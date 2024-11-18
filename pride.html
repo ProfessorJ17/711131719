@@ -1,0 +1,286 @@
+​<html>
+<head>
+<base href="/">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lion 777</title>
+<style>
+    body {
+        margin: 0;
+        font-family: 'Courier New', Courier, monospace;
+        background-color: black;
+        color: white;
+        overflow-x: hidden;
+    }
+
+    .container {
+        text-align: center;
+        padding: 20px;
+        background: linear-gradient(45deg, rgba(0,255,255,0.1), rgba(255,0,255,0.1));
+    }
+
+    .fixed-images {
+        position: fixed;
+        top: 20px;
+        width: 100%;
+        pointer-events: none;
+        z-index: 100;
+    }
+
+    .lion-left {
+        position: absolute;
+        left: 20px;
+        width: 100px;
+        filter: drop-shadow(0 0 10px #0ff) drop-shadow(0 0 20px #f0f);
+        animation: neonPulse 2s infinite alternate;
+    }
+
+    .lion-right {
+        position: absolute;
+        right: 20px;
+        width: 100px;
+        filter: drop-shadow(0 0 10px #0ff) drop-shadow(0 0 20px #f0f);
+        animation: neonPulse 2s infinite alternate-reverse;
+    }
+
+    @keyframes neonPulse {
+        from {
+            filter: drop-shadow(0 0 10px #0ff) drop-shadow(0 0 20px #f0f);
+        }
+        to {
+            filter: drop-shadow(0 0 15px #39ff14) drop-shadow(0 0 25px #f0f);
+        }
+    }
+
+    h1.glitch {
+        color: #0ff;
+        font-size: 4em;
+        position: relative;
+        display: inline-block;
+        text-shadow: 0 0 20px #0ff, 0 0 30px #0ff, 0 0 40px #0ff;
+        margin-top: 60px;
+    }
+
+    h1.glitch:before,
+    h1.glitch:after {
+        content: attr(data-text);
+        position: absolute;
+        left: 0;
+        top: 0;
+        color: #f0f;
+        overflow: hidden;
+        clip: rect(0, 900px, 0, 0);
+        animation: glitch 3s infinite linear alternate-reverse;
+        text-shadow: 0 0 20px #f0f, 0 0 30px #f0f;
+    }
+
+    @keyframes glitch {
+        0% { clip: rect(42px, 9999px, 22px, 0); }
+        10% { clip: rect(12px, 9999px, 70px, 0); }
+        20% { clip: rect(35px, 9999px, 50px, 0); }
+        30% { clip: rect(50px, 9999px, 40px, 0); }
+        40% { clip: rect(20px, 9999px, 60px, 0); }
+        50% { clip: rect(30px, 9999px, 20px, 0); }
+        60% { clip: rect(10px, 9999px, 30px, 0); }
+        70% { clip: rect(25px, 9999px, 45px, 0); }
+        80% { clip: rect(15px, 9999px, 50px, 0); }
+        90% { clip: rect(5px, 9999px, 35px, 0); }
+        100% { clip: rect(0, 9999px, 20px, 0); }
+    }
+
+    nav ul {
+        list-style-type: none;
+        padding: 0;
+    }
+
+    nav ul li {
+        display: inline;
+        margin: 0 15px;
+    }
+
+    nav ul li a {
+        color: #0ff;
+        text-decoration: none;
+        font-size: 1.2em;
+        transition: all 0.3s;
+        text-shadow: 0 0 10px #0ff;
+    }
+
+    nav ul li a:hover {
+        color: #39ff14;
+        text-shadow: 0 0 20px #39ff14;
+    }
+
+    footer {
+        margin-top: 50px;
+        padding-bottom: 30px;
+        color: #f0f;
+        text-shadow: 0 0 10px #f0f;
+    }
+
+    main {
+        margin-top: 40px;
+    }
+
+    main h2 {
+        color: #39ff14;
+        font-size: 2em;
+        margin-bottom: 20px;
+        text-shadow: 0 0 15px #39ff14;
+    }
+
+    main p {
+        font-size: 1.2em;
+        color: #fff;
+        margin-bottom: 20px;
+        text-shadow: 0 0 5px #fff;
+    }
+
+    blockquote {
+        font-size: 1.3em;
+        color: #f0f;
+        margin: 20px;
+        font-style: italic;
+        border-left: 3px solid #0ff;
+        padding-left: 20px;
+        text-shadow: 0 0 10px #f0f;
+        background: linear-gradient(90deg, rgba(255,0,255,0.1), transparent);
+    }
+
+    .section-title {
+        font-size: 2.5em;
+        color: #39ff14;
+        margin-top: 50px;
+        text-shadow: 0 0 15px #39ff14;
+    }
+
+    .section-image {
+        margin-top: 30px;
+        width: 80%;
+        max-width: 600px;
+        border: 5px solid #f0f;
+        box-shadow: 0 0 20px rgba(0, 255, 255, 0.7);
+    }
+
+    .section-text {
+        font-size: 1.2em;
+        color: #fff;
+        margin: 20px;
+        text-shadow: 0 0 10px #fff;
+    }
+
+    .image-block {
+        display: flex;
+        justify-content: space-around;
+        margin-top: 30px;
+    }
+
+    .image-block img {
+        width: 45%;
+        max-width: 400px;
+        border: 3px solid #39ff14;
+        box-shadow: 0 0 15px rgba(0, 255, 255, 0.5);
+        transition: transform 0.3s;
+    }
+
+    .image-block img:hover {
+        transform: scale(1.1);
+    }
+
+    .random-blockquote {
+        font-size: 1.2em;
+        color: #f0f;
+        background: rgba(0, 255, 255, 0.1);
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 0 10px #0ff;
+        margin: 30px 0;
+    }
+
+    .random-text {
+        font-size: 1.1em;
+        color: #39ff14;
+        margin-top: 20px;
+        text-shadow: 0 0 15px #39ff14;
+    }
+</style>
+</head>
+<body>
+    <div class="fixed-images">
+        <img src="https://i.imgur.com/LeHxKpE.jpeg" alt="Lion emblem in cyberpunk style" class="lion-left" width="100" height="100">
+        <img src="https://i.imgur.com/LeHxKpE.jpeg" alt="Lion 777 logo in cyberpunk style" class="lion-right" width="100" height="100">
+    </div>
+    <div class="container">
+        <header>
+            <h1 class="glitch" data-text="Lion 777">Lion 777</h1>
+            <nav>
+                <ul>
+                    <li><a href="https://lion777.com/welcome">Welcome</a></li>
+                    <li><a href="https://lion777.com/about">About</a></li>
+                    <li><a href="https://lion777.com/philosophy">Pride</a></li>
+                    <li><a href="https://lion777.com/teachings">Arcana</a></li>
+                    <li><a href="https://lion777.com/codex">Liber Secodus</a></li>
+                    <li><a href="https://lion777.com/initiation">Initiation</a></li>
+                    <li><a href="https://lion777.com/mysteries">Puzzles</a></li>
+                </ul>
+            </nav>
+        </header>
+
+        <main id="welcome">
+            <h2>Prides</h2>
+          <p>
+A pride in the Lion 777 system is a dedicated group of individuals who have come together with a singular mission: to collectively pursue enlightenment and achieve the highest form of wisdom. Much like the lion prides of the savanna, these groups embody unity, strength, and mutual respect. They are not temporary formations but rather long-standing communities that foster deep connections between individuals with shared goals.<br></br>
+<br></br>
+Key Concepts of the Prides:<br></br>
+Formation of a Pride<br></br>
+A pride is formed when individuals, deeply committed to the path of Lion 777, gather with shared purpose. It is marked by a deep, intentional connection between the members, who commit to a lifetime of study, practice, and mutual growth. Members of a pride often specialize in different aspects of knowledge, from spiritual wisdom to technological mastery, providing a balanced support system for all involved.
+<br></br>
+Leadership within the Pride<br></br>
+Leadership in a pride is fluid but based on wisdom, maturity, and the ability to guide others through the challenges of spiritual growth. Rather than a fixed hierarchy, leadership in a pride can shift based on the needs of the collective and the evolving wisdom of its members. Pride leaders are those who have ascended through the stages of Lion 777, embodying the teachings of the philosophy with grace and strength.
+<br></br>
+Mission of the Pride<br></br>
+The primary mission of a pride is to raise the collective consciousness of its members while also contributing to the growth of humanity. Prides act as a catalyst for enlightenment, supporting both internal growth and outward action. Their influence extends beyond their own community, impacting the larger society through acts of wisdom, courage, and leadership.
+<br></br>
+Rituals and Practices<br></br>
+Each pride has its own set of rituals and practices, rooted in the principles of Lion 777. These rituals are designed to foster unity, encourage self-reflection, and promote the transmutation of base knowledge into higher understanding. From meditation and communal study to public service and spiritual leadership, each pride’s rituals are aligned with their unique vision.
+<br></br>
+The Role of the Pride in the Larger Network<br></br>
+While prides are autonomous, they are not isolated. They are part of a larger global network of Lion 777 seekers. This network exists to provide mutual support, share insights, and work together on larger projects or missions that require collective effort. The larger Lion 777 community thrives on the collaboration and exchange of wisdom between prides.
+<br></br>
+Applications for Joining a Pride<br></br>
+Much like other esoteric communities, joining a pride is not something that can be taken lightly. A seeker must demonstrate their commitment to the path through rigorous self-examination, study, and active participation in the community’s activities. Applications are often initiated through written statements or by direct invitation from current pride members.
+<br></br>
+Roles within the Pride:<br></br>
+The Elder: The spiritual guide and philosophical leader of the pride. The Elder is typically the most experienced member who has walked the path for many years. They serve as the bridge between the highest principles of Lion 777 and the daily life of the pride.
+<br></br>
+The Guardians: These members are tasked with the protection of the pride’s knowledge and teachings. They are the spiritual warriors who maintain the integrity of the community and ensure that the path remains true to its original mission.<br></br>
+<br></br>
+The Seekers: Newer members who are in the process of deepening their understanding and commitment to the Lion 777 philosophy. They are actively engaged in study, ritual, and transformation, progressing through the various stages of enlightenment.<br></br>
+<br></br>
+The Builders: Members who focus on bringing the teachings of the pride into the world through action. This can include anything from charity work and social justice initiatives to creating and sharing educational content related to the Lion 777 philosophy.
+<br></br>
+Summary of a Pride’s Purpose:<br></br>
+A pride in the Lion 777 system is more than a group; it is a spiritual family united by a common goal: to ascend to higher states of being and lead the world toward enlightenment. These communities serve as incubators for transformation, providing wisdom, strength, and support for seekers who are committed to personal and collective awakening. With the goal of ultimately creating enlightened leaders and fostering societal change, the pride stands as a powerful force in the Lion 777 philosophy.
+<br></br>
+Connecting with a Pride:
+<br></br>
+Interested seekers can find prides through established online platforms, such as private forums or encrypted messaging systems like Telegram. Prides can also be formed independently, as long as their members are aligned with the core teachings of Lion 777.</p>
+
+        </main>
+
+        <section>
+            <h2 class="section-title">Join Our Pride</h2>
+          <h3>Pride : Team CAIMEO Discord Link</h3>
+<br>
+          
+        <section class="random-blockquote">
+            <p>"The lion roams both the digital jungle and the forest of thoughts, always hunting for greater truths."</p>
+        </section>
+
+        <footer>
+            <p>&copy; 2024 Lion 777. All rights reserved.</p>
+            <p class="random-text">Stay curious. Stay fierce.</p>
+        </footer>
+    </div>
+</body>
+</html>
