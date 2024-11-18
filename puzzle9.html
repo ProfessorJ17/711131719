@@ -1,0 +1,282 @@
+<html><head><base href="." />
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Esoteric Puzzle Challenge</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        /* Global Styles */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: #0a0a0f;
+            color: #fff;
+            font-family: 'Orbitron', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            min-height: min-content;
+            padding: clamp(20px, 5vw, 40px);
+            background: rgba(0, 0, 0, 0.7);
+            border-radius: clamp(10px, 2vw, 20px);
+            box-shadow: 0 0 30px #b700ff;
+            margin: auto;
+        }
+
+        h1 {
+            margin-bottom: clamp(20px, 4vw, 40px);
+            color: #00ffff;
+            text-shadow: 0 0 10px #00ffff;
+            font-size: clamp(1.8rem, 4vw, 3rem);
+            letter-spacing: 2px;
+        }
+
+        p {
+            margin-bottom: clamp(15px, 3vw, 30px);
+            color: #ff00ff;
+            font-size: clamp(1rem, 2vw, 1.4rem);
+        }
+
+        .riddle {
+            margin: clamp(20px, 4vw, 40px) 0;
+            padding: clamp(15px, 3vw, 30px);
+            background: rgba(0, 0, 0, 0.8);
+            border: 2px solid #b700ff;
+            border-radius: clamp(8px, 1.5vw, 15px);
+            box-shadow: 0 0 25px #b700ff;
+        }
+
+        .riddle h2 {
+            color: #00ffff;
+            text-shadow: 0 0 5px #00ffff;
+            font-size: clamp(1.2rem, 2.5vw, 1.8rem);
+            white-space: pre-wrap;
+            margin-bottom: clamp(15px, 3vw, 25px);
+        }
+
+        .input-container {
+            display: flex;
+            gap: clamp(10px, 2vw, 20px);
+            margin-top: clamp(15px, 3vw, 25px);
+            flex-wrap: wrap;
+        }
+
+        input[type="text"] {
+            flex: 1;
+            min-width: 200px;
+            max-width: 100%;
+            padding: clamp(8px, 1.5vw, 15px);
+            border-radius: 5px;
+            border: 2px solid #ff00ff;
+            background: rgba(0, 0, 0, 0.8);
+            color: #fff;
+            font-family: 'Orbitron', sans-serif;
+            font-size: clamp(0.9rem, 1.5vw, 1.1rem);
+        }
+
+        button {
+            padding: clamp(8px, 1.5vw, 15px) clamp(15px, 3vw, 30px);
+            background: linear-gradient(45deg, #ff00ff, #b700ff);
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            color: #fff;
+            font-family: 'Orbitron', sans-serif;
+            font-size: clamp(0.9rem, 1.5vw, 1.1rem);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 15px #ff00ff;
+        }
+
+        .result {
+            margin-top: clamp(10px, 2vw, 20px);
+            color: #ff00ff;
+            font-weight: bold;
+            font-size: clamp(1rem, 1.8vw, 1.3rem);
+            min-height: 30px;
+        }
+
+        .image {
+            width: 100%;
+            max-width: 800px;
+            height: auto;
+            margin: clamp(15px, 3vw, 30px) auto;
+            border-radius: clamp(8px, 1.5vw, 15px);
+            display: block;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        /* Animation for success message */
+        @keyframes success-pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .success {
+            animation: success-pulse 1s ease-in-out;
+            color: #00ff00;
+            text-shadow: 0 0 10px #00ff00;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Esoteric Puzzle Challenge</h1>
+        <p>Enter your answers to solve the riddles. Only those with keen insight will succeed.</p>
+        <div id="puzzle-container"></div>
+    </div>
+
+    <script>
+        const riddles = [
+            {
+                question: "1. Keeper of the first secret flame,\nWhere wisdom starts, so ends the game.\nName me, whose voice sparked the might,\nWhat word binds this eternal light?",
+                answers: ["logos", "word"],
+                image: "https://via.placeholder.com/800x400.png?text=Riddle+1+Image"
+            },
+            {
+                question: "2. Clad in light but born of void,\nA circle’s shadow never destroyed.\nWhat is the shape that’s never bent,\nYet holds the secrets, heaven-sent?",
+                answers: ["ouroboros", "circle", "serpent"],
+                image: "https://via.placeholder.com/800x400.png?text=Riddle+2+Image"
+            },
+            {
+                question: "3. The journey inward reveals a key,\nTo walk the steps from one to three.\nFind me where the lions reign,\nTell the word, and break the chain.",
+                answers: ["solomon", "temple", "wisdom"],
+                image: "https://via.placeholder.com/800x400.png?text=Riddle+3+Image"
+            },
+            {
+                question: "4. By many known, yet few can see,\nWhat lies behind duality.\nI am the force that binds the night,\nSpeak my name, the hidden sight.",
+                answers: ["ether", "aether", "spirit"],
+                image: "https://via.placeholder.com/800x400.png?text=Riddle+4+Image"
+            },
+            {
+                question: "5. Of gold I shine but never hold,\nThe whispers of power, manifold.\nI am the scepter of great kings,\nWhat is the name that legend sings?",
+                answers: ["spear of destiny", "holy lance", "lance of longinus"],
+                image: "https://via.placeholder.com/800x400.png?text=Riddle+5+Image"
+            },
+            {
+                question: "6. Fashioned in darkness yet wielded by light,\nI carve paths that end mortal plight.\nForged by none, yet sought by kings,\nSpeak my name, the song that sings.",
+                answers: ["excalibur", "etheric blade"],
+                image: "https://via.placeholder.com/800x400.png?text=Riddle+6+Image"
+            },
+            {
+                question: "7. I stretch across the void unseen,\nWhere souls traverse to realms pristine.\nI am the crossing, the place of choice,\nName the path with neither sound nor voice.",
+                answers: ["rainbow bridge", "bifrost", "antahkarana"],
+                image: "https://via.placeholder.com/800x400.png?text=Riddle+7+Image"
+            },
+            {
+                question: "8. Ancient eyes that see the stars fall,\nIn whispers, I reveal the call.\nI am the keeper of forgotten lore,\nTell me the beast at the gate of more.",
+                answers: ["sphinx", "chimera"],
+                image: "https://via.placeholder.com/800x400.png?text=Riddle+8+Image"
+            },
+            {
+                question: "9. Silent it lies, hidden from sight,\nYet in its glow, all truths ignite.\nIt is the ember within the soul,\nName the fire that makes the whole.",
+                answers: ["sacred flame", "divine spark"],
+                image: "https://via.placeholder.com/800x400.png?text=Riddle+9+Image"
+            },
+            {
+                question: "10. In the reflection, we find our pair,\nAs above, so below, beware.\nI am the split that reveals the all,\nWhat am I called when worlds enthrall?",
+                answers: ["veil of isis", "duality", "monad"],
+                image: "https://via.placeholder.com/800x400.png?text=Riddle+10+Image"
+            }
+        ];
+
+        let currentLevel = 0;
+
+        function createPuzzle() {
+            const container = document.getElementById('puzzle-container');
+            container.innerHTML = '';
+
+            if (currentLevel < riddles.length) {
+                const riddle = riddles[currentLevel];
+                const riddleDiv = document.createElement('div');
+                riddleDiv.classList.add('riddle');
+
+                const riddleText = document.createElement('h2');
+                riddleText.textContent = riddle.question;
+                riddleDiv.appendChild(riddleText);
+
+                const image = document.createElement('img');
+                image.src = riddle.image;
+                image.alt = `Mystical image for riddle ${currentLevel + 1}`;
+                image.classList.add('image');
+                riddleDiv.appendChild(image);
+
+                const inputContainer = document.createElement('div');
+                inputContainer.classList.add('input-container');
+
+                const answerInput = document.createElement('input');
+                answerInput.type = 'text';
+                answerInput.placeholder = 'Enter your answer';
+                answerInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        checkAnswer(answerInput.value.trim().toLowerCase(), riddle.answers);
+                        answerInput.value = '';
+                    }
+                });
+                inputContainer.appendChild(answerInput);
+
+                const submitButton = document.createElement('button');
+                submitButton.textContent = 'Submit Answer';
+                submitButton.onclick = () => {
+                    checkAnswer(answerInput.value.trim().toLowerCase(), riddle.answers);
+                    answerInput.value = '';
+                };
+                inputContainer.appendChild(submitButton);
+
+                riddleDiv.appendChild(inputContainer);
+
+                const resultDiv = document.createElement('div');
+                resultDiv.classList.add('result');
+                resultDiv.classList.add('hidden');
+                riddleDiv.appendChild(resultDiv);
+
+                container.appendChild(riddleDiv);
+                answerInput.focus();
+            } else {
+                const finalMessage = document.createElement('h2');
+                finalMessage.textContent = "Congratulations, you've mastered all the mysteries!";
+                finalMessage.classList.add('success');
+                container.appendChild(finalMessage);
+            }
+        }
+
+        function checkAnswer(answer, correctAnswers) {
+            const resultDiv = document.querySelector('.riddle .result');
+            resultDiv.classList.remove('hidden');
+            
+            if (correctAnswers.includes(answer)) {
+                resultDiv.textContent = "Correct! The ancient knowledge flows through you.";
+                resultDiv.classList.add('success');
+                currentLevel++;
+                setTimeout(createPuzzle, 1500);
+            } else {
+                resultDiv.textContent = "Incorrect. Seek deeper understanding.";
+                resultDiv.classList.remove('success');
+            }
+        }
+
+        createPuzzle();
+    </script>
+</body>
+</html>
