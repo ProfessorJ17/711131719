@@ -1,0 +1,256 @@
+​<html>
+<head>
+<base href="/">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lion 777</title>
+<style>
+    body {
+        margin: 0;
+        font-family: 'Courier New', Courier, monospace;
+        background-color: black;
+        color: white;
+        overflow-x: hidden;
+    }
+
+    .container {
+        text-align: center;
+        padding: 20px;
+        background: linear-gradient(45deg, rgba(0,255,255,0.1), rgba(255,0,255,0.1));
+    }
+
+    .fixed-images {
+        position: fixed;
+        top: 20px;
+        width: 100%;
+        pointer-events: none;
+        z-index: 100;
+    }
+
+    .lion-left {
+        position: absolute;
+        left: 20px;
+        width: 100px;
+        filter: drop-shadow(0 0 10px #0ff) drop-shadow(0 0 20px #f0f);
+        animation: neonPulse 2s infinite alternate;
+    }
+
+    .lion-right {
+        position: absolute;
+        right: 20px;
+        width: 100px;
+        filter: drop-shadow(0 0 10px #0ff) drop-shadow(0 0 20px #f0f);
+        animation: neonPulse 2s infinite alternate-reverse;
+    }
+
+    @keyframes neonPulse {
+        from {
+            filter: drop-shadow(0 0 10px #0ff) drop-shadow(0 0 20px #f0f);
+        }
+        to {
+            filter: drop-shadow(0 0 15px #39ff14) drop-shadow(0 0 25px #f0f);
+        }
+    }
+
+    h1.glitch {
+        color: #0ff;
+        font-size: 4em;
+        position: relative;
+        display: inline-block;
+        text-shadow: 0 0 20px #0ff, 0 0 30px #0ff, 0 0 40px #0ff;
+        margin-top: 60px;
+    }
+
+    h1.glitch:before,
+    h1.glitch:after {
+        content: attr(data-text);
+        position: absolute;
+        left: 0;
+        top: 0;
+        color: #f0f;
+        overflow: hidden;
+        clip: rect(0, 900px, 0, 0);
+        animation: glitch 3s infinite linear alternate-reverse;
+        text-shadow: 0 0 20px #f0f, 0 0 30px #f0f;
+    }
+
+    @keyframes glitch {
+        0% { clip: rect(42px, 9999px, 22px, 0); }
+        10% { clip: rect(12px, 9999px, 70px, 0); }
+        20% { clip: rect(35px, 9999px, 50px, 0); }
+        30% { clip: rect(50px, 9999px, 40px, 0); }
+        40% { clip: rect(20px, 9999px, 60px, 0); }
+        50% { clip: rect(30px, 9999px, 20px, 0); }
+        60% { clip: rect(10px, 9999px, 30px, 0); }
+        70% { clip: rect(25px, 9999px, 45px, 0); }
+        80% { clip: rect(15px, 9999px, 50px, 0); }
+        90% { clip: rect(5px, 9999px, 35px, 0); }
+        100% { clip: rect(0, 9999px, 20px, 0); }
+    }
+
+    nav ul {
+        list-style-type: none;
+        padding: 0;
+    }
+
+    nav ul li {
+        display: inline;
+        margin: 0 15px;
+    }
+
+    nav ul li a {
+        color: #0ff;
+        text-decoration: none;
+        font-size: 1.2em;
+        transition: all 0.3s;
+        text-shadow: 0 0 10px #0ff;
+    }
+
+    nav ul li a:hover {
+        color: #39ff14;
+        text-shadow: 0 0 20px #39ff14;
+    }
+
+    footer {
+        margin-top: 50px;
+        padding-bottom: 30px;
+        color: #f0f;
+        text-shadow: 0 0 10px #f0f;
+    }
+
+    main {
+        margin-top: 40px;
+    }
+
+    main h2 {
+        color: #39ff14;
+        font-size: 2em;
+        margin-bottom: 20px;
+        text-shadow: 0 0 15px #39ff14;
+    }
+
+    main p {
+        font-size: 1.2em;
+        color: #fff;
+        margin-bottom: 20px;
+        text-shadow: 0 0 5px #fff;
+    }
+
+    blockquote {
+        font-size: 1.3em;
+        color: #f0f;
+        margin: 20px;
+        font-style: italic;
+        border-left: 3px solid #0ff;
+        padding-left: 20px;
+        text-shadow: 0 0 10px #f0f;
+        background: linear-gradient(90deg, rgba(255,0,255,0.1), transparent);
+    }
+
+    .section-title {
+        font-size: 2.5em;
+        color: #39ff14;
+        margin-top: 50px;
+        text-shadow: 0 0 15px #39ff14;
+    }
+
+    .section-image {
+        margin-top: 30px;
+        width: 80%;
+        max-width: 600px;
+        border: 5px solid #f0f;
+        box-shadow: 0 0 20px rgba(0, 255, 255, 0.7);
+    }
+
+    .section-text {
+        font-size: 1.2em;
+        color: #fff;
+        margin: 20px;
+        text-shadow: 0 0 10px #fff;
+    }
+
+    .image-block {
+        display: flex;
+        justify-content: space-around;
+        margin-top: 30px;
+    }
+
+    .image-block img {
+        width: 45%;
+        max-width: 400px;
+        border: 3px solid #39ff14;
+        box-shadow: 0 0 15px rgba(0, 255, 255, 0.5);
+        transition: transform 0.3s;
+    }
+
+    .image-block img:hover {
+        transform: scale(1.1);
+    }
+
+    .random-blockquote {
+        font-size: 1.2em;
+        color: #f0f;
+        background: rgba(0, 255, 255, 0.1);
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 0 10px #0ff;
+        margin: 30px 0;
+    }
+
+    .random-text {
+        font-size: 1.1em;
+        color: #39ff14;
+        margin-top: 20px;
+        text-shadow: 0 0 15px #39ff14;
+    }
+</style>
+</head>
+<body>
+    <div class="fixed-images">
+        <img src="https://i.imgur.com/LeHxKpE.jpeg" alt="Lion emblem in cyberpunk style" class="lion-left" width="100" height="100">
+        <img src="https://i.imgur.com/LeHxKpE.jpeg" alt="Lion 777 logo in cyberpunk style" class="lion-right" width="100" height="100">
+    </div>
+    <div class="container">
+        <header>
+            <h1 class="glitch" data-text="Lion 777">Lion 777</h1>
+            <nav>
+                <ul>
+                    <li><a href="https://lion777.com/welcome">Welcome</a></li>
+                    <li><a href="https://lion777.com/about">About</a></li>
+                    <li><a href="https://lion777.com/philosophy">Pride</a></li>
+                    <li><a href="https://lion777.com/teachings">Arcana</a></li>
+                    <li><a href="https://lion777.com/codex">Liber Secodus</a></li>
+                    <li><a href="https://lion777.com/initiation">Initiation</a></li>
+                    <li><a href="https://lion777.com/mysteries">Puzzles</a></li>
+                </ul>
+            </nav>
+        </header>
+
+        <main id="welcome">
+            <h2>Welcome Lion Cubs!</h2>
+            <p>Through a convergence of fate, chance, and the fabric of existence, you've found yourself at the domain of Lion 777. Here, wisdom is not just imparted, but woven through the strands of knowledge that have stood the test of time. Prepare yourself for a journey into the mysteries of the universe.</p>
+            <blockquote>"The pride is eternal. The path is hidden in plain sight."</blockquote>
+        </main>
+
+        <section>
+            <h2 class="section-title">A Glimpse into the Future</h2>
+            <img src="https://via.placeholder.com/600x400" class="section-image" alt="Cyberpunk city skyline" />
+            <p class="section-text">The city around us pulses with neon energy, while beneath it, the ancient truths remain guarded. We will explore the deepest corners of the digital age and unlock ancient knowledge, one cipher at a time.</p>
+        </section>
+
+        <section class="image-block">
+            <img src="https://via.placeholder.com/400x250" alt="Cyberpunk neon lights" />
+            <img src="https://via.placeholder.com/400x250" alt="Futuristic technology" />
+        </section>
+
+        <section class="random-blockquote">
+            <p>"The lion roams both the digital jungle and the forest of thoughts, always hunting for greater truths."</p>
+        </section>
+
+        <footer>
+            <p>&copy; 2024 Lion 777. All rights reserved.</p>
+            <p class="random-text">Stay curious. Stay fierce.</p>
+        </footer>
+    </div>
+</body>
+</html>
