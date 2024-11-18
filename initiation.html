@@ -1,0 +1,302 @@
+​<html>
+<head>
+<base href="/">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lion 777</title>
+<style>
+    body {
+        margin: 0;
+        font-family: 'Courier New', Courier, monospace;
+        background-color: black;
+        color: white;
+        overflow-x: hidden;
+    }
+
+    .container {
+        text-align: center;
+        padding: 20px;
+        background: linear-gradient(45deg, rgba(0,255,255,0.1), rgba(255,0,255,0.1));
+    }
+
+    .fixed-images {
+        position: fixed;
+        top: 20px;
+        width: 100%;
+        pointer-events: none;
+        z-index: 100;
+    }
+
+    .lion-left {
+        position: absolute;
+        left: 20px;
+        width: 100px;
+        filter: drop-shadow(0 0 10px #0ff) drop-shadow(0 0 20px #f0f);
+        animation: neonPulse 2s infinite alternate;
+    }
+
+    .lion-right {
+        position: absolute;
+        right: 20px;
+        width: 100px;
+        filter: drop-shadow(0 0 10px #0ff) drop-shadow(0 0 20px #f0f);
+        animation: neonPulse 2s infinite alternate-reverse;
+    }
+
+    @keyframes neonPulse {
+        from {
+            filter: drop-shadow(0 0 10px #0ff) drop-shadow(0 0 20px #f0f);
+        }
+        to {
+            filter: drop-shadow(0 0 15px #39ff14) drop-shadow(0 0 25px #f0f);
+        }
+    }
+
+    h1.glitch {
+        color: #0ff;
+        font-size: 4em;
+        position: relative;
+        display: inline-block;
+        text-shadow: 0 0 20px #0ff, 0 0 30px #0ff, 0 0 40px #0ff;
+        margin-top: 60px;
+    }
+
+    h1.glitch:before,
+    h1.glitch:after {
+        content: attr(data-text);
+        position: absolute;
+        left: 0;
+        top: 0;
+        color: #f0f;
+        overflow: hidden;
+        clip: rect(0, 900px, 0, 0);
+        animation: glitch 3s infinite linear alternate-reverse;
+        text-shadow: 0 0 20px #f0f, 0 0 30px #f0f;
+    }
+
+    @keyframes glitch {
+        0% { clip: rect(42px, 9999px, 22px, 0); }
+        10% { clip: rect(12px, 9999px, 70px, 0); }
+        20% { clip: rect(35px, 9999px, 50px, 0); }
+        30% { clip: rect(50px, 9999px, 40px, 0); }
+        40% { clip: rect(20px, 9999px, 60px, 0); }
+        50% { clip: rect(30px, 9999px, 20px, 0); }
+        60% { clip: rect(10px, 9999px, 30px, 0); }
+        70% { clip: rect(25px, 9999px, 45px, 0); }
+        80% { clip: rect(15px, 9999px, 50px, 0); }
+        90% { clip: rect(5px, 9999px, 35px, 0); }
+        100% { clip: rect(0, 9999px, 20px, 0); }
+    }
+
+    nav ul {
+        list-style-type: none;
+        padding: 0;
+    }
+
+    nav ul li {
+        display: inline;
+        margin: 0 15px;
+    }
+
+    nav ul li a {
+        color: #0ff;
+        text-decoration: none;
+        font-size: 1.2em;
+        transition: all 0.3s;
+        text-shadow: 0 0 10px #0ff;
+    }
+
+    nav ul li a:hover {
+        color: #39ff14;
+        text-shadow: 0 0 20px #39ff14;
+    }
+
+    footer {
+        margin-top: 50px;
+        padding-bottom: 30px;
+        color: #f0f;
+        text-shadow: 0 0 10px #f0f;
+    }
+
+    main {
+        margin-top: 40px;
+    }
+
+    main h2 {
+        color: #39ff14;
+        font-size: 2em;
+        margin-bottom: 20px;
+        text-shadow: 0 0 15px #39ff14;
+    }
+
+    main p {
+        font-size: 1.2em;
+        color: #fff;
+        margin-bottom: 20px;
+        text-shadow: 0 0 5px #fff;
+    }
+
+    blockquote {
+        font-size: 1.3em;
+        color: #f0f;
+        margin: 20px;
+        font-style: italic;
+        border-left: 3px solid #0ff;
+        padding-left: 20px;
+        text-shadow: 0 0 10px #f0f;
+        background: linear-gradient(90deg, rgba(255,0,255,0.1), transparent);
+    }
+
+    .section-title {
+        font-size: 2.5em;
+        color: #39ff14;
+        margin-top: 50px;
+        text-shadow: 0 0 15px #39ff14;
+    }
+
+    .section-image {
+        margin-top: 30px;
+        width: 80%;
+        max-width: 600px;
+        border: 5px solid #f0f;
+        box-shadow: 0 0 20px rgba(0, 255, 255, 0.7);
+    }
+
+    .section-text {
+        font-size: 1.2em;
+        color: #fff;
+        margin: 20px;
+        text-shadow: 0 0 10px #fff;
+    }
+
+    .image-block {
+        display: flex;
+        justify-content: space-around;
+        margin-top: 30px;
+    }
+
+    .image-block img {
+        width: 45%;
+        max-width: 400px;
+        border: 3px solid #39ff14;
+        box-shadow: 0 0 15px rgba(0, 255, 255, 0.5);
+        transition: transform 0.3s;
+    }
+
+    .image-block img:hover {
+        transform: scale(1.1);
+    }
+
+    .random-blockquote {
+        font-size: 1.2em;
+        color: #f0f;
+        background: rgba(0, 255, 255, 0.1);
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 0 10px #0ff;
+        margin: 30px 0;
+    }
+
+    .random-text {
+        font-size: 1.1em;
+        color: #39ff14;
+        margin-top: 20px;
+        text-shadow: 0 0 15px #39ff14;
+    }
+</style>
+</head>
+<body>
+    <div class="fixed-images">
+        <img src="https://i.imgur.com/LeHxKpE.jpeg" alt="Lion emblem in cyberpunk style" class="lion-left" width="100" height="100">
+        <img src="https://i.imgur.com/LeHxKpE.jpeg" alt="Lion 777 logo in cyberpunk style" class="lion-right" width="100" height="100">
+    </div>
+    <div class="container">
+        <header>
+            <h1 class="glitch" data-text="Lion 777">Lion 777</h1>
+            <nav>
+                <ul>
+                    <li><a href="https://lion777.com/welcome">Welcome</a></li>
+                    <li><a href="https://lion777.com/about">About</a></li>
+                    <li><a href="https://lion777.com/philosophy">Pride</a></li>
+                    <li><a href="https://lion777.com/teachings">Arcana</a></li>
+                    <li><a href="https://lion777.com/codex">Liber Secodus</a></li>
+                    <li><a href="https://lion777.com/initiation">Initiation</a></li>
+                    <li><a href="https://lion777.com/mysteries">Puzzles</a></li>
+                </ul>
+            </nav>
+        </header>
+
+        <main id="welcome">
+            <h2>Ranks</h2>
+          <p>5° Prima Ignis - Cub of Awakening<br></br>
+The first spark of insight ignites, as the seeker enters the realm of Lion 777 with curiosity. It is a time of exploration and discovery, where the mysteries of the pride are revealed, and the desire for deeper understanding begins to take root. Like the flickering of a flame, this stage signifies the initial awakening of the seeker’s potential.
+<br></br>
+4° Auric Ember - Roaring Ember<br></br>
+The seeker’s journey deepens, and what was once a spark now grows into a steady ember of wisdom. As the seeker absorbs the core teachings of Lion 777, they begin to shine with inner clarity, their newfound light growing stronger. Confidence rises, and they become a radiant force—an ember that will one day become a blazing fire.
+<br></br>
+3° Solar Acolyte - Sentinel of Light<br></br>
+A phase of profound commitment, where the seeker embodies the wisdom they have received. Acts of courage, wisdom, and leadership arise as the seeker channels their inner light outward, becoming a protector of the teachings and a guide to others. The Solar Acolyte shines brightly, leading the way for those who walk in the same path.
+<br></br>
+2° Celestial Sentinel - Sovereign Guardian<br></br>
+The seeker’s transformation reaches its advanced stage. Having integrated the teachings deeply into their being, they now become a true guardian of Lion 777’s wisdom. This phase is marked by balance, inner strength, and a profound sense of responsibility to protect and embody the sacred knowledge. The initiate is now ready to ascend to their final transformation.
+<br></br>
+_° Aurum Coronam - Golden Mane Ascendant<br></br>
+The final, transcendent phase. The seeker emerges fully enlightened, crowned with the "golden mane" of wisdom, symbolizing their unity with the collective consciousness of the pride. This stage represents the ultimate embodiment of Lion 777’s teachings—an enlightened being who radiates wisdom and leads others by example.</p>
+
+        </main>
+
+        <section>
+            <h2 class="section-title">The Initation Ritual</h2>
+          <h3>The Quantum Initiation Ritual of Lion 777<br></br>
+Step 1: The Call to the Quantum Pride<br></br>
+The seeker’s journey begins when they are drawn to the teachings of Lion 777, compelled by an inner yearning for higher understanding and the mysteries of the quantum world. Before the ritual begins, the seeker must declare their intent through an encrypted message—symbolic of their inner encryption of purpose—written on paper or in code, within the sacred space of the pride’s circle. This declaration, though written or spoken, must resonate with deep sincerity, revealing their desire to access the secrets of the universe.<br></br>
+<br></br>
+The seeker must reflect deeply on their purpose: Why have they come to this path? What is the true nature of the knowledge they seek? The intention should be fully aligned with the Light of Knowledge, like a quantum particle beginning its journey into entanglement with the greater whole.
+<br></br>
+Step 2: The Quantum Flame of Awakening<br></br>
+The heart of the initiation ritual is the lighting of the Quantum Flame of Awakening. This represents the moment of transcendent insight—a spark of light within the quantum void. The seeker, holding a single photon-like flame, is guided to the central altar, upon which resides the Quantum Prism—a symbol of the Lion 777 teachings, reflecting light in infinite directions. The seeker places the flame on the altar, and as they do so, they speak the words:
+<br></br>
+"I light this flame as a quantum act of intention. May it expand into a wave of enlightenment, illuminating my path to ultimate truth."<br></br>
+<br></br>
+At this moment, the flame’s light expands, signifying the collapse of their inner quantum state into clarity. The seeker's journey of self-awareness has begun, and they are now bound to the path of transformation through light, energy, and the awakening of hidden knowledge.
+<br></br>
+Step 3: The Rite of Reflection (Quantum Reflection and the Moon Cycle)<br></br>
+With the flame now burning bright, the seeker enters a phase of deep reflection. In solitude, they must meditate upon the Liber Secudus the sacred text of Lion 777, encrypted with knowledge both esoteric and scientific. This text teaches them to interpret reality through the lens of quantum mechanics, alchemy, and the universal codes of existence. The seeker is encouraged to contemplate their connection to the laws of light, energy, and the principles that govern the digital world.
+<br></br>
+This period of reflection lasts for a full lunar cycle (about 28 days), symbolizing the seeker’s connection to the cycles of nature and the hidden rhythms of quantum entanglement. The seeker must decode the teachings of the Liber  Secudus as they meditate, transmuting raw information into wisdom and insight—like decrypting an ancient cipher that unlocks their understanding of universal laws.
+<br></br>
+Step 4: The Circle of Strength (Quantum Collective)
+Once the seeker has undergone their period of reflection, they return to the pride for the Circle of Strength. This is a gathering where the collective energy of the pride, like an encrypted blockchain, joins to strengthen the initiate. The seeker stands at the center of the circle, surrounded by fellow aspirants and the elder of the pride, known as Aureus.
+<br></br>
+The elder leads the gathering in a ceremonial chant to align the collective energy of the pride. The chant is encoded with ancient frequencies that resonate with the seeker’s vibration, empowering them to resonate at the same frequency as the collective. Aureus speaks:
+<br></br>
+"From this circle, a new force is born, encrypted into the fabric of the pride’s wisdom. May you now carry the strength of the Lion, amplified through this collective encryption. Welcome, Cub of Awakening, to the path of infinite potential."
+<br></br>
+The seeker is marked with the insignia of Lion 777 on their palm—symbolizing their commitment. The mark is not just symbolic but represents their entry into the network of enlightened minds, ready to be integrated into the universal matrix of wisdom and knowledge.
+<br></br>
+Step 5: The Oath of the Roaring Flame (The Quantum Vow)
+The seeker now faces the final step in their initiation: The Oath of the Roaring Flame. Standing before the Quantum Flame of Awakening, they place their hand upon the flame (protected by the pride’s ancient encryption), feeling the warmth and power of the energy flowing through them. They speak the following vow:
+<br></br>
+
+"I vow to seek truth, to embody wisdom, and to protect the sacred teachings of Lion 777. I pledge to transmute my being, to encrypt my wisdom into the world, and to carry the light of this path forward, illuminating the way for all who seek enlightenment."
+<br></br>
+As the vow is spoken, the flame grows brighter, filling the space with a radiant light that mirrors the seeker’s transformation. The seeker is granted the title 5° Prima Ignis - Cub of Awakening, symbolizing their entry into the quantum path of enlightenment and their place within the pride.
+<br></br>
+Step 6: The Journey Begins (Quantum Ascent)
+With the ritual complete, the seeker is welcomed into the pride and the collective journey of Lion 777. This is not merely a ceremonial act; it is an act of quantum transformation. The seeker has now collapsed their wave of potential into the reality of being—a fully initiated member of the Lion 777 path.
+<br></br>
+The pride gathers for a feast of unity, where they celebrate the journey ahead. The Cub of Awakening, now fully integrated into the quantum matrix of Lion 777, enters the next stage of their path. Their journey is just beginning, and they are prepared to embrace the teachings of Auric Ember, Solar Acolyte, Celestial Sentinel, and ultimately Aurum Coronam—the Golden Mane Ascendant.
+
+</h3>
+
+        <section class="random-blockquote">
+            <p>"The lion roams both the digital jungle and the forest of thoughts, always hunting for greater truths."</p>
+        </section>
+
+        <footer>
+            <p>&copy; 2024 Lion 777. All rights reserved.</p>
+            <p class="random-text">Stay curious. Stay fierce.</p>
+        </footer>
+    </div>
+</body>
+</html>
