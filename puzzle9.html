@@ -1,282 +1,309 @@
-<html><head><base href="." />
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Esoteric Puzzle Challenge</title>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
-    <style>
-        /* Global Styles */
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+<!DOCTYPE html><html><head>
+  <base href="/">
+  <meta charset="UTF-8">
+  <title>Neural Network Puzzle Challenge </title>
+  <style>
+    body {
+      background-color: #000;
+      color: #00ffff;
+      font-family: 'Courier New', monospace;
+      margin: 0;
+      padding: 20px;
+      overflow-x: hidden;
+    }
 
-        body {
-            background-color: #0a0a0f;
-            color: #fff;
-            font-family: 'Orbitron', sans-serif;
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-            line-height: 1.6;
-        }
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+    }
 
-        .container {
-            width: 100%;
-            max-width: 1200px;
-            min-height: min-content;
-            padding: clamp(20px, 5vw, 40px);
-            background: rgba(0, 0, 0, 0.7);
-            border-radius: clamp(10px, 2vw, 20px);
-            box-shadow: 0 0 30px #b700ff;
-            margin: auto;
-        }
+    .glitch {
+      animation: glitch 1s linear infinite;
+      text-shadow: 
+        2px 2px #ffd700,
+        -2px -2px #00ffff;
+    }
 
-        h1 {
-            margin-bottom: clamp(20px, 4vw, 40px);
-            color: #00ffff;
-            text-shadow: 0 0 10px #00ffff;
-            font-size: clamp(1.8rem, 4vw, 3rem);
-            letter-spacing: 2px;
-        }
+    @keyframes glitch {
+      2%, 64% {
+        transform: translate(2px,0) skew(0deg);
+      }
+      4%, 60% {
+        transform: translate(-2px,0) skew(0deg);
+      }
+      62% {
+        transform: translate(0,0) skew(5deg); 
+      }
+    }
 
-        p {
-            margin-bottom: clamp(15px, 3vw, 30px);
-            color: #ff00ff;
-            font-size: clamp(1rem, 2vw, 1.4rem);
-        }
+    .neon-box {
+      border: 2px solid #00ffff;
+      padding: 20px;
+      margin: 20px 0;
+      box-shadow: 
+        0 0 10px #00ffff,
+        inset 0 0 10px #00ffff;
+      position: relative;
+      background: rgba(0,255,255,0.05);
+    }
 
-        .riddle {
-            margin: clamp(20px, 4vw, 40px) 0;
-            padding: clamp(15px, 3vw, 30px);
-            background: rgba(0, 0, 0, 0.8);
-            border: 2px solid #b700ff;
-            border-radius: clamp(8px, 1.5vw, 15px);
-            box-shadow: 0 0 25px #b700ff;
-        }
+    .gold-text {
+      color: #ffd700;
+      text-shadow: 0 0 10px #ffd700;
+    }
 
-        .riddle h2 {
-            color: #00ffff;
-            text-shadow: 0 0 5px #00ffff;
-            font-size: clamp(1.2rem, 2.5vw, 1.8rem);
-            white-space: pre-wrap;
-            margin-bottom: clamp(15px, 3vw, 25px);
-        }
+    .puzzle-input {
+      background: #000;
+      border: 1px solid #00ffff;
+      color: #00ffff;
+      padding: 10px;
+      width: 100%;
+      margin: 10px 0;
+      font-family: 'Courier New', monospace;
+    }
 
-        .input-container {
-            display: flex;
-            gap: clamp(10px, 2vw, 20px);
-            margin-top: clamp(15px, 3vw, 25px);
-            flex-wrap: wrap;
-        }
+    .binary-background {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0.1;
+      z-index: -1;
+      font-size: 10px;
+      overflow: hidden;
+    }
 
-        input[type="text"] {
-            flex: 1;
-            min-width: 200px;
-            max-width: 100%;
-            padding: clamp(8px, 1.5vw, 15px);
-            border-radius: 5px;
-            border: 2px solid #ff00ff;
-            background: rgba(0, 0, 0, 0.8);
-            color: #fff;
-            font-family: 'Orbitron', sans-serif;
-            font-size: clamp(0.9rem, 1.5vw, 1.1rem);
-        }
+    .submit-btn {
+      background: #000;
+      color: #00ffff;
+      border: 1px solid #00ffff;
+      padding: 10px 20px;
+      cursor: pointer;
+      transition: all 0.3s;
+      margin: 10px 5px;
+    }
 
-        button {
-            padding: clamp(8px, 1.5vw, 15px) clamp(15px, 3vw, 30px);
-            background: linear-gradient(45deg, #ff00ff, #b700ff);
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            color: #fff;
-            font-family: 'Orbitron', sans-serif;
-            font-size: clamp(0.9rem, 1.5vw, 1.1rem);
-            transition: transform 0.2s, box-shadow 0.2s;
-        }
+    .submit-btn:hover {
+      background: #00ffff;
+      color: #000;
+      box-shadow: 0 0 20px #00ffff;
+    }
 
-        button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 0 15px #ff00ff;
-        }
+    .level {
+      display: none;
+    }
 
-        .result {
-            margin-top: clamp(10px, 2vw, 20px);
-            color: #ff00ff;
-            font-weight: bold;
-            font-size: clamp(1rem, 1.8vw, 1.3rem);
-            min-height: 30px;
-        }
+    .level.active {
+      display: block;
+    }
 
-        .image {
-            width: 100%;
-            max-width: 800px;
-            height: auto;
-            margin: clamp(15px, 3vw, 30px) auto;
-            border-radius: clamp(8px, 1.5vw, 15px);
-            display: block;
-        }
+    .progress-bar {
+      height: 5px;
+      background: #001414;
+      margin: 20px 0;
+      position: relative;
+    }
 
-        .hidden {
-            display: none;
-        }
+    .progress {
+      height: 100%;
+      background: #00ffff;
+      width: 10%;
+      transition: width 0.5s;
+      box-shadow: 0 0 10px #00ffff;
+    }
+  </style>
+  
+     <script type="text/javascript">
+        // Disable right-click
+        document.addEventListener('contextmenu', function(e) {
+            e.preventDefault();
+            alert("Right-click is disabled on this page.");
+        });
 
-        /* Animation for success message */
-        @keyframes success-pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-            100% { transform: scale(1); }
+        // Disable 'View Source' through the F12 and Ctrl+U keys
+        document.onkeydown = function(e) {
+            if (e.keyCode == 123 || (e.ctrlKey && e.keyCode == 85)) {
+                e.preventDefault();
+                alert("Viewing source is disabled.");
+            }
         }
-
-        .success {
-            animation: success-pulse 1s ease-in-out;
-            color: #00ff00;
-            text-shadow: 0 0 10px #00ff00;
-        }
-    </style>
+    </script>
 </head>
 <body>
-    <div class="container">
-        <h1>Esoteric Puzzle Challenge</h1>
-        <p>Enter your answers to solve the riddles. Only those with keen insight will succeed.</p>
-        <div id="puzzle-container"></div>
+
+<div class="binary-background" id="binary"></div>
+
+<div class="container">
+  <h1 class="glitch">NEURAL NETWORK CHALLENGE v8.8.8</h1>
+  
+  <div class="progress-bar">
+    <div class="progress" id="progress"></div>
+  </div>
+
+  <div id="level1" class="level active">
+    <div class="neon-box">
+      <h2 class="gold-text">Level 1: Quantum Encryption Sequence</h2>
+      <p>Decode the following sequence using advanced mathematical principles:</p>
+      <p>Given the sequence: <span class="gold-text">8, 13, 21, 34, ?, 89</span></p>
+      <p>Apply the quantum transformation: f(n) = (φ^n - (-φ)^-n)/√5</p>
+      <input type="text" class="puzzle-input" id="answer1" placeholder="Enter the missing number...">
     </div>
+  </div>
 
-    <script>
-        const riddles = [
-            {
-                question: "1. Keeper of the first secret flame,\nWhere wisdom starts, so ends the game.\nName me, whose voice sparked the might,\nWhat word binds this eternal light?",
-                answers: ["logos", "word"],
-                image: "https://via.placeholder.com/800x400.png?text=Riddle+1+Image"
-            },
-            {
-                question: "2. Clad in light but born of void,\nA circle’s shadow never destroyed.\nWhat is the shape that’s never bent,\nYet holds the secrets, heaven-sent?",
-                answers: ["ouroboros", "circle", "serpent"],
-                image: "https://via.placeholder.com/800x400.png?text=Riddle+2+Image"
-            },
-            {
-                question: "3. The journey inward reveals a key,\nTo walk the steps from one to three.\nFind me where the lions reign,\nTell the word, and break the chain.",
-                answers: ["solomon", "temple", "wisdom"],
-                image: "https://via.placeholder.com/800x400.png?text=Riddle+3+Image"
-            },
-            {
-                question: "4. By many known, yet few can see,\nWhat lies behind duality.\nI am the force that binds the night,\nSpeak my name, the hidden sight.",
-                answers: ["ether", "aether", "spirit"],
-                image: "https://via.placeholder.com/800x400.png?text=Riddle+4+Image"
-            },
-            {
-                question: "5. Of gold I shine but never hold,\nThe whispers of power, manifold.\nI am the scepter of great kings,\nWhat is the name that legend sings?",
-                answers: ["spear of destiny", "holy lance", "lance of longinus"],
-                image: "https://via.placeholder.com/800x400.png?text=Riddle+5+Image"
-            },
-            {
-                question: "6. Fashioned in darkness yet wielded by light,\nI carve paths that end mortal plight.\nForged by none, yet sought by kings,\nSpeak my name, the song that sings.",
-                answers: ["excalibur", "etheric blade"],
-                image: "https://via.placeholder.com/800x400.png?text=Riddle+6+Image"
-            },
-            {
-                question: "7. I stretch across the void unseen,\nWhere souls traverse to realms pristine.\nI am the crossing, the place of choice,\nName the path with neither sound nor voice.",
-                answers: ["rainbow bridge", "bifrost", "antahkarana"],
-                image: "https://via.placeholder.com/800x400.png?text=Riddle+7+Image"
-            },
-            {
-                question: "8. Ancient eyes that see the stars fall,\nIn whispers, I reveal the call.\nI am the keeper of forgotten lore,\nTell me the beast at the gate of more.",
-                answers: ["sphinx", "chimera"],
-                image: "https://via.placeholder.com/800x400.png?text=Riddle+8+Image"
-            },
-            {
-                question: "9. Silent it lies, hidden from sight,\nYet in its glow, all truths ignite.\nIt is the ember within the soul,\nName the fire that makes the whole.",
-                answers: ["sacred flame", "divine spark"],
-                image: "https://via.placeholder.com/800x400.png?text=Riddle+9+Image"
-            },
-            {
-                question: "10. In the reflection, we find our pair,\nAs above, so below, beware.\nI am the split that reveals the all,\nWhat am I called when worlds enthrall?",
-                answers: ["veil of isis", "duality", "monad"],
-                image: "https://via.placeholder.com/800x400.png?text=Riddle+10+Image"
-            }
-        ];
+  <div id="level2" class="level">
+    <div class="neon-box">
+      <h2 class="gold-text">Level 2: Neural Pattern Recognition</h2>
+      <p>Complete the pattern matrix:</p>
+      <pre>2  5  10  17
+4  9  16  25
+8  15 24  35
+16 23 ?  47
+      </pre>
+      <input type="text" class="puzzle-input" id="answer2" placeholder="Enter the missing number...">
+    </div>
+  </div>
 
-        let currentLevel = 0;
+  <div id="level3" class="level">
+    <div class="neon-box">
+      <h2 class="gold-text">Level 3: Quantum Entanglement Cipher</h2>
+      <p>Decrypt the following quantum state equation:</p>
+      <p>|ψ⟩ = α|0⟩ + β|1⟩, where:</p>
+      <p>α² + β² = 1</p>
+      <p>If α = 0.6, calculate β to maintain quantum coherence</p>
+      <input type="text" class="puzzle-input" id="answer3" placeholder="Enter β value to 3 decimal places...">
+    </div>
+  </div>
 
-        function createPuzzle() {
-            const container = document.getElementById('puzzle-container');
-            container.innerHTML = '';
+  <div id="level4" class="level">
+    <div class="neon-box">
+      <h2 class="gold-text">Level 4: AI Neural Pathway Optimization</h2>
+      <p>Given a neural network with weights:</p>
+      <pre>[0.3  0.5  0.8]
+[0.4  0.7  ?  ]
+[0.2  0.6  0.9]
+      </pre>
+      <p>Calculate the missing weight to maximize network efficiency using the golden ratio (φ)</p>
+      <input type="text" class="puzzle-input" id="answer4" placeholder="Enter the optimal weight...">
+    </div>
+  </div>
 
-            if (currentLevel < riddles.length) {
-                const riddle = riddles[currentLevel];
-                const riddleDiv = document.createElement('div');
-                riddleDiv.classList.add('riddle');
+  <div id="level5" class="level">
+    <div class="neon-box">
+      <h2 class="gold-text">Level 5: Cryptographic Hash Sequence</h2>
+      <p>Complete the hash sequence based on prime factorization:</p>
+      <p>2¹ × 3² = 18</p>
+      <p>2² × 3¹ = 12</p>
+      <p>2³ × 3⁰ = 8</p>
+      <p>2⁴ × 3? = 48</p>
+      <input type="text" class="puzzle-input" id="answer5" placeholder="Enter the missing exponent...">
+    </div>
+  </div>
 
-                const riddleText = document.createElement('h2');
-                riddleText.textContent = riddle.question;
-                riddleDiv.appendChild(riddleText);
+  <div id="level6" class="level">
+    <div class="neon-box">
+      <h2 class="gold-text">Level 6: Quantum Superposition Matrix</h2>
+      <p>Given the following quantum state transitions:</p>
+      <pre>|ψ₁⟩ → |ψ₂⟩: +3i
+|ψ₂⟩ → |ψ₃⟩: -2 + i
+|ψ₃⟩ → |ψ₄⟩: 4 - 2i
+|ψ₄⟩ → |ψ₅⟩: ?
+      </pre>
+      <p>Calculate the final transition value to maintain complex unity.</p>
+      <input type="text" class="puzzle-input" id="answer6" placeholder="Enter in format: a + bi or a - bi">
+    </div>
+  </div>
 
-                const image = document.createElement('img');
-                image.src = riddle.image;
-                image.alt = `Mystical image for riddle ${currentLevel + 1}`;
-                image.classList.add('image');
-                riddleDiv.appendChild(image);
+  <div id="level7" class="level">
+    <div class="neon-box">
+      <h2 class="gold-text">Level 7: Recursive Neural Entropy</h2>
+      <p>Analyze the recursive pattern:</p>
+      <pre>f(1) = 1
+f(2) = f(1) + 3 = 4
+f(3) = f(2) + f(1) + 5 = 10
+f(4) = f(3) + f(2) + f(1) + 7 = ?
+      </pre>
+      <input type="text" class="puzzle-input" id="answer7" placeholder="Calculate f(4)...">
+    </div>
+  </div>
 
-                const inputContainer = document.createElement('div');
-                inputContainer.classList.add('input-container');
+  <div id="level8" class="level">
+    <div class="neon-box">
+      <h2 class="gold-text">Level 8: Hyperdimensional Vector Analysis</h2>
+      <p>In a 4D hypercube, calculate the missing coordinate:</p>
+      <p>Point A: (2, 4, 6, 8)</p>
+      <p>Point B: (3, 6, 9, 12)</p>
+      <p>Point C: (4, 8, 12, 16)</p>
+      <p>Find the value for the unknown coordinate: (5, 10, ?, 20)</p>
+      <input type="text" class="puzzle-input" id="answer8" placeholder="Enter missing coordinate value...">
+    </div>
+  </div>
 
-                const answerInput = document.createElement('input');
-                answerInput.type = 'text';
-                answerInput.placeholder = 'Enter your answer';
-                answerInput.addEventListener('keypress', (e) => {
-                    if (e.key === 'Enter') {
-                        checkAnswer(answerInput.value.trim().toLowerCase(), riddle.answers);
-                        answerInput.value = '';
-                    }
-                });
-                inputContainer.appendChild(answerInput);
+  <div id="level9" class="level">
+    <div class="neon-box">
+      <h2 class="gold-text">Level 9: Neural Network Frequency Analysis</h2>
+      <p>Given the following signals:</p>
+      <p>Signal A: 4Hz, Signal B: 8Hz, Signal C: 12Hz</p>
+      <p>What is the dominant frequency of the combined signal?</p>
+      <input type="text" class="puzzle-input" id="answer9" placeholder="Enter the dominant frequency...">
+    </div>
+  </div>
 
-                const submitButton = document.createElement('button');
-                submitButton.textContent = 'Submit Answer';
-                submitButton.onclick = () => {
-                    checkAnswer(answerInput.value.trim().toLowerCase(), riddle.answers);
-                    answerInput.value = '';
-                };
-                inputContainer.appendChild(submitButton);
+  <div id="level10" class="level">
+    <div class="neon-box">
+      <h2 class="gold-text">Level 10: Ultimate Neural Encryption</h2>
+      <p>Decode the encrypted message:</p>
+      <p><span class="gold-text">”Evhf!Ivnz!Puvm!”</span></p>
+      <p>Apply the Caesar cipher with a shift of 7.</p>
+      <input type="text" class="puzzle-input" id="answer10" placeholder="Enter the decoded message...">
+    </div>
+  </div>
 
-                riddleDiv.appendChild(inputContainer);
+  <div class="submit-btn" id="submitBtn">Submit Answer</div>
+  <div id="nextBtn" class="submit-btn" style="display:none;">Next Level</div>
+</div>
 
-                const resultDiv = document.createElement('div');
-                resultDiv.classList.add('result');
-                resultDiv.classList.add('hidden');
-                riddleDiv.appendChild(resultDiv);
+<script>
+  const answers = {
+    level1: '55',
+    level2: '36',
+    level3: '0.8',
+    level4: '1.6',
+    level5: '2',
+    level6: '6 + 2i',
+    level7: '16',
+    level8: '10',
+    level9: '24Hz',
+    level10: 'This!Is!Fun!',
+  };
 
-                container.appendChild(riddleDiv);
-                answerInput.focus();
-            } else {
-                const finalMessage = document.createElement('h2');
-                finalMessage.textContent = "Congratulations, you've mastered all the mysteries!";
-                finalMessage.classList.add('success');
-                container.appendChild(finalMessage);
-            }
-        }
+  let currentLevel = 1;
 
-        function checkAnswer(answer, correctAnswers) {
-            const resultDiv = document.querySelector('.riddle .result');
-            resultDiv.classList.remove('hidden');
-            
-            if (correctAnswers.includes(answer)) {
-                resultDiv.textContent = "Correct! The ancient knowledge flows through you.";
-                resultDiv.classList.add('success');
-                currentLevel++;
-                setTimeout(createPuzzle, 1500);
-            } else {
-                resultDiv.textContent = "Incorrect. Seek deeper understanding.";
-                resultDiv.classList.remove('success');
-            }
-        }
+  document.getElementById('submitBtn').addEventListener('click', function() {
+    const userAnswer = document.getElementById(`answer${currentLevel}`).value.trim().toLowerCase();
+    if (userAnswer === answers[`level${currentLevel}`].toLowerCase()) {
+      document.getElementById(`level${currentLevel}`).classList.remove('active');
+      currentLevel++;
+      if (currentLevel <= 10) {
+        document.getElementById(`level${currentLevel}`).classList.add('active');
+        document.getElementById('nextBtn').style.display = 'none';
+        document.getElementById('submitBtn').style.display = 'block';
+      } else {
+        document.getElementById('nextBtn').innerHTML = 'Congratulations!';
+        document.getElementById('nextBtn').style.display = 'block';
+        document.getElementById('submitBtn').style.display = 'none';
+        window.location.href = 'https://www.711131719.xyz/puzzle9.html';
+      }
+      updateProgress();
+    } else {
+      alert("Incorrect answer, try again!");
+    }
+  });
 
-        createPuzzle();
-    </script>
-</body>
-</html>
+  function updateProgress() {
+    document.getElementById('progress').style.width = (currentLevel * 10) + '%';
+  }
+</script>
+
+
+</body></html>
