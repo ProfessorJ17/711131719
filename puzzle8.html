@@ -1,8 +1,4 @@
-<html>
-<head>
-  <base href="/" />
-  <meta charset="UTF-8">
-  <title>Neural Network Puzzle Challenge </title>
+<html><head><base href="/" /><meta charset="UTF-8"><title>Neural Network Puzzle Challenge </title>
   <style>
     body {
       background-color: #000;
@@ -281,6 +277,10 @@ f(4) = f(3) + f(2) + f(1) + 7 = ?
         document.getElementById('nextBtn').innerHTML = 'You Win!';
         document.getElementById('nextBtn').style.display = 'block';
         document.getElementById('submitBtn').style.display = 'none';
+        // Add delay and redirect after winning
+        setTimeout(() => {
+          window.location.href = 'https://711131719.xyz/puzzle9.html';
+        }, 2000); // Redirects after 2 seconds
       }
       updateProgress();
     } else {
