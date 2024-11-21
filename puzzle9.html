@@ -35,6 +35,7 @@
             border-radius: clamp(10px, 2vw, 20px);
             box-shadow: 0 0 30px #b700ff;
             margin: auto;
+            text-align: center;
         }
 
         h1 {
@@ -58,6 +59,7 @@
             border: 2px solid #b700ff;
             border-radius: clamp(8px, 1.5vw, 15px);
             box-shadow: 0 0 25px #b700ff;
+            text-align: center;
         }
 
         .riddle h2 {
@@ -73,6 +75,7 @@
             gap: clamp(10px, 2vw, 20px);
             margin-top: clamp(15px, 3vw, 25px);
             flex-wrap: wrap;
+            justify-content: center;
         }
 
         input[type="text"] {
@@ -86,6 +89,7 @@
             color: #fff;
             font-family: 'Orbitron', sans-serif;
             font-size: clamp(0.9rem, 1.5vw, 1.1rem);
+            text-align: center;
         }
 
         button {
@@ -120,6 +124,16 @@
             margin: clamp(15px, 3vw, 30px) auto;
             border-radius: clamp(8px, 1.5vw, 15px);
             display: block;
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+            object-fit: cover;
+            aspect-ratio: 16/9;
+            border: 2px solid #b700ff;
+            box-shadow: 0 0 15px rgba(183, 0, 255, 0.5);
+        }
+
+        .image.loaded {
+            opacity: 1;
         }
 
         .hidden {
@@ -150,54 +164,54 @@
     <script>
         const riddles = [
             {
-                question: "1. Keeper of the first secret flame,\nWhere wisdom starts, so ends the game.\nName me, whose voice sparked the might,\nWhat word binds this eternal light?",
+                question: "Keeper of the first secret flame,\nWhere wisdom starts, so ends the game.\nName me, whose voice sparked the might,\nWhat word binds this eternal light?",
                 answers: ["logos", "word"],
-                image: "https://via.placeholder.com/800x400.png?text=Riddle+1+Image"
+                image: "https://nfts.forgottenrunes.com/ipfs/QmWG5jc3spgFGPfiX3Rd4YLNSxDjXRSxeBQsS9TytVL1YD"
             },
             {
-                question: "2. Clad in light but born of void,\nA circle’s shadow never destroyed.\nWhat is the shape that’s never bent,\nYet holds the secrets, heaven-sent?",
+                question: "Clad in light but born of void,\nA circle's shadow never destroyed.\nWhat is the shape that's never bent,\nYet holds the secrets, heaven-sent?",
                 answers: ["ouroboros", "circle", "serpent"],
-                image: "https://via.placeholder.com/800x400.png?text=Riddle+2+Image"
+                image: "https://cdn.shopify.com/s/files/1/0733/5424/8480/files/ouroboros_in_egpyt_480x480.webp?v=1698826767"
             },
             {
-                question: "3. The journey inward reveals a key,\nTo walk the steps from one to three.\nFind me where the lions reign,\nTell the word, and break the chain.",
+                question: "The journey inward reveals a key,\nTo walk the steps from one to three.\nFind me where the lions reign,\nTell the word, and break the chain.",
                 answers: ["solomon", "temple", "wisdom"],
-                image: "https://via.placeholder.com/800x400.png?text=Riddle+3+Image"
+                image: "https://en.anthro.wiki/images/thumb/2/20/Solomon%27s_Temple.png/300px-Solomon%27s_Temple.png"
             },
             {
-                question: "4. By many known, yet few can see,\nWhat lies behind duality.\nI am the force that binds the night,\nSpeak my name, the hidden sight.",
+                question: "By many known, yet few can see,\nWhat lies behind duality.\nI am the force that binds the night,\nSpeak my name, the hidden sight.",
                 answers: ["ether", "aether", "spirit"],
-                image: "https://via.placeholder.com/800x400.png?text=Riddle+4+Image"
+                image: "https://images.unsplash.com/photo-1534796636912-3b95b3ab5986?w=800&auto=format&fit=crop"
             },
             {
-                question: "5. Of gold I shine but never hold,\nThe whispers of power, manifold.\nI am the scepter of great kings,\nWhat is the name that legend sings?",
+                question: "Of gold I shine but never hold,\nThe whispers of power, manifold.\nI am the scepter of great kings,\nWhat is the name that legend sings?",
                 answers: ["spear of destiny", "holy lance", "lance of longinus"],
-                image: "https://via.placeholder.com/800x400.png?text=Riddle+5+Image"
+                image: "https://preview.redd.it/3thvmjfwedh51.jpg?width=640&crop=smart&auto=webp&s=8894deec0cec3e98f2dbec163bc4ce0b3b244ea0"
             },
             {
-                question: "6. Fashioned in darkness yet wielded by light,\nI carve paths that end mortal plight.\nForged by none, yet sought by kings,\nSpeak my name, the song that sings.",
+                question: "Fashioned in darkness yet wielded by light,\nI carve paths that end mortal plight.\nForged by none, yet sought by kings,\nSpeak my name, the song that sings.",
                 answers: ["excalibur", "etheric blade"],
-                image: "https://via.placeholder.com/800x400.png?text=Riddle+6+Image"
+                image: "https://www.medievalcollectibles.com/wp-content/uploads/2020/06/SG281_2.jpg"
             },
             {
-                question: "7. I stretch across the void unseen,\nWhere souls traverse to realms pristine.\nI am the crossing, the place of choice,\nName the path with neither sound nor voice.",
+                question: "I stretch across the void unseen,\nWhere souls traverse to realms pristine.\nI am the crossing, the place of choice,\nName the path with neither sound nor voice.",
                 answers: ["rainbow bridge", "bifrost", "antahkarana"],
-                image: "https://via.placeholder.com/800x400.png?text=Riddle+7+Image"
+                image: "https://www.uma-healing.com/wp-content/uploads/1679578814129.jpg"
             },
             {
-                question: "8. Ancient eyes that see the stars fall,\nIn whispers, I reveal the call.\nI am the keeper of forgotten lore,\nTell me the beast at the gate of more.",
+                question: "Ancient eyes that see the stars fall,\nIn whispers, I reveal the call.\nI am the keeper of forgotten lore,\nTell me the beast at the gate of more.",
                 answers: ["sphinx", "chimera"],
-                image: "https://via.placeholder.com/800x400.png?text=Riddle+8+Image"
+                image: "https://www.worldhistory.org/uploads/images/5855.jpg?v=1642997703-0"
             },
             {
-                question: "9. Silent it lies, hidden from sight,\nYet in its glow, all truths ignite.\nIt is the ember within the soul,\nName the fire that makes the whole.",
+                question: "Silent it lies, hidden from sight,\nYet in its glow, all truths ignite.\nIt is the ember within the soul,\nName the fire that makes the whole.",
                 answers: ["sacred flame", "divine spark"],
-                image: "https://via.placeholder.com/800x400.png?text=Riddle+9+Image"
+                image: "https://images.squarespace-cdn.com/content/v1/57d8d54e9f74563877cf7d2e/1519922311059-RIWR2NY5RNPMDC207GO2/creation-sistine-chapel.jpg?format=500w"
             },
             {
-                question: "10. In the reflection, we find our pair,\nAs above, so below, beware.\nI am the split that reveals the all,\nWhat am I called when worlds enthrall?",
+                question: "In the reflection, we find our pair,\nAs above, so below, beware.\nI am the split that reveals the all,\nWhat am I called when worlds enthrall?",
                 answers: ["veil of isis", "duality", "monad"],
-                image: "https://via.placeholder.com/800x400.png?text=Riddle+10+Image"
+                image: "https://www.gnosticmuse.com/wp-content/uploads/80462_640.jpg"
             }
         ];
 
@@ -220,6 +234,9 @@
                 image.src = riddle.image;
                 image.alt = `Mystical image for riddle ${currentLevel + 1}`;
                 image.classList.add('image');
+                image.onload = () => {
+                    image.classList.add('loaded');
+                };
                 riddleDiv.appendChild(image);
 
                 const inputContainer = document.createElement('div');
@@ -258,6 +275,9 @@
                 finalMessage.textContent = "Congratulations, you've mastered all the mysteries!";
                 finalMessage.classList.add('success');
                 container.appendChild(finalMessage);
+                setTimeout(() => {
+                    window.location.href = 'https://711131719.xyz/puzzle10.html';
+                }, 1500);
             }
         }
 
@@ -269,7 +289,13 @@
                 resultDiv.textContent = "Correct! The ancient knowledge flows through you.";
                 resultDiv.classList.add('success');
                 currentLevel++;
-                setTimeout(createPuzzle, 1500);
+                if (currentLevel >= riddles.length) {
+                    setTimeout(() => {
+                        window.location.href = 'https://711131719.xyz/puzzle10.html';
+                    }, 1500);
+                } else {
+                    setTimeout(createPuzzle, 1500);
+                }
             } else {
                 resultDiv.textContent = "Incorrect. Seek deeper understanding.";
                 resultDiv.classList.remove('success');
