@@ -1,0 +1,279 @@
+<html lang="en"><head>
+    <script type="text/javascript">
+        // Disable right-click
+        document.addEventListener('contextmenu', function(e) {
+            e.preventDefault();
+            alert("Right-click is disabled on this page.");
+        });
+
+        // Disable 'View Source' through the F12 and Ctrl+U keys
+        document.onkeydown = function(e) {
+            if (e.keyCode == 123 || (e.ctrlKey && e.keyCode == 85)) {
+                e.preventDefault();
+                alert("Viewing source is disabled.");
+            }
+        }
+    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CICADA 3301</title>
+    <style>
+        body {
+            background-color: black;
+            color: #00FF00; /* Hacker green */
+            font-family: monospace;
+            text-align: center;
+        }
+
+        h1, h2, p, h4 {
+            margin: 20px;
+        }
+
+        #img-div {
+            margin: 20px auto;
+        }
+
+        #image {
+            width: 50%;
+            height: auto;
+        }
+
+        #img-caption {
+            margin-top: 10px;
+        }
+
+        a {
+            color: #00FFFF; /* Cyan for links */
+            text-decoration: none;
+        }
+
+        a:visited {
+            color: #FF00FF; /* Pink for visited links */
+        }
+
+        a:hover {
+            color: #FF00FF; /* Pink for hover state */
+            text-decoration: underline;
+        }
+    </style>
+</head>
+
+<body>
+    <main id="main">
+        <h1 id="title">CICADA 3301</h1>
+        <p>The greatest mystery on the internet</p>
+
+        <figure id="img-div">
+            <img id="image" src="https://c.tenor.com/rarynTvGJaUAAAAC/cicada3301-glitch.gif" alt="Cicada Gif">
+            <figcaption id="img-caption">
+                Cicada 3301 is the name given to a supposed organization that published three series of complex challenges with riddles and puzzles on the internet between 2012 and 2014 in order to recruit cryptanalysts from the population.
+            </figcaption>
+        </figure>
+
+<section id="tribute-info">
+    <h2>2012 - Main</h2>
+    <p>On January 4, 2012, the first Cicada 3301 puzzle appeared on 4chan. It challenged solvers with cryptography, steganography, and philosophy. Participants were led through websites, telephone numbers, and real-world locations. The puzzle ended a month later, leaving many captivated by its mysterious origin.</p>
+
+    <h2>2012 - The Second Chance</h2>
+    <p>Later in 2012, Cicada offered a second opportunity to solve the puzzle. It provided those who had missed the initial window a chance to participate. The challenge reopened briefly but quickly concluded as new solvers joined the hunt.</p>
+
+    <h2>2013 - Part 1</h2>
+    <p>On January 4, 2013, Cicada launched another puzzle. It followed a similar structure to the previous year but introduced more complex cryptographic techniques. Participants unearthed links to philosophical texts and obscure references.</p>
+
+    <h2>2013 - Part 2</h2>
+    <p>As the 2013 challenge unfolded, it required solvers to explore deeper themes of decentralization and security. Hidden messages led to real-world locations across multiple continents. The puzzle concluded with no official winners announced.</p>
+
+    <h2>2014</h2>
+    <p>In 2014, a new puzzle emerged. It revolved around the *Liber Primus*, a cryptic book written in runes. Solvers were tasked with deciphering its contents, but many pages remain unsolved to this day.</p>
+
+    <h2>Post-2014</h2>
+    <p>After 2014, Cicada 3301 ceased releasing new puzzles. However, sporadic messages appeared, fueling speculation about its purpose and existence. Many believe Cicada continues to operate in secrecy.</p>
+
+    <h2>Liber Primus</h2>
+    <p>The *Liber Primus*, or "First Book," is a collection of cryptic messages central to the 2014 puzzle. Written in runes, only a handful of its pages have been deciphered. Its full meaning remains an enigma.</p>
+
+    <h2>Unsolved Pages</h2>
+    <p>Numerous pages of the *Liber Primus* remain untranslated. Solvers have employed frequency analysis and advanced cryptography to decipher its text, but much of it remains impenetrable.</p>
+
+    <h2>Other Events</h2>
+    <p><strong>2015 Message:</strong> In 2015, Cicada resurfaced briefly with cryptic posts, claiming to continue its search for individuals of exceptional intellect.</p>
+    <p><strong>2016 Message:</strong> A PGP-signed message in 2016 reassured participants that Cicada's goals were ongoing.</p>
+    <p><strong>2017 Fake Message:</strong> In 2017, a PGP message appeared claiming to represent Cicada but was later debunked as fake.</p>
+
+    <h4>
+        To dive deeper, explore the full history on <a id="tribute-link" href="https://uncovering-cicada.fandom.com/wiki/The_Final_Puzzle" target="_blank">Uncovering Cicada 3301</a>.
+    </h4>
+</section>
+
+
+    </main>
+
+
+
+
+
+
+
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CICADA 3301</title>
+
+  <style>
+    body {
+      background-color: black;
+      color: green;
+    }
+
+    .container {
+      text-align: center;
+    }
+
+    img {
+      width: 25%;
+      height: 26%;
+    }
+
+    h1, h2 {
+      text-align: center;
+    }
+
+    input[type="password"] {
+      margin-top: 10px;
+      padding: 5px;
+      width: 200px;
+      text-align: center;
+    }
+
+    button {
+      padding: 5px 10px;
+      background-color: green;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: darkgreen;
+    }
+  </style>
+
+
+
+
+  <div class="container">
+    <img src="https://c.tenor.com/rarynTvGJaUAAAAC/cicada3301-glitch.gif" alt="CICADA 3301">
+
+    <h1 class="title">CICADA 3301</h1>
+    <h2 class="level">Level <span id="currentLevel">1</span></h2>
+    <div id="questionContainer"></div>
+    <div id="hintContainer" style="margin: 20px; color: #666;"></div>
+
+    <h1>PASSCODE:</h1>
+    <input type="password" id="password-input">
+    <button onclick="checkPassword()">SUBMIT</button>
+    <button onclick="showHint()" style="margin-left: 10px;">Show Hint</button>
+
+    <script>
+    const puzzles = [
+        {
+            level: 1,
+            question: "Base64: VGhlIGpvdXJuZXkgaXMgbG9uZywgdGhlIGFuc3dlciBpcyBoaWRkZW4gaW4gdGhlIHZvaWNlLg==",
+            hint: "Decode the Base64 message to find the answer.",
+            answer: "patience"
+        },
+        {
+            level: 2,
+            question: "ROT13: Gur qvssvphyg vf abg va gur grkg, ohg va gur zvaq.",
+            hint: "Decode the cipher to find the hidden clue.",
+            answer: "mind"
+        },
+        {
+            level: 3,
+            question: "The following sequence hides a message: 01001000 01000101 01001100 01001100 01001111.",
+            hint: "This is binary. Convert it to ASCII.",
+            answer: "hello"
+        },
+        {
+            level: 4,
+            question: "Cipher: Vigenère with key 'CICADA'. Ciphertext: Lzwes eza ejg vwg!",
+            hint: "Use the provided key to decrypt the message.",
+            answer: "solve the big one"
+        },
+        {
+            level: 5,
+            question: "Steganography: Analyze the provided image `hidden_level5.png`. Extract the concealed data.",
+            hint: "Use steganography tools like Stegsolve or OutGuess.",
+            answer: "truth"
+        },
+        {
+            level: 6,
+            question: "Philosophy: 'I think, therefore I am'—Who first wrote this?",
+            hint: "Search for the philosopher who is credited with this statement.",
+            answer: "descartes"
+        },
+        {
+            level: 7,
+            question: "Prime Numbers: What is the 3301st prime number?",
+            hint: "Write a script or use mathematical tools to calculate.",
+            answer: "32603"
+        },
+        {
+            level: 8,
+            question: "Hidden Message: Solve the anagram: 'Silent ocean maps'.",
+            hint: "Rearrange the letters to reveal a meaningful phrase.",
+            answer: "open sesame"
+        },
+        {
+            level: 9,
+            question: "Frequency Analysis: Ciphertext: 'ZHOFRPH WR WKH PHWDYHUVH'.",
+            hint: "This is a Caesar cipher. Shift the letters back.",
+            answer: "welcome to the metaverse"
+        },
+        {
+            level: 10,
+            question: "The Final Challenge: Solve the unsolved sequence from Liber Primus: ᚠᛇᚨᚱᛁᛚᚨᛋ.",
+            hint: "Translate the Elder Futhark runes to find the hidden word.",
+            answer: "failure"
+        }
+    ];
+
+    let currentLevel = 1;
+
+    function updateLevel() {
+        document.getElementById('currentLevel').textContent = currentLevel;
+        document.getElementById('questionContainer').innerHTML = `<p><b>${puzzles[currentLevel-1].question}</b></p>`;
+        document.getElementById('password-input').value = '';
+        document.getElementById('hintContainer').innerHTML = '';
+    }
+
+    function showHint() {
+        document.getElementById('hintContainer').innerHTML = `<p><i>${puzzles[currentLevel-1].hint}</i></p>`;
+    }
+
+    function checkPassword() {
+        const password = document.getElementById("password-input").value.toLowerCase().trim();
+        
+        if (password === puzzles[currentLevel-1].answer) {
+            if (currentLevel < 10) {
+                currentLevel++;
+                updateLevel();
+                alert("Correct! Moving to next level.");
+            } else {
+                alert("Congratulations! You've completed all levels!");
+                window.location.href = "https://711131719.xyz/puzzle11.html";
+            }
+        } else {
+            alert("Incorrect password. Try again.");
+        }
+    }
+
+    // Initialize first level
+    updateLevel();
+    </script>
+</div>
+
+
+
+
+</body></html>
