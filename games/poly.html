@@ -1,0 +1,875 @@
+<html><head><base href="./"><title>Polybius Arcade Cabinet - Urban Legend</title><style>
+body {
+    background: 
+        linear-gradient(0deg, rgba(0,20,0,0.9), rgba(0,0,0,1)),
+        repeating-linear-gradient(
+            0deg,
+            rgba(0,50,0,0.1) 0px,
+            rgba(0,50,0,0.1) 1px,
+            transparent 1px,
+            transparent 10px
+        ),
+        repeating-linear-gradient(
+            90deg,
+            rgba(0,50,0,0.1) 0px,
+            rgba(0,50,0,0.1) 1px,
+            transparent 1px,
+            transparent 10px
+        );
+    position: relative;
+    overflow: hidden;
+}
+
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+@keyframes glitch {
+    0% { transform: translate(0); text-shadow: none; }
+    20% { transform: translate(-2px, 2px); text-shadow: 2px 2px #ff0000, -2px -2px #00ff00; }
+    40% { transform: translate(2px, -2px); text-shadow: -2px -2px #ff0000, 2px 2px #00ff00; }
+    60% { transform: translate(-2px, 2px); text-shadow: 2px -2px #ff0000, -2px 2px #00ff00; }
+    80% { transform: translate(2px, -2px); text-shadow: -2px 2px #ff0000, 2px -2px #00ff00; }
+    100% { transform: translate(0); text-shadow: none; }
+}
+
+@keyframes matrixRain {
+    0% { top: -100%; }
+    100% { top: 100%; }
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+}
+
+@keyframes tentacleWiggle {
+    0%, 100% { transform: rotate(-5deg) translateY(0); }
+    50% { transform: rotate(5deg) translateY(-10px); }
+}
+
+.screen-content {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Press Start 2P', cursive;
+}
+
+.screen-content .title {
+    animation: glitch 0.3s infinite;
+    color: #ff0000;
+    text-shadow: 
+        2px 2px 0 #000,
+        -2px -2px 0 #000,
+        0 0 20px rgba(255,0,0,0.5),
+        0 0 30px rgba(255,0,0,0.3),
+        0 0 40px rgba(255,0,0,0.2);
+}
+
+.screen-content .copyright {
+    color: #0000ff;
+    font-size: 0.5rem;
+    margin-top: 1rem;
+}
+
+.screen-content .credits {
+    color: #ff0000;
+    font-size: 0.5rem;
+    margin-top: 0.5rem;
+}
+
+.cabinet {
+    width: min(90vw, 350px);
+    aspect-ratio: 1/1.8;
+    position: relative;
+    background: linear-gradient(180deg, #2a2a2a, #111111);
+    border: 10px solid #1a1a1a;
+    border-radius: 10px 10px 0 0;
+    box-shadow: 
+        inset 0 0 20px rgba(255,0,0,0.3),
+        0 0 30px rgba(255,0,0,0.3),
+        0 0 50px rgba(255,0,0,0.2),
+        0 0 70px rgba(0,0,0,0.8);
+    animation: evilPulse 4s infinite;
+    margin: 40px auto;
+}
+
+@keyframes evilPulse {
+    0% { box-shadow: 
+        inset 0 0 20px rgba(255,0,0,0.3),
+        0 0 30px rgba(255,0,0,0.3),
+        0 0 50px rgba(255,0,0,0.2),
+        0 0 70px rgba(0,0,0,0.8);
+    }
+    50% { box-shadow: 
+        inset 0 0 40px rgba(255,0,0,0.5),
+        0 0 60px rgba(255,0,0,0.5),
+        0 0 100px rgba(255,0,0,0.3),
+        0 0 140px rgba(0,0,0,0.9);
+    }
+    100% { box-shadow: 
+        inset 0 0 20px rgba(255,0,0,0.3),
+        0 0 30px rgba(255,0,0,0.3),
+        0 0 50px rgba(255,0,0,0.2),
+        0 0 70px rgba(0,0,0,0.8);
+    }
+}
+
+.screen-bezel {
+    width: 85%;
+    aspect-ratio: 4/3;
+    margin: 8% auto 0;
+    background: #000;
+    border: 8px solid #111;
+    border-radius: 10px;
+    position: relative;
+}
+
+.screen {
+    width: 100%;
+    height: 100%;
+    background: #000;
+    position: relative;
+    overflow: hidden;
+    box-shadow: inset 0 0 50px rgba(0,255,0,0.2);
+}
+
+.screen-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 1;
+}
+
+.control-panel {
+    width: 100%;
+    height: 25%;
+    background: #1a1a1a;
+    position: absolute;
+    bottom: 0;
+    transform: perspective(500px) rotateX(20deg);
+    transform-origin: bottom;
+    border-top: 8px solid #111;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.joystick {
+    width: 40px;
+    height: 40px;
+    background: #111;
+    border-radius: 50%;
+    position: absolute;
+    left: 20%;
+    top: 50%;
+    transform: translateY(-50%);
+    border: 4px solid #222;
+    box-shadow: 0 4px 8px rgba(0,255,0,0.2);
+}
+
+.joystick::after {
+    content: '';
+    position: absolute;
+    width: 15px;
+    height: 30px;
+    background: #222;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border-radius: 10px;
+}
+
+.buttons {
+    position: absolute;
+    right: 20%;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    gap: 15px;
+}
+
+.button {
+    width: 30px;
+    height: 30px;
+    background: #1a1a1a;
+    border-radius: 50%;
+    border: 3px solid #222;
+    box-shadow: 0 4px 8px rgba(0,255,0,0.2);
+}
+
+.marquee {
+    width: 90%;
+    height: 15%;
+    margin: 0 auto;
+    background: #000;
+    border: 6px solid #111;
+    position: absolute;
+    top: 2%;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #32CD32;
+    font-size: clamp(12px, 2.5vw, 20px);
+    font-weight: bold;
+    text-shadow: 0 0 10px #32CD32;
+    overflow: hidden;
+}
+
+.subliminal {
+    position: absolute;
+    color: #ff0000;
+    font-size: 20px;
+    text-shadow: 
+        0 0 10px #ff0000,
+        0 0 20px #ff0000;
+    opacity: 0;
+    animation: subliminalPulse 0.5s infinite;
+}
+
+@keyframes subliminalPulse {
+    0% { transform: scale(1); opacity: 0; }
+    50% { transform: scale(2); opacity: 1; }
+    100% { transform: scale(1); opacity: 0; }
+}
+
+.matrix-rain {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 200%;
+    background: linear-gradient(0deg, 
+        rgba(0,255,0,0) 0%,
+        rgba(0,255,0,0.1) 50%,
+        rgba(0,255,0,0) 100%);
+    animation: matrixRain 10s linear infinite;
+    z-index: 2;
+}
+
+.glitch-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    mix-blend-mode: overlay;
+    animation: glitch 0.3s infinite;
+    z-index: 5;
+    pointer-events: none;
+    background: repeating-linear-gradient(
+        0deg,
+        rgba(0,0,0,0.1) 0px,
+        rgba(0,0,0,0.1) 1px,
+        transparent 1px,
+        transparent 2px
+    );
+}
+
+.tentacle-container {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    filter: blur(5px);
+    z-index: -1;
+}
+
+.tentacle {
+    position: absolute;
+    background: rgba(0,0,0,0.8);
+    border-radius: 50%;
+    filter: drop-shadow(0 0 10px rgba(0,255,0,0.2));
+    animation: tentacleWiggle 3s ease-in-out infinite;
+    animation-delay: var(--delay);
+}
+
+.cabinet:hover .tentacle-container {
+    opacity: 1;
+}
+
+@media (max-width: 600px) {
+    .cabinet {
+        width: 85vw;
+        margin: 50px auto;
+    }
+    
+    .joystick {
+        width: 30px;
+        height: 30px;
+    }
+    
+    .button {
+        width: 25px;
+        height: 25px;
+    }
+}
+
+.scanline {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: rgba(50,205,50,0.1);
+    animation: scan 8s linear infinite;
+    pointer-events: none;
+    z-index: 3;
+}
+
+@keyframes scan {
+    from { top: 0; }
+    to { top: 100%; }
+}
+
+.crt-effect {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: 
+        linear-gradient(rgba(50,205,50,0.03) 50%, rgba(0,0,0,0.1) 50%),
+        linear-gradient(90deg, rgba(255,0,0,0.06), rgba(0,255,0,0.02), rgba(0,0,255,0.06));
+    background-size: 100% 4px, 3px 100%;
+    pointer-events: none;
+}
+
+body::before {
+    content: '';
+    position: fixed;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: 
+        radial-gradient(circle at center, transparent 0%, rgba(0,0,0,0.8) 100%),
+        repeating-conic-gradient(
+            from 0deg,
+            rgba(0,255,0,0.1) 0deg 10deg,
+            transparent 10deg 20deg
+        );
+    animation: rotateBackground 120s linear infinite;
+    z-index: -1;
+}
+
+body::after {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: 
+        linear-gradient(45deg, 
+            rgba(255,0,0,0.05) 25%, 
+            transparent 25%,
+            transparent 75%,
+            rgba(0,255,0,0.05) 75%
+        );
+    background-size: 100px 100px;
+    animation: glitchPattern 20s linear infinite;
+    z-index: -1;
+    opacity: 0.3;
+}
+
+@keyframes rotateBackground {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+@keyframes glitchPattern {
+    0% { transform: translateX(0) translateY(0); }
+    25% { transform: translateX(10px) translateY(-10px); }
+    50% { transform: translateX(-5px) translateY(5px); }
+    75% { transform: translateX(3px) translateY(-3px); }
+    100% { transform: translateX(0) translateY(0); }
+}
+
+a:hover .cabinet {
+    transform: scale(1.02);
+    transition: transform 0.3s ease;
+    box-shadow: 
+        inset 0 0 30px rgba(255,0,0,0.3),
+        0 0 40px rgba(255,0,0,0.3),
+        0 0 60px rgba(255,0,0,0.2),
+        0 0 80px rgba(0,0,0,0.9);
+}
+
+.game-details {
+    max-width: 800px;
+    margin: 40px auto;
+    padding: 20px;
+    background: rgba(0, 0, 0, 0.7);
+    border: 1px solid rgba(0, 255, 0, 0.2);
+    box-shadow: 
+        0 0 20px rgba(0, 255, 0, 0.1),
+        inset 0 0 30px rgba(0, 0, 0, 0.5);
+    font-family: "Courier New", monospace;
+    color: #00ff00;
+    text-shadow: 0 0 5px rgba(0, 255, 0, 0.5);
+    position: relative;
+    overflow: hidden;
+}
+
+.game-details::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+        linear-gradient(45deg, 
+            rgba(0, 255, 0, 0.05) 25%, 
+            transparent 25%,
+            transparent 75%,
+            rgba(0, 255, 0, 0.05) 75%
+        );
+    background-size: 4px 4px;
+    pointer-events: none;
+    opacity: 0.2;
+}
+
+.game-details h2 {
+    color: #ff0066;
+    text-align: center;
+    font-size: 24px;
+    margin-bottom: 20px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    animation: glitch 2s infinite;
+}
+
+.game-details p {
+    margin-bottom: 15px;
+    line-height: 1.6;
+    font-size: 16px;
+}
+
+.game-details p:hover {
+    color: #00ffff;
+    text-shadow: 0 0 8px rgba(0, 255, 255, 0.8);
+    transition: all 0.3s ease;
+}
+
+/* Custom scrollbar styling for webkit browsers (Chrome, Safari, newer Edge) */
+::-webkit-scrollbar {
+    width: 12px;
+    background: #000;
+}
+
+::-webkit-scrollbar-track {
+    background: linear-gradient(0deg, 
+        rgba(0,20,0,0.9), 
+        rgba(0,0,0,1)
+    );
+    border: 1px solid rgba(0,255,0,0.1);
+    box-shadow: inset 0 0 6px rgba(0,255,0,0.2);
+}
+
+::-webkit-scrollbar-thumb {
+    background: linear-gradient(90deg,
+        #1a1a1a,
+        #2a2a2a
+    );
+    border-radius: 6px;
+    border: 1px solid rgba(0,255,0,0.2);
+    box-shadow: 0 0 8px rgba(0,255,0,0.2);
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(90deg,
+        #2a2a2a,
+        #3a3a3a
+    );
+    box-shadow: 0 0 12px rgba(0,255,0,0.3);
+}
+
+/* Enable smooth scrolling for the whole page */
+html {
+    scroll-behavior: smooth;
+}
+
+/* Add touch-friendly scrolling for mobile */
+body {
+    -webkit-overflow-scrolling: touch;
+    overflow-y: auto;
+    overflow-x: hidden;
+    min-height: 100vh;
+    padding-bottom: 2rem;
+}
+
+/* Ensure the game details container is scrollable on mobile */
+.game-details {
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    max-height: 80vh;
+    margin-bottom: 2rem;
+}
+
+/* Media query for mobile optimization */
+@media (max-width: 768px) {
+    body {
+        padding: 0 10px;
+    }
+    
+    .game-details {
+        max-height: none;
+        margin: 20px 10px;
+    }
+    
+    /* Smaller scrollbar for mobile */
+    ::-webkit-scrollbar {
+        width: 8px;
+    }
+}
+
+.caimeo-signature {
+    text-align: center;
+    margin: 40px auto;
+    padding: 20px;
+    position: relative;
+}
+
+.glitch-text {
+    font-family: 'Press Start 2P', cursive;
+    font-size: 24px;
+    color: #0ff;
+    text-shadow: 
+        2px 2px #f0f,
+        -2px -2px #0f0;
+    animation: textGlitch 2s infinite;
+    position: relative;
+    display: inline-block;
+}
+
+.glitch-text::before,
+.glitch-text::after {
+    content: 'CAIMEO Games';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0.8;
+}
+
+.glitch-text::before {
+    color: #f0f;
+    animation: glitchOffset 3s infinite;
+    clip-path: polygon(0 0, 100% 0, 100% 45%, 0 45%);
+}
+
+.glitch-text::after {
+    color: #0f0;
+    animation: glitchOffset 2s infinite reverse;
+    clip-path: polygon(0 60%, 100% 60%, 100% 100%, 0 100%);
+}
+
+@keyframes textGlitch {
+    0% { 
+        text-shadow: 2px 2px #f0f, -2px -2px #0f0;
+        transform: translate(0);
+    }
+    25% { 
+        text-shadow: -2px 2px #f0f, 2px -2px #0f0;
+        transform: translate(1px, 1px);
+    }
+    50% { 
+        text-shadow: 2px -2px #f0f, -2px 2px #0f0;
+        transform: translate(-1px, -1px);
+    }
+    75% { 
+        text-shadow: -2px -2px #f0f, 2px 2px #0f0;
+        transform: translate(-1px, 1px);
+    }
+    100% { 
+        text-shadow: 2px 2px #f0f, -2px -2px #0f0;
+        transform: translate(0);
+    }
+}
+
+@keyframes glitchOffset {
+    0% { transform: translate(0); }
+    20% { transform: translate(-3px, 3px); }
+    40% { transform: translate(-3px, -3px); }
+    60% { transform: translate(3px, 3px); }
+    80% { transform: translate(3px, -3px); }
+    100% { transform: translate(0); }
+}
+
+.caimeo-signature::before {
+    content: '';
+    position: absolute;
+    top: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 200px;
+    height: 2px;
+    background: linear-gradient(90deg, 
+        transparent, 
+        #0ff, 
+        #f0f, 
+        #0f0, 
+        transparent
+    );
+    animation: neonPulse 2s infinite;
+}
+
+@keyframes neonPulse {
+    0% { opacity: 0.5; width: 200px; }
+    50% { opacity: 1; width: 300px; }
+    100% { opacity: 0.5; width: 200px; }
+}
+</style></head><body>
+
+<a href="https://www.711131719.xyz/games/Polybius.html " style="text-decoration: none; cursor: pointer;">
+<div class="cabinet">
+    <div class="marquee">POLYBIUS<div class="subliminal">OBEY</div></div>
+    <div class="screen-bezel">
+        <div class="screen">
+            <div class="screen-content">
+                <div class="title">POLYBIUS</div>
+                <div class="copyright">(C) 1981 SINNESLOSCHEN INC.</div>
+                <div class="credits">CREDITS 3</div>
+            </div>
+            <div class="geometric-pattern"></div>
+            <div class="scanline"></div>
+            <div class="crt-effect"></div>
+        </div>
+        <div class="matrix-rain"></div>
+        <div class="glitch-overlay"></div>
+    </div>
+    <div class="control-panel" style="transform: perspective(500px) rotateX(20deg) translateY(-250px); background: #1a1a1a; border-bottom: 10px solid #000;">
+    <div class="joystick" style="background: #222; border: 4px solid #333; box-shadow: 0 4px 8px rgba(0,0,0,0.5);">
+        <svg width="100%" height="100%" viewBox="0 0 40 40">
+            <circle cx="20" cy="20" r="18" fill="#2b2b2b" stroke="#444" stroke-width="2"></circle>
+            <circle cx="20" cy="20" r="16" fill="none" stroke="#333" stroke-width="1" stroke-dasharray="2,2"></circle>
+            <circle cx="20" cy="20" r="14" fill="none" stroke="#333" stroke-width="1" stroke-dasharray="2,2"></circle>
+            <rect x="17" y="8" width="6" height="24" rx="3" fill="#444" transform="rotate(0, 20, 20)">
+                <animate attributeName="transform" attributeType="XML" type="rotate" from="-15 20 20" to="15 20 20" dur="4s" repeatCount="indefinite" direction="alternate"></animate>
+            </rect>
+            <circle cx="20" cy="8" r="6" fill="#ff0000">
+                <animate attributeName="cy" values="8;9;8" dur="2s" repeatCount="indefinite"></animate>
+            </circle>
+            <circle cx="18" cy="6" r="2" fill="#ff3333" opacity="0.5"></circle>
+            <circle cx="22" cy="10" r="1" fill="#ff3333" opacity="0.5"></circle>
+            <circle cx="20" cy="20" r="19" fill="none" stroke="#555" stroke-width="2"></circle>
+        </svg>
+    </div>
+    <div class="buttons" style="gap: 20px;">
+        <div class="button" style="width: 25px; height: 25px; background: #ff0000; border: 2px solid #cc0000; box-shadow: 0 0 15px #ff0000, inset 0 0 10px #ff0000; animation: colorGlitch1 0.5s ease-in-out infinite;">
+            <style>
+                @keyframes colorGlitch1 {
+                    0% { background: #ff0000; box-shadow: 0 0 15px #ff0000, inset 0 0 10px #ff0000; }
+                    33% { background: #00ffff; box-shadow: 0 0 15px #00ffff, inset 0 0 10px #00ffff; }
+                    66% { background: #ff00ff; box-shadow: 0 0 15px #ff00ff, inset 0 0 10px #ff00ff; }
+                    100% { background: #ff0000; box-shadow: 0 0 15px #ff0000, inset 0 0 10px #ff0000; }
+                }
+            </style>
+        </div>
+        <div class="button" style="width: 25px; height: 25px; background: #00ff00; border: 2px solid #00cc00; box-shadow: 0 0 15px #00ff00, inset 0 0 10px #00ff00; animation: colorGlitch2 0.7s ease-in-out infinite;">
+            <style>
+                @keyframes colorGlitch2 {
+                    0% { background: #00ff00; box-shadow: 0 0 15px #00ff00, inset 0 0 10px #00ff00; }
+                    33% { background: #ffff00; box-shadow: 0 0 15px #ffff00, inset 0 0 10px #ffff00; }
+                    66% { background: #0000ff; box-shadow: 0 0 15px #0000ff, inset 0 0 10px #0000ff; }
+                    100% { background: #00ff00; box-shadow: 0 0 15px #00ff00, inset 0 0 10px #00ff00; }
+                }
+            </style>
+        </div>
+    </div>
+</div>
+    <div style="position: absolute; left: 0; top: 0; width: 5px; height: 100%; background: #1a1a1a;"></div>
+    <div style="position: absolute; right: 0; top: 0; width: 5px; height: 100%; background: #1a1a1a;"></div>
+    <div class="tentacle-container"></div>
+</div>
+</a>
+
+<div class="game-details">
+    <h2>Game Details</h2>
+    <p>This game had a very limited release, one or two backwater arcades in a suburb of Portland. The history of this game is cloudy, there were all kinds of strange stories about how kids who played it got amnesia afterwards, couldn't remember their name or where they lived, etc.</p>
+    
+    <p>The bizarre rumors about this game are that it was supposedly developed by some kind of weird military tech offshoot group, used some kind of proprietary behavior modification algorithms developed for the CIA or something, kids who played it woke up at night screaming, having horrible nightmares.</p>
+    
+    <p>According to an operator who ran an arcade with one of these games, guys in black coats would come to collect "records" from the machines. They're not interested in quarters or anything, they just collected information about how the game was played.</p>
+    
+    <p>The game was weird looking, kind of abstract, fast action with some puzzle elements, the kids who played it stopped playing games entirely, one of them became a big anti videogame crusader or something. We've contacted one person who met him, and he claims the machines disappeared after a month or so and no one ever heard about them again.</p>
+</div>
+
+<div class="caimeo-signature">
+    <div class="glitch-text">CAIMEO Games</div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const screen = document.querySelector('.screen');
+    const cabinet = document.querySelector('.cabinet');
+    const subliminal = document.querySelector('.subliminal');
+    const messages = [
+        'YOUR SOUL IS MINE', 'ETERNAL DARKNESS', 'NO ESCAPE', 
+        'ABANDON HOPE', 'DEVIL\'S ARCADE', 'HELL AWAITS',
+        'CURSED FOREVER', 'DEMONIC PRESENCE', 'WELCOME TO HELL',
+        'SUFFERING ETERNAL', 'NIGHTMARE BEGINS', 'BLOOD SACRIFICE'
+    ];
+    let messageIndex = 0;
+
+    // Add creepy whispers audio effect
+    function playCreepyWhisper() {
+        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        const oscillator = audioContext.createOscillator();
+        const gainNode = audioContext.createGain();
+        
+        oscillator.type = 'sawtooth';
+        oscillator.frequency.setValueAtTime(Math.random() * 200 + 100, audioContext.currentTime);
+        gainNode.gain.setValueAtTime(0, audioContext.currentTime);
+        gainNode.gain.linearRampToValueAtTime(0.1, audioContext.currentTime + 0.1);
+        gainNode.gain.linearRampToValueAtTime(0, audioContext.currentTime + 0.3);
+        
+        oscillator.connect(gainNode);
+        gainNode.connect(audioContext.destination);
+        oscillator.start();
+        oscillator.stop(audioContext.currentTime + 0.3);
+    }
+
+    // Play random whispers more frequently
+    setInterval(() => {
+        if (Math.random() < 0.2) { // Increase frequency
+            playCreepyWhisper();
+        }
+    }, 1000);
+
+    // Create matrix rain characters
+    function createMatrixRain() {
+        const chars = '日ﾊﾐﾋｰｳｼﾅﾓﾆｻﾜﾂｵﾘｱﾎﾃﾏｹﾒｴｶｷﾑﾕﾗｾﾈｽﾀﾇﾍ0123456789'.split('');
+        const rainEl = document.createElement('div');
+        rainEl.className = 'matrix-rain';
+        screen.appendChild(rainEl);
+    }
+
+    // Enhanced screen flicker effect
+    setInterval(() => {
+        if (Math.random() < 0.2) {
+            screen.style.filter = `hue-rotate(${Math.random() * 360}deg)`;
+            screen.style.opacity = Math.random() * 0.5 + 0.5;
+            setTimeout(() => {
+                screen.style.filter = 'none';
+                screen.style.opacity = 1;
+            }, Math.random() * 100);
+        }
+    }, 100);
+
+    // More aggressive subliminal message effect
+    setInterval(() => {
+        if (Math.random() < 0.3) {
+            subliminal.textContent = messages[Math.floor(Math.random() * messages.length)];
+            subliminal.style.opacity = 1;
+            subliminal.style.transform = `scale(${Math.random() * 2 + 1}) rotate(${Math.random() * 360}deg)`;
+            setTimeout(() => {
+                subliminal.style.opacity = 0;
+                subliminal.style.transform = 'scale(1) rotate(0deg)';
+            }, Math.random() * 100 + 50);
+        }
+    }, 1000);
+
+    // Glitch effect
+    const glitchOverlay = document.createElement('div');
+    glitchOverlay.className = 'glitch-overlay';
+    screen.appendChild(glitchOverlay);
+
+    // Create multiple matrix rain instances
+    for (let i = 0; i < 5; i++) {
+        createMatrixRain();
+    }
+
+    // Make cabinet respond to hover/touch with glitch effect
+    cabinet.addEventListener('mouseover', () => {
+        cabinet.style.transform = 'scale(1.01)';
+        cabinet.style.transition = 'transform 0.3s ease';
+        cabinet.style.animation = 'glitch 0.2s infinite';
+    });
+
+    cabinet.addEventListener('mouseout', () => {
+        cabinet.style.transform = 'scale(1)';
+        cabinet.style.animation = 'none';
+    });
+
+    // Add tentacle monster
+    const tentacleContainer = document.querySelector('.tentacle-container');
+    const numTentacles = 12;
+    for (let i = 0; i < numTentacles; i++) {
+        const tentacle = document.createElement('div');
+        tentacle.className = 'tentacle';
+        
+        // Calculate position around the cabinet
+        const angle = (i / numTentacles) * Math.PI * 2;
+        const radius = 50; // Distance from cabinet edge
+        
+        // Set random sizes and positions
+        const width = Math.random() * 20 + 30;
+        const height = Math.random() * 100 + 150;
+        
+        tentacle.style.cssText = `
+            width: ${width}px;
+            height: ${height}px;
+            left: ${50 + Math.cos(angle) * radius}%;
+            top: ${50 + Math.sin(angle) * radius}%;
+            transform-origin: center bottom;
+            --delay: ${i * 0.2}s;
+            box-shadow: 0 0 20px rgba(0,0,0,0.5);
+            background: linear-gradient(
+                to bottom,
+                rgba(0,0,0,0.9),
+                rgba(20,0,20,0.8)
+            );
+        `;
+        
+        tentacleContainer.appendChild(tentacle);
+    }
+
+    // Add pulsing shadow effect on hover
+    cabinet.addEventListener('mouseover', () => {
+        cabinet.style.boxShadow = `
+            inset 0 0 20px rgba(255,0,0,0.3),
+            0 0 30px rgba(255,0,0,0.3),
+            0 0 50px rgba(255,0,0,0.2),
+            0 0 70px rgba(0,0,0,0.8),
+            0 0 100px rgba(0,0,0,0.9)
+        `;
+    });
+
+    cabinet.addEventListener('mouseout', () => {
+        cabinet.style.boxShadow = `
+            inset 0 0 20px rgba(255,0,0,0.3),
+            0 0 30px rgba(255,0,0,0.3),
+            0 0 50px rgba(255,0,0,0.2),
+            0 0 70px rgba(0,0,0,0.8)
+        `;
+    });
+
+    // Random color distortion
+    setInterval(() => {
+        if (Math.random() < 0.1) {
+            document.body.style.filter = `saturate(${Math.random() * 500}%) hue-rotate(${Math.random() * 360}deg)`;
+            setTimeout(() => {
+                document.body.style.filter = 'none';
+            }, 100);
+        }
+    }, 2000);
+});
+</script>
+
+</body></html>
