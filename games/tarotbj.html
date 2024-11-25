@@ -1,0 +1,700 @@
+<html><head><base href="https://classicblackjack.casino/"><title>Tarot BlackJack</title><style>
+body {
+  font-family: 'Times New Roman', serif;
+  background-color: #000000;
+  color: #0ff;
+  text-align: center;
+  margin: 0;
+  padding: 20px;
+  text-shadow: 0 0 5px #0ff, 0 0 10px #0ff, 0 0 15px #0ff;
+}
+h1 {
+  font-size: 36px;
+  text-shadow: 0 0 10px #ff69b4, 0 0 20px #ff69b4, 0 0 30px #ff69b4;
+  color: #ff69b4;
+  margin-top: -20px;
+  padding-top: 10px;
+}
+#game-area {
+  background-color: #000000;
+  border: none;
+  box-shadow: none;
+  border-radius: 10px;
+  padding: 15px;
+  margin: 20px auto;
+  max-width: 800px;
+}
+.hand-score {
+  font-size: 18px;
+  color: #ff69b4;
+  text-shadow: 0 0 5px #ff69b4, 0 0 10px #ff69b4;
+}
+.card {
+  display: inline-block;
+  width: 56px;
+  height: 72px;
+  border: 2px solid #0ff;
+  box-shadow: 0 0 10px #0ff;
+  color: #0ff;
+  vertical-align: middle;
+  position: relative;
+  padding: 3px;
+}
+.card.red {
+  border: 2px solid #ff69b4;
+  box-shadow: 0 0 10px #ff69b4;
+  color: #ff69b4;
+}
+.card.gold {
+  border: 2px solid #ffd700;
+  box-shadow: 0 0 10px #ffd700;
+  color: #ffd700;
+}
+.card.gold .card-value,
+.card.gold .card-suit,
+.card.gold .card-suit-name {
+  text-shadow: 0 0 5px #ffd700;
+}
+.card.purple {
+  border: 2px solid #9370db;
+  box-shadow: 0 0 10px #9370db;
+  color: #9370db;
+}
+.card.purple .card-value,
+.card.purple .card-suit,
+.card.purple .card-suit-name {
+  text-shadow: 0 0 5px #9370db;
+}
+.card-value {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  font-size: 16px;
+  text-shadow: 0 0 5px #0ff;
+}
+.card.red .card-value,
+.card.red .card-suit,
+.card.red .card-suit-name {
+  text-shadow: 0 0 5px #ff69b4;
+}
+.card-suit {
+  position: absolute;
+  top: 2px;
+  right: 2px; /* Changed from left: 22px to right: 2px */
+  font-size: 16px;
+  text-shadow: 0 0 5px #0ff;
+}
+.card-suit-name {
+  position: absolute;
+  bottom: 2px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 12px; /* Increased from 10px */
+  text-shadow: 0 0 5px #0ff;
+  width: 100%;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.card-suit-name div {
+  font-size: 12px !important; /* Increased and made consistent */
+  margin-bottom: 2px;
+}
+.card-center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 12px; /* Match size with other text */
+  width: 90%;
+  text-align: center;
+  text-shadow: 0 0 5px #0ff;
+}
+button {
+  font-size: 16px;
+  margin: 5px;
+  padding: 8px 16px;
+  background-color: #000;
+  color: #0f0;
+  border: 2px solid #0f0;
+  box-shadow: 0 0 10px #0f0;
+  border-radius: 5px;
+  cursor: pointer;
+  text-shadow: 0 0 5px #0f0;
+  transition: all 0.3s ease;
+}
+#message {
+  font-size: 20px;
+  font-weight: bold;
+  margin: 10px 0;
+  color: #ff69b4;
+  text-shadow: 0 0 5px #ff69b4, 0 0 10px #ff69b4;
+}
+
+@keyframes balanceGlow {
+  0% { text-shadow: 0 0 5px #0f0, 0 0 10px #0f0; }
+  50% { text-shadow: 0 0 20px #0f0, 0 0 30px #0f0; }
+  100% { text-shadow: 0 0 5px #0f0, 0 0 10px #0f0; }
+}
+
+.balance-update {
+  animation: balanceGlow 0.5s ease-in-out;
+}
+
+/* Adding new styles for bet controls */
+.bet-controls {
+  margin: 10px 0;
+}
+
+.bet-input {
+  background: black;
+  color: #0f0;
+  border: 2px solid #0f0;
+  padding: 5px;
+  width: 100px;
+  text-align: center;
+  margin: 0 5px;
+  box-shadow: 0 0 5px #0f0;
+}
+
+.bet-input:focus {
+  outline: none;
+  box-shadow: 0 0 10px #0f0;
+}
+
+#current-bet {
+  color: #0f0;
+  text-shadow: 0 0 5px #0f0;
+  margin: 5px 0;
+}
+
+/* Add styles for disabled bet controls */
+.bet-input:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.card.arcane[data-direction="1"] {
+  border: 2px solid #0f0;
+  box-shadow: 0 0 10px #0f0;
+  color: #0f0;
+}
+
+.card.arcane[data-direction="1"] .card-value,
+.card.arcane[data-direction="1"] .card-center {
+  text-shadow: 0 0 5px #0f0;
+}
+
+.card.arcane[data-direction="-1"] {
+  border: 2px solid #f00;
+  box-shadow: 0 0 10px #f00;
+  color: #f00;
+}
+
+.card.arcane[data-direction="-1"] .card-value,
+.card.arcane[data-direction="-1"] .card-center {
+  text-shadow: 0 0 5px #f00;
+}
+
+.card.arcane[data-direction="1"] .card-suit {
+  text-shadow: 0 0 5px #0f0;
+}
+
+.card.arcane[data-direction="-1"] .card-suit {
+  text-shadow: 0 0 5px #f00;
+}
+</style></head><body>
+<h1>Tarot BlackJack</h1>
+<div class="stats-container" style="margin-top: -15px;">
+  <div id="deck-count">Cards Remaining: <span id="remaining-cards">0</span></div>
+  <div id="balance" style="color: #0f0; text-shadow: 0 0 5px #0f0, 0 0 10px #0f0;">Balance: $<span id="money">1000</span></div>
+</div>
+<div id="game-area" style="margin-top: -10px;">
+  <div id="dealer-hand">
+    <div style="margin-bottom: 5px;">Dealer's Hand:</div>
+    <div style="display: flex; justify-content: center; gap: 3px;"></div>
+  </div>
+  <div id="dealer-score" class="hand-score" style="margin: 2px 0;">Score: 0</div>
+  <div id="player-hand" style="margin: 10px 0;">
+    <div style="margin-bottom: 5px;">Your Hand:</div>
+    <div style="display: flex; justify-content: center; gap: 3px;"></div>
+  </div>
+  <div id="player-score" class="hand-score" style="margin: 2px 0;">Score: 0</div>
+  <div id="message" style="margin: 10px 0;"></div>
+  <div class="bet-controls">
+    <div id="current-bet">Current Bet: $<span id="bet-amount">10</span></div>
+    <input type="number" id="bet-input" class="bet-input" min="10" max="1000" step="10" value="10">
+    <button id="update-bet">Place Bet</button>
+  </div>
+  <button id="hit" style="margin: 5px; font-size: 16px;">Hit</button>
+  <button id="stand" style="margin: 5px; font-size: 16px;">Stand</button>
+  <button id="deal" style="margin: 5px; font-size: 16px;">New Game</button>
+</div>
+<script>
+const minor_arcane_suits = ['🌠', '⚔️', '💰', '🏆'];
+const minor_arcane_values = ['👁️', '2', '3', '4', '5', '6', '7', '8', '9', '10', '🛡️', '📜', '👸', '🤴'];
+const major_arcane_names = [
+  'The Fool', 'The Magician', 'The High Priestess', 'The Empress', 'The Emperor',
+  'The Hierophant', 'The Lovers', 'The Chariot', 'Strength', 'The Hermit',
+  'Wheel of Fortune', 'Justice', 'The Hanged Man', 'Death', 'Temperance',
+  'The Devil', 'The Tower', 'The Star', 'The Moon', 'The Sun',
+  'Judgement', 'The World'
+];
+
+const standard_suits = ['♥️', '♦️', '♣️', '♠️'];
+const standard_values = ['👁️', '2', '3', '4', '5', '6', '7', '8', '9', '10', '🃏', '👸', '🤴'];
+const suit_names = {
+  '♥️': 'Hearts',
+  '♦️': 'Diamonds',
+  '♣️': 'Clubs',
+  '♠️': 'Spades',
+  '🌠': 'Wands',
+  '⚔️': 'Swords',
+  '💰': 'Pentacles',
+  '🏆': 'Cups'
+};
+
+const value_names = {
+  '👁️': 'Ace',
+  '2': 'Two',
+  '3': 'Three',
+  '4': 'Four',
+  '5': 'Five',
+  '6': 'Six',
+  '7': 'Seven',
+  '8': 'Eight',
+  '9': 'Nine',
+  '10': 'Ten',
+  '🛡️': 'Knight',
+  '📜': 'Page',
+  '👸': 'Queen',
+  '🤴': 'King',
+  '🃏': 'Jack'
+};
+
+let deck = [];
+let playerHand = [];
+let dealerHand = [];
+let playerScore = 0;
+let dealerScore = 0;
+let gameOver = false;
+let balance = 1000;
+let currentBet = 10;
+
+function createDeck() {
+  if (deck.length === 0) {
+    for (let suit of minor_arcane_suits) {
+      for (let value of minor_arcane_values) {
+        deck.push({type: 'minor', suit, value});
+      }
+    }
+    for (let suit of standard_suits) {
+      for (let value of standard_values) {
+        deck.push({type: 'standard', suit, value});
+      }
+    }
+    for (let i = 0; i < major_arcane_names.length; i++) {
+      deck.push({
+        type: 'major',
+        value: i.toString(),
+        name: major_arcane_names[i],
+        direction: Math.random() < 0.5 ? 1 : -1
+      });
+    }
+    shuffleDeck();
+  }
+  updateDeckCount();
+}
+
+function updateDeckCount() {
+  document.getElementById('remaining-cards').textContent = deck.length;
+}
+
+function shuffleDeck() {
+  for (let i = deck.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [deck[i], deck[j]] = [deck[j], deck[i]];
+  }
+}
+
+function dealCard() {
+  if (deck.length === 0) return null;
+  const card = deck.pop();
+  updateDeckCount();
+  return card;
+}
+
+function getCardValue(card) {
+  if (!card) return 0;
+  if (card.type === 'major') {
+    return parseInt(card.value) * card.direction;
+  } else {
+    if (['🛡️', '📜', '👸', '🤴', '🃏'].includes(card.value)) return 10;
+    if (card.value === '👁️') return 11;
+    return parseInt(card.value) || 10;
+  }
+}
+
+function calculateHandValue(hand) {
+  if (!hand) return 0;
+  let value = 0;
+  let aces = 0;
+  
+  for (let card of hand) {
+    if (!card) continue;
+    if ((card.type === 'minor' || card.type === 'standard') && card.value === '👁️') {
+      aces++;
+    } else {
+      value += getCardValue(card);
+    }
+  }
+  
+  for (let i = 0; i < aces; i++) {
+    if (value + 11 <= 21) {
+      value += 11;
+    } else {
+      value += 1;
+    }
+  }
+  
+  return value;
+}
+
+function getCardDisplay(card) {
+  if (!card) return '';
+  if (card.type === 'major') {
+    const directionSymbol = card.direction === -1 ? '↓' : '↑';
+    return `
+      <div class="card-value">${card.value}</div>
+      <div class="card-suit">${directionSymbol}</div>
+      <div class="card-center">${card.name}</div>
+    `;
+  }
+  return `
+    <div class="card-value">${card.value}</div>
+    <div class="card-suit">${card.suit}</div>
+    <div class="card-suit-name">
+      <div style="font-size: 12px; margin-bottom: 2px;">${value_names[card.value] || card.value} of</div>
+      <div>${suit_names[card.suit]}</div>
+    </div>
+  `;
+}
+
+function toggleMajorArcanaDirection(card) {
+  if (!card || card.type !== 'major') return false;
+  card.direction *= -1;
+  return true;
+}
+
+function attachCardClickHandlers() {
+  const playerCards = document.querySelectorAll('#player-hand .card');
+  const dealerCards = document.querySelectorAll('#dealer-hand .card');
+  
+  [...playerCards, ...dealerCards].forEach((cardElement, index) => {
+    cardElement.style.cursor = 'pointer';
+    cardElement.onclick = function() {
+      if (gameOver) return;
+      
+      // Determine if this is a player or dealer card
+      const isPlayerCard = cardElement.closest('#player-hand') !== null;
+      const hand = isPlayerCard ? playerHand : dealerHand;
+      
+      // Safety check to ensure the hand and index exist
+      if (!hand || index >= hand.length) return;
+      
+      const card = hand[index];
+      if (!card) return;
+      
+      if (toggleMajorArcanaDirection(card)) {
+        playerScore = calculateHandValue(playerHand);
+        dealerScore = calculateHandValue(dealerHand);
+        updateDisplay();
+        
+        // If it's dealer's hand, let them optimize after each toggle
+        if (!isPlayerCard && !gameOver) {
+          optimizeDealerHand();
+        }
+      }
+    };
+  });
+}
+
+function optimizeDealerHand() {
+  let bestScore = dealerScore;
+  let bestDirections = dealerHand.map(card => card.type === 'major' ? card.direction : null);
+  
+  // Try all possible combinations of major arcana directions
+  const majorCards = dealerHand.filter(card => card.type === 'major');
+  const combinations = 2 ** majorCards.length;
+  
+  for (let i = 0; i < combinations; i++) {
+    // Reset cards to original state
+    dealerHand.forEach((card, index) => {
+      if (card.type === 'major') {
+        card.direction = bestDirections[index] || 1;
+      }
+    });
+    
+    // Try this combination
+    let bitMask = i;
+    majorCards.forEach(card => {
+      card.direction = (bitMask & 1) ? 1 : -1;
+      bitMask >>= 1;
+    });
+    
+    const currentScore = calculateHandValue(dealerHand);
+    
+    // If this score is better (closer to 21 without going over)
+    if ((currentScore <= 21 && currentScore > bestScore) || 
+        (bestScore > 21 && currentScore <= 21)) {
+      bestScore = currentScore;
+      bestDirections = dealerHand.map(card => card.type === 'major' ? card.direction : null);
+    }
+  }
+  
+  // Apply best found combination
+  dealerHand.forEach((card, index) => {
+    if (card.type === 'major') {
+      card.direction = bestDirections[index];
+    }
+  });
+  
+  dealerScore = calculateHandValue(dealerHand);
+  updateDisplay();
+}
+
+function updateDisplay() {
+  const dealerHandEl = document.getElementById('dealer-hand');
+  dealerHandEl.innerHTML = `
+    <div style="margin-bottom: 10px;">Dealer's Hand:</div>
+    <div style="display: flex; justify-content: center; gap: 5px;">
+      ${dealerHand.map(card => {
+        let colorClass = '';
+        if (card.type === 'major') {
+          colorClass = 'arcane';
+        } else if (card.type === 'standard' && (card.suit === '♥️' || card.suit === '♦️')) {
+          colorClass = 'red';
+        } else if (card.type === 'minor') {
+          if (card.suit === '🏆' || card.suit === '💰') {
+            colorClass = 'gold';
+          } else if (card.suit === '⚔️') {
+            colorClass = 'purple';
+          }
+        }
+        return `<div class="card ${colorClass}" ${card.type === 'major' ? `data-direction="${card.direction}"` : ''}>${getCardDisplay(card)}</div>`;
+      }).join('')}
+    </div>
+  `;
+  document.getElementById('dealer-score').textContent = `Score: ${dealerScore}`;
+  
+  const playerHandEl = document.getElementById('player-hand');
+  playerHandEl.innerHTML = `
+    <div style="margin-bottom: 10px;">Your Hand:</div>
+    <div style="display: flex; justify-content: center; gap: 5px;">
+      ${playerHand.map(card => {
+        let colorClass = '';
+        if (card.type === 'major') {
+          colorClass = 'arcane';
+        } else if (card.type === 'standard' && (card.suit === '♥️' || card.suit === '♦️')) {
+          colorClass = 'red';
+        } else if (card.type === 'minor') {
+          if (card.suit === '🏆' || card.suit === '💰') {
+            colorClass = 'gold';
+          } else if (card.suit === '⚔️') {
+            colorClass = 'purple';
+          }
+        }
+        return `<div class="card ${colorClass}" ${card.type === 'major' ? `data-direction="${card.direction}"` : ''}>${getCardDisplay(card)}</div>`;
+      }).join('')}
+    </div>
+  `;
+  document.getElementById('player-score').textContent = `Score: ${playerScore}`;
+  
+  const moneyEl = document.getElementById('money');
+  moneyEl.textContent = balance;
+  moneyEl.parentElement.classList.add('balance-update');
+  setTimeout(() => {
+    moneyEl.parentElement.classList.remove('balance-update');
+  }, 500);
+  
+  // Add card click handlers
+  attachCardClickHandlers();
+}
+
+function dealInitialCards() {
+  if (deck.length < 4) {
+    deck = [];
+    createDeck();
+  }
+  
+  // Deduct bet amount when dealing
+  balance -= currentBet;
+  
+  playerHand = [dealCard(), dealCard()];
+  dealerHand = [dealCard(), dealCard()];
+  playerScore = calculateHandValue(playerHand);
+  dealerScore = calculateHandValue(dealerHand);
+  updateDisplay();
+}
+
+function toggleBetControls(enabled) {
+  document.getElementById('bet-input').disabled = !enabled;
+  document.getElementById('update-bet').disabled = !enabled;
+}
+
+function toggleGameButtons(enabled) {
+  document.getElementById('hit').style.display = enabled ? 'inline-block' : 'none';
+  document.getElementById('stand').style.display = enabled ? 'inline-block' : 'none';
+}
+
+function hit() {
+  if (gameOver) return;
+  const card = dealCard();
+  if (!card) {
+    alert("No cards left in deck!");
+    return;
+  }
+  playerHand.push(card);
+  playerScore = calculateHandValue(playerHand);
+  updateDisplay();
+  if (playerScore > 21) {
+    endGame(false);
+  }
+}
+
+function stand() {
+  if (gameOver) return;
+  
+  // Let dealer optimize current hand first
+  optimizeDealerHand();
+  
+  while (dealerScore < 17) {
+    const card = dealCard();
+    if (!card) break;
+    dealerHand.push(card);
+    // Optimize after each new card
+    optimizeDealerHand();
+  }
+  
+  updateDisplay();
+  endGame(playerScore > dealerScore || dealerScore > 21);
+}
+
+function newGame() {
+  if (balance <= 0) {
+    alert("Game over! You're out of money!");
+    return;
+  }
+  
+  // Reset game state
+  gameOver = false;
+  playerHand = [];
+  dealerHand = [];
+  playerScore = 0;
+  dealerScore = 0;
+  
+  // Reset bet to 10
+  currentBet = 10;
+  document.getElementById('bet-amount').textContent = '10';
+  document.getElementById('bet-input').value = '10';
+  
+  if (balance < currentBet) {
+    alert("Your balance is too low for the current bet!");
+    return;
+  }
+  
+  // Enable betting controls and hide game buttons
+  toggleBetControls(true);
+  toggleGameButtons(false);
+  document.getElementById('message').textContent = "";
+  updateDisplay();
+}
+
+function startGame() {
+  if (balance < currentBet) {
+    alert("You don't have enough money for this bet!");
+    return;
+  }
+  
+  toggleBetControls(false);
+  toggleGameButtons(true);
+  dealInitialCards();
+}
+
+function updateBet() {
+  const betInput = document.getElementById('bet-input');
+  const newBet = parseInt(betInput.value);
+  if (newBet < 10) {
+    alert("Minimum bet is $10");
+    betInput.value = 10;
+    return;
+  }
+  if (newBet > 1000) {
+    alert("Maximum bet is $1000");
+    betInput.value = 1000;
+    return;
+  }
+  if (newBet > balance) {
+    alert("You can't bet more than your balance!");
+    betInput.value = currentBet;
+    return;
+  }
+  currentBet = newBet;
+  document.getElementById('bet-amount').textContent = currentBet;
+  startGame(); // Start the game after bet is updated
+}
+
+function endGame(playerWins) {
+  gameOver = true;
+  let message = "";
+  if (playerScore > 21) {
+    message = "You bust! Dealer wins.";
+    // No need to subtract bet here as it's already subtracted when dealing
+  } else if (dealerScore > 21) {
+    message = "Dealer busts! You win!";
+    balance += currentBet * 2; // Return bet + winnings
+  } else if (playerWins) {
+    message = "You win!";
+    balance += currentBet * 2; // Return bet + winnings
+  } else if (playerScore === dealerScore) {
+    message = "It's a tie!";
+    balance += currentBet; // Return original bet
+  } else {
+    message = "Dealer wins.";
+    // No need to subtract bet here as it's already subtracted when dealing
+  }
+  document.getElementById('message').textContent = message;
+  updateDisplay();
+}
+
+document.getElementById('hit').addEventListener('click', hit);
+document.getElementById('stand').addEventListener('click', stand);
+document.getElementById('deal').addEventListener('click', newGame);
+document.getElementById('update-bet').addEventListener('click', updateBet);
+
+// Initial setup
+function initializeGame() {
+  createDeck();
+  newGame();
+  toggleGameButtons(false);
+}
+
+initializeGame();
+</script>
+<footer>
+  <p style="margin-top: -20px;">CAIMEO Gaming - Where magic meets future code!</p>
+  <nav>
+    <a href="https://classicblackjack.casino/rules">Rules</a> | 
+    <a href="https://classicblackjack.casino/about">About Us</a> | 
+    <a href="https://classicblackjack.casino/responsible-gaming">Responsible Gaming</a>
+  </nav>
+</footer>
+</body></html>
