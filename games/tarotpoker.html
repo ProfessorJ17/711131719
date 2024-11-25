@@ -1,0 +1,1202 @@
+<html><head><base href="https://websim.ai/c/texas-holdem-video-poker"><meta charset="utf-8"><title>Super Tarot Texas Hold'em </title><style>
+body {
+  font-family: 'Courier New', monospace;
+  background: radial-gradient(circle, rgba(9,9,121,1) 0%, rgba(255,0,255,1) 49%, rgba(9,9,121,1) 100%);
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  min-height: 100vh;
+  margin: 0;
+  padding: 20px;
+  overflow: hidden;
+  text-shadow: 0 0 15px neon;
+}
+
+.game-container {
+  background-color: rgba(0, 0, 0, 0.8);
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
+  margin-top: 0;
+  position: relative;
+}
+
+h1 {
+  margin: -30px 0 10px 0;
+  font-size: 20px; /* Smaller font size for title */
+  text-align: center;
+  text-shadow: 0 0 10px cyan, 0 0 20px cyan;
+}
+
+.top-info {
+  width: 100%;
+  display: flex;
+  justify-content: space-between; /* Align credits to the sides */
+}
+
+.suit-legend {
+  position: absolute;
+  left: 5px; /* Moved over to the left by 5 pixels */
+  top: 80px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start; /* Keeps left alignment */
+  font-size: 14px;
+  text-align: left;
+}
+
+.court-cards {
+  position: absolute;
+  right: -0px; /* Changed from -60px to 40px to move it 100 pixels to the right */
+  top: 80px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end; /* Right-align the text */
+  font-size: 14px;
+  text-align: right;
+  color: white;
+}
+
+.suit-item {
+  margin: 5px 0;
+  transition: all 0.3s ease;
+}
+
+.suit-legend .suit-item {
+  color: white; /* Set the text color for all suits to white */
+}
+
+.dealer-hand, .community-cards, .player-hand {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.card {
+  position: relative; /* Ensure proper positioning of card contents */
+  width: 56px; /* Increase to make cards larger */
+  height: 72px; /* Adjust height accordingly */
+  background-color: rgba(255, 255, 255, 0.1);
+  border: 2px solid #00ffcc; /* Neon cyan border */
+  border-radius: 5px;
+  margin: 0 3px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 60px; /* Doubled from 30px */
+  font-weight: bold;
+  color: white;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.card .card-value-top-left {
+  position: absolute;
+  top: 3px;
+  left: 5px;
+  font-size: 32px; /* Doubled from 16px */
+}
+
+.card .card-suit-bottom-right {
+  position: absolute;
+  bottom: 3px;
+  right: 5px;
+  font-size: 32px; /* Doubled from 16px */
+}
+
+.card[data-suit='♠'], .card[data-suit='✤'] {
+  border-color: cyan;
+  box-shadow: 
+    0 0 1.5px cyan,  
+    0 0 3px cyan,  
+    0 0 4.5px cyan,
+    0 0 6px rgba(0, 255, 255, 0.35);
+  animation: neon-cyan-glow 1.5s ease-in-out infinite alternate;
+}
+
+.card[data-suit='♠'] .card-value-top-left,
+.card[data-suit='♠'] .card-suit-bottom-right,
+.card[data-suit='✤'] .card-value-top-left,
+.card[data-suit='✤'] .card-suit-bottom-right {
+  text-shadow: 
+    0 0 3px cyan,
+    0 0 6px cyan;
+  color: cyan;
+}
+
+.card[data-suit='⚔'] {
+  border-color: purple;
+  box-shadow: 
+    0 0 1.5px purple,  
+    0 0 3px purple,  
+    0 0 4.5px purple,
+    0 0 6px rgba(128, 0, 128, 0.35);
+  animation: neon-purple-glow 1.5s ease-in-out infinite alternate;
+}
+
+.card[data-suit='⚔'] .card-value-top-left,
+.card[data-suit='⚔'] .card-suit-bottom-right {
+  text-shadow: 
+    0 0 3px purple,
+    0 0 6px purple;
+  color: purple;
+}
+
+.card[data-suit='♥'], .card[data-suit='♦'] {
+  border-color: #ff1493; /* Deep pink */
+  box-shadow: 
+    0 0 1.5px #ff1493,  
+    0 0 3px #ff1493,  
+    0 0 4.5px #ff1493,
+    0 0 6px rgba(255, 20, 147, 0.45);
+  animation: neon-pink-glow 1.5s ease-in-out infinite alternate;
+}
+
+.card[data-suit='♥'] .card-value-top-left,
+.card[data-suit='♥'] .card-suit-bottom-right,
+.card[data-suit='♦'] .card-value-top-left,
+.card[data-suit='♦'] .card-suit-bottom-right {
+  text-shadow: 
+    0 0 3px #ff1493,
+    0 0 6px #ff1493;
+  color: #ff1493;
+}
+
+.card[data-suit='☨'] {
+  border-color: red;
+  box-shadow: 
+    0 0 1.5px red,  
+    0 0 3px red,  
+    0 0 4.5px red,
+    0 0 6px rgba(255, 0, 0, 0.35);
+  animation: neon-red-glow 1.5s ease-in-out infinite alternate;
+}
+
+.card[data-suit='☨'] .card-value-top-left,
+.card[data-suit='☨'] .card-suit-bottom-right {
+  text-shadow: 
+    0 0 3px red,
+    0 0 6px red;
+  color: red;
+}
+
+.card[data-suit='⛧'] {
+  border-color: red;
+  box-shadow: 
+    0 0 1.5px red,  
+    0 0 3px red,  
+    0 0 4.5px red,
+    0 0 6px rgba(255, 0, 0, 0.35);
+  animation: neon-red-glow 1.5s ease-in-out infinite alternate;
+}
+
+.card[data-suit='⛧'] .card-value-top-left,
+.card[data-suit='⛧'] .card-suit-bottom-right {
+  text-shadow: 
+    0 0 3px red,
+    0 0 6px red;
+  color: red;
+}
+
+.card[data-suit='℧'] {
+  border-color: goldenrod;
+  box-shadow: 
+    0 0 1.5px goldenrod,  
+    0 0 3px goldenrod,  
+    0 0 4.5px goldenrod,
+    0 0 6px rgba(218, 165, 32, 0.35);
+  animation: neon-gold-glow 1.5s ease-in-out infinite alternate;
+}
+
+.card[data-suit='℧'] .card-value-top-left,
+.card[data-suit='℧'] .card-suit-bottom-right {
+  text-shadow: 
+    0 0 3px goldenrod,
+    0 0 6px goldenrod;
+  color: goldenrod;
+}
+
+@keyframes neon-cyan-glow {
+  from {
+    box-shadow: 
+      0 0 1.5px cyan,
+      0 0 3px cyan,
+      0 0 4.5px cyan,
+      0 0 6px rgba(0, 255, 255, 0.35);
+  }
+  to {
+    box-shadow: 
+      0 0 3px cyan,
+      0 0 6px cyan,
+      0 0 9px cyan,
+      0 0 12px rgba(0, 255, 255, 0.45);
+  }
+}
+
+@keyframes neon-purple-glow {
+  from {
+    box-shadow: 
+      0 0 1.5px purple,
+      0 0 3px purple,
+      0 0 4.5px purple,
+      0 0 6px rgba(128, 0, 128, 0.35);
+  }
+  to {
+    box-shadow: 
+      0 0 3px purple,
+      0 0 6px purple,
+      0 0 9px purple,
+      0 0 12px rgba(128, 0, 128, 0.45);
+  }
+}
+
+@keyframes neon-pink-glow {
+  from {
+    box-shadow: 
+      0 0 1.5px #ff1493,
+      0 0 3px #ff1493,
+      0 0 4.5px #ff1493,
+      0 0 6px rgba(255, 20, 147, 0.45);
+  }
+  to {
+    box-shadow: 
+      0 0 3px #ff1493,
+      0 0 6px #ff1493,
+      0 0 9px #ff1493,
+      0 0 12px rgba(255, 20, 147, 0.55);
+  }
+}
+
+@keyframes neon-green-glow {
+  from {
+    box-shadow: 
+      0 0 1.5px green,
+      0 0 3px green,
+      0 0 4.5px green,
+      0 0 6px rgba(0, 128, 0, 0.35);
+  }
+  to {
+    box-shadow: 
+      0 0 3px green,
+      0 0 6px green,
+      0 0 9px green,
+      0 0 12px rgba(0, 128, 0, 0.45);
+  }
+}
+
+@keyframes neon-red-glow {
+  from {
+    box-shadow: 
+      0 0 1.5px red,
+      0 0 3px red,
+      0 0 4.5px red,
+      0 0 6px rgba(255, 0, 0, 0.35);
+  }
+  to {
+    box-shadow: 
+      0 0 3px red,
+      0 0 6px red,
+      0 0 9px red,
+      0 0 12px rgba(255, 0, 0, 0.45);
+  }
+}
+
+@keyframes neon-gold-glow {
+  from {
+    box-shadow: 
+      0 0 1.5px goldenrod,
+      0 0 3px goldenrod,
+      0 0 4.5px goldenrod,
+      0 0 6px rgba(218, 165, 32, 0.35);
+  }
+  to {
+    box-shadow: 
+      0 0 3px goldenrod,
+      0 0 6px goldenrod,
+      0 0 9px goldenrod,
+      0 0 12px rgba(218, 165, 32, 0.45);
+  }
+}
+
+.betting-controls {
+  display: flex;
+  justify-content: center; /* Center the betting controls container */
+  margin: 20px 0; /* Add some margin for spacing */
+}
+
+.pot-info {
+  text-align: center; /* Center the text within pot info */
+  margin: 20px 0; /* Add some margin for spacing */
+}
+
+.controls {
+  display: flex;
+  justify-content: center; /* Center the controls */
+  margin-top: 20px;
+}
+
+.button-neon {
+  border: 2px solid #FFD700; /* Neon Gold */
+  background-color: black;
+  color: #FFD700;
+  padding: 10px 20px;
+  font-size: 16px;
+  font-weight: bold;
+  border-radius: 5px;
+  transition: all 0.3s;
+  text-shadow: 0 0 5px pink;
+}
+
+button:disabled {
+  background-color: #ccccc;
+  cursor: not-allowed;
+}
+
+button:hover:not(:disabled) {
+  background-color: #ffed76; /* Neon hover effect */
+  transform: scale(1.05);
+  box-shadow: 0 0 20px rgba(255, 215, 0, 1);
+}
+
+.stats {
+  margin-top: 20px;
+  text-align: center;
+  text-shadow: 0 0 10px cyan;
+}
+
+.neon {
+  color: #ff00ff; /* Neon pink for some elements */
+  text-shadow: 0 0 10px rgba(255, 0, 255, 1), 0 0 20px rgba(255, 0, 255, 1);
+}
+
+.hidden {
+  display: none;
+}
+
+/* New login modal styles */
+.login-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.9);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.login-container {
+  background: rgba(50,50,100,0.8);
+  padding: 30px;
+  border-radius: 10px;
+  text-align: center;
+  color: white;
+}
+
+.login-input {
+  margin: 10px 0;
+  padding: 10px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.congratulations-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,255,0.9);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  color: white;
+  text-align: center;
+  padding: 20px;
+  box-sizing: border-box;
+}
+</style></head><body>
+  <div id="loginModal" class="login-modal">
+    <div class="login-container">
+      <h2>Login to Super Tarot Texas Hold'em</h2>
+      <input type="text" id="usernameInput" class="login-input" placeholder="Enter Username">
+      <input type="email" id="emailInput" class="login-input" placeholder="Enter Email">
+      <button onclick="login()" class="button-neon">Login</button>
+    </div>
+  </div>
+
+  <div id="congratulationsModal" class="congratulations-modal" style="display:none;">
+    <h1>Congratulations!</h1>
+    <p id="congratsMessage"></p>
+    <p>Redeem Prize Code at:</p>
+    <p>moddarkrevolt@gmail.com</p>
+    <p>Prize Code: <span id="prizeCode"></span></p>
+    <button onclick="closeCongratulations()" class="button-neon">Close</button>
+  </div>
+
+  <div class="game-container">
+    <h1 class="neon glitch-title" style="
+    position: relative;
+    font-size: 24px;
+    text-align: center;
+    color: cyan;
+    text-shadow: 
+        0 0 5px cyan, 
+        0 0 10px cyan, 
+        0 0 15px cyan,
+        0 0 20px purple,
+        0 0 25px magenta;
+    animation: 
+        glitch-title 1s infinite alternate,
+        color-shift 3s infinite alternate,
+        jump-around 2s infinite alternate;
+">
+    <span style="
+        position: absolute;
+        top: -2px;
+        left: -2px;
+        color: green;
+        opacity: 0.7;
+        clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+        animation: glitch-anim1 0.5s infinite alternate-reverse;
+    ">Super Tarot Texas Hold'em</span>
+    
+    <span style="
+        position: absolute;
+        top: 2px;
+        left: 2px;
+        color: magenta;
+        opacity: 0.7;
+        clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+        animation: glitch-anim2 0.5s infinite alternate;
+    ">Super Tarot Texas Hold'em</span>
+    
+    Super Tarot Texas Hold'em
+</h1>
+    <div class="top-info">
+      <div class="credits">Credits: ₻<span id="credits">1000</span></div>
+      <div class="credits">Dealer : ₻<span id="dealerCredits">1000</span></div>
+    </div>
+    
+    <div class="suit-legend">
+      <div class="suit-item" data-suit="♦">♦ Diamonds</div>
+      <div class="suit-item" data-suit="♥">♥ Hearts</div>
+      <div class="suit-item" data-suit="♠">♠ Spades</div>
+      <div class="suit-item" data-suit="✤">✤ Clubs</div>
+      <div class="suit-item" data-suit="☨">☨ Swords</div>
+      <div class="suit-item" data-suit="⚔">⚔ Wands</div>
+      <div class="suit-item" data-suit="℧">℧ Cups</div> <!-- Update to White -->
+      <div class="suit-item" data-suit="⛧">⛧ Pentacles</div> <!-- Update to White -->
+    </div>
+
+    <div class="court-cards">
+      <div class="suit-item">King♛</div>
+      
+      <div class="suit-item">Queen🜲</div>
+      
+            <div class="suit-item">Jack⤶</div>
+⤶
+      <div class="suit-item">Knight♞</div>
+⤶
+            <div class="suit-item">Page🗎</div>
+⤶
+      <div class="suit-item">[♞🗎⤶ = Jack] </div>
+
+    </div>
+    
+    <div class="dealer-hand">
+      <div class="card" id="dealer1">?</div> <!-- First dealer card -->
+      <div class="card" id="dealer2">?</div> <!-- Second dealer card (always visible) -->
+    </div>
+    
+    <div class="community-cards">
+      <div class="card" id="community1">?</div>
+      <div class="card" id="community2">?</div>
+      <div class="card" id="community3">?</div>
+      <div class="card" id="community4">?</div>
+      <div class="card" id="community5">?</div>
+    </div>
+    
+    <div class="player-hand">
+      <div class="card" id="player1">?</div>
+      <div class="card" id="player2">?</div>
+    </div>
+    
+    <div class="betting-controls">
+      <button id="betMinusBtn">-</button>
+      <span class="neon">Bet: ₻<span id="betAmount">10</span></span>
+      <button id="betPlusBtn">+</button>
+    </div>
+
+    <div class="pot-info">
+      <p>Pot: ₻<span id="pot">0</span></p> <!-- Pot Display -->
+    </div>
+
+    <div class="controls">
+      <button id="dealBtn" class="button-neon">Deal</button>
+      <button id="checkBtn" class="button-neon" onclick="checkAndProgress()">Check</button>
+      <button id="callBtn" class="button-neon" disabled="">Raise</button>
+      <button id="foldBtn" class="button-neon" disabled="">Fold</button>
+      <button id="raiseBtn" class="button-neon" disabled="" style="display: none;">Raise</button>
+      <div>
+        <button id="rulesBtn" class="button-neon" onclick="showRules()">Rules</button>
+        <div id="rulesModal" class="modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:1000; overflow:auto; color:white; padding:20px;">
+          <div class="modal-content" style="max-width:800px; margin:50px auto; background:rgba(50,50,100,0.8); padding:30px; border-radius:10px;">
+            <h2 style="text-align:center; color:#FFD700;">Texas Hold'em Video Poker - Hand Rankings</h2>
+            <div id="rulesText" style="max-height:500px; overflow-y:scroll;"></div>
+            <button onclick="closeRules()" class="button-neon" style="display:block; margin:20px auto;">Back</button>
+          </div>
+        </div>
+      </div> <!-- Added Rules Button -->
+    </div>
+    
+    <div class="stats">
+      <p>Your Hand: <span id="playerHandRank"></span></p>
+      <p>Dealer Hand: <span id="dealerHandRank"></span> (<span id="dealerWinPercentage"></span>% to win)</p> <!-- Added Dealer Win Percentage -->
+    </div>
+    
+    <div style="display:none">
+      Player Total Score: ₻0 | Dealer Total Score: ₻0
+    </div>
+  </div>
+
+  <script>
+    // Define the suits (8 suits in total)
+    const suits = ['♠', '♥', '♦', '✤', '☨', '⚔', '⛧', '℧']; // 8 suits, custom and traditional
+
+    // Updated Normal Deck values (🃏 is now Jack, no Joker)
+    const valuesNormalDeck = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', '⤶', '🜲', '♛']; 
+
+    // Updated Minor Arcana values (Tarot deck with court cards)
+    const valuesMinorArcana = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', '🗎', '♞', '🜲', '♛']; 
+
+    // Create a full deck
+    let deck = [];
+
+    let lastClickTime = 0;
+
+    function throttleClick(callback) {
+      const currentTime = Date.now();
+      if (currentTime - lastClickTime >= 2000) {
+        lastClickTime = currentTime;
+        callback();
+      } else {
+        console.log("Click throttled: Wait 2 seconds between clicks");
+      }
+    }
+
+    function createFullDeck() {
+      deck = []; // Clear existing deck
+
+      // Populate full deck with normal cards (4 traditional suits + 4 new suits)
+      suits.forEach(suit => {
+        valuesNormalDeck.forEach(value => {
+          deck.push({ value: value, suit: suit });
+        });
+      });
+
+      // Populate Minor Arcana (4 new suits with Minor Arcana values)
+      suits.slice(4).forEach(suit => {
+        valuesMinorArcana.forEach(value => {
+          deck.push({ value: value, suit: suit });
+        });
+      });
+
+      console.log(`Deck created with ${deck.length} cards`);
+      return deck;
+    }
+
+    // Replace existing createDeck function with this
+    function createDeck() {
+      return createFullDeck();
+    }
+
+    const values = valuesMinorArcana; // Assuming Minor Arcana is used for the game
+
+    let communityCards = [];
+    let playerHand = [];
+    let dealerHand = [];
+    let credits = 1000;
+    let dealerCredits = 1000;
+    let totalPlayerScore = 0;
+    let totalDealerScore = 0;
+    let currentBet = 10;
+    let pot = 0;
+    let gameStage = 'pre-flop'; // pre-flop, flop, turn, river, showdown
+    let maxBet = 50; // New maximum bet
+    let minBet = 10; // New minimum bet
+    let dealerWinPercentage = 0; // New variable for dealer's win percentage
+
+    const dealBtn = document.getElementById('dealBtn');
+    const checkBtn = document.getElementById('checkBtn');
+    const callBtn = document.getElementById('callBtn');
+    const foldBtn = document.getElementById('foldBtn');
+    const raiseBtn = document.getElementById('raiseBtn');
+    const betMinusBtn = document.getElementById('betMinusBtn');
+    const betPlusBtn = document.getElementById('betPlusBtn');
+    const creditsDisplay = document.getElementById('credits');
+    const dealerCreditsDisplay = document.getElementById('dealerCredits');
+    const potDisplay = document.getElementById('pot');
+    const betDisplay = document.getElementById('betAmount');
+    const playerHandRankDisplay = document.getElementById('playerHandRank');
+    const dealerHandRankDisplay = document.getElementById('dealerHandRank');
+
+    function shuffleDeck() {
+      for (let i = deck.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [deck[i], deck[j]] = [deck[j], deck[i]];
+      }
+    }
+
+    function calculateWinPercentage(playerCards, communityCards) {
+      const remainingCards = deck.slice(); // Copy remaining deck
+      const knownCards = [...playerCards, ...communityCards];
+      let wins = 0;
+      let totalSimulations = 1000;
+      
+      // Run Monte Carlo simulation
+      for(let i = 0; i < totalSimulations; i++) {
+        // Copy and shuffle remaining cards
+        let simDeck = [...remainingCards];
+        for (let i = simDeck.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [simDeck[i], simDeck[j]] = [simDeck[j], simDeck[i]];
+        }
+        
+        // Complete the board if needed
+        let simCommunityCards = [...communityCards];
+        while(simCommunityCards.length < 5) {
+          simCommunityCards.push(simDeck.pop());
+        }
+        
+        // Deal dealer cards if we don't know them
+        let simDealerCards = gameStage === 'showdown' ? dealerHand : [simDeck.pop(), simDeck.pop()];
+        
+        // Evaluate both hands
+        const playerScore = evaluateHand([...simCommunityCards, ...playerCards]);
+        const dealerScore = evaluateHand([...simCommunityCards, ...simDealerCards]);
+        
+        if(playerScore.value >= dealerScore.value) {
+          wins++;
+        }
+      }
+      
+      return Math.round((wins / totalSimulations) * 100);
+    }
+
+    function startNewGame() {
+      // Ensure initial bet is subtracted from credits
+      const initialBet = currentBet;
+      credits -= initialBet; // Small blind
+      dealerCredits -= initialBet * 2; // Big blind
+      pot = initialBet * 3; // Pot includes both players' bets
+      
+      createDeck();
+      shuffleDeck();
+      communityCards = [];
+      playerHand = deck.splice(0, 2);
+      dealerHand = deck.splice(0, 2);
+      gameStage = 'pre-flop';
+      
+      updateDisplay();
+      updateControls();
+    }
+
+    function updateDisplay() {
+      // Community cards
+      for (let i = 0; i < 5; i++) {
+        const card = document.getElementById(`community${i+1}`);
+        if (i < communityCards.length) {
+          card.innerHTML = `
+            <div class="card-value-top-left">${communityCards[i].value}</div>
+            <div class="card-suit-bottom-right">${communityCards[i].suit}</div>
+          `;
+          card.className = `card ${communityCards[i].suit === '♥' || communityCards[i].suit === '♦' ? 'red' : 'black'}`;
+          card.setAttribute('data-suit', communityCards[i].suit);
+        } else {
+          card.innerHTML = '?';
+          card.className = 'card';
+          card.removeAttribute('data-suit');
+        }
+      }
+
+      // Player cards
+      for (let i = 0; i < 2; i++) {
+        const card = document.getElementById(`player${i+1}`);
+        card.innerHTML = `
+          <div class="card-value-top-left">${playerHand[i].value}</div>
+          <div class="card-suit-bottom-right">${playerHand[i].suit}</div>
+        `;
+        card.className = `card ${playerHand[i].suit === '♥' || playerHand[i].suit === '♦' ? 'red' : 'black'}`;
+        card.setAttribute('data-suit', playerHand[i].suit);
+      }
+
+      // Dealer first card
+      const dealerFirstCard = document.getElementById('dealer1');
+      dealerFirstCard.innerHTML = `
+        <div class="card-value-top-left">${dealerHand[0].value}</div>
+        <div class="card-suit-bottom-right">${dealerHand[0].suit}</div>
+      `;
+      dealerFirstCard.className = `card ${dealerHand[0].suit === '♥' || dealerHand[0].suit === '♦' ? 'red' : 'black'}`;
+      dealerFirstCard.setAttribute('data-suit', dealerHand[0].suit);
+
+      // Dealer second card
+      const dealerSecondCard = document.getElementById('dealer2');
+      dealerSecondCard.innerHTML = gameStage === 'showdown' ? 
+        `<div class="card-value-top-left">${dealerHand[1].value}</div>
+         <div class="card-suit-bottom-right">${dealerHand[1].suit}</div>` : 
+        '?';
+      dealerSecondCard.className = 'card ' + (gameStage === 'showdown' ? 
+        (dealerHand[1].suit === '♥' || dealerHand[1].suit === '♦' ? 'red' : 'black') : 
+        'hidden');
+      if (gameStage === 'showdown') {
+        dealerSecondCard.setAttribute('data-suit', dealerHand[1].suit);
+      } else {
+        dealerSecondCard.removeAttribute('data-suit');
+      }
+
+      // Update total score display
+      const totalScoreElement = document.getElementById('totalScore');
+      if (totalScoreElement) {
+        totalScoreElement.innerHTML = `
+          Player Total Score: $${totalPlayerScore} | 
+          Dealer Total Score: $${totalDealerScore}
+        `;
+      }
+
+      // Existing credit and pot updates
+      creditsDisplay.textContent = credits;
+      dealerCreditsDisplay.textContent = dealerCredits;
+      potDisplay.textContent = pot;
+      
+      // Add win percentage calculation and display
+      if (gameStage !== 'showdown') {
+        const winPercentage = calculateWinPercentage(playerHand, communityCards);
+        const currentHand = evaluateHand([...communityCards, ...playerHand]);
+        playerHandRankDisplay.textContent = `${currentHand.handRank} (${winPercentage}% to win)`;
+
+        // Calculate dealer's win percentage
+        dealerWinPercentage = calculateWinPercentage(dealerHand, communityCards);
+        dealerHandRankDisplay.textContent = `${evaluateHand([...communityCards, ...dealerHand]).handRank}`; // Update dealer hand rank display
+        document.getElementById('dealerWinPercentage').textContent = dealerWinPercentage; // Update dealer win percentage display
+      }
+    }
+
+    function updateControls() {
+      const canAct = gameStage !== 'showdown';
+      checkBtn.disabled = !canAct;
+      callBtn.disabled = !canAct;
+      foldBtn.disabled = !canAct;
+      raiseBtn.disabled = !canAct;
+      dealBtn.disabled = canAct;
+    }
+
+    function dealerAction() {
+      // Advancing dealer AI for Texas Hold'em, with a chance to match the bet
+      const random = Math.random();
+      const dealerCanCall = dealerCredits >= currentBet; // Dealer can call if they have enough credits
+
+      if (gameStage === 'pre-flop') {
+        if (dealerCanCall && random < 0.5) return 'call'; // 50% chance to call if they can
+        if (random < 0.7) return 'check'; // 20% chance to check
+        return 'raise'; // Otherwise raise
+      } else {
+        // Simple random action for other stages
+        if (random < 0.4) return 'check';
+        if (random < 0.7 && dealerCanCall) return 'call';
+        return 'raise';
+      }
+    }
+
+    function progressGame() {
+      switch(gameStage) {
+        case 'pre-flop':
+          communityCards = deck.splice(0, 3);
+          gameStage = 'flop';
+          break;
+        case 'flop':
+          communityCards.push(deck.splice(0, 1)[0]);
+          gameStage = 'turn';
+          break;
+        case 'turn':
+          communityCards.push(deck.splice(0, 1)[0]);
+          gameStage = 'river';
+          break;
+        case 'river':
+          gameStage = 'showdown';
+          determineWinner();
+          break;
+      }
+      
+      // Typical Texas Hold'em: dealer does not act until after the player
+      if(gameStage === 'flop' || gameStage === 'turn' || gameStage === 'river') {
+        const dealerMove = dealerAction();
+        if (dealerMove === 'call' || dealerMove === 'check') {
+          // Dealer will act; therefore "call" or "check" and continue game
+          updateDisplay();
+          updateControls();
+        }
+      }
+      
+      if(gameStage !== 'showdown') {
+        const currentHand = evaluateHand([...communityCards, ...playerHand]);
+        const winPercentage = calculateWinPercentage(playerHand, communityCards);
+        playerHandRankDisplay.textContent = `${currentHand.handRank} (${winPercentage}% to win)`;
+      }
+      
+      updateDisplay();
+      updateControls();
+    }
+
+    function determineWinner() {
+      const playerScore = evaluateHand([...communityCards, ...playerHand]);
+      const dealerScore = evaluateHand([...communityCards, ...dealerHand]);
+      
+      let roundWinnings = pot;
+
+      if (playerScore.value > dealerScore.value) {
+        credits += roundWinnings; // Player wins entire pot
+        totalPlayerScore += roundWinnings;
+        totalDealerScore -= roundWinnings;
+        
+        // If dealer's credits are zero, show congratulations
+        if (dealerCredits <= 0) {
+          showCongratulations();
+        } else {
+          alert(`You win! +$${roundWinnings}`);
+        }
+      } else if (dealerScore.value > playerScore.value) {
+        dealerCredits += roundWinnings; // Dealer wins entire pot
+        totalDealerScore += roundWinnings;
+        totalPlayerScore -= roundWinnings;
+        alert(`Dealer wins! +$${roundWinnings}`);
+      } else {
+        // Split pot equally
+        const halfPot = Math.floor(roundWinnings / 2);
+        credits += halfPot;
+        dealerCredits += halfPot;
+        totalPlayerScore += halfPot;
+        totalDealerScore += halfPot;
+        alert("It's a tie!");
+      }
+      
+      pot = 0;
+      
+      // Ensure credits don't go negative
+      credits = Math.max(0, credits);
+      dealerCredits = Math.max(0, dealerCredits);
+
+      // New winning condition: Check if dealer's credits are zero or negative
+      if (dealerCredits <= 0) {
+        alert("Congratulations! You WIN the game by depleting the dealer's credits!");
+        
+        // Optional: Reset game or add special winning screen
+        credits = 1000;
+        dealerCredits = 1000;
+        totalPlayerScore = 0;
+        totalDealerScore = 0;
+      }
+      // Existing game over check remains the same
+      else if (credits <= 0 || dealerCredits <= 0) {
+        alert("Game Over! Resetting game...");
+        credits = 1000;
+        dealerCredits = 1000;
+        totalPlayerScore = 0;
+        totalDealerScore = 0;
+      }
+
+      updateDisplay();
+    }
+
+    function evaluateHand(cards) {
+      // First, map card values to ranks
+      const ranks = cards.map(card => {
+        const value = card.value;
+        // Now only Pages (p🗎), Knights (k♞), Queens (🜲), Kings (♛), and Jacks (⤶) count as Jack-like cards
+        if (value === '🗎' || value === '♞' || value === '⤶' || value === '🜲' || value === '♛') {
+          return values.indexOf('⤶'); 
+        }
+        return values.indexOf(value);
+      });
+      
+      const suits = cards.map(card => card.suit);
+      const uniqueSuits = [...new Set(suits)];
+
+      // Check for flush (including tarot and traditional suits)
+      const isFlush = uniqueSuits.some(suit => 
+        suits.filter(s => s === suit).length >= 5
+      );
+
+      // Check for straight
+      const uniqueRanks = [...new Set(ranks)].sort((a, b) => a - b);
+      let isStraight = false;
+      let straightLength = 0;
+      for (let i = 0; i <= uniqueRanks.length - 5; i++) {
+        if (uniqueRanks[i+4] - uniqueRanks[i] === 4) {
+          isStraight = true;
+          straightLength = 5;
+          // Check for longer straights
+          for (let j = 5; j <= Math.min(uniqueRanks.length - uniqueRanks[i], 7); j++) {
+            if (uniqueRanks[i+j-1] - uniqueRanks[i] === j-1) {
+              straightLength = j;
+            }
+          }
+          break;
+        }
+      }
+
+      // Count occurrences
+      const rankCounts = ranks.reduce((acc, rank) => {
+        acc[rank] = (acc[rank] || 0) + 1;
+        return acc;
+      }, {});
+
+      const multipleRanks = Object.entries(rankCounts).filter(([_, count]) => count > 1);
+      const jackCount = ranks.filter(rank => rank === values.indexOf('🃏')).length;
+      
+      let handRank;
+      let value;
+
+      // New Extended Hand Rankings
+      if (ranks.length >= 7) {
+        // Super-Royal Flush
+        const superRoyalFlush = uniqueSuits.some(suit => {
+          const royalCards = [
+            values.indexOf('♛'), // King
+            values.indexOf('🜲'), // Queen
+            values.indexOf('♞'), // Knight
+            values.indexOf('🗎'), // Page
+            values.indexOf('⤶'), // Jack
+            values.indexOf('10'),
+            values.indexOf('9'), // Include the 9 for Super-Royal Flush
+            values.indexOf('8')   // One additional match
+          ];
+          const royalCardsInSuit = cards.filter(card => 
+            card.suit === suit && 
+            royalCards.includes(values.indexOf(card.value))
+          );
+          return royalCardsInSuit.length === 7;
+        });
+        
+        if (superRoyalFlush) {
+          handRank = "Super-Royal Flush";
+          value = 15; // Highest possible hand
+        }
+        // Super-Straight Flush
+        else if (isFlush && straightLength === 7) {
+          handRank = "Super-Straight Flush";
+          value = 14;
+        }
+        // Seven of a Kind
+        else if (Object.values(rankCounts).includes(7)) {
+          handRank = "Seven of a Kind";
+          value = 13;
+        }
+      }
+
+      // Existing hand ranking logic, now expanded
+      if (!handRank) {
+        if (jackCount === 6) {
+          handRank = "Six of a Kind (Royal Flush Minor Arcana)";
+          value = 12;
+        } else if (isFlush && isStraight && straightLength === 6) {
+          handRank = "Straight Flush (Extended)";
+          value = 11;
+        } else if (Object.values(rankCounts).includes(6)) {
+          handRank = "Six of a Kind";
+          value = 10;
+        } else if (isFlush && isStraight) {
+          handRank = "Straight Flush";
+          value = 9;
+        } else if (Object.values(rankCounts).includes(5)) {
+          handRank = "Five of a Kind";
+          value = 8;
+        } else if (Object.values(rankCounts).includes(4)) {
+          handRank = "Four of a Kind";
+          value = 7;
+        } else if (multipleRanks.length === 2 && 
+                   multipleRanks.some(([_, count]) => count === 3) && 
+                   multipleRanks.some(([_, count]) => count === 4)) {
+          handRank = "Extended Full House";
+          value = 6;
+        } else if (multipleRanks.some(([_, count]) => count === 3) && 
+                   multipleRanks.some(([_, count]) => count === 2)) {
+          handRank = "Full House";
+          value = 5;
+        } else if (isFlush) {
+          handRank = "Flush";
+          value = 4;
+        } else if (isStraight) {
+          handRank = "Straight";
+          value = 3;
+        } else if (multipleRanks.some(([_, count]) => count === 3)) {
+          handRank = "Three of a Kind";
+          value = 2;
+        } else if (multipleRanks.filter(([_, count]) => count === 2).length === 2) {
+          handRank = "Two Pair";
+          value = 1;
+        } else if (multipleRanks.some(([_, count]) => count === 2)) {
+          handRank = "One Pair";
+          value = 1;
+        } else {
+          handRank = "High Card";
+          value = 0;
+        }
+      }
+
+      return { handRank, value };
+    }
+
+    function checkAndProgress() {
+      const dealerMove = dealerAction();
+      if (dealerMove === 'check' || dealerMove === 'call') {
+        progressGame();
+      }
+    }
+
+    dealBtn.addEventListener('click', () => throttleClick(startNewGame));
+    checkBtn.addEventListener('click', () => throttleClick(() => {
+      const dealerMove = dealerAction();
+      if (dealerMove === 'check' || dealerMove === 'call') {
+        progressGame();
+      }
+    }));
+
+    callBtn.addEventListener('click', () => throttleClick(() => {
+      // Ensure player has enough credits to call
+      if (credits >= currentBet) {
+        credits -= currentBet;
+        dealerCredits -= currentBet;
+        pot += currentBet * 2;
+        progressGame();
+      } else {
+        alert("Not enough credits to call!");
+      }
+    }));
+
+    foldBtn.addEventListener('click', () => throttleClick(() => {
+      dealerCredits += pot;
+      pot = 0;
+      gameStage = 'showdown';
+      updateDisplay();
+      updateControls();
+      alert("You folded. Dealer wins!");
+    }));
+
+    raiseBtn.addEventListener('click', () => throttleClick(() => {
+      const raiseAmount = currentBet * 2;
+      
+      // Check if player has enough credits to raise
+      if (credits >= raiseAmount) {
+        credits -= raiseAmount;
+        pot += raiseAmount;
+        
+        const dealerMove = dealerAction();
+        if (dealerMove === 'call') {
+          dealerCredits -= raiseAmount;
+          pot += raiseAmount;
+          progressGame();
+        } else {
+          credits += pot;
+          pot = 0;
+          gameStage = 'showdown';
+          updateDisplay();
+          updateControls();
+          alert("Dealer folded. You win!");
+        }
+      } else {
+        alert("Not enough credits to raise!");
+      }
+    }));
+
+    betMinusBtn.addEventListener('click', () => throttleClick(() => {
+      if (currentBet > minBet) { // Ensure currentBet does not fall below minBet
+        currentBet -= 10;
+        betDisplay.textContent = currentBet;
+      }
+    }));
+
+    betPlusBtn.addEventListener('click', () => throttleClick(() => {
+      if (currentBet < maxBet && currentBet < credits) { // Ensure currentBet does not exceed maxBet or available credits
+        currentBet += 10;
+        betDisplay.textContent = currentBet;
+      }
+    }));
+    
+    function showRules() {
+      const rulesText = `
+Comprehensive Hand Rankings
+1. Super-Royal Flush (~0.0001%) Explanation: Seven specific cards (Ace, 10, Page, Knight, Queen, King, and 9) of the same suit
+2. Super-Straight Flush (~0.0002%) Explanation: Seven consecutive cards of the same suit
+3. Seven of a Kind (~0.0002%) Explanation: Seven cards of the same rank
+4. Royal Flush (Extended) (~0.0011%) Explanation: Ace, 10, Page, Knight, Queen, and King of the same suit
+5. Royal Flush (Traditional) (~0.0009%) 
+6. Straight Flush (Extended) (~0.0014%) Explanation: Six consecutive cards of the same suit
+7. Straight Flush (Traditional) (~0.00139%) 
+8. Six of a Kind (~0.002%) Explanation: Six cards of the same rank
+9. Five of a Kind (~0.0025%) Explanation: Five cards of the same rank
+10. Four of a Kind (~0.03%) Explanation: Four cards of the same rank 
+11. Super Full House (Extended) (~0.08%) Explanation: Three cards of one rank and four cards of another rank
+12. Full House (~0.12%) Explanation: Three cards of one rank and two cards of another rank
+13. Flush (~0.2%) Explanation: Any five cards of the same suit, now easier to form with the inclusion of tarot suits.
+14. Straight (~0.3%) Explanation: Any five consecutive cards, regardless of suit
+15. Three of a Kind (~2.5%) Explanation: Three cards of the same rank
+16. Two Pair (~4.3%) Explanation: Two sets of pairs
+17. One Pair (~42.5%) Explanation: A single pair of cards
+18. High Card (~50%) Explanation: The highest card when no other hand is made, the most frequent outcome when no valid hand is formed.
+`;
+  
+      alert(rulesText);
+    }
+
+    let currentUser = null;
+    let currentUserEmail = null;
+
+    function login() {
+      const username = document.getElementById('usernameInput').value;
+      const email = document.getElementById('emailInput').value;
+
+      if (username.trim() === '' || email.trim() === '') {
+        alert('Please enter both username and email');
+        return;
+      }
+
+      currentUser = username;
+      currentUserEmail = email;
+
+      // Hide login modal
+      document.getElementById('loginModal').style.display = 'none';
+    }
+
+    function showCongratulations() {
+      if (!currentUser) {
+        alert('Please log in first!');
+        return;
+      }
+
+      // Generate prize code
+      const base64Username = btoa(currentUser);
+      const prizeCode = base64Username
+        .split('')
+        .map(char => char.charCodeAt(0).toString(16))
+        .join('-');
+
+      const congratsModal = document.getElementById('congratulationsModal');
+      const congratsMessage = document.getElementById('congratsMessage');
+      const prizeCodeElement = document.getElementById('prizeCode');
+
+      congratsMessage.textContent = `Congratulations, ${currentUser}! You've beaten the game!`;
+      prizeCodeElement.textContent = prizeCode;
+
+      congratsModal.style.display = 'flex';
+    }
+
+    function closeCongratulations() {
+      document.getElementById('congratulationsModal').style.display = 'none';
+    }
+  </script>
+</body></html>
