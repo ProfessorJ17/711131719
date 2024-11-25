@@ -1220,25 +1220,6 @@ class Game {
         this.level++;
         this.points = 0;
         
-        // Update enemy types based on level
-        if (this.level >= 40) {
-            // Super boss versions - even more enhanced enemies
-            this.enemyTypes = ['boss_circle', 'boss_triangle', 'boss_hexagon', 'boss_pentagon', 'boss_square'];
-        } else if (this.level >= 7) {
-            // Boss versions - enhanced enemies
-            this.enemyTypes = ['boss_circle', 'boss_triangle', 'boss_hexagon', 'boss_pentagon', 'boss_square'];
-        } else if (this.level === 6) {
-            this.enemyTypes = ['square'];
-        } else if (this.level === 5) {
-            this.enemyTypes = ['pentagon'];
-        } else if (this.level === 3) {
-            this.enemyTypes = ['hexagon'];
-        } else if (this.level === 2) {
-            this.enemyTypes = ['triangle'];
-        } else {
-            this.enemyTypes = ['circle'];
-        }
-        
         // Clear existing spawn intervals
         clearInterval(this.advancedEnemySpawnTimer);
         
@@ -1440,7 +1421,7 @@ class Game {
             this.advancedEnemySpawnTimer = setInterval(() => {
                 if (!this.isPaused && this.advancedEnemies.length < 20) {
                     const shape = this.enemyTypes[Math.floor(Math.random() * this.enemyTypes.length)];
-                    this.advancedEnemies.push(new AdvancedEnemy(this.canvas, this.player, shape, this));
+                    this.advancedEnemies.push(new AdvancedEnemy(this.canvas, this.player, shape, this)); // Pass 'this' here
                 }
             }, 5000);
         }
