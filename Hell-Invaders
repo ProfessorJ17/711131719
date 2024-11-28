@@ -1,0 +1,926 @@
+<html><head><base href="https://spacegame.retro.ai/"><title>Space Invaders - Classic Arcade</title><style>
+body, html {
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+    overflow: hidden;
+    font-family: 'Courier New', monospace;
+    background-image: none; /* Remove the current background image */
+    background: radial-gradient(circle at center, #1a1a3a 0%, #000000 100%);
+    position: relative;
+}
+
+/* Add star field effect */
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: 
+        radial-gradient(white, rgba(255,255,255,.2) 2px, transparent 4px),
+        radial-gradient(white, rgba(255,255,255,.15) 1px, transparent 3px),
+        radial-gradient(white, rgba(255,255,255,.1) 2px, transparent 4px);
+    background-size: 550px 550px, 350px 350px, 250px 250px;
+    background-position: 0 0, 40px 60px, 130px 270px;
+    animation: twinkle 15s linear infinite;
+    z-index: 1;
+}
+
+@keyframes twinkle {
+    from { transform: translateY(0); }
+    to { transform: translateY(-550px); }
+}
+
+/* Ensure game container is above the star field */
+.game-container {
+    width: 100vw;
+    height: 100vh;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    z-index: 2;
+}
+.score-board {
+    color: #00ff00; /* Neon green */
+    font-size: 24px;
+    font-weight: bold;
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    padding: 10px 20px;
+    box-sizing: border-box;
+    text-shadow: 0 0 10px #00ff00, 0 0 20px #00ff00; /* Enhanced neon glow */
+    position: relative;
+    z-index: 3;
+}
+
+/* Update mystery UFO z-index to be behind score text */
+.mystery-ufo {
+    width: 96px;
+    height: 28px;
+    position: absolute;
+    top: 10px;
+    left: -96px; /* Match new width */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1;  /* Add this to make UFO appear behind score text */
+}
+.invaders-grid {
+    position: absolute;
+    top: 20%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transition: left 0.2s ease-in-out, top 0.2s ease-in-out;
+}
+.invaders-row {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 10px;
+}
+.invader {
+    width: 48px;
+    height: 32px;
+    margin: 0 5px;
+    position: relative;
+}
+.invader svg {
+    filter: drop-shadow(0 0 3px currentColor);
+    transform-origin: center;
+    animation: float 2s infinite ease-in-out;
+}
+.invader svg .horns {
+    transform-origin: center;
+    animation: hornsPulse 1s infinite alternate ease-in-out;
+}
+.invader svg .eyes {
+    animation: glowEyes 1.5s infinite alternate ease-in-out;
+}
+.invader-green svg { color: #00FF00; }
+.invader-blue svg { color: #00FFFF; }
+.invader-pink svg { color: #FF69B4; }
+.bunker {
+    width: 88px;
+    height: 64px;
+    position: absolute;
+    bottom: 100px;
+}
+.bunker-part {
+    width: 11px;
+    height: 8px;
+    background-color: #00ff00;
+    position: absolute;
+}
+.player {
+    width: 64px; /* Increased from 52px */
+    height: 32px;
+    background-size: contain;
+    background-repeat: no-repeat;
+    image-rendering: pixelated;
+    position: absolute;
+    bottom: 40px; /* Changed from 20px to 40px to move player up */
+    transition: left 0.1s ease-out;
+}
+.bullet {
+    width: 4px;
+    height: 15px;
+    background-color: #fff;
+    position: absolute;
+}
+.alien-bullet {
+    width: 6px;
+    height: 12px;
+    background-size: contain;
+    background-repeat: no-repeat;
+    image-rendering: pixelated;
+    position: absolute;
+    animation: alienBulletAnimation 0.2s steps(1) infinite;
+}
+@keyframes alienBulletAnimation {
+    0%, 100% { background-image: url('https://i.ibb.co/s29FXkK/alienbullet01.png'); }
+    50% { background-image: url('https://i.ibb.co/bFhXGmk/alienbullet02.png'); }
+}
+.mystery-ufo {
+    width: 96px; /* Increased from 64px */
+    height: 28px;
+    position: absolute;
+    top: 10px;
+    left: -96px; /* Match new width */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.lives-display {
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+    color: #00ffff; /* Neon cyan */
+    font-size: 24px;
+    font-weight: bold;
+    text-shadow: 0 0 10px #00ffff, 0 0 20px #00ffff; /* Enhanced neon glow */
+}
+.life-icon {
+    width: 52px;  /* Doubled from 26px */
+    height: 32px; /* Doubled from 16px */
+    background-size: contain;
+    background-repeat: no-repeat;
+    image-rendering: pixelated;
+    display: inline-block;
+    margin-left: 5px;
+}
+.game-over, .level-up {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: #ff00ff; /* Neon magenta */
+    font-size: 48px;
+    font-weight: bold;
+    text-align: center;
+    text-shadow: 0 0 10px #ff00ff, 0 0 20px #ff00ff; /* Enhanced neon glow */
+}
+.restart-button, .next-level-button {
+    margin-top: 20px;
+    padding: 10px 20px;
+    font-size: 24px;
+    font-weight: bold;
+    background-color: #00ff00; /* Neon green */
+    color: #000;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 0 10px #00ff00, 0 0 20px #00ff00; /* Added neon glow */
+    text-shadow: none; /* Remove text shadow for buttons */
+}
+.restart-button:hover, .next-level-button:hover {
+    background-color: #33ff33;
+    box-shadow: 0 0 15px #00ff00, 0 0 30px #00ff00; /* Enhanced glow on hover */
+}
+.player-explosion {
+    width: 64px;
+    height: 64px;
+    position: absolute;
+    bottom: 40px; /* Changed from 20px to 40px to match player position */
+    background-image: url('https://i.ibb.co/xH2rTvX/Explosion02.gif');
+    background-size: contain;
+    background-repeat: no-repeat;
+    image-rendering: pixelated;
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-2px); }
+}
+
+@keyframes hornsPulse {
+    0% { transform: scaleY(1); }
+    100% { transform: scaleY(1.2); }
+}
+
+@keyframes glowEyes {
+    0% { fill: #FF0000; filter: drop-shadow(0 0 2px #FF0000); }
+    100% { fill: #FF6666; filter: drop-shadow(0 0 4px #FF0000); }
+}
+
+.invader:hover svg {
+    transform: scale(1.1);
+    filter: drop-shadow(0 0 5px currentColor);
+}
+</style></head><body>
+
+<div class="game-container">
+    <div class="score-board">
+        <span id="scoreDisplay">SCORE:0</span>
+        <span id="levelDisplay">LEVEL:1</span>
+        <span id="highScoreDisplay">HIGHSCORE:0</span>
+    </div>
+    <div id="mysteryUfo" class="mystery-ufo">
+        <svg width="96" height="28" viewBox="0 0 96 28" xmlns="http://www.w3.org/2000/svg">
+            <g class="ufo-body">
+                <!-- Top antenna -->
+                <rect x="46" y="0" width="4" height="4" fill="#FF00FF">
+                    <animate attributeName="y" values="0;-2;0" dur="1s" repeatCount="indefinite"/>
+                </rect>
+                
+                <!-- Upper layer squares -->
+                <rect x="36" y="4" width="24" height="4" fill="#FF00FF"/>
+                <rect x="28" y="8" width="40" height="4" fill="#FF00FF"/>
+                
+                <!-- Middle section -->
+                <rect x="20" y="12" width="56" height="8" fill="#FF00FF">
+                    <animate attributeName="fill" values="#FF00FF;#FF66FF;#FF00FF" dur="2s" repeatCount="indefinite"/>
+                </rect>
+                
+                <!-- Bottom windows -->
+                <rect x="28" y="20" width="8" height="6" fill="#00FFFF" class="window">
+                    <animate attributeName="fill" values="#00FFFF;#FFFFFF;#00FFFF" dur="0.5s" repeatCount="indefinite"/>
+                </rect>
+                <rect x="44" y="20" width="8" height="6" fill="#00FFFF" class="window">
+                    <animate attributeName="fill" values="#00FFFF;#FFFFFF;#00FFFF" dur="0.5s" repeatCount="indefinite"/>
+                </rect>
+                <rect x="60" y="20" width="8" height="6" fill="#00FFFF" class="window">
+                    <animate attributeName="fill" values="#00FFFF;#FFFFFF;#00FFFF" dur="0.5s" repeatCount="indefinite"/>
+                </rect>
+                
+                <!-- Side thrusters -->
+                <rect x="12" y="14" width="8" height="4" fill="#FF00FF">
+                    <animate attributeName="x" values="12;8;12" dur="0.5s" repeatCount="indefinite"/>
+                </rect>
+                <rect x="76" y="14" width="8" height="4" fill="#FF00FF">
+                    <animate attributeName="x" values="76;80;76" dur="0.5s" repeatCount="indefinite"/>
+                </rect>
+            </g>
+        </svg>
+    </div>
+    <div id="invadersGrid" class="invaders-grid">
+        <!-- Invaders will be dynamically added here -->
+    </div>
+    <div class="bunker" style="left: 10%;"></div>
+    <div class="bunker" style="left: 30%;"></div>
+    <div class="bunker" style="left: 50%;"></div>
+    <div class="bunker" style="left: 70%;"></div>
+    <div id="player" class="player" style="transform: translate(-50%, -50%); display: flex; justify-content: center; align-items: center;">
+        <svg width="64" height="32" viewBox="0 0 64 32" xmlns="http://www.w3.org/2000/svg">
+            <g class="player-body">
+                <!-- Bottom row -->
+                <rect x="4" y="24" width="8" height="8" fill="#FFD700" filter="drop-shadow(0 0 3px #FFD700)"/>
+                <rect x="12" y="24" width="8" height="8" fill="#FFD700" filter="drop-shadow(0 0 3px #FFD700)"/>
+                <rect x="20" y="24" width="24" height="8" fill="#FFD700" filter="drop-shadow(0 0 3px #FFD700)"/>
+                <rect x="44" y="24" width="8" height="8" fill="#FFD700" filter="drop-shadow(0 0 3px #FFD700)"/>
+                <rect x="52" y="24" width="8" height="8" fill="#FFD700" filter="drop-shadow(0 0 3px #FFD700)"/>
+                
+                <!-- Middle row -->
+                <rect x="12" y="16" width="8" height="8" fill="#FFD700" filter="drop-shadow(0 0 3px #FFD700)"/>
+                <rect x="20" y="16" width="24" height="8" fill="#FFD700" filter="drop-shadow(0 0 3px #FFD700)"/>
+                <rect x="44" y="16" width="8" height="8" fill="#FFD700" filter="drop-shadow(0 0 3px #FFD700)"/>
+                
+                <!-- Top row - more pointed -->
+                <rect x="20" y="8" width="24" height="8" fill="#FFD700" filter="drop-shadow(0 0 3px #FFD700)"/>
+                <rect x="28" y="0" width="8" height="8" fill="#FFD700" filter="drop-shadow(0 0 3px #FFD700)"/>
+                
+                <!-- Square eye -->
+                <rect x="28" y="12" width="8" height="8" fill="white" filter="drop-shadow(0 0 2px white)"/>
+                <rect x="30" y="14" width="4" height="4" fill="#FFD700" filter="drop-shadow(0 0 2px #FFD700)"/>
+                <rect x="31" y="15" width="2" height="2" fill="black"/>
+            </g>
+        </svg>
+    </div>
+    <div class="lives-display">LIVES: <span id="livesIcons"></span></div>
+</div>
+
+<script>
+const invadersGrid = document.getElementById('invadersGrid');
+const mysteryUfo = document.getElementById('mysteryUfo');
+const gameContainer = document.querySelector('.game-container');
+const bunkers = document.querySelectorAll('.bunker');
+const player = document.getElementById('player');
+const scoreDisplay = document.getElementById('scoreDisplay');
+const levelDisplay = document.getElementById('levelDisplay');
+const highScoreDisplay = document.getElementById('highScoreDisplay');
+const livesDisplay = document.getElementById('livesIcons');
+let playerPosition = 50;
+let keys = {};
+let canShoot = true;
+let activeBullet = null;
+let score = 0;
+let highScore = 0;
+let lives = 3;
+let gameOver = false;
+
+let alienDirection = 1;
+let alienPosition = 0;
+let alienMoveSpeed = 5; // Changed from 10 to 5 to make movement smoother at slower speed
+let alienMoveInterval = 500; // Changed from 250 to 500 to make it half as fast
+let alienVerticalMove = 5;
+let originalRowCount = 5;
+let currentRowCount = 5;
+let aliensHit = 0;
+let currentLevel = 1;
+
+const galagaSounds = {
+    backgroundMusic: new Audio('https://example.com/galaga_background.mp3'),
+    playerShoot: new Audio('https://example.com/galaga_player_shoot.mp3'),
+    enemyExplode: new Audio('https://example.com/galaga_enemy_explode.mp3'),
+    playerExplode: new Audio('https://example.com/galaga_player_explode.mp3'),
+    levelStart: new Audio('https://example.com/galaga_level_start.mp3'),
+    gameOver: new Audio('https://example.com/galaga_game_over.mp3')
+};
+
+Object.values(galagaSounds).forEach(sound => {
+    sound.load();
+});
+
+function startBackgroundMusic() {
+    // Only try to play if we have user interaction
+    document.addEventListener('click', function audioHandler() {
+        galagaSounds.backgroundMusic.loop = true;
+        galagaSounds.backgroundMusic.volume = 0.5;
+        galagaSounds.backgroundMusic.play().catch(function(error) {
+            console.log("Audio play failed:", error);
+        });
+        // Remove the click listener after first interaction
+        document.removeEventListener('click', audioHandler);
+    });
+}
+
+// Add error handling to all sound effects
+function playSoundWithError(sound) {
+    if (sound.paused) { // Only play if not already playing
+        sound.play().catch(function(error) {
+            console.log("Audio play failed:", error);
+        });
+    }
+}
+
+const invaderSVGs = {
+    green: {
+        frame1: `<svg viewBox="0 0 48 32" xmlns="http://www.w3.org/2000/svg">
+            <path d="M0 8h8v-8h8v8h16v-8h8v8h8v8h-8v8h-8v8h-16v-8h-8v-8h-8v-8z" fill="#00FF00"/>
+            <path d="M8 0h8v12h-8v-12zM32 0h8v12h-8v-12z" fill="#00FF00" class="horns"/>
+            <path d="M16 16h4v4h-4zM28 16h4v4h-4z" fill="#FF0000" class="eyes"/>
+        </svg>`,
+        frame2: `<svg viewBox="0 0 48 32" xmlns="http://www.w3.org/2000/svg">
+            <path d="M8 0h32v8h8v16h-8v8h-32v-8h-8v-16h8v-8z" fill="#00FF00"/>
+            <path d="M0 8h8v12h-8zM40 8h8v12h-8z" fill="#00FF00" class="horns"/>
+            <path d="M16 16h4v4h-4zM28 16h4v4h-4z" fill="#FF0000" class="eyes"/>
+        </svg>`
+    },
+    blue: {
+        frame1: `<svg viewBox="0 0 48 32" xmlns="http://www.w3.org/2000/svg">
+            <path d="M8 8h32v16h-8v8h-16v-8h-8v-16z" fill="#00FFFF"/>
+            <path d="M0 4h8v16h-8zM40 4h8v16h-8z" fill="#00FFFF" class="horns"/>
+            <path d="M16 16h4v4h-4zM28 16h4v4h-4z" fill="#FF0000" class="eyes"/>
+            <path d="M20 24h8v4h-8z" fill="#FF0000" class="mouth"/>
+        </svg>`,
+        frame2: `<svg viewBox="0 0 48 32" xmlns="http://www.w3.org/2000/svg">
+            <path d="M8 0h32v24h-8v8h-16v-8h-8v-24z" fill="#00FFFF"/>
+            <path d="M0 0h8v16h-8zM40 0h8v16h-8z" fill="#00FFFF" class="horns"/>
+            <path d="M16 16h4v4h-4zM28 16h4v4h-4z" fill="#FF0000" class="eyes"/>
+            <path d="M20 24h8v4h-8z" fill="#FF0000" class="mouth"/>
+        </svg>`
+    },
+    pink: {
+        frame1: `<svg viewBox="0 0 48 32" xmlns="http://www.w3.org/2000/svg">
+            <path d="M8 8h32v8h-8v8h-16v-8h-8v-8z" fill="#FF69B4"/>
+            <path d="M0 0h8v20h-8zM40 0h8v20h-8z" fill="#FF69B4" class="horns"/>
+            <path d="M16 16h4v4h-4zM28 16h4v4h-4z" fill="#FF0000" class="eyes"/>
+            <path d="M20 24h8v4l-4 4l-4-4v-4z" fill="#FF0000" class="mouth"/>
+        </svg>`,
+        frame2: `<svg viewBox="0 0 48 32" xmlns="http://www.w3.org/2000/svg">
+            <path d="M8 0h32v16h-8v8h-16v-8h-8v-16z" fill="#FF69B4"/>
+            <path d="M0 4h8v20h-8zM40 4h8v20h-8z" fill="#FF69B4" class="horns"/>
+            <path d="M16 16h4v4h-4zM28 16h4v4h-4z" fill="#FF0000" class="eyes"/>
+            <path d="M20 24h8v4l-4 4l-4-4v-4z" fill="#FF0000" class="mouth"/>
+        </svg>`
+    }
+};
+
+// Update the horn animation to be more dramatic
+
+function createInvaders() {
+    invadersGrid.innerHTML = '';
+    const invaderTypes = ['green', 'blue', 'blue', 'pink', 'pink'];
+
+    invaderTypes.forEach((type, rowIndex) => {
+        const row = document.createElement('div');
+        row.className = 'invaders-row';
+        for (let i = 0; i < 11; i++) {
+            const invader = document.createElement('div');
+            invader.className = `invader invader-${type}`;
+            invader.innerHTML = invaderSVGs[type].frame1;
+            row.appendChild(invader);
+        }
+        invadersGrid.appendChild(row);
+    });
+}
+
+// Update the animation keyframes to swap SVG content instead of background images
+function updateInvaderFrame(type, frame) {
+    const invaders = document.querySelectorAll(`.invader-${type}`);
+    invaders.forEach(invader => {
+        invader.innerHTML = frame;
+    });
+}
+
+// Create animation intervals for each invader type
+function startInvaderAnimations() {
+    setInterval(() => {
+        const frame = Date.now() % 1000 < 500;
+        updateInvaderFrame('green', invaderSVGs.green[frame ? 'frame1' : 'frame2']);
+        updateInvaderFrame('blue', invaderSVGs.blue[frame ? 'frame1' : 'frame2']);
+        updateInvaderFrame('pink', invaderSVGs.pink[frame ? 'frame1' : 'frame2']);
+    }, 500);
+}
+
+// Call this after creating invaders
+startInvaderAnimations();
+
+function createBunkerParts() {
+    bunkers.forEach(bunker => {
+        bunker.innerHTML = ''; // Clear any existing parts
+        
+        // Define more pointy pyramid-like bunker shape
+        const bunkerShape = [
+            [0,0,0,0,1,0,0,0,0], // Single block at top
+            [0,0,0,1,1,1,0,0,0], // 3 blocks
+            [0,0,1,1,1,1,1,0,0], // 5 blocks
+            [0,1,1,1,1,1,1,1,0], // 7 blocks
+            [1,1,1,1,1,1,1,1,1], // Full row
+            [1,1,1,0,0,0,1,1,1], // Gaps in middle
+            [1,1,0,0,0,0,0,1,1], // More gaps
+            [1,0,0,0,0,0,0,0,1]  // Just edges
+        ];
+
+        // Create bunker parts based on the pointy pyramid shape
+        bunkerShape.forEach((row, rowIndex) => {
+            row.forEach((hasBlock, colIndex) => {
+                if (hasBlock) {
+                    const part = document.createElement('div');
+                    part.className = 'bunker-part';
+                    part.style.left = `${colIndex * 11}px`;  // 11px width per block
+                    part.style.top = `${rowIndex * 8}px`;    // 8px height per block
+                    bunker.appendChild(part);
+                }
+            });
+        });
+    });
+}
+
+function moveAliens() {
+    if (gameOver) return;
+
+    const containerWidth = gameContainer.offsetWidth;
+    const gridWidth = invadersGrid.offsetWidth;
+    const maxMove = (containerWidth - gridWidth) / 2;
+
+    alienPosition += alienMoveSpeed * alienDirection;
+
+    if (alienPosition >= maxMove || alienPosition <= -maxMove) {
+        alienDirection *= -1;
+        const currentTop = parseFloat(invadersGrid.style.top) || 20;
+        invadersGrid.style.top = `${currentTop + alienVerticalMove}%`;
+        
+        if (currentTop + alienVerticalMove > 70) {
+            endGame(false);
+            return;
+        }
+    }
+
+    invadersGrid.style.left = `calc(50% + ${alienPosition}px)`;
+
+    setTimeout(moveAliens, alienMoveInterval);
+}
+
+function spawnMysteryUfo() {
+    if (gameOver) return;
+    
+    mysteryUfo.style.left = '-96px';
+    
+    let ufoPosition = -96;
+    const moveUfo = setInterval(() => {
+        ufoPosition += 2;
+        mysteryUfo.style.left = `${ufoPosition}px`;
+        
+        if (ufoPosition > gameContainer.offsetWidth) {
+            clearInterval(moveUfo);
+            setTimeout(spawnMysteryUfo, Math.random() * 30000 + 15000);
+        }
+    }, 50);
+}
+
+function alienShoot() {
+    if (gameOver) return;
+    
+    const aliens = document.querySelectorAll('.invader');
+    const shootingAlien = aliens[Math.floor(Math.random() * aliens.length)];
+    const alienRect = shootingAlien.getBoundingClientRect();
+
+    const bullet = document.createElement('div');
+    bullet.classList.add('alien-bullet');
+    bullet.style.left = (alienRect.left + alienRect.width / 2 - 3) + 'px';
+    bullet.style.top = (alienRect.bottom) + 'px';
+    gameContainer.appendChild(bullet);
+
+    const bulletInterval = setInterval(() => {
+        if (gameOver) {
+            clearInterval(bulletInterval);
+            bullet.remove();
+            return;
+        }
+        
+        const bulletRect = bullet.getBoundingClientRect();
+        bullet.style.top = (bulletRect.top + 5) + 'px';
+
+        if (bulletRect.top > gameContainer.offsetHeight) {
+            clearInterval(bulletInterval);
+            bullet.remove();
+        }
+
+        checkBunkerCollision(bullet, bulletRect, bulletInterval);
+        checkPlayerCollision(bullet, bulletRect, bulletInterval);
+    }, 50);
+}
+
+function checkBunkerCollision(bullet, bulletRect, bulletInterval) {
+    bunkers.forEach(bunker => {
+        const bunkerParts = bunker.querySelectorAll('.bunker-part');
+        bunkerParts.forEach(part => {
+            const partRect = part.getBoundingClientRect();
+            if (
+                bulletRect.left < partRect.right &&
+                bulletRect.right > partRect.left &&
+                bulletRect.top < partRect.bottom &&
+                bulletRect.bottom > partRect.top
+            ) {
+                clearInterval(bulletInterval);
+                bullet.remove();
+                part.remove();
+                if (bullet.classList.contains('bullet')) {
+                    activeBullet = null;
+                    canShoot = true;
+                }
+                playSoundWithError(galagaSounds.enemyExplode);
+            }
+        });
+    });
+}
+
+function movePlayer() {
+    if (gameOver) return;
+    
+    const playerSpeed = 5;
+    const containerWidth = gameContainer.offsetWidth;
+    const playerWidth = player.offsetWidth;
+    
+    if (keys.ArrowLeft) {
+        playerPosition = Math.max(0, playerPosition - playerSpeed);
+    }
+    if (keys.ArrowRight) {
+        playerPosition = Math.min(containerWidth - playerWidth, playerPosition + playerSpeed);
+    }
+    
+    player.style.left = `${playerPosition}px`;
+}
+
+function playerShoot() {
+    if (gameOver) return;
+    
+    if (canShoot && !activeBullet) {
+        canShoot = false;
+
+        const bullet = document.createElement('div');
+        bullet.classList.add('bullet');
+        const playerRect = player.getBoundingClientRect();
+        bullet.style.left = (playerRect.left + playerRect.width / 2 - 2) + 'px';
+        bullet.style.bottom = '52px';
+        gameContainer.appendChild(bullet);
+
+        activeBullet = bullet;
+
+        playSoundWithError(galagaSounds.playerShoot);
+
+        const bulletInterval = setInterval(() => {
+            if (gameOver) {
+                clearInterval(bulletInterval);
+                bullet.remove();
+                return;
+            }
+            
+            const bulletRect = bullet.getBoundingClientRect();
+            bullet.style.bottom = (parseFloat(bullet.style.bottom) + 20) + 'px';
+
+            if (bulletRect.top <= 0) {
+                clearInterval(bulletInterval);
+                bullet.remove();
+                activeBullet = null;
+                canShoot = true;
+            }
+
+            checkBunkerCollision(bullet, bulletRect, bulletInterval);
+            checkAlienCollision(bullet, bulletRect, bulletInterval);
+            checkMysteryUfoCollision(bullet, bulletRect, bulletInterval);
+        }, 20);
+
+        setTimeout(() => { canShoot = true; }, 250);
+    }
+}
+
+function checkAlienCollision(bullet, bulletRect, bulletInterval) {
+    const aliens = document.querySelectorAll('.invader');
+    aliens.forEach(alien => {
+        const alienRect = alien.getBoundingClientRect();
+        if (
+            bulletRect.left < alienRect.right &&
+            bulletRect.right > alienRect.left &&
+            bulletRect.top < alienRect.bottom &&
+            bulletRect.bottom > alienRect.top
+        ) {
+            clearInterval(bulletInterval);
+            bullet.remove();
+            alien.remove();
+            activeBullet = null;
+            canShoot = true;
+            playSoundWithError(galagaSounds.enemyExplode);
+            updateScore(50);
+            
+            aliensHit++;
+            increaseAlienSpeed();
+            
+            checkRowDestroyed();
+            
+            if (document.querySelectorAll('.invader').length === 0) {
+                levelUp();
+            }
+        }
+    });
+}
+
+function checkRowDestroyed() {
+    const rows = document.querySelectorAll('.invaders-row');
+    rows.forEach(row => {
+        if (row.children.length === 0) {
+            row.remove();
+            currentRowCount--;
+        }
+    });
+}
+
+function increaseAlienSpeed() {
+    const speedIncrease = 1 - (aliensHit * 0.005); // Changed from 0.01 to 0.005
+    alienMoveInterval = Math.max(100, Math.floor(alienMoveInterval * speedIncrease)); // Changed minimum from 50 to 100
+}
+
+function checkMysteryUfoCollision(bullet, bulletRect, bulletInterval) {
+    const ufoRect = mysteryUfo.getBoundingClientRect();
+    if (
+        bulletRect.left < ufoRect.right &&
+        bulletRect.right > ufoRect.left &&
+        bulletRect.top < ufoRect.bottom &&
+        bulletRect.bottom > ufoRect.top
+    ) {
+        clearInterval(bulletInterval);
+        bullet.remove();
+        activeBullet = null;
+        canShoot = true;
+        
+        playSoundWithError(galagaSounds.enemyExplode);
+        
+        updateScore(200);
+        
+        mysteryUfo.style.display = 'none';
+        
+        setTimeout(() => {
+            mysteryUfo.style.display = 'block';
+            spawnMysteryUfo();
+        }, Math.random() * 30000 + 15000);
+    }
+}
+
+function checkPlayerCollision(bullet, bulletRect, bulletInterval) {
+    const playerRect = player.getBoundingClientRect();
+    if (
+        bulletRect.left < playerRect.right &&
+        bulletRect.right > playerRect.left &&
+        bulletRect.top < playerRect.bottom &&
+        bulletRect.bottom > playerRect.top
+    ) {
+        clearInterval(bulletInterval);
+        bullet.remove();
+        loseLife();
+    }
+}
+
+function loseLife() {
+    lives--;
+    updateLivesDisplay();
+    if (lives <= 0) {
+        endGame(false);
+    } else {
+        player.style.display = 'none';
+        const explosion = document.createElement('div');
+        explosion.classList.add('player-explosion');
+        explosion.style.left = player.style.left;
+        gameContainer.appendChild(explosion);
+
+        playSoundWithError(galagaSounds.playerExplode);
+
+        setTimeout(() => {
+            explosion.remove();
+            playerPosition = gameContainer.offsetWidth / 2 - player.offsetWidth / 2;
+            player.style.left = `${playerPosition}px`;
+            player.style.display = 'block';
+        }, 1000);
+    }
+}
+
+function levelUp() {
+    currentLevel++;
+    levelDisplay.textContent = `LEVEL:${currentLevel}`;
+    
+    const levelUpDiv = document.createElement('div');
+    levelUpDiv.classList.add('level-up');
+    levelUpDiv.innerHTML = `LEVEL ${currentLevel}`;
+    
+    const nextLevelButton = document.createElement('button');
+    nextLevelButton.classList.add('next-level-button');
+    nextLevelButton.textContent = 'NEXT LEVEL';
+    nextLevelButton.onclick = startNextLevel;
+    
+    levelUpDiv.appendChild(nextLevelButton);
+    gameContainer.appendChild(levelUpDiv);
+    
+    gameOver = true;
+
+    playSoundWithError(galagaSounds.levelStart);
+}
+
+function startNextLevel() {
+    gameOver = false;
+    document.querySelector('.level-up').remove();
+    
+    alienMoveInterval = Math.max(100, alienMoveInterval - 25); // Changed minimum from 50 to 100
+    alienMoveSpeed += 0.5; // Changed from 1 to 0.5 for smoother scaling
+    
+    createInvaders();
+    createBunkerParts();
+    
+    aliensHit = 0;
+    currentRowCount = originalRowCount;
+    
+    invadersGrid.style.top = '20%';
+    alienPosition = 0;
+    alienDirection = 1;
+    
+    moveAliens();
+}
+
+function endGame(win) {
+    gameOver = true;
+    
+    gameContainer.innerHTML = '';
+    
+    const gameOverDiv = document.createElement('div');
+    gameOverDiv.classList.add('game-over');
+    gameOverDiv.innerHTML = win ? 'YOU WIN!' : 'GAME OVER';
+    
+    const restartButton = document.createElement('button');
+    restartButton.classList.add('restart-button');
+    restartButton.textContent = 'RESTART';
+    restartButton.onclick = () => {
+        location.reload();
+    };
+    
+    gameOverDiv.appendChild(restartButton);
+    gameContainer.appendChild(gameOverDiv);
+
+    galagaSounds.backgroundMusic.pause();
+    playSoundWithError(galagaSounds.gameOver);
+}
+
+function updateScore(points) {
+    score += points;
+    scoreDisplay.textContent = `SCORE:${score}`;
+    if (score > highScore) {
+        highScore = score;
+        highScoreDisplay.textContent = `HIGHSCORE:${highScore}`;
+    }
+}
+
+function updateLivesDisplay() {
+    livesDisplay.innerHTML = '';
+    for (let i = 0; i < lives; i++) {
+        const lifeIcon = document.createElement('span');
+        lifeIcon.classList.add('life-icon');
+        lifeIcon.innerHTML = `<svg width="52" height="32" viewBox="0 0 52 32" xmlns="http://www.w3.org/2000/svg">
+            <g class="player-body" transform="scale(1)">
+                <!-- Bottom row -->
+                <rect x="4" y="24" width="8" height="8" fill="#FFD700" filter="drop-shadow(0 0 3px #FFD700)"/>
+                <rect x="12" y="24" width="8" height="8" fill="#FFD700" filter="drop-shadow(0 0 3px #FFD700)"/>
+                <rect x="20" y="24" width="12" height="8" fill="#FFD700" filter="drop-shadow(0 0 3px #FFD700)"/>
+                <rect x="32" y="24" width="8" height="8" fill="#FFD700" filter="drop-shadow(0 0 3px #FFD700)"/>
+                <rect x="40" y="24" width="8" height="8" fill="#FFD700" filter="drop-shadow(0 0 3px #FFD700)"/>
+                
+                <!-- Middle row -->
+                <rect x="12" y="16" width="8" height="8" fill="#FFD700" filter="drop-shadow(0 0 3px #FFD700)"/>
+                <rect x="20" y="16" width="12" height="8" fill="#FFD700" filter="drop-shadow(0 0 3px #FFD700)"/>
+                <rect x="32" y="16" width="8" height="8" fill="#FFD700" filter="drop-shadow(0 0 3px #FFD700)"/>
+                
+                <!-- Top row -->
+                <rect x="20" y="8" width="12" height="8" fill="#FFD700" filter="drop-shadow(0 0 3px #FFD700)"/>
+            </g>
+        </svg>`;
+        livesDisplay.appendChild(lifeIcon);
+    }
+}
+
+function addStartScreen() {
+    const startScreen = document.createElement('div');
+    startScreen.style.cssText = `
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.8);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+    `;
+    
+    const startButton = document.createElement('button');
+    startButton.textContent = "CLICK TO START";
+    startButton.style.cssText = `
+        padding: 20px 40px;
+        font-size: 24px;
+        background: #00ff00;
+        border: none;
+        color: #000;
+        cursor: pointer;
+        font-family: 'Courier New', monospace;
+        text-transform: uppercase;
+        box-shadow: 0 0 20px #00ff00;
+    `;
+    
+    startScreen.appendChild(startButton);
+    gameContainer.appendChild(startScreen);
+    
+    startButton.addEventListener('click', function() {
+        startScreen.remove();
+        gameOver = false;
+        startBackgroundMusic();
+        moveAliens();
+        spawnMysteryUfo();
+        setInterval(alienShoot, 1000);
+        gameLoop();
+    });
+}
+
+document.addEventListener('keydown', (event) => {
+    keys[event.code] = true;
+    if (event.code === 'Space') {
+        event.preventDefault();
+        playerShoot();
+    }
+});
+
+document.addEventListener('keyup', (event) => {
+    keys[event.code] = false;
+});
+
+function gameLoop() {
+    movePlayer();
+    requestAnimationFrame(gameLoop);
+}
+
+createInvaders();
+createBunkerParts();
+updateLivesDisplay();
+addStartScreen();
+</script>
+
+</body></html>
