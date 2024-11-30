@@ -1,0 +1,940 @@
+<html><head><base href="/"><style>
+body { margin: 0; padding: 0; background: #000; overflow: hidden; font-family: 'Orbitron', sans-serif; }
+.quantum-field { width: 100vw; height: 100vh; display: flex; justify-content: center; align-items: center; }
+.particle { position: absolute; border-radius: 50%; filter: blur(2px); transition: all 0.3s ease; }
+.superposition { 
+  position: absolute; 
+  border-radius: 50%; 
+  background: rgba(0,255,255,0.2); 
+  border: 2px solid #0ff; 
+  cursor: pointer; 
+  animation: multidimensionalSpin 3s infinite linear; 
+  transition: all 0.5s ease; 
+  transform-style: preserve-3d; 
+  perspective: 1000px; 
+}
+.superposition:before {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: inherit;
+  filter: blur(5px);
+  animation: dimensionalRipple 2s infinite alternate-reverse;
+}
+.superposition.dangerous {
+  background: rgba(255,0,0,0.2);
+  border: 2px solid #f00;
+}
+/* Add style for bonus superpositions */
+.superposition.bonus {
+  background: rgba(0,255,0,0.2);
+  border: 2px solid #0f0;
+}
+/* Add style for purple superpositions */
+.superposition.purple {
+  background: rgba(255,0,255,0.2);
+  border: 2px solid #f0f;
+}
+.triangle-state {
+  clip-path: polygon(50% 0%, 100% 100%, 0% 100%);
+  background: rgba(0,255,255,0.2) !important;
+  border: 2px solid #0ff !important;
+  animation: multidimensionalSpin 1.5s infinite linear, dimensionalRipple 1.2s infinite alternate !important;
+}
+@keyframes multidimensionalSpin {
+  0% { 
+    transform: rotate3d(1, 0, 0, 0deg) scale(1);
+  }
+  25% { 
+    transform: rotate3d(1, 1, 0, 90deg) scale(1.2);
+  }
+  50% { 
+    transform: rotate3d(0, 1, 1, 180deg) scale(0.8);
+  }
+  75% { 
+    transform: rotate3d(1, 0, 1, 270deg) scale(1.2);
+  }
+  100% { 
+    transform: rotate3d(1, 0, 0, 360deg) scale(1);
+  }
+}
+@keyframes dimensionalRipple {
+  0% {
+    box-shadow: 0 0 20px currentColor,
+                inset 0 0 20px currentColor;
+    transform: perspective(500px) rotate3d(1, 1, 0, 0deg);
+  }
+  50% {
+    box-shadow: 0 0 40px currentColor,
+                inset 0 0 40px currentColor;
+    transform: perspective(500px) rotate3d(1, 1, 1, 180deg);
+  }
+  100% {
+    box-shadow: 0 0 20px currentColor,
+                inset 0 0 20px currentColor;
+    transform: perspective(500px) rotate3d(1, 1, 0, 360deg);
+  }
+}
+.score { position: fixed; top: 20px; right: 20px; color: #0ff; font-size: 24px; text-shadow: 0 0 10px #0ff; }
+.quantum-power { position: fixed; top: 60px; right: 20px; color: #f0f; font-size: 18px; text-shadow: 0 0 10px #f0f; }
+.crypto-balance { position: fixed; top: 100px; right: 20px; color: #ff0; font-size: 18px; text-shadow: 0 0 10px #ff0; }
+.lives {
+  position: fixed;
+  top: 180px;
+  right: 20px;
+  color: #0ff;
+  font-size: 18px;
+  text-shadow: 0 0 10px #0ff;
+}
+.entanglement-line { 
+  position: absolute; 
+  height: 2px; 
+  background: #0ff; /* Default cyan color */
+  transform-origin: left center; 
+  filter: blur(1px); 
+  box-shadow: 0 0 10px #0ff; 
+  pointer-events: none; 
+  z-index: 1; 
+}
+.entanglement-line.dangerous {
+  background: #f00; /* Red for dangerous connections */
+  box-shadow: 0 0 10px #f00;
+}
+.quantum-tunnel { position: absolute; border: 2px solid #f0f; border-radius: 50%; filter: blur(1px); animation: tunnelPulse 1s infinite; }
+.crypto-mining { position: absolute; width: 30px; height: 30px; background: rgba(255,255,0,0.2); border: 2px solid #ff0; animation: cryptoPulse 1.5s infinite; }
+.blockchain-link { position: absolute; height: 2px; background: #0ff; transform-origin: left center; filter: blur(1px); }
+.uncertainty-wave { position: absolute; border: 2px solid #0ff; border-radius: 50%; filter: blur(2px); animation: uncertaintyPulse 3s infinite; }
+.spin-particle { position: absolute; width: 10px; height: 10px; background: #0ff; clip-path: polygon(50% 0%, 100% 100%, 0% 100%); animation: spinRotation 1s linear infinite; }
+@keyframes pulse { 0% { transform: scale(1); box-shadow: 0 0 20px #0ff; } 50% { transform: scale(1.1); box-shadow: 0 0 40px #0ff; } 100% { transform: scale(1); box-shadow: 0 0 20px #0ff; } }
+@keyframes cryptoPulse { 0% { transform: scale(1) rotate(0deg); box-shadow: 0 0 20px #ff0; } 50% { transform: scale(1.2) rotate(180deg); box-shadow: 0 0 40px #ff0; } 100% { transform: scale(1) rotate(360deg); box-shadow: 0 0 20px #ff0; } }
+@keyframes tunnelPulse { 0% { transform: scale(1); opacity: 1; } 100% { transform: scale(2); opacity: 0; } }
+@keyframes uncertaintyPulse { 0% { transform: scale(1) rotate(0deg); opacity: 0.8; } 50% { transform: scale(1.5) rotate(180deg); opacity: 0.4; } 100% { transform: scale(1) rotate(360deg); opacity: 0.8; } }
+@keyframes spinRotation { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+@keyframes glitchEffect { 0% { clip-path: inset(40% 0 61% 0); transform: skew(0.5deg); } 20% { clip-path: inset(75% 0 28% 0); transform: skew(-0.8deg); } 40% { clip-path: inset(25% 0 58% 0); transform: skew(0.8deg); } 60% { clip-path: inset(10% 0 77% 0); transform: skew(-0.3deg); } 80% { clip-path: inset(40% 0 43% 0); transform: skew(0.4deg); } 100% { clip-path: inset(50% 0 31% 0); transform: skew(-0.2deg); } }
+@keyframes geometricSpin { 0% { transform: rotate(0deg) scale(1); } 50% { transform: rotate(180deg) scale(1.5); } 100% { transform: rotate(360deg) scale(1); } }
+@keyframes floatingHexagon { 0% { transform: translateY(0) rotate(0deg); } 50% { transform: translateY(-20px) rotate(180deg); } 100% { transform: translateY(0) rotate(360deg); } }
+.geometric-background { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -1; opacity: 0.3; }
+.geometric-shape { position: absolute; border: 2px solid; opacity: 0.4; filter: blur(1px); animation: geometricSpin 8s linear infinite; }
+.glitch-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0, 255, 255, 0.1); mix-blend-mode: overlay; animation: glitchEffect 2s infinite; pointer-events: none; z-index: 1; }
+.floating-hexagon { position: absolute; width: 60px; height: 60px; clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%); border: 2px solid #0ff; animation: floatingHexagon 4s ease-in-out infinite; opacity: 0.3; }
+.game-over { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); color: #0ff; font-size: 48px; text-shadow: 0 0 20px #0ff; display: none; }
+.level-display { position: fixed; top: 140px; right: 20px; color: #0f0; font-size: 18px; text-shadow: 0 0 10px #0f0; }
+.level-up-notification { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); color: #0f0; font-size: 36px; text-shadow: 0 0 20px #0f0; opacity: 0; transition: opacity 0.5s; pointer-events: none; z-index: 10; }
+.store-button { position: fixed; bottom: 20px; right: 20px; padding: 10px 20px; background: rgba(0, 255, 255, 0.2); border: 2px solid #0ff; color: #0ff; font-family: 'Orbitron', sans-serif; cursor: pointer; font-size: 18px; text-shadow: 0 0 10px #0ff; transition: all 0.3s ease; }
+.store-button:hover { background: rgba(0, 255, 255, 0.4); transform: scale(1.1); }
+.store-modal { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 80%; max-width: 600px; background: rgba(0, 0, 0, 0.9); border: 2px solid #0ff; padding: 20px; color: #fff; z-index: 1000; }
+.store-modal h2 { color: #0ff; text-align: center; margin-bottom: 20px; }
+.upgrade-item { display: flex; justify-content: space-between; align-items: center; padding: 10px; border: 1px solid rgba(0, 255, 255, 0.3); margin-bottom: 10px; transition: all 0.3s ease; }
+.upgrade-item:hover { background: rgba(0, 255, 255, 0.1); }
+.upgrade-button { padding: 5px 15px; background: rgba(255, 0, 255, 0.2); border: 2px solid #f0f; color: #f0f; cursor: pointer; transition: all 0.3s ease; }
+.upgrade-button:hover:not(:disabled) { background: rgba(255, 0, 255, 0.4); transform: scale(1.1); }
+.upgrade-button:disabled { opacity: 0.5; cursor: not-allowed; }
+.close-store { position: absolute; top: 10px; right: 10px; color: #0ff; cursor: pointer; font-size: 24px; }
+.modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.7); z-index: 999; }
+.restart-button { position: fixed; top: 60%; left: 50%; transform: translate(-50%, -50%); padding: 15px 30px; background: rgba(0, 255, 255, 0.2); border: 2px solid #0ff; color: #0ff; font-family: 'Orbitron', sans-serif; font-size: 24px; cursor: pointer; display: none; text-shadow: 0 0 10px #0ff; transition: all 0.3s ease; z-index: 100; }
+.restart-button:hover { background: rgba(0, 255, 255, 0.4); transform: translate(-50%, -50%) scale(1.1); }
+@keyframes fadeAway {
+  0% { opacity: 1; }
+  100% { opacity: 0; }
+}
+</style>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron&amp;display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="quantum-field">
+    <div class="score">Score: <span id="score">0</span></div>
+    <div class="quantum-power">Quantum Power: <span id="quantumPower">100</span></div>
+    <div class="crypto-balance">Crypto Balance: <span id="cryptoBalance">0</span> QC</div>
+    <div class="level-display">Level: <span id="currentLevel">1</span></div>
+    <div class="lives">Lives: <span id="livesCount">3</span></div>
+    <div class="level-up-notification" id="levelUpNotification">LEVEL UP!</div>
+    <div class="game-over" id="gameOver">QUANTUM COLLAPSE!</div>
+    <button class="restart-button" id="restartButton" onclick="restartGame()">RESTART</button>
+    <button class="store-button" onclick="toggleStore()">Quantum Store</button>
+    <div class="modal-overlay" id="modalOverlay"></div>
+    <div class="store-modal" id="storeModal" style="max-height: 90vh; overflow-y: auto; font-size: 14px; padding: 15px; width: min(90vw, 400px);">
+      <span class="close-store" onclick="toggleStore()" style="position: fixed; right: 15px;">×</span>
+      <h2 style="font-size: 18px;">Quantum Store</h2>
+      <div class="upgrade-item" style="margin: 8px 0;">
+        <div>
+          <h3 style="font-size: 16px; margin: 5px 0;">Quantum Power Regeneration</h3>
+          <p style="font-size: 12px; margin: 3px 0;">Increases power regeneration rate</p>
+          <p style="font-size: 12px; margin: 3px 0;">Cost: 2.0 QC</p>
+        </div>
+        <button class="upgrade-button" onclick="purchaseUpgrade('powerRegen')" style="font-size: 12px; padding: 4px 10px;">Purchase</button>
+      </div>
+      <div class="upgrade-item" style="margin: 8px 0;">
+        <div>
+          <h3 style="font-size: 16px; margin: 5px 0;">Superposition Mastery</h3>
+          <p style="font-size: 12px; margin: 3px 0;">Reduces quantum power cost for collapsing</p>
+          <p style="font-size: 12px; margin: 3px 0;">Cost: 3.0 QC</p>
+        </div>
+        <button class="upgrade-button" onclick="purchaseUpgrade('collapseCost')" style="font-size: 12px; padding: 4px 10px;">Purchase</button>
+      </div>
+      <div class="upgrade-item" style="margin: 8px 0;">
+        <div>
+          <h3 style="font-size: 16px; margin: 5px 0;">Mining Efficiency</h3>
+          <p style="font-size: 12px; margin: 3px 0;">Increases crypto rewards</p>
+          <p style="font-size: 12px; margin: 3px 0;">Cost: 2.5 QC</p>
+        </div>
+        <button class="upgrade-button" onclick="purchaseUpgrade('miningEfficiency')" style="font-size: 12px; padding: 4px 10px;">Purchase</button>
+      </div>
+      <div class="upgrade-item" style="margin: 8px 0;">
+        <div>
+          <h3 style="font-size: 16px; margin: 5px 0;">Quantum Stability</h3>
+          <p style="font-size: 12px; margin: 3px 0;">Increases max superpositions allowed</p>
+          <p style="font-size: 12px; margin: 3px 0;">Cost: 4.0 QC</p>
+        </div>
+        <button class="upgrade-button" onclick="purchaseUpgrade('stability')" style="font-size: 12px; padding: 4px 10px;">Purchase</button>
+      </div>
+    </div>
+  </div>
+
+<script>
+const quantumField = document.querySelector('.quantum-field');
+let score = 0;
+let quantumPower = 100;
+let maxQuantumPower = 100;
+let cryptoBalance = 0;
+let particles = [];
+let superpositions = [];
+let miners = [];
+let isGameOver = false;
+let spinStates = ['UP', 'DOWN'];
+let currentLevel = 1;
+let superpositionSpawnRate = 2000;
+let maxSuperpositions = 5;
+let quantumPowerRegenRate = 1;
+let scoreToNextLevel = 500;
+let powerRegenLevel = 1;
+let collapseCostLevel = 1;
+let miningEfficiencyLevel = 1;
+let stabilityLevel = 1;
+let superpositionCost = 20;
+let isPaused = false;
+let lives = 3;
+
+function updateQuantumPowerDisplay() {
+  document.getElementById('quantumPower').textContent = `${Math.floor(quantumPower)}/${maxQuantumPower}`;
+}
+
+function toggleStore() {
+  const modal = document.getElementById('storeModal');
+  const overlay = document.getElementById('modalOverlay');
+  if (modal.style.display === 'block') {
+    modal.style.display = 'none';
+    overlay.style.display = 'none';
+    isPaused = false;
+  } else {
+    modal.style.display = 'block';
+    overlay.style.display = 'block';
+    isPaused = true;
+    updateStoreButtons();
+  }
+}
+
+function updateStoreButtons() {
+  const buttons = document.querySelectorAll('.upgrade-button');
+  buttons.forEach(button => {
+    const upgradeCost = getUpgradeCost(button.onclick.toString().match(/'(.*?)'/)[1]);
+    button.disabled = cryptoBalance < upgradeCost;
+  });
+}
+
+function getUpgradeCost(upgradeType) {
+  switch(upgradeType) {
+    case 'powerRegen': return 2.0;
+    case 'collapseCost': return 3.0;
+    case 'miningEfficiency': return 2.5;
+    case 'stability': return 4.0;
+    default: return 0;
+  }
+}
+
+function purchaseUpgrade(upgradeType) {
+  const cost = getUpgradeCost(upgradeType);
+  if (cryptoBalance >= cost) {
+    cryptoBalance -= cost;
+    document.getElementById('cryptoBalance').textContent = cryptoBalance.toFixed(2);
+    
+    switch(upgradeType) {
+      case 'powerRegen':
+        powerRegenLevel++;
+        quantumPowerRegenRate += 0.5;
+        break;
+      case 'collapseCost':
+        collapseCostLevel++;
+        superpositionCost = Math.max(5, superpositionCost - 2);
+        break;
+      case 'miningEfficiency':
+        miningEfficiencyLevel++;
+        break;
+      case 'stability':
+        stabilityLevel++;
+        maxSuperpositions += 1;
+        break;
+    }
+    
+    updateStoreButtons();
+  }
+}
+
+function createParticle(x, y) {
+  const particle = document.createElement('div');
+  particle.className = 'particle';
+  particle.style.left = x + 'px';
+  particle.style.top = y + 'px';
+  particle.style.width = '4px';
+  particle.style.height = '4px';
+  particle.style.background = '#0f0'; // Green color
+  particle.style.boxShadow = `0 0 10px #0f0`; // Green glow
+  quantumField.appendChild(particle);
+  return particle;
+}
+
+function createQuantumMiner(x, y, isBonus = false) {
+  const miner = document.createElement('div');
+  miner.className = 'crypto-mining';
+  miner.style.left = x + 'px';
+  miner.style.top = y + 'px';
+  quantumField.appendChild(miner);
+  miners.push(miner);
+  
+  createBlockchainVisuals(miner);
+  
+  const baseReward = Math.random() > 0.5 ? 0.2 : 0.4;
+  const efficiencyBonus = 1 + (miningEfficiencyLevel - 1) * 0.2;
+  const bonusMultiplier = isBonus ? 2 : 1;
+  const reward = baseReward * efficiencyBonus * bonusMultiplier;
+  
+  cryptoBalance += reward;
+  document.getElementById('cryptoBalance').textContent = cryptoBalance.toFixed(2);
+  
+  setTimeout(() => {
+    miner.remove();
+    miners = miners.filter(m => m !== miner);
+  }, 3000);
+}
+
+function createBlockchainVisuals(miner) {
+  const rect = miner.getBoundingClientRect();
+  const centerX = rect.left + rect.width/2;
+  const centerY = rect.top + rect.height/2;
+  
+  for (let i = 0; i < 4; i++) {
+    const link = document.createElement('div');
+    link.className = 'blockchain-link';
+    const angle = (i / 4) * Math.PI * 2;
+    const length = 50;
+    
+    link.style.width = length + 'px';
+    link.style.left = centerX + 'px';
+    link.style.top = centerY + 'px';
+    link.style.transform = `rotate(${angle}rad)`;
+    
+    quantumField.appendChild(link);
+    setTimeout(() => link.remove(), 1000);
+  }
+}
+
+function createUncertaintyWave(x, y) {
+  const wave = document.createElement('div');
+  wave.className = 'uncertainty-wave';
+  wave.style.left = x + 'px';
+  wave.style.top = y + 'px';
+  wave.style.width = '60px';
+  wave.style.height = '60px';
+  quantumField.appendChild(wave);
+  setTimeout(() => wave.remove(), 3000);
+}
+
+function quantumSpin(element) {
+  const spinParticle = document.createElement('div');
+  spinParticle.className = 'spin-particle';
+  const rect = element.getBoundingClientRect();
+  spinParticle.style.left = (rect.left + rect.width/2) + 'px';
+  spinParticle.style.top = (rect.top + rect.height/2) + 'px';
+  quantumField.appendChild(spinParticle);
+  
+  const spinState = spinStates[Math.floor(Math.random() * spinStates.length)];
+  if(spinState === 'UP') {
+    score += 50;
+    spinParticle.style.transform = 'rotate(0deg)';
+  } else {
+    score += 30;
+    spinParticle.style.transform = 'rotate(180deg)';
+  }
+  
+  setTimeout(() => spinParticle.remove(), 1000);
+}
+
+function schrodingerWaveCollapse(element) {
+  const probability = Math.random();
+  if(probability > 0.5) {
+    createParticle(parseInt(element.style.left), parseInt(element.style.top));
+  } else {
+    createUncertaintyWave(parseInt(element.style.left), parseInt(element.style.top));
+  }
+}
+
+function collapseSuperposition(element, x, y) {
+  if (!element.isDangerous && quantumPower < superpositionCost) return;
+  
+  const centerX = parseInt(element.style.left) + (parseInt(element.style.width) / 2);
+  const centerY = parseInt(element.style.top) + (parseInt(element.style.height) / 2);
+  
+  for (let i = 0; i < 20; i++) {
+    const angle = (i / 20) * Math.PI * 2;
+    const distance = 50;
+    const particleX = centerX + Math.cos(angle) * distance;
+    const particleY = centerY + Math.sin(angle) * distance;
+    const particle = createParticle(particleX, particleY); // Green color
+    
+    particles.push({
+      element: particle,
+      x: particleX,
+      y: particleY,
+      angle: angle,
+      speed: Math.random() * 2 + 1
+    });
+  }
+  
+  quantumTunnel(element);
+  createQuantumMiner(centerX, centerY, element.isBonus);
+  
+  // If this was part of an entangled pair, collapse both
+  if (element.entangledPair && element.entangledPair.isConnected) {
+    const pair = element.entangledPair;
+    setTimeout(() => {
+      collapseSuperposition(pair, 
+        parseInt(pair.style.left) + (parseInt(pair.style.width) / 2), 
+        parseInt(pair.style.top) + (parseInt(pair.style.height) / 2)
+      );
+    }, 100);
+  }
+  
+  if (superpositions.length > 1) {
+    const otherSuperposition = superpositions.find(s => s !== element);
+    if (otherSuperposition) {
+      quantumEntangle(element, otherSuperposition);
+    }
+  }
+  
+  element.remove();
+  superpositions = superpositions.filter(s => s !== element);
+  score += 100;
+  document.getElementById('score').textContent = score;
+  decreaseQuantumPower(20);
+  
+  // Special effects for purple superpositions
+  if (element.isPurple) {
+    // Create a burst of purple particles
+    for (let i = 0; i < 30; i++) {
+      const angle = (i / 30) * Math.PI * 2;
+      const distance = 100;
+      const particleX = centerX + Math.cos(angle) * distance;
+      const particleY = centerY + Math.sin(angle) * distance;
+      const particle = createParticle(particleX, particleY);
+      particle.style.background = '#f0f';
+      particle.style.boxShadow = '0 0 10px #f0f';
+      
+      particles.push({
+        element: particle,
+        x: particleX,
+        y: particleY,
+        angle: angle,
+        speed: Math.random() * 3 + 2
+      });
+    }
+    
+    // Add extra score for purple superpositions
+    score += 50;
+    
+    // Increase max power
+    maxQuantumPower += 1;
+    updateQuantumPowerDisplay();
+  }
+  
+  checkLevelProgress();
+}
+
+function updateSuperpositionBehavior(superposition) {
+  if (currentLevel >= 10) {
+    // Remove random movement code
+    // Only keep size and rotation animations if desired
+    const randomRotation = `rotate3d(
+      ${Math.random()}, 
+      ${Math.random()}, 
+      ${Math.random()}, 
+      ${Math.random() * 360}deg
+    )`;
+    superposition.style.transform = randomRotation;
+  }
+  
+  if (currentLevel >= 20) {
+    // Keep disappearing/reappearing behavior
+    setInterval(() => {
+      if (!isGameOver && !isPaused) {
+        superposition.style.opacity = superposition.style.opacity === '0' ? '1' : '0';
+      }
+    }, 2000);
+  }
+}
+
+function createSuperposition() {
+  if (isGameOver || isPaused) return;
+
+  if (superpositions.length >= maxSuperpositions) {
+    gameOver();
+    return;
+  }
+  
+  const superposition = document.createElement('div');
+  superposition.className = 'superposition';
+  const x = Math.random() * (window.innerWidth - 60);
+  const y = Math.random() * (window.innerHeight - 60);
+  
+  // Add random size between 20px and 60px
+  const randomSize = Math.floor(Math.random() * 40) + 20;
+  superposition.style.width = randomSize + 'px';
+  superposition.style.height = randomSize + 'px';
+  
+  superposition.style.left = x + 'px';
+  superposition.style.top = y + 'px';
+
+  // Add transition style for smooth movement
+  superposition.style.transition = 'all 0.5s ease';
+
+  // Add chance for different colored superpositions
+  const colorRoll = Math.random();
+  if (colorRoll < 0.1) {
+    superposition.classList.add('bonus'); // Green (10% chance)
+    superposition.isBonus = true;
+  } else if (colorRoll < 0.2) { // Purple (10% chance)
+    superposition.classList.add('purple');
+    superposition.isPurple = true;
+    
+    // Purple circles have special properties:
+    // They create more quantum tunnels when clicked
+    superposition.addEventListener('click', () => {
+      if (!isGameOver && !isPaused) {
+        // Create multiple quantum tunnels in a spiral pattern
+        for (let i = 0; i < 5; i++) {
+          setTimeout(() => {
+            const tunnel = document.createElement('div');
+            tunnel.className = 'quantum-tunnel';
+            tunnel.style.width = parseInt(superposition.style.width) + 'px';
+            tunnel.style.height = parseInt(superposition.style.height) + 'px';
+            
+            // Calculate spiral position
+            const angle = (i / 5) * Math.PI * 2;
+            const distance = 50;
+            const offsetX = Math.cos(angle) * distance;
+            const offsetY = Math.sin(angle) * distance;
+            
+            tunnel.style.left = (parseInt(superposition.style.left) + offsetX) + 'px';
+            tunnel.style.top = (parseInt(superposition.style.top) + offsetY) + 'px';
+            
+            quantumField.appendChild(tunnel);
+            setTimeout(() => tunnel.remove(), 1000);
+          }, i * 200);
+        }
+      }
+    });
+  }
+
+  // Modify particle creation for purple superpositions
+  if (superposition.isPurple) {
+    // Add purple particle trails
+    const particleInterval = setInterval(() => {
+      if (!isGameOver && !isPaused && superposition.isConnected) {
+        const particle = document.createElement('div');
+        particle.className = 'particle';
+        particle.style.left = (parseInt(superposition.style.left) + Math.random() * parseInt(superposition.style.width)) + 'px';
+        particle.style.top = (parseInt(superposition.style.top) + Math.random() * parseInt(superposition.style.height)) + 'px';
+        particle.style.width = '2px';
+        particle.style.height = '2px';
+        particle.style.background = '#f0f';
+        particle.style.boxShadow = '0 0 10px #f0f';
+        quantumField.appendChild(particle);
+        
+        setTimeout(() => particle.remove(), 1000);
+      }
+    }, 100);
+    
+    // Clean up interval when superposition is removed
+    superposition.addEventListener('remove', () => {
+      clearInterval(particleInterval);
+    });
+  }
+
+  // Add random movement behavior removed as per plan
+
+  const randomRotation = `rotate3d(
+    ${Math.random()}, 
+    ${Math.random()}, 
+    ${Math.random()}, 
+    ${Math.random() * 360}deg
+  )`;
+  superposition.style.transform = randomRotation;
+
+  superposition.isDangerous = Math.random() < 0.3;
+  
+  // Initialize entanglement properties
+  superposition.entangledPair = null;
+  superposition.isEntangled = false;
+
+  // Try to entangle with an existing superposition
+  if (superpositions.length > 0) {
+    const availablePair = superpositions.find(s => !s.isEntangled);
+    if (availablePair) {
+      superposition.entangledPair = availablePair;
+      availablePair.entangledPair = superposition;
+      superposition.isEntangled = true;
+      availablePair.isEntangled = true;
+      
+      // Start entanglement flashing
+      startEntanglementFlash(superposition, availablePair);
+    }
+  }
+
+  if (superposition.isDangerous) {
+    superposition.classList.add('dangerous');
+  }
+  
+  superposition.addEventListener('click', () => {
+    if (isGameOver) return;
+    
+    if (superposition.isDangerous) {
+      gameOver();
+      return;
+    }
+    
+    superposition.classList.add('triangle-state');
+    
+    collapseSuperposition(superposition, x + 20, y + 20);
+    quantumSpin(superposition);
+    schrodingerWaveCollapse(superposition);
+    
+    // Only decrease quantum power if not a bonus
+    if (!superposition.isBonus) {
+      decreaseQuantumPower(20);
+    }
+  });
+  
+  quantumField.appendChild(superposition);
+  superpositions.push(superposition);
+  
+  updateSuperpositionBehavior(superposition);
+
+  setTimeout(() => {
+    superposition.style.animation = 'fadeAway 0.5s forwards';
+    setTimeout(() => {
+      superposition.remove();
+      superpositions = superpositions.filter(s => s !== superposition);
+      
+      // If this superposition was entangled, find its pair and clear the entanglement
+      if (superposition.entangledPair && superposition.entangledPair.isConnected) {
+        superposition.entangledPair.entangledPair = null;
+        superposition.entangledPair.isEntangled = false;
+      }
+    }, 500);
+  }, 4500);
+}
+
+function quantumTunnel(element) {
+  const tunnel = document.createElement('div');
+  tunnel.className = 'quantum-tunnel';
+  tunnel.style.width = '40px';
+  tunnel.style.height = '40px';
+  tunnel.style.left = element.style.left;
+  tunnel.style.top = element.style.top;
+  quantumField.appendChild(tunnel);
+  setTimeout(() => tunnel.remove(), 1000);
+}
+
+function quantumEntangle(element1, element2) {
+  const rect1 = element1.getBoundingClientRect();
+  const rect2 = element2.getBoundingClientRect();
+  
+  createEntanglementLine(
+    rect1.left + rect1.width/2,
+    rect1.top + rect1.height/2,
+    rect2.left + rect2.width/2,
+    rect2.top + rect2.height/2,
+    element1.isDangerous || element2.isDangerous // Pass dangerous status
+  );
+  
+  const tempLeft = element1.style.left;
+  const tempTop = element1.style.top;
+  element1.style.left = element2.style.left;
+  element1.style.top = element2.style.top;
+  element2.style.left = tempLeft;
+  element2.style.top = tempTop;
+}
+
+function decreaseQuantumPower(amount) {
+  quantumPower = Math.max(0, quantumPower - amount);
+  updateQuantumPowerDisplay();
+}
+
+function regenerateQuantumPower() {
+  if (!isGameOver && !isPaused && quantumPower < maxQuantumPower) {
+    quantumPower = Math.min(maxQuantumPower, quantumPower + quantumPowerRegenRate);
+    updateQuantumPowerDisplay();
+  }
+}
+
+function createEntanglementLine(x1, y1, x2, y2, isDangerous = false) {
+  const line = document.createElement('div');
+  line.className = 'entanglement-line';
+  if (isDangerous) {
+    line.classList.add('dangerous');
+  }
+  
+  const length = Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
+  const angle = Math.atan2(y2 - y1, x2 - x1);
+  
+  line.style.width = length + 'px';
+  line.style.left = x1 + 'px';
+  line.style.top = y1 + 'px';
+  line.style.transform = `rotate(${angle}rad)`;
+  
+  quantumField.appendChild(line);
+  setTimeout(() => line.remove(), 1000);
+}
+
+function updateParticles() {
+  if (isPaused) return;
+  
+  particles.forEach((particle, index) => {
+    particle.x += Math.cos(particle.angle) * particle.speed;
+    particle.y += Math.sin(particle.angle) * particle.speed;
+    particle.element.style.left = particle.x + 'px';
+    particle.element.style.top = particle.y + 'px';
+    
+    if (particle.x < 0 || particle.x > window.innerWidth || 
+        particle.y < 0 || particle.y > window.innerHeight) {
+      particle.element.remove();
+      particles.splice(index, 1);
+    }
+  });
+}
+
+function gameOver() {
+  lives--;
+  document.getElementById('livesCount').textContent = lives;
+  
+  if (lives <= 0) {
+    isGameOver = true;
+    document.getElementById('gameOver').style.display = 'block';  
+    document.getElementById('restartButton').style.display = 'block';
+    superpositions.forEach(s => s.remove());
+    superpositions = [];
+    clearInterval(superpositionInterval);
+    
+    setTimeout(() => {
+      document.getElementById('gameOver').style.display = 'none';
+      document.getElementById('restartButton').style.display = 'none';
+      restartGame();
+    }, 5000);
+  }
+}
+
+function restartGame() {
+  score = 0;
+  quantumPower = 100;
+  cryptoBalance = 0;
+  isGameOver = false;
+  currentLevel = 1;
+  superpositionSpawnRate = 2000;
+  maxSuperpositions = 5;
+  quantumPowerRegenRate = 1;
+  scoreToNextLevel = 500;
+  powerRegenLevel = 1;
+  collapseCostLevel = 1;
+  miningEfficiencyLevel = 1;
+  stabilityLevel = 1;
+  superpositionCost = 20;
+  lives = 3;
+  
+  document.getElementById('score').textContent = '0';
+  updateQuantumPowerDisplay();
+  document.getElementById('cryptoBalance').textContent = '0';
+  document.getElementById('currentLevel').textContent = '1';
+  document.getElementById('livesCount').textContent = '3';
+  document.getElementById('gameOver').style.display = 'none';
+  document.getElementById('restartButton').style.display = 'none';
+  
+  superpositions.forEach(s => s.remove());
+  superpositions = [];
+  particles.forEach(p => p.element.remove());
+  particles = [];
+  miners.forEach(m => m.remove());
+  miners = [];
+  
+  clearInterval(superpositionInterval);
+  superpositionInterval = setInterval(createSuperposition, superpositionSpawnRate);
+  
+  createSuperposition();
+  createSuperposition();
+}
+
+// Update the startEntanglementFlash function to handle cleanup better
+function startEntanglementFlash(particle1, particle2) {
+  // Generate random duration between 1500ms (1.5s) and 3000ms (3s)
+  const entanglementDuration = Math.random() * 1500 + 1500;
+  
+  const entanglementInterval = setInterval(() => {
+    if (!isGameOver && !isPaused && 
+        particle1 && particle2 && 
+        particle1.isConnected && particle2.isConnected) {
+      
+      // Create visual connection line with dangerous status
+      const rect1 = particle1.getBoundingClientRect();
+      const rect2 = particle2.getBoundingClientRect();
+      createEntanglementLine(
+        rect1.left + rect1.width/2,
+        rect1.top + rect1.height/2,
+        rect2.left + rect2.width/2,
+        rect2.top + rect2.height/2,
+        particle1.isDangerous || particle2.isDangerous
+      );
+
+      // Swap positions
+      const tempLeft = particle1.style.left;
+      const tempTop = particle1.style.top;
+      particle1.style.left = particle2.style.left;
+      particle1.style.top = particle2.style.top;
+      particle2.style.left = tempLeft;
+      particle2.style.top = tempTop;
+      
+      // Add flash effect
+      particle1.style.opacity = '0.5';
+      particle2.style.opacity = '0.5';
+      setTimeout(() => {
+        if (particle1.isConnected) particle1.style.opacity = '1';
+        if (particle2.isConnected) particle2.style.opacity = '1';
+      }, 100);
+      
+    } else {
+      clearInterval(entanglementInterval);
+    }
+  }, 1000);
+
+  // Set timeout to clear entanglement after random duration
+  setTimeout(() => {
+    clearInterval(entanglementInterval);
+    if (particle1 && particle1.isConnected) {
+      particle1.entangledPair = null;
+      particle1.isEntangled = false;
+    }
+    if (particle2 && particle2.isConnected) {
+      particle2.entangledPair = null;
+      particle2.isEntangled = false;
+    }
+  }, entanglementDuration);
+
+  // Clean up interval if particles are removed before duration ends
+  const cleanup = () => {
+    clearInterval(entanglementInterval);
+    if (particle1.entangledPair) particle1.entangledPair = null;
+    if (particle2.entangledPair) particle2.entangledPair = null;
+    particle1.isEntangled = false;
+    particle2.isEntangled = false;
+  };
+
+  particle1.addEventListener('remove', cleanup);
+  particle2.addEventListener('remove', cleanup);
+}
+
+function createGeometricBackground() {
+  const background = document.createElement('div');
+  background.className = 'geometric-background';
+  quantumField.appendChild(background);
+
+  for (let i = 0; i < 10; i++) {
+    createGeometricShape(background);
+    createFloatingHexagon(background);
+  }
+
+  const glitchOverlay = document.createElement('div');
+  glitchOverlay.className = 'glitch-overlay';
+  quantumField.appendChild(glitchOverlay);
+}
+
+function createGeometricShape(parent) {
+  const shape = document.createElement('div');
+  shape.className = 'geometric-shape';
+  
+  shape.style.left = Math.random() * window.innerWidth + 'px';
+  shape.style.top = Math.random() * window.innerHeight + 'px';
+  
+  const size = Math.random() * 100 + 50;
+  shape.style.width = size + 'px';
+  shape.style.height = size + 'px';
+  
+  shape.style.borderRadius = Math.random() > 0.5 ? '50%' : '0';
+  shape.style.borderColor = '#0ff'; // Always cyan
+  
+  parent.appendChild(shape);
+}
+
+function createFloatingHexagon(parent) {
+  const hexagon = document.createElement('div');
+  hexagon.className = 'floating-hexagon';
+  
+  hexagon.style.left = Math.random() * window.innerWidth + 'px';
+  hexagon.style.top = Math.random() * window.innerHeight + 'px';
+  
+  hexagon.style.borderColor = '#0ff'; // Always cyan
+  hexagon.style.background = 'rgba(0, 255, 255, 0.1)';
+  
+  hexagon.style.animationDelay = Math.random() * 2 + 's';
+  
+  parent.appendChild(hexagon);
+}
+
+function checkLevelProgress() {
+  const circlesNeeded = currentLevel * 10;
+  if (score / 100 >= circlesNeeded) {
+    levelUp();
+  }
+}
+
+function levelUp() {
+  currentLevel++;
+  document.getElementById('currentLevel').textContent = currentLevel;
+  
+  const notification = document.getElementById('levelUpNotification');
+  notification.style.opacity = '1';
+  
+  superpositionSpawnRate = Math.max(500, superpositionSpawnRate - 200);
+  maxSuperpositions = Math.min(10, maxSuperpositions + 1);
+  quantumPowerRegenRate = Math.min(5, quantumPowerRegenRate + 0.5);
+  
+  // Update existing superpositions with new level-based behaviors
+  superpositions.forEach(superposition => {
+    updateSuperpositionBehavior(superposition);
+  });
+  
+  clearInterval(superpositionInterval);
+  superpositionInterval = setInterval(createSuperposition, superpositionSpawnRate);
+  
+  setTimeout(() => {
+    notification.style.opacity = '0';
+  }, 2000);
+}
+
+let superpositionInterval = setInterval(createSuperposition, superpositionSpawnRate);
+setInterval(updateParticles, 16);
+setInterval(regenerateQuantumPower, 100);
+
+createGeometricBackground();
+createSuperposition();
+createSuperposition();
+updateQuantumPowerDisplay();
+</script>
+</body></html>
