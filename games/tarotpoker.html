@@ -581,11 +581,11 @@ button:hover:not(:disabled) {
 
     function throttleClick(callback) {
       const currentTime = Date.now();
-      if (currentTime - lastClickTime >= 2000) {
+      if (currentTime - lastClickTime >= 1500) { // 1.5 seconds
         lastClickTime = currentTime;
         callback();
       } else {
-        console.log("Click throttled: Wait 2 seconds between clicks");
+        console.log("Click throttled: Wait 1.5 seconds between clicks");
       }
     }
 
