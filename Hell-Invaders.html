@@ -331,15 +331,18 @@ let highScore = 0;
 let lives = 3;
 let gameOver = false;
 
-let alienDirection = 1;
-let alienPosition = 0;
-let alienMoveSpeed = 5; // Changed from 10 to 5 to make movement smoother at slower speed
-let alienMoveInterval = 500; // Changed from 250 to 500 to make it half as fast
-let alienVerticalMove = 5;
-let originalRowCount = 5;
-let currentRowCount = 5;
 let aliensHit = 0;
 let currentLevel = 1;
+let originalRowCount = 5;
+let currentRowCount = 5;
+
+let alienDirection = 1;
+let alienPosition = 0;
+let alienMoveSpeed = 3; // Start slower to allow for more progression
+let alienMoveInterval = 800; // Start slower
+let alienBulletSpeed = 3; // New variable for bullet speed
+let alienShootInterval = 1000; // New variable for shooting frequency
+const MAX_LEVEL = 20; // New constant for max levels
 
 const galagaSounds = {
     backgroundMusic: new Audio('https://example.com/galaga_background.mp3'),
@@ -502,9 +505,9 @@ function moveAliens() {
     if (alienPosition >= maxMove || alienPosition <= -maxMove) {
         alienDirection *= -1;
         const currentTop = parseFloat(invadersGrid.style.top) || 20;
-        invadersGrid.style.top = `${currentTop + alienVerticalMove}%`;
+        invadersGrid.style.top = `${currentTop + 5}%`;
         
-        if (currentTop + alienVerticalMove > 70) {
+        if (currentTop + 5 > 70) {
             endGame(false);
             return;
         }
@@ -536,6 +539,8 @@ function alienShoot() {
     if (gameOver) return;
     
     const aliens = document.querySelectorAll('.invader');
+    if (aliens.length === 0) return;
+    
     const shootingAlien = aliens[Math.floor(Math.random() * aliens.length)];
     const alienRect = shootingAlien.getBoundingClientRect();
 
@@ -553,7 +558,7 @@ function alienShoot() {
         }
         
         const bulletRect = bullet.getBoundingClientRect();
-        bullet.style.top = (bulletRect.top + 5) + 'px';
+        bullet.style.top = (bulletRect.top + alienBulletSpeed) + 'px';
 
         if (bulletRect.top > gameContainer.offsetHeight) {
             clearInterval(bulletInterval);
@@ -562,7 +567,7 @@ function alienShoot() {
 
         checkBunkerCollision(bullet, bulletRect, bulletInterval);
         checkPlayerCollision(bullet, bulletRect, bulletInterval);
-    }, 50);
+    }, 20);
 }
 
 function checkBunkerCollision(bullet, bulletRect, bulletInterval) {
@@ -759,6 +764,11 @@ function loseLife() {
 
 function levelUp() {
     currentLevel++;
+    if (currentLevel > MAX_LEVEL) {
+        endGame(true); // Player wins after beating level 20
+        return;
+    }
+    
     levelDisplay.textContent = `LEVEL:${currentLevel}`;
     
     const levelUpDiv = document.createElement('div');
@@ -782,22 +792,35 @@ function startNextLevel() {
     gameOver = false;
     document.querySelector('.level-up').remove();
     
-    alienMoveInterval = Math.max(100, alienMoveInterval - 25); // Changed minimum from 50 to 100
-    alienMoveSpeed += 0.5; // Changed from 1 to 0.5 for smoother scaling
+    // Reset hit counter and row tracking
+    aliensHit = 0;
+    
+    // Progressive difficulty adjustments
+    alienMoveInterval = Math.max(100, 800 - (currentLevel * 35)); // Gets faster each level
+    alienMoveSpeed = 3 + (currentLevel * 0.2); // Slight speed increase per level
+    alienBulletSpeed = 3 + (currentLevel * 0.15); // Bullets get faster
+    alienShootInterval = Math.max(300, 1000 - (currentLevel * 35)); // Shoot more frequently
+    
+    // Add more invaders in higher levels (up to 7 rows)
+    const extraRows = Math.min(2, Math.floor(currentLevel / 5)); // Add a row every 5 levels, max 2 extra
+    originalRowCount = 5 + extraRows;
+    currentRowCount = originalRowCount;
     
     createInvaders();
     createBunkerParts();
-    
-    aliensHit = 0;
-    currentRowCount = originalRowCount;
     
     invadersGrid.style.top = '20%';
     alienPosition = 0;
     alienDirection = 1;
     
+    // Update alien shooting interval
+    clearInterval(window.alienShootTimer);
+    window.alienShootTimer = setInterval(alienShoot, alienShootInterval);
+    
     moveAliens();
 }
 
+// Update endGame function to handle winning
 function endGame(win) {
     gameOver = true;
     
@@ -805,7 +828,7 @@ function endGame(win) {
     
     const gameOverDiv = document.createElement('div');
     gameOverDiv.classList.add('game-over');
-    gameOverDiv.innerHTML = win ? 'YOU WIN!' : 'GAME OVER';
+    gameOverDiv.innerHTML = win ? 'CONGRATULATIONS!<br>YOU BEAT ALL 20 LEVELS!' : 'GAME OVER';
     
     const restartButton = document.createElement('button');
     restartButton.classList.add('restart-button');
@@ -820,6 +843,9 @@ function endGame(win) {
     galagaSounds.backgroundMusic.pause();
     playSoundWithError(galagaSounds.gameOver);
 }
+
+// Add this line where alienShoot is initially set up (near the bottom of the file)
+window.alienShootTimer = setInterval(alienShoot, alienShootInterval);
 
 function updateScore(points) {
     score += points;
@@ -858,6 +884,12 @@ function updateLivesDisplay() {
 }
 
 function addStartScreen() {
+    // Reset game variables
+    aliensHit = 0;
+    currentLevel = 1;
+    originalRowCount = 5;
+    currentRowCount = 5;
+    
     const startScreen = document.createElement('div');
     startScreen.style.cssText = `
         position: absolute;
@@ -895,7 +927,7 @@ function addStartScreen() {
         startBackgroundMusic();
         moveAliens();
         spawnMysteryUfo();
-        setInterval(alienShoot, 1000);
+        setInterval(alienShoot, alienShootInterval);
         gameLoop();
     });
 }
