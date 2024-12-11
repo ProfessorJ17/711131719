@@ -1,0 +1,968 @@
+<html><head><base href="." />
+<style>
+    /* I'll keep all the previous styles and add new ones for interactions */
+    body, html {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+        font-family: Arial, sans-serif;
+        background: #000;
+        color: white;
+    }
+    
+    @keyframes glitch {
+        0% {
+            transform: translate(0);
+            text-shadow: 2px 2px #f00, -2px -2px #0ff;
+        }
+        25% {
+            transform: translate(-2px, 2px);
+            text-shadow: -2px -2px #f00, 2px 2px #0ff;
+        }
+        50% {
+            transform: translate(2px, -2px);
+            text-shadow: 2px -2px #f00, -2px 2px #0ff;
+        }
+        75% {
+            transform: translate(-2px, -2px);
+            text-shadow: -2px 2px #f00, 2px -2px #0ff;
+        }
+        100% {
+            transform: translate(0);
+            text-shadow: 2px 2px #f00, -2px -2px #0ff;
+        }
+    }
+
+    @keyframes bloodDrip {
+        0% {
+            transform: translateY(-100%);
+        }
+        100% {
+            transform: translateY(100%);
+        }
+    }
+
+    #elevator {
+        width: 100%;
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .view {
+        width: 80%;
+        height: 60vh;
+        border: 4px solid #444;
+        background: linear-gradient(45deg, #1a0707, #222);
+        position: relative;
+        overflow: hidden;
+        perspective: 1000px;
+        box-shadow: inset 0 0 50px rgba(255,0,0,0.2);
+    }
+
+    .buttons {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10px;
+        margin-top: 20px;
+    }
+
+    button {
+        padding: 10px 20px;
+        background: #333;
+        color: white;
+        border: 2px solid #555;
+        cursor: pointer;
+        transition: 0.3s;
+    }
+
+    button:hover {
+        background: #444;
+    }
+
+    .elevator-door {
+        position: absolute;
+        width: 50%;
+        height: 100%;
+        background: linear-gradient(45deg, #2a0808, #400);
+        border: 2px solid #800;
+        transition: transform 0.5s;
+    }
+
+    .door-left { left: 0; }
+    .door-right { right: 0; }
+
+    .keypad {
+        position: absolute;
+        right: 20px;
+        top: 50%;
+        transform: translateY(-50%);
+        background: #222;
+        padding: 10px;
+        border: 2px solid #444;
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 5px;
+    }
+
+    .keypad-button {
+        width: 40px;
+        height: 40px;
+        background: #2a0808;
+        border: 1px solid #800;
+        color: #f00;
+        text-shadow: 0 0 5px #f00;
+        cursor: pointer;
+        transition: all 0.3s;
+    }
+
+    .keypad-button:hover {
+        background: #400;
+        transform: scale(1.1);
+    }
+
+    .scrambled-display {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        background: #000;
+        padding: 10px 20px;
+        font-family: 'Courier New', monospace;
+        color: #f00;
+        text-shadow: 2px 2px #0ff;
+        border: 2px solid #444;
+        font-size: 24px;
+        letter-spacing: 2px;
+        animation: glitch 0.3s infinite;
+    }
+
+    .mirror {
+        width: 80%;
+        height: 80%;
+        background: linear-gradient(135deg, #111, #2a0808);
+        border: 10px solid #800;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+    }
+
+    .hidden-message {
+        position: absolute;
+        opacity: 0;
+        transition: opacity 0.3s;
+    }
+
+    .uv-visible {
+        opacity: 0.8;
+        color: #7b68ee;
+    }
+
+    .inventory {
+        position: fixed;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: #333;
+        padding: 10px;
+        border: 2px solid #555;
+        display: flex;
+        gap: 10px;
+    }
+
+    .inventory-item {
+        width: 50px;
+        height: 50px;
+        background: #222;
+        border: 1px solid #444;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+        cursor: pointer;
+    }
+
+    .interactive {
+        cursor: pointer;
+        transition: transform 0.2s;
+    }
+
+    .interactive:hover {
+        transform: scale(1.05);
+    }
+
+    .message {
+        position: fixed;
+        top: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: rgba(0, 0, 0, 0.8);
+        padding: 10px 20px;
+        border-radius: 5px;
+        z-index: 1000;
+        display: none;
+    }
+
+    .blood-drip {
+        position: absolute;
+        width: 2px;
+        height: 20px;
+        background: #800;
+        opacity: 0.7;
+        animation: bloodDrip 3s linear infinite;
+    }
+
+    .magnetic-panel {
+        position: absolute;
+        width: 200px;
+        height: 200px;
+        background: linear-gradient(135deg, #333, #444);
+        border: 2px solid #555;
+        right: 20px;
+        bottom: 20px;
+        cursor: pointer;
+        transition: all 0.3s;
+    }
+
+    .magnetic-panel:hover {
+        background: linear-gradient(135deg, #444, #555);
+    }
+
+    .magnetic-panel.open {
+        transform: translateX(180px);
+    }
+
+    .gear-container {
+        position: absolute;
+        right: 20px;
+        bottom: 20px;
+        width: 200px;
+        height: 200px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        opacity: 0;
+        transition: opacity 0.3s;
+    }
+
+    .gear-container.visible {
+        opacity: 1;
+    }
+
+    .gear-svg {
+        width: 100px;
+        height: 100px;
+        cursor: pointer;
+    }
+
+    .hidden-drawer {
+        position: absolute;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 200px;
+        height: 20px;
+        background: #333;
+        border: 2px solid #444;
+        transition: height 0.3s;
+    }
+
+    .hidden-drawer.open {
+        height: 100px;
+    }
+
+    .speaker-grill {
+        background: #333;
+        padding: 20px;
+        border: 1px solid #444;
+        cursor: pointer;
+    }
+
+    .diagram-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.9);
+        z-index: 1000;
+        display: none;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .diagram-content {
+        background: #222;
+        padding: 20px;
+        border: 2px solid #444;
+        position: relative;
+        width: 80%;
+        max-width: 600px;
+    }
+
+    .close-button {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background: #333;
+        border: none;
+        color: white;
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        cursor: pointer;
+        font-weight: bold;
+    }
+
+    .maze-container {
+        position: relative;
+        width: 100%;
+        height: 400px;
+    }
+</style>
+<script>
+let currentView = 'front';
+let inventory = [];
+let hasUVLight = false;
+let hasCrowbar = false;
+let hasWrench = false;
+let hasMagneticTool = false;
+let hasGear = false;
+let fireExtinguisherBroken = false;
+let hasCeilingDiagram = false;
+let magneticPanelOpen = false;
+let doorUnlocked = false;
+let speakerRiddleSolved = false;
+let hasDrawerKey = false;
+let emergencyHatchOpen = false;
+let ceilingPanelUnscrewed = false;
+let gearInstalled = false;
+let drawerOpen = false;
+let scratchPuzzleSolved = false;
+let crankTurned = false;
+let maintenancePanelUnlocked = false; // New state variable
+
+let keypadInput = '';
+let toolboxAttempts = 0;
+
+let startTime = Date.now();
+let gameWon = false;
+
+document.addEventListener('DOMContentLoaded', () => {
+    // Add random glitch effects
+    setInterval(() => {
+        if (Math.random() < 0.1) { // 10% chance every second
+            const view = document.querySelector('.view');
+            if (view) {
+                view.style.filter = `hue-rotate(${Math.random() * 360}deg)`;
+                setTimeout(() => {
+                    view.style.filter = '';
+                }, 100);
+            }
+        }
+    }, 1000);
+});
+
+function completeGame() {
+    if (gameWon) return;
+    gameWon = true;
+    const endTime = Date.now();
+    const timeElapsed = Math.floor((endTime - startTime) / 1000); // Convert to seconds
+    const minutes = Math.floor(timeElapsed / 60);
+    const seconds = timeElapsed % 60;
+    
+    // Create winning overlay
+    const overlay = document.createElement('div');
+    overlay.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.9);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 2000;
+    `;
+    
+    overlay.innerHTML = `
+        <div style="background: #222; padding: 40px; border: 2px solid #0f0; text-align: center;">
+            <h1 style="color: #0f0; margin-bottom: 20px;">Congratulations!</h1>
+            <p style="color: white; font-size: 1.2em;">You've escaped the elevator!</p>
+            <p style="color: #0f0; margin: 20px 0;">Time: ${minutes}m ${seconds}s</p>
+            <button onclick="location.reload()" 
+                    style="background: #0f0; color: black; border: none; padding: 10px 20px; 
+                           cursor: pointer; margin-top: 20px;">
+                Play Again
+            </button>
+        </div>
+    `;
+    
+    document.body.appendChild(overlay);
+}
+
+function showMessage(text) {
+    const msg = document.querySelector('.message');
+    msg.textContent = text;
+    msg.style.display = 'block';
+    setTimeout(() => msg.style.display = 'none', 3000);
+    if (Math.random() < 0.5) { // 50% chance to play sound on messages
+        playCreepySound();
+    }
+}
+
+function addToInventory(item) {
+    if (!inventory.includes(item)) {
+        inventory.push(item);
+        updateInventory();
+        showMessage(`Added ${item} to inventory`);
+    }
+}
+
+function useItem(item, target) {
+    const index = inventory.indexOf(item);
+    if (index > -1) {
+        inventory.splice(index, 1);
+        updateInventory();
+        return true;
+    }
+    return false;
+}
+
+function updateInventory() {
+    const inv = document.getElementById('inventory');
+    inv.innerHTML = inventory.map(item => `
+        <div class="inventory-item" onclick="useSelectedItem('${item}')">${item}</div>
+    `).join('');
+}
+
+function useSelectedItem(item) {
+    // Add to existing if statements in useSelectedItem
+    if (item === '📋') {
+        showDiagram();
+        return;
+    }
+    
+    if (currentView === 'down' && item === '🔧' && !hasUVLight) {
+        addToInventory('🔦');
+        hasUVLight = true;
+        showMessage('Found UV flashlight under the panel!');
+    }
+    
+    if (currentView === 'back' && item === '🔦') {
+        document.querySelector('.hidden-message').classList.add('uv-visible');
+        showMessage('The UV light reveals a hidden message!');
+    }
+
+    if (currentView === 'right' && item === '🛠️' && !fireExtinguisherBroken) {
+        fireExtinguisherBroken = true;
+        hasWrench = true;
+        hasCeilingDiagram = true;
+        addToInventory('🔧'); // Add wrench to inventory
+        addToInventory('📋'); // Add ceiling diagram to inventory
+        showMessage('You broke the fire extinguisher case and found a wrench and ceiling diagram!');
+        updateView();
+    }
+
+    if (currentView === 'back' && item === '🧲' && !magneticPanelOpen) {
+        magneticPanelOpen = true;
+        hasGear = true;
+        addToInventory('⚙️');
+        showMessage('You used the magnetic tool to open the panel and found a gear!');
+        updateView();
+    }
+}
+
+function handleKeypadInput(symbol) {
+    if (currentView === 'front') {
+        keypadInput += symbol;
+        showMessage(`Entered: ${symbol}`);
+        
+        if (keypadInput === '⌘★∞') {
+            doorUnlocked = true;
+            showMessage('Correct sequence! The doors are unlocking...');
+            updateView();
+        } else if (keypadInput.length >= 3) {
+            keypadInput = '';
+            showMessage('Wrong sequence. Try again.');
+        }
+    }
+}
+
+function handleDrawer() {
+    if (!hasDrawerKey) {
+        showMessage('The drawer is locked. You need a key.');
+        return;
+    }
+    drawerOpen = true;
+    addToInventory('🗝️');
+    updateView();
+}
+
+function handleEmergencyHatch() {
+    if (!speakerRiddleSolved) {
+        playRiddle();
+        return;
+    }
+    if (!hasDrawerKey) {
+        hasDrawerKey = true;
+        addToInventory('🔑'); // Use key emoji
+        showMessage('You found a key behind the speaker grill!');
+        updateView();
+        return;
+    }
+    if (!emergencyHatchOpen) {
+        emergencyHatchOpen = true;
+        hasMagneticTool = true;
+        addToInventory('🧲');
+        showMessage('You found a magnetic tool!');
+        updateView();
+    }
+}
+
+function playRiddle() {
+    const answer = prompt('Solve the riddle: "I have cities, but no houses. I have mountains, but no trees. I have water, but no fish. I have roads, but no cars. What am I?"');
+    if (answer && answer.toLowerCase() === 'map') {
+        speakerRiddleSolved = true;
+        showMessage('Riddle solved! The emergency hatch clicks...');
+    } else {
+        showMessage('That\'s not the correct answer...');
+    }
+}
+
+function handleCeiling() {
+    if (!maintenancePanelUnlocked) {
+        const passcode = prompt('Enter the 5-letter passcode to access maintenance panel:');
+        if (passcode && passcode.toUpperCase() === 'HACKER') {
+            maintenancePanelUnlocked = true;
+            showMessage('Access granted to maintenance panel!');
+            updateView();
+            return;
+        } else {
+            showMessage('Invalid passcode. Access denied.');
+            return;
+        }
+    }
+
+    if (!hasWrench) {
+        showMessage('You need a wrench to unscrew the panel.');
+        return;
+    }
+    
+    if (!ceilingPanelUnscrewed && inventory.includes('🔧')) {
+        ceilingPanelUnscrewed = true;
+        showMessage('You unscrewed the ceiling panel!');
+        updateView();
+        return;
+    }
+    
+    if (ceilingPanelUnscrewed && hasGear && !gearInstalled) {
+        gearInstalled = true;
+        useItem('⚙️'); // Remove gear from inventory after installing
+        showMessage('You installed the gear in the crank mechanism!');
+        updateView();
+        return;
+    }
+    
+    if (gearInstalled && !crankTurned) {
+        crankTurned = true;
+        showMessage('You turned the crank and opened the trapdoor. You can escape!');
+        updateView();
+        return;
+    }
+
+    // Add this new condition:
+    if (crankTurned) {
+        completeGame();
+    }
+}
+
+function handleInteraction(element) {
+    if (element === 'loose-panel' && !hasUVLight) {
+        addToInventory('🔦');
+        hasUVLight = true;
+        showMessage('You found a UV light in the toolbox!');
+        return;
+    }
+    
+    if (element === 'toolbox' && hasUVLight) {
+        const code = prompt('Enter the 4-digit code:');
+        if (code) handleToolboxCode(code);
+    }
+
+    if (element === 'fire-extinguisher' && !fireExtinguisherBroken) {
+        showMessage('The case is too strong to break with bare hands. Maybe a tool would help?');
+    }
+
+    if (element === 'magnetic-panel') {
+        handleMagneticPanel();
+    }
+}
+
+function changeView(direction) {
+    currentView = direction;
+    updateView();
+    playCreepySound();
+}
+
+function updateView() {
+    const view = document.getElementById('current-view');
+    view.innerHTML = '';
+    
+    switch(currentView) {
+        case 'front':
+            view.innerHTML = `
+                <div class="elevator-door door-left" style="transform: ${doorUnlocked ? 'translateX(-100%)' : 'none'}"></div>
+                <div class="elevator-door door-right" style="transform: ${doorUnlocked ? 'translateX(100%)' : 'none'}"></div>
+                <div class="scrambled-display">⌘⚡✦☆∞</div>
+                <div class="keypad">
+                    ${['⌘','⚡','✦','☆','∞','★','⚪','◆','▲'].map(symbol => 
+                        `<button class="keypad-button" onclick="handleKeypadInput('${symbol}')">${symbol}</button>`
+                    ).join('')}
+                </div>
+                <div class="hidden-drawer ${drawerOpen ? 'open' : ''}" 
+                     onclick="handleDrawer()" 
+                     style="height: ${drawerOpen ? '100px' : '20px'};">
+                    ${drawerOpen ? '<div style="padding: 20px; text-align: center;">Extra clue found!</div>' : 'Locked Drawer'}
+                </div>
+            `;
+            break;
+        case 'back':
+            view.innerHTML = `
+                <div class="mirror"></div>
+                <div class="hidden-message" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 24px;">
+                    THE SEQUENCE LIES IN THE STARS ⌘★∞<br>
+                    TOOLBOX CODE: 1379
+                </div>
+                <div class="${magneticPanelOpen ? 'magnetic-panel open' : 'magnetic-panel'}" 
+                     onclick="handleMagneticPanel()">
+                    <div style="padding: 10px; text-align: center;">
+                        Magnetic Panel
+                    </div>
+                </div>
+                <div class="gear-container ${magneticPanelOpen && !hasGear ? 'visible' : ''}">
+                    <svg class="gear-svg" viewBox="0 0 100 100" onclick="collectGear()">
+                        <path d="M50 25c-13.8 0-25 11.2-25 25s11.2 25 25 25 25-11.2 25-25-11.2-25-25-25zm0 45c-11 0-20-9-20-20s9-20 20-20 20 9 20 20-9 20-20 20z" fill="#666"/>
+                        <path d="M50 0v10c-2.8 0-5 2.2-5 5s2.2 5 5 5v10c-2.8 0-5 2.2-5 5s2.2 5 5 5v10c-2.8 0-5 2.2-5 5s2.2 5 5 5v10c-2.8 0-5 2.2-5 5s2.2 5 5 5v10h5V0h-5z" fill="#666"/>
+                        <path d="M100 50h-10c0-2.8-2.2-5-5-5s-5 2.2-5 5H60c0-2.8-2.2-5-5-5s-5 2.2-5 5H30c0-2.8-2.2-5-5-5s-5 2.2-5 5H0v5h100v-5z" fill="#666"/>
+                    </svg>
+                </div>
+            `;
+            break;
+        case 'left':
+            view.innerHTML = `
+                <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center;">
+                    <button class="interactive" onclick="handleEmergencyHatch()" 
+                            style="background: red; padding: 20px; border-radius: 50%; margin-bottom: 20px;">
+                        EMERGENCY
+                    </button>
+                    <div class="speaker-grill" onclick="playRiddle()">
+                        <div style="font-family: monospace;">SPEAKER GRILL</div>
+                        <div style="font-size: 0.8em; color: #666;">(Click to hear riddle)</div>
+                        ${speakerRiddleSolved && !hasDrawerKey ? 
+                            '<div style="color: gold; margin-top: 10px;">🔑</div>' : 
+                            ''}
+                    </div>
+                    ${emergencyHatchOpen ? 
+                        '<div style="margin-top: 20px; color: #0f0;">Hatch Open!</div>' : ''}
+                </div>
+            `;
+            break;
+        case 'right':
+            view.innerHTML = `
+                <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center;">
+                    <div class="interactive" onclick="handleInteraction('fire-extinguisher')" 
+                        style="border: 2px solid #555; padding: 20px; margin-bottom: 20px;">
+                        ${fireExtinguisherBroken ? 
+                            'BROKEN FIRE EXTINGUISHER CASE' : 
+                            'FIRE EXTINGUISHER (Need crowbar to break)'}
+                        ${fireExtinguisherBroken ? 
+                            '<div style="color: #666;">(Wrench and ceiling diagram retrieved)</div>' : 
+                            ''}
+                    </div>
+                    <div class="interactive" onclick="handleInteraction('toolbox')" 
+                        style="background: #333; padding: 20px; border: 1px solid #444;">
+                        LOCKED TOOLBOX
+                    </div>
+                </div>
+            `;
+            break;
+        case 'up':
+            view.innerHTML = `
+                <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center;">
+                    <div class="interactive" onclick="handleCeiling()" 
+                         style="border: 2px solid #444; padding: 40px; background: #333;">
+                        ${!maintenancePanelUnlocked ? 
+                            '<div>MAINTENANCE PANEL<br>(Enter Passcode to Access)</div>' :
+                            !ceilingPanelUnscrewed ? 
+                                '<div>MAINTENANCE PANEL<br>(Needs Wrench to Unscrew)</div>' :
+                                !gearInstalled ? 
+                                    '<div>CRANK MECHANISM EXPOSED<br>(Needs Gear to Function)</div>' :
+                                    !crankTurned ? 
+                                        '<div>CRANK READY TO TURN<br>(Click to Operate)</div>' :
+                                        '<div style="color: #0f0;">TRAPDOOR OPEN!<br>You can escape!</div>'
+                        }
+                        
+                        <!-- Screws in corners, visible when not unscrewed -->
+                        ${!ceilingPanelUnscrewed ? `
+                            <div style="position: absolute; top: 10px; left: 10px;">⚪</div>
+                            <div style="position: absolute; top: 10px; right: 10px;">⚪</div>
+                            <div style="position: absolute; bottom: 10px; left: 10px;">⚪</div>
+                            <div style="position: absolute; bottom: 10px; right: 10px;">⚪</div>
+                        ` : ''}
+                        
+                        <!-- Crank mechanism -->
+                        <div style="margin-top: 20px;">
+                            <svg width="80" height="80" viewBox="0 0 100 100">
+                                <!-- Base circle -->
+                                <circle cx="50" cy="50" r="40" fill="none" stroke="#666" stroke-width="4"/>
+                                
+                                <!-- Gear teeth if gear is installed -->
+                                ${gearInstalled ? `
+                                    <path d="M50,10 L45,0 L55,0 Z M90,50 L100,45 L100,55 Z M50,90 L55,100 L45,100 Z M10,50 L0,55 L0,45 Z" 
+                                          fill="#555"/>
+                                ` : ''}
+                                
+                                <!-- Handle -->
+                                <rect x="45" y="20" width="10" height="60" fill="#555"
+                                      transform="${crankTurned ? 'rotate(45, 50, 50)' : 'none'}">
+                                    ${crankTurned ? `
+                                        <animate attributeName="transform" 
+                                                 from="rotate(0, 50, 50)" 
+                                                 to="rotate(360, 50, 50)" 
+                                                 dur="2s" 
+                                                 repeatCount="1"/>
+                                    ` : ''}
+                                </rect>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+            `;
+            break;
+        case 'down':
+            view.innerHTML = `
+                <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;">
+                    <svg width="100%" height="100%" viewBox="0 0 100 100">
+                        <pattern id="floorPattern" patternUnits="userSpaceOnUse" width="20" height="20">
+                            <rect width="20" height="20" fill="#333"/>
+                            <rect width="10" height="10" fill="#383838"/>
+                            <rect x="10" y="10" width="10" height="10" fill="#383838"/>
+                        </pattern>
+                        <rect width="100%" height="100%" fill="url(#floorPattern)"/>
+                    </svg>
+                    <div class="interactive" onclick="handleInteraction('loose-panel')" 
+                         style="position: absolute; bottom: 20px; right: 20px; 
+                                background: #444; padding: 20px; border: 2px solid #555;
+                                border-radius: 5px; text-align: center;">
+                        <svg width="40" height="40" viewBox="0 0 24 24" style="display: block; margin: 0 auto;">
+                            <rect x="2" y="6" width="20" height="14" fill="#666" rx="2"/>
+                            <rect x="2" y="6" width="20" height="4" fill="#555"/>
+                            <rect x="10" y="4" width="4" height="4" fill="#777"/>
+                        </svg>
+                        <div style="margin-top: 5px; font-size: 14px;">Toolbox</div>
+                    </div>
+                </div>
+            `;
+            break;
+    }
+    addBloodDrips();
+    if (Math.random() < 0.3) { // 30% chance to play sound on view change
+        playCreepySound();
+    }
+}
+
+function handleMagneticPanel() {
+    if (!hasMagneticTool) {
+        showMessage('This panel seems to have a magnetic lock. You need a special tool to open it.');
+        return;
+    }
+    
+    if (!magneticPanelOpen) {
+        useSelectedItem('🧲');
+    }
+}
+
+function collectGear() {
+    if (!hasGear && magneticPanelOpen) {
+        hasGear = true;
+        addToInventory('⚙️');
+        showMessage('You collected the gear!');
+        updateView();
+    }
+}
+
+function handleToolboxCode(code) {
+    toolboxAttempts++;
+    
+    if (code === '1379') {
+        if (!hasCrowbar) {
+            hasCrowbar = true;
+            addToInventory('🛠️');
+            showMessage('You found a crowbar in the toolbox!');
+            updateView();
+        }
+    } else {
+        if (toolboxAttempts >= 3) {
+            showMessage('The toolbox is now locked for 30 seconds. Too many attempts.');
+            setTimeout(() => {
+                toolboxAttempts = 0;
+                showMessage('Toolbox unlocked. You can try again.');
+            }, 30000);
+        } else {
+            showMessage(`Wrong code. ${3 - toolboxAttempts} attempts remaining.`);
+        }
+    }
+}
+
+function showDiagram() {
+    // Create overlay if it doesn't exist
+    let overlay = document.querySelector('.diagram-overlay');
+    if (!overlay) {
+        overlay = document.createElement('div');
+        overlay.className = 'diagram-overlay';
+        document.body.appendChild(overlay);
+    }
+
+    // Fixed numbers instead of random
+    const numbers = [08, 01, 03, 11, 5, 18];
+    const positions = [
+        {x: 100, y: 150},  // Position for 19
+        {x: 300, y: 150},  // Position for 56
+        {x: 100, y: 250},  // Position for 86
+        {x: 300, y: 250},  // Position for 98
+        {x: 200, y: 200},  // Position for 68
+        {x: 200, y: 300}   // Position for 62
+    ];
+
+    overlay.innerHTML = `
+        <div class="diagram-content">
+            <button class="close-button" onclick="closeDiagram()">X</button>
+            <svg class="maze-container" viewBox="0 0 400 400">
+                <!-- Maze background -->
+                <rect x="0" y="0" width="400" height="400" fill="#333"/>
+                
+                <!-- Maze paths -->
+                <path d="M50,50 L350,50 L350,350 L50,350 L50,50 M50,200 L150,200 M200,50 L200,150 
+                         M250,200 L350,200 M200,250 L200,350 M150,100 L250,100 M150,300 L250,300" 
+                      stroke="#666" fill="none" stroke-width="4"/>
+
+                <!-- Connection line between numbers -->
+                <path d="M${positions[0].x},${positions[0].y} 
+                        L${positions[1].x},${positions[1].y} 
+                        L${positions[2].x},${positions[2].y}
+                        L${positions[3].x},${positions[3].y}
+                        L${positions[4].x},${positions[4].y}
+                        L${positions[5].x},${positions[5].y}"
+                      stroke="#f00" stroke-width="2" fill="none" stroke-dasharray="5,5">
+                    <animate attributeName="stroke-dashoffset" from="100" to="0" dur="2s" repeatCount="indefinite"/>
+                </path>
+
+                <!-- Numbers -->
+                ${positions.map((pos, i) => 
+                    `<text x="${pos.x}" y="${pos.y}" fill="#0f0" font-size="20">${numbers[i]}</text>`
+                ).join('')}
+
+                <!-- Path markers -->
+                <circle cx="50" cy="50" r="8" fill="green"/>
+                <circle cx="350" cy="350" r="8" fill="red"/>
+            </svg>
+        </div>
+    `;
+
+    overlay.style.display = 'flex';
+}
+
+function closeDiagram() {
+    const overlay = document.querySelector('.diagram-overlay');
+    if (overlay) {
+        overlay.style.display = 'none';
+    }
+}
+
+function playCreepySound() {
+    const sounds = [
+        // Using oscillator for creepy beeps
+        () => {
+            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            
+            oscillator.type = 'sawtooth';
+            oscillator.frequency.setValueAtTime(Math.random() * 200 + 200, audioContext.currentTime);
+            gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
+            
+            oscillator.start();
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
+            setTimeout(() => oscillator.stop(), 500);
+        },
+        
+        // Creaking sound using noise
+        () => {
+            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            const bufferSize = 4096;
+            const whiteNoise = audioContext.createScriptProcessor(bufferSize, 1, 1);
+            const gainNode = audioContext.createGain();
+            
+            whiteNoise.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            
+            whiteNoise.onaudioprocess = (e) => {
+                const output = e.outputBuffer.getChannelData(0);
+                for (let i = 0; i < bufferSize; i++) {
+                    output[i] = Math.random() * 2 - 1;
+                }
+            };
+            
+            gainNode.gain.setValueAtTime(0.05, audioContext.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 1);
+            
+            setTimeout(() => {
+                whiteNoise.disconnect();
+                gainNode.disconnect();
+            }, 1000);
+        }
+    ];
+    
+    sounds[Math.floor(Math.random() * sounds.length)]();
+}
+
+// Add blood drips to the view
+function addBloodDrips() {
+    const view = document.querySelector('.view');
+    for (let i = 0; i < 5; i++) {
+        const drip = document.createElement('div');
+        drip.className = 'blood-drip';
+        drip.style.left = Math.random() * 100 + '%';
+        drip.style.animationDelay = Math.random() * 2 + 's';
+        view.appendChild(drip);
+    }
+}
+</script>
+</head>
+<body>
+    <div id="elevator">
+        <div id="current-view" class="view"></div>
+        <div class="buttons">
+            <button onclick="changeView('left')">← Look Left</button>
+            <button onclick="changeView('up')">↑ Look Up</button>
+            <button onclick="changeView('right')">Look Right →</button>
+            <button onclick="changeView('front')">Look Forward</button>
+            <button onclick="changeView('down')">↓ Look Down</button>
+            <button onclick="changeView('back')">Look Behind</button>
+        </div>
+    </div>
+    <div class="message"></div>
+    <div id="inventory" class="inventory"></div>
+    <script>
+        updateView();
+        updateInventory();
+    </script>
+</body>
+</html>
