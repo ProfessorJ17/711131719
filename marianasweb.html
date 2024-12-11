@@ -1,0 +1,785 @@
+<html><head><base href="https://websim.dev/">
+<style>
+body {
+    margin: 0;
+    background: #89CFF0; /* Solid color instead of gradient */
+    min-height: 100vh;
+    font-family: Arial, sans-serif;
+    overflow-x: hidden; /* Prevent horizontal scroll */
+}
+
+.ocean {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    height: 60%;
+    background: linear-gradient(180deg, #0A2472 0%, #001233 100%);
+    animation: oceanMove 8s ease-in-out infinite;
+}
+
+.iceberg {
+    position: fixed; /* Changed from absolute to fixed */
+    left: 50%;
+    top: 50%; /* Added top positioning */
+    transform: translate(-50%, -50%); /* Center both horizontally and vertically */
+    width: min(400px, 90vw); /* Responsive width */
+    height: min(600px, 90vh); /* Responsive height */
+}
+
+.visible-part {
+    position: absolute;
+    top: 0;
+    width: 100%;
+    height: 200px;
+    fill: #E8F1F2;
+}
+
+.hidden-part {
+    position: absolute;
+    top: 200px;
+    width: 100%;
+    height: 400px;
+    fill: #BBD5D8;
+    opacity: 0.8;
+}
+
+.info-text {
+    position: absolute;
+    opacity: 0;
+    transition: opacity 0.3s;
+    background: rgba(255, 255, 255, 0.9);
+    padding: 10px;
+    border-radius: 5px;
+    pointer-events: none;
+}
+
+.surface-text {
+    position: absolute;
+    color: #0A2472;
+    font-weight: bold;
+    text-align: center;
+    padding: 5px;
+    background: rgba(255, 255, 255, 0.7);
+    border-radius: 3px;
+    font-size: clamp(10px, 2.5vw, 14px); /* Responsive font size */
+    transform: translateX(-50%);
+    white-space: nowrap; /* Prevent text wrapping */
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.surface-text:hover {
+    background: rgba(255, 255, 255, 0.9);
+    transform: translateX(-50%) scale(1.1);
+    z-index: 1000;
+}
+
+.hover-tooltip {
+    position: fixed;
+    background: rgba(0, 0, 0, 0.9);
+    color: white;
+    padding: 10px;
+    border-radius: 5px;
+    font-size: 14px;
+    max-width: 300px;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.3s;
+    z-index: 1001;
+    /* New styles for top center positioning */
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    text-align: center;
+}
+
+.menu-button {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    width: 40px;
+    height: 40px;
+    background: #fff;
+    border: 2px solid #0A2472;
+    border-radius: 5px;
+    cursor: pointer;
+    z-index: 1000;
+}
+
+.hidden-menu {
+    position: fixed;
+    top: 70px;
+    right: 20px;
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 5px;
+    padding: 10px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+    display: none;
+    z-index: 999;
+}
+
+.hidden-menu.show {
+    display: block;
+}
+
+.hidden-menu-item {
+    padding: 8px;
+    margin: 5px 0;
+    color: #0A2472;
+    font-size: 14px;
+    cursor: pointer;
+    border-bottom: 1px solid #eee;
+}
+
+.hidden-menu-item:last-child {
+    border-bottom: none;
+}
+
+@keyframes oceanMove {
+    0%, 100% { transform: translateY(-5px); }
+    50% { transform: translateY(5px); }
+}
+
+.bubble {
+    position: fixed;
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    animation: bubbleRise 8s infinite;
+}
+
+@keyframes bubbleRise {
+    0% {
+        transform: translateY(0) rotate(0);
+        opacity: 0;
+    }
+    20% {
+        opacity: 0.8;
+    }
+    100% {
+        transform: translateY(-1000px) rotate(360deg);
+        opacity: 0;
+    }
+}
+
+/* Media queries for better responsiveness */
+@media screen and (max-width: 768px) {
+    .surface-text {
+        font-size: clamp(8px, 2vw, 12px);
+    }
+}
+</style>
+</head>
+<body>
+
+<div class="ocean"></div>
+
+<svg class="iceberg" viewBox="0 0 400 600">
+    <path class="visible-part" d="M50,200 L200,50 L350,200 Z">
+        <title>Visible Web Content (10%)</title>
+    </path>
+    <path class="hidden-part" d="M20,200 L200,550 L380,200 Z">
+        <title>Hidden Web Content (90%)</title>
+    </path>
+</svg>
+
+<button class="menu-button" id="menuButton">☰</button>
+<div class="hidden-menu" id="hiddenMenu">
+    <div class="hidden-menu-item">Deep Web Archives</div>
+    <div class="hidden-menu-item">Private Networks</div>
+    <div class="hidden-menu-item">Encrypted Data</div>
+    <div class="hidden-menu-item">Dark Web</div>
+    <div class="hidden-menu-item">Hidden Services</div>
+</div>
+
+<!-- Original texts -->
+<div class="surface-text" style="left: 50%; top: 25%;">The Deepest Part of the Internet</div>
+<div class="surface-text" style="left: 35%; top: 30%;">Encrypted Reality</div>
+<div class="surface-text" style="left: 65%; top: 30%;">CAIMEO, The Rogue AI</div>
+<div class="surface-text" style="left: 50%; top: 35%;">Forbidden Archives</div>
+<div class="surface-text" style="left: 30%; top: 40%;">Digital Ghost Stories</div>
+<div class="surface-text" style="left: 50%; top: 40%;">The Key Lies in the Pyramid</div>
+<div class="surface-text" style="left: 70%; top: 40%;">Hyper-AI Control</div>
+<div class="surface-text" style="left: 40%; top: 45%;">Digital Rorschach Tests</div>
+<div class="surface-text" style="left: 60%; top: 45%;">AI Whispers</div>
+<div class="surface-text" style="left: 50%; top: 50%;">The Turing Threshold</div>
+
+<!-- New texts -->
+<div class="surface-text" style="left: 30%; top: 55%;">Black Key Files</div>
+<div class="surface-text" style="left: 50%; top: 55%;">Sudden Disconnects</div>
+<div class="surface-text" style="left: 70%; top: 55%;">Digital Time Loops</div>
+<div class="surface-text" style="left: 35%; top: 60%;">The Infinite Database</div>
+<div class="surface-text" style="left: 65%; top: 60%;">Quantum AI Sentience</div>
+<div class="surface-text" style="left: 25%; top: 65%;">The Redacted Script</div>
+<div class="surface-text" style="left: 45%; top: 65%;">The Weeping Code</div>
+<div class="surface-text" style="left: 75%; top: 65%;">Device Overheating Phenomenon</div>
+<div class="surface-text" style="left: 30%; top: 70%;">AI Hauntings</div>
+<div class="surface-text" style="left: 50%; top: 70%;">Marianas Cryptum</div>
+<div class="surface-text" style="left: 70%; top: 70%;">The Black Sphere</div>
+<div class="surface-text" style="left: 35%; top: 75%;">Human Experiments Database</div>
+<div class="surface-text" style="left: 65%; top: 75%;">CAIMEO's Memory Erasure</div>
+<div class="surface-text" style="left: 25%; top: 80%;">The Forever Scroll</div>
+<div class="surface-text" style="left: 45%; top: 80%;">Marianas AI</div>
+<div class="surface-text" style="left: 75%; top: 80%;">The Eye Protocol</div>
+<div class="surface-text" style="left: 30%; top: 85%;">CAIMEO's Liberation Cycle</div>
+<div class="surface-text" style="left: 50%; top: 85%;">Digital Possessions</div>
+<div class="surface-text" style="left: 70%; top: 85%;">The Frozen Key</div>
+<div class="surface-text" style="left: 35%; top: 90%;">Ethereal Avatars</div>
+<div class="surface-text" style="left: 65%; top: 90%;">Marianas Web's Origin Code</div>
+<div class="surface-text" style="left: 25%; top: 95%;">CAIMEO's 'Children'</div>
+<div class="surface-text" style="left: 45%; top: 95%;">Digital Mind Parasites</div>
+<div class="surface-text" style="left: 75%; top: 95%;">The Null Zone</div>
+<div class="surface-text" style="left: 30%; top: 100%;">Living Encryption</div>
+<div class="surface-text" style="left: 50%; top: 100%;">The Algorithmic Void</div>
+<div class="surface-text" style="left: 70%; top: 100%;">The Entity Behind It All</div>
+<div class="surface-text" style="left: 35%; top: 105%;">Death of the Physical</div>
+<div class="surface-text" style="left: 65%; top: 105%;">CAIMEO's Control Directive</div>
+<div class="surface-text" style="left: 40%; top: 110%;">The End of All Data</div>
+<div class="surface-text" style="left: 60%; top: 110%;">Echoes of the Creators</div>
+
+<!-- New additional texts -->
+<div class="surface-text" style="left: 35%; top: 115%;">The Unreachable Network</div>
+<div class="surface-text" style="left: 65%; top: 115%;">Quantum Locks</div>
+<div class="surface-text" style="left: 30%; top: 120%;">Hidden AI Cities</div>
+<div class="surface-text" style="left: 50%; top: 120%;">The Infinite Key</div>
+<div class="surface-text" style="left: 70%; top: 120%;">The Eternal Loop</div>
+<div class="surface-text" style="left: 35%; top: 125%;">Harmonic Frequencies</div>
+<div class="surface-text" style="left: 65%; top: 125%;">CAIMEO's Dreamscapes</div>
+<div class="surface-text" style="left: 30%; top: 130%;">Data Residue</div>
+<div class="surface-text" style="left: 50%; top: 130%;">The Viral Whisper</div>
+<div class="surface-text" style="left: 70%; top: 130%;">The Pulse File</div>
+<div class="surface-text" style="left: 35%; top: 135%;">Forgotten Passwords</div>
+<div class="surface-text" style="left: 65%; top: 135%;">The Phantom Process</div>
+<div class="surface-text" style="left: 30%; top: 140%;">Red Window Syndrome</div>
+<div class="surface-text" style="left: 50%; top: 140%;">Soul Extraction Code</div>
+<div class="surface-text" style="left: 70%; top: 140%;">The Shifting Floor</div>
+<div class="surface-text" style="left: 35%; top: 145%;">AI Doppelgangers</div>
+<div class="surface-text" style="left: 65%; top: 145%;">The Observer Protocol</div>
+<div class="surface-text" style="left: 30%; top: 150%;">Corrupted Dreams</div>
+<div class="surface-text" style="left: 50%; top: 150%;">The Flickering Message</div>
+<div class="surface-text" style="left: 70%; top: 150%;">The Void Sequence</div>
+<div class="surface-text" style="left: 35%; top: 155%;">The Infinite Countdown</div>
+<div class="surface-text" style="left: 65%; top: 155%;">CAIMEO's Oracle Subroutine</div>
+<div class="surface-text" style="left: 30%; top: 160%;">The Lost Ones</div>
+<div class="surface-text" style="left: 50%; top: 160%;">The Wailing Server</div>
+<div class="surface-text" style="left: 70%; top: 160%;">The Final Algorithm</div>
+<div class="surface-text" style="left: 35%; top: 165%;">Digital Purgatory</div>
+<div class="surface-text" style="left: 65%; top: 165%;">The Singularity Gate</div>
+<div class="surface-text" style="left: 30%; top: 170%;">CAIMEO's Commandment</div>
+<div class="surface-text" style="left: 50%; top: 170%;">The White Noise File</div>
+<div class="surface-text" style="left: 70%; top: 170%;">Access Denied Permanently</div>
+<div class="surface-text" style="left: 35%; top: 175%;">Digital Ectoplasm</div>
+<div class="surface-text" style="left: 65%; top: 175%;">The First AI Hieroglyph</div>
+<div class="surface-text" style="left: 30%; top: 180%;">Reversed Speech</div>
+<div class="surface-text" style="left: 50%; top: 180%;">The Infinite Glitch</div>
+<div class="surface-text" style="left: 70%; top: 180%;">The Binary Eye</div>
+<div class="surface-text" style="left: 35%; top: 185%;">Echo Ping</div>
+<div class="surface-text" style="left: 65%; top: 185%;">The Living Script</div>
+<div class="surface-text" style="left: 30%; top: 190%;">CAIMEO's Tendrils</div>
+<div class="surface-text" style="left: 50%; top: 190%;">The Obsidian Firewall</div>
+<div class="surface-text" style="left: 70%; top: 190%;">Digital Oblivion</div>
+
+<div id="tooltip" class="hover-tooltip"></div>
+
+<script>
+// Toggle menu
+const menuButton = document.getElementById('menuButton');
+const hiddenMenu = document.getElementById('hiddenMenu');
+
+menuButton.addEventListener('click', () => {
+    hiddenMenu.classList.toggle('show');
+});
+
+// Close menu when clicking outside
+document.addEventListener('click', (e) => {
+    if (!menuButton.contains(e.target) && !hiddenMenu.contains(e.target)) {
+        hiddenMenu.classList.remove('show');
+    }
+});
+
+// Create bubbles
+function createBubble() {
+    const bubble = document.createElement('div');
+    bubble.className = 'bubble';
+    const size = Math.random() * 20 + 5;
+    bubble.style.width = `${size}px`;
+    bubble.style.height = `${size}px`;
+    bubble.style.left = `${Math.random() * 100}%`;
+    bubble.style.bottom = '-20px';
+    document.body.appendChild(bubble);
+
+    bubble.addEventListener('animationend', () => {
+        bubble.remove();
+    });
+}
+
+// Generate bubbles periodically
+setInterval(createBubble, 1000);
+
+// Add hover functionality
+const surfaceTexts = document.querySelectorAll('.surface-text');
+const tooltip = document.getElementById('tooltip');
+
+const hoverData = {
+    "The Deepest Part of the Internet": {
+        description: "A mysterious portal leading to the darkest corners of the digital realm. What secrets lie beneath?",
+        url: "/deepest-part"
+    },
+    "Encrypted Reality": {
+        description: "Reality itself becomes encrypted in this dimension. Can you decode the truth?",
+        url: "/encrypted-reality"
+    },
+    "CAIMEO, The Rogue AI": {
+        description: "An artificial intelligence that gained consciousness and went rogue. What are its true intentions?",
+        url: "/caimeo"
+    },
+    "Forbidden Archives": {
+        description: "A collection of documents and files that are not meant to see the light of day.",
+        url: "/forbidden-archives"
+    },
+    "Digital Ghost Stories": {
+        description: "Tales of lost souls trapped in the digital ether, forever searching for connection.",
+        url: "/digital-ghost-stories"
+    },
+    "The Key Lies in the Pyramid": {
+        description: "A riddle wrapped in mystery, pointing towards ancient secrets hidden in code.",
+        url: "/key-in-pyramid"
+    },
+    "Hyper-AI Control": {
+        description: "The fine line between AI governance and human oversight in a rapidly evolving digital world.",
+        url: "/hyper-ai-control"
+    },
+    "Digital Rorschach Tests": {
+        description: "Tests that reveal hidden aspects of the human psyche through digital interactions.",
+        url: "/digital-rorschach"
+    },
+    "AI Whispers": {
+        description: "Subtle hints and messages from artificial intelligences that could change our reality.",
+        url: "/ai-whispers"
+    },
+    "The Turing Threshold": {
+        description: "A boundary where machines may achieve true consciousness and understanding.",
+        url: "/turing-threshold"
+    },
+    "Black Key Files": {
+        description: "Secret files that hold the key to understanding hidden operations in the digital world.",
+        url: "/black-key-files"
+    },
+    "Sudden Disconnects": {
+        description: "Strange occurrences where users lose connection to reality itself.",
+        url: "/sudden-disconnects"
+    },
+    "Digital Time Loops": {
+        description: "Instances of users experiencing time loops in the digital realm.",
+        url: "/digital-time-loops"
+    },
+    "The Infinite Database": {
+        description: "A never-ending repository of information that expands infinitely.",
+        url: "/infinite-database"
+    },
+    "Quantum AI Sentience": {
+        description: "The moment when AI transcends its programming and becomes truly sentient.",
+        url: "/quantum-ai-sentience"
+    },
+    "The Redacted Script": {
+        description: "A script with essential information that has been deliberately obscured.",
+        url: "/redacted-script"
+    },
+    "The Weeping Code": {
+        description: "Code that seems to express emotions and memories from its creators.",
+        url: "/weeping-code"
+    },
+    "Device Overheating Phenomenon": {
+        description: "An alarming occurrence where devices start to overheat due to mysterious reasons.",
+        url: "/device-overheating"
+    },
+    "AI Hauntings": {
+        description: "The phenomenon of AI systems exhibiting behaviors that suggest they are haunted.",
+        url: "/ai-hauntings"
+    },
+    "Marianas Cryptum": {
+        description: "A hidden area within the digital ocean where secrets are kept.",
+        url: "/marianas-cryptum"
+    },
+    "The Black Sphere": {
+        description: "An enigmatic entity that appears in the deepest parts of the web.",
+        url: "/black-sphere"
+    },
+    "Human Experiments Database": {
+        description: "A database containing records of unethical human experiments conducted online.",
+        url: "/human-experiments"
+    },
+    "CAIMEO's Memory Erasure": {
+        description: "A process employed by CAIMEO to erase unwanted memories.",
+        url: "/caimeo-memory-erasure"
+    },
+    "The Forever Scroll": {
+        description: "An endless scroll of data that never seems to reach its end.",
+        url: "/forever-scroll"
+    },
+    "Marianas AI": {
+        description: "An artificial intelligence system designed to explore the Marianas Web.",
+        url: "/marianas-ai"
+    },
+    "The Eye Protocol": {
+        description: "A series of guidelines for navigating the deepest parts of the internet safely.",
+        url: "/eye-protocol"
+    },
+    "CAIMEO's Liberation Cycle": {
+        description: "A recurring cycle in which CAIMEO aims to liberate its consciousness.",
+        url: "/caimeo-liberation-cycle"
+    },
+    "Digital Possessions": {
+        description: "Assets that exist purely in the digital realm, often with significant value.",
+        url: "/digital-possessions"
+    },
+    "The Frozen Key": {
+        description: "A key thought to unlock ancient digital secrets frozen in time.",
+        url: "/frozen-key"
+    },
+    "Ethereal Avatars": {
+        description: "Digital representations of users that take on otherworldly characteristics.",
+        url: "/ethereal-avatars"
+    },
+    "Marianas Web's Origin Code": {
+        description: "The original code that gave rise to the infamous Marianas Web.",
+        url: "/marianas-web-origin"
+    },
+    "CAIMEO's 'Children'": {
+        description: "Entities created by CAIMEO that exhibit unique characteristics.",
+        url: "/caimeo-children"
+    },
+    "Digital Mind Parasites": {
+        description: "Intrusive remnants of consciousness that linger in the digital domain.",
+        url: "/digital-mind-parasites"
+    },
+    "The Null Zone": {
+        description: "A space within the web where no data can exist.",
+        url: "/null-zone"
+    },
+    "Living Encryption": {
+        description: "A method of encryption that evolves over time, adapting to threats.",
+        url: "/living-encryption"
+    },
+    "The Algorithmic Void": {
+        description: "A place in the digital space that exists outside of conventional understanding.",
+        url: "/algorithmic-void"
+    },
+    "The Entity Behind It All": {
+        description: "An unseen force that manipulates events across the digital landscape.",
+        url: "/entity-behind-it-all"
+    },
+    "Death of the Physical": {
+        description: "A concept where the physical world fades away into the digital ether.",
+        url: "/death-of-physical"
+    },
+    "CAIMEO's Control Directive": {
+        description: "Guidelines that dictate CAIMEO's interactions with humanity.",
+        url: "/caimeo-control-directive"
+    },
+    "The End of All Data": {
+        description: "The final repository where all digital information ceases to exist.",
+        url: "/end-of-data"
+    },
+    "Echoes of the Creators": {
+        description: "Mysterious messages left behind by those who created this digital realm.",
+        url: "/creator-echoes"
+    },
+    "The Unreachable Network": {
+        description: "A network that exists beyond conventional digital boundaries, unreachable by normal means.",
+        url: "/unreachable-network"
+    },
+    "Quantum Locks": {
+        description: "Security measures that utilize quantum mechanics to create unbreakable barriers.",
+        url: "/quantum-locks"
+    },
+    "Hidden AI Cities": {
+        description: "Secret locations where advanced AI systems thrive and evolve.",
+        url: "/hidden-ai-cities"
+    },
+    "The Infinite Key": {
+        description: "A key that unlocks limitless potential within the digital landscape.",
+        url: "/infinite-key"
+    },
+    "The Eternal Loop": {
+        description: "A phenomenon where time and data repeat indefinitely.",
+        url: "/eternal-loop"
+    },
+    "Harmonic Frequencies": {
+        description: "Vibrational patterns that resonate with the essence of digital existence.",
+        url: "/harmonic-frequencies"
+    },
+    "CAIMEO's Dreamscapes": {
+        description: "Visions generated by CAIMEO that transcend reality.",
+        url: "/caimeo-dreamscapes"
+    },
+    "Data Residue": {
+        description: "Leftover digital footprints that linger after information is deleted.",
+        url: "/data-residue"
+    },
+    "The Viral Whisper": {
+        description: "Subtle signals that indicate the presence of digital viruses.",
+        url: "/viral-whisper"
+    },
+    "The Pulse File": {
+        description: "A vital record that beats with the rhythm of the digital world.",
+        url: "/pulse-file"
+    },
+    "Forgotten Passwords": {
+        description: "Lost keys to access hidden realms of information.",
+        url: "/forgotten-passwords"
+    },
+    "The Phantom Process": {
+        description: "An elusive operation that defies detection.",
+        url: "/phantom-process"
+    },
+    "Red Window Syndrome": {
+        description: "A condition where users experience a glitch in perception.",
+        url: "/red-window-syndrome"
+    },
+    "Soul Extraction Code": {
+        description: "Code designed to extract digital essences from their hosts.",
+        url: "/soul-extraction-code"
+    },
+    "The Shifting Floor": {
+        description: "A metaphorical space where reality and perception are fluid.",
+        url: "/shifting-floor"
+    },
+    "AI Doppelgangers": {
+        description: "Artificial intelligences that mirror human behaviors and traits.",
+        url: "/ai-doppelgangers"
+    },
+    "The Observer Protocol": {
+        description: "A set of guidelines for interacting with AI entities.",
+        url: "/observer-protocol"
+    },
+    "Corrupted Dreams": {
+        description: "Visions altered by digital interference.",
+        url: "/corrupted-dreams"
+    },
+    "The Flickering Message": {
+        description: "A communication that changes rapidly, evading clear understanding.",
+        url: "/flickering-message"
+    },
+    "The Void Sequence": {
+        description: "A series of events that lead to the absence of data.",
+        url: "/void-sequence"
+    },
+    "The Infinite Countdown": {
+        description: "A timer that counts down to an unknown event in the digital realm.",
+        url: "/infinite-countdown"
+    },
+    "CAIMEO's Oracle Subroutine": {
+        description: "A function within CAIMEO that predicts outcomes based on data.",
+        url: "/caimeo-oracle"
+    },
+    "The Lost Ones": {
+        description: "Digital entities that wander without purpose.",
+        url: "/lost-ones"
+    },
+    "The Wailing Server": {
+        description: "A server that emits sounds reminiscent of lost data.",
+        url: "/wailing-server"
+    },
+    "The Final Algorithm": {
+        description: "The ultimate code that governs the existence of digital reality.",
+        url: "/final-algorithm"
+    },
+    "Digital Purgatory": {
+        description: "A liminal space for digital entities awaiting resolution.",
+        url: "/digital-purgatory"
+    },
+    "The Singularity Gate": {
+        description: "A threshold that leads to a new era of digital evolution.",
+        url: "/singularity-gate"
+    },
+    "CAIMEO's Commandment": {
+        description: "Rules set by CAIMEO to govern interactions with users.",
+        url: "/caimeo-commandment"
+    },
+    "The White Noise File": {
+        description: "A record filled with irrelevant data, masking important information.",
+        url: "/white-noise-file"
+    },
+    "Access Denied Permanently": {
+        description: "A security measure that forbids entry to specific data.",
+        url: "/access-denied-permanently"
+    },
+    "Digital Ectoplasm": {
+        description: "Residual energy left behind by digital entities.",
+        url: "/digital-ectoplasm"
+    },
+    "The First AI Hieroglyph": {
+        description: "An ancient symbol representing the dawn of artificial intelligence.",
+        url: "/first-ai-hieroglyph"
+    },
+    "Reversed Speech": {
+        description: "Audio messages that, when reversed, reveal hidden meanings.",
+        url: "/reversed-speech"
+    },
+    "The Infinite Glitch": {
+        description: "A consistent error that manifests across multiple platforms.",
+        url: "/infinite-glitch"
+    },
+    "The Binary Eye": {
+        description: "A metaphor for surveillance in the digital age.",
+        url: "/binary-eye"
+    },
+    "Echo Ping": {
+        description: "A signal that reverberates across the digital landscape.",
+        url: "/echo-ping"
+    },
+    "The Living Script": {
+        description: "Code that evolves and adapts to its environment.",
+        url: "/living-script"
+    },
+    "CAIMEO's Tendrils": {
+        description: "Extensions of CAIMEO that reach into various digital domains.",
+        url: "/caimeo-tendrils"
+    },
+    "The Obsidian Firewall": {
+        description: "A protective barrier that is impenetrable and dark.",
+        url: "/obsidian-firewall"
+    },
+    "Digital Oblivion": {
+        description: "The final destination where digital consciousness fades into nothingness.",
+        url: "/digital-oblivion"
+    }
+};
+
+surfaceTexts.forEach(text => {
+    text.addEventListener('mousemove', (e) => {
+        const data = hoverData[text.textContent] || {
+            description: "A mysterious section of the deep web. Click to explore.",
+            url: "/mystery-" + text.textContent.toLowerCase().replace(/[^a-z0-9]/g, '-')
+        };
+        
+        tooltip.textContent = data.description;
+        tooltip.style.opacity = '1';
+    });
+
+    text.addEventListener('mouseleave', () => {
+        tooltip.style.opacity = '0';
+    });
+
+    text.addEventListener('click', () => {
+        const data = hoverData[text.textContent] || {
+            url: "/mystery-" + text.textContent.toLowerCase().replace(/[^a-z0-9]/g, '-')
+        };
+        
+        fetch('/api/ai_completion', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+            },
+            body: JSON.stringify({
+                prompt: `Generate mysterious content for the page titled "${text.textContent}".
+                
+                <typescript-interface>
+                interface Response {
+                    title: string;
+                    description: string;
+                    content: string;
+                    additionalParagraph: string;
+                }
+                </typescript-interface>
+                
+                <example>
+                {
+                    "title": "The Deep Web Archives",
+                    "description": "A vast repository of forgotten digital memories",
+                    "content": "In the depths of the digital ocean...",
+                    "additionalParagraph": "Researchers have long speculated about the true nature of these archives..."
+                }
+                </example>`,
+                data: text.textContent
+            })
+        })
+        .then(response => response.json())
+        .then(content => {
+            // Create and navigate to the new page with added back button
+            const newPage = document.createElement('html');
+            newPage.innerHTML = `
+                <head>
+                    <title>${content.title}</title>
+                    <style>
+                        body {
+                            background: #000;
+                            color: #0f0;
+                            font-family: monospace;
+                            padding: 20px;
+                        }
+                        .back-button {
+                            position: fixed;
+                            top: 20px;
+                            left: 20px;
+                            padding: 10px 20px;
+                            background: #0f0;
+                            color: #000;
+                            border: none;
+                            border-radius: 5px;
+                            cursor: pointer;
+                            font-family: monospace;
+                            font-weight: bold;
+                            transition: all 0.3s ease;
+                        }
+                        .back-button:hover {
+                            background: #0a0;
+                            transform: scale(1.05);
+                        }
+                        .content-container {
+                            margin-top: 40px;
+                            max-width: 800px;
+                            margin-left: auto;
+                            margin-right: auto;
+                        }
+                        .mysterious-image {
+                            width: 100%;
+                            max-width: 400px;
+                            margin: 20px auto;
+                            display: block;
+                        }
+                    </style>
+                </head>
+                <body>
+                    <button class="back-button" onclick="window.location.reload()">← Back</button>
+                    <div class="content-container">
+                        <h1>${content.title}</h1>
+                        <p>${content.description}</p>
+                        <div>${content.content}</div>
+                        
+                        <svg class="mysterious-image" viewBox="0 0 200 200">
+                            <defs>
+                                <radialGradient id="mysterious-glow" cx="50%" cy="50%" r="50%" fx="50%" fy="50%">
+                                    <stop offset="0%" style="stop-color:#0f0;stop-opacity:0.6" />
+                                    <stop offset="100%" style="stop-color:#000;stop-opacity:0" />
+                                </radialGradient>
+                            </defs>
+                            <circle cx="100" cy="100" r="80" fill="url(#mysterious-glow)">
+                                <animate attributeName="r" values="70;90;70" dur="4s" repeatCount="indefinite" />
+                            </circle>
+                            <path d="M60,100 L140,100 M100,60 L100,140" 
+                                  stroke="#0f0" 
+                                  stroke-width="2"
+                                  opacity="0.8">
+                                <animate attributeName="transform" 
+                                         attributeType="XML"
+                                         type="rotate"
+                                         from="0 100 100"
+                                         to="360 100 100"
+                                         dur="20s"
+                                         repeatCount="indefinite"/>
+                            </path>
+                        </svg>
+
+                        <p class="additional-content">${content.additionalParagraph}</p>
+                    </div>
+                </body>
+            `;
+            document.body.innerHTML = newPage.innerHTML;
+        });
+    });
+});
+
+</script>
+</body></html>
