@@ -1,0 +1,250 @@
+<html><head><base href="/" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Telepathic Puzzle - Level 1</title>
+<style>
+body {
+    font-family: Arial, sans-serif;
+    background: linear-gradient(135deg, #1a1a2e, #16213e);
+    color: #fff;
+    text-align: center;
+    min-height: 100vh;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.container {
+    margin: 20px;
+    padding: 30px;
+    width: 90%;
+    max-width: 600px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 15px;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+.patterns {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin: 30px 0;
+}
+
+.pattern {
+    width: 60px;
+    height: 60px;
+    border-radius: 12px;
+    background-color: #333;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+}
+
+.pattern.revealed {
+    animation: revealColor 0.5s forwards;
+}
+
+@keyframes revealColor {
+    from { transform: rotateY(0deg); }
+    to { transform: rotateY(360deg); }
+}
+
+.button {
+    padding: 12px 30px;
+    background: linear-gradient(45deg, #3498db, #2980b9);
+    border: none;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 25px;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: bold;
+    margin-top: 20px;
+}
+
+.button:hover {
+    background: linear-gradient(45deg, #2980b9, #3498db);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(52, 152, 219, 0.4);
+}
+
+.button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.message {
+    font-size: 18px;
+    margin-top: 20px;
+    font-weight: bold;
+    min-height: 27px;
+    color: #3498db;
+    text-shadow: 0 0 10px rgba(52, 152, 219, 0.3);
+}
+
+.level-display {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    font-size: 18px;
+    color: #3498db;
+}
+
+.score {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    font-size: 18px;
+    color: #3498db;
+}
+
+.pattern-options {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(50px, 1fr));
+    gap: 15px;
+    margin-top: 30px;
+    max-width: 400px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.option {
+    width: 50px;
+    height: 50px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin: 0 auto;
+}
+
+.option:hover {
+    transform: scale(1.1);
+}
+</style>
+</head>
+<body>
+<div class="level-display">Level: <span id="levelDisplay">1</span></div>
+<div class="score">Score: <span id="scoreValue">0</span></div>
+
+<div class="container">
+    <h1>Telepathic Puzzle</h1>
+    <div class="patterns" id="patterns"></div>
+    <p>Choose the next color in the pattern:</p>
+    <div class="pattern-options" id="patternOptions"></div>
+    <button class="button" id="nextLevel" style="display: none;">Next Level</button>
+    <p class="message" id="message"></p>
+</div>
+
+<script>
+const levelPatterns = [
+    ['#FF5733', '#33FF57', '#3357FF', '#FF33F5'],
+    ['#FF0000', '#FF4400', '#FF8800', '#FFCC00', '#FFFF00'],
+    ['#9400D3', '#4B0082', '#0000FF', '#00FF00', '#FFFF00', '#FF7F00'],
+    ['#FF0000', '#FF00FF', '#0000FF', '#00FFFF', '#00FF00', '#FFFF00', '#FF0000'],
+    ['#1abc9c', '#2ecc71', '#3498db', '#9b59b6', '#f1c40f', '#e67e22', '#e74c3c', '#95a5a6']
+];
+
+let currentLevel = 0;
+let score = 0;
+let revealedIndices = new Set();
+let currentPattern = levelPatterns[currentLevel];
+
+function initializeLevel() {
+    document.getElementById('levelDisplay').textContent = currentLevel + 1;
+    revealedIndices.clear();
+    
+    const patternsContainer = document.getElementById('patterns');
+    patternsContainer.innerHTML = '';
+    
+    for (let i = 0; i < currentLevel + 3; i++) {
+        const pattern = document.createElement('div');
+        pattern.className = 'pattern';
+        pattern.setAttribute('data-color', currentPattern[i]);
+        patternsContainer.appendChild(pattern);
+    }
+    
+    const optionsContainer = document.getElementById('patternOptions');
+    optionsContainer.innerHTML = '';
+    
+    const numOptions = currentLevel + 4;
+    const options = [currentPattern[currentLevel + 3]];
+    
+    while (options.length < numOptions) {
+        const randomColor = levelPatterns[Math.floor(Math.random() * levelPatterns.length)]
+            [Math.floor(Math.random() * levelPatterns[0].length)];
+        if (!options.includes(randomColor)) {
+            options.push(randomColor);
+        }
+    }
+    
+    options.sort(() => Math.random() - 0.5);
+    
+    options.forEach(color => {
+        const option = document.createElement('div');
+        option.className = 'option';
+        option.style.backgroundColor = color;
+        option.addEventListener('click', () => checkGuess(color));
+        optionsContainer.appendChild(option);
+    });
+    
+    document.getElementById('nextLevel').style.display = 'none';
+    document.getElementById('message').textContent = '';
+}
+
+function revealRandomColor() {
+    const patterns = document.querySelectorAll('.pattern');
+    const unrevealedIndices = Array.from(patterns).map((_, i) => i)
+        .filter(i => !revealedIndices.has(i));
+    
+    if (unrevealedIndices.length > 0) {
+        const randomIndex = unrevealedIndices[Math.floor(Math.random() * unrevealedIndices.length)];
+        revealedIndices.add(randomIndex);
+        
+        const pattern = patterns[randomIndex];
+        pattern.classList.add('revealed');
+        pattern.style.backgroundColor = pattern.getAttribute('data-color');
+    }
+}
+
+function checkGuess(color) {
+    if (color === currentPattern[currentLevel + 3]) {
+        score += 100 - (revealedIndices.size * 20);
+        document.getElementById('scoreValue').textContent = score;
+        
+        document.querySelectorAll('.pattern').forEach((pattern, index) => {
+            pattern.classList.add('revealed');
+            pattern.style.backgroundColor = pattern.getAttribute('data-color');
+        });
+        
+        document.getElementById('message').textContent = 'Correct! Well done!';
+        document.getElementById('message').style.color = '#2ecc71';
+        
+        if (currentLevel < levelPatterns.length - 1) {
+            document.getElementById('nextLevel').style.display = 'block';
+        } else {
+            document.getElementById('message').textContent += ' You\'ve completed all levels!';
+        }
+    } else {
+        revealRandomColor();
+        document.getElementById('message').textContent = 'Try again!';
+        document.getElementById('message').style.color = '#e74c3c';
+        score = Math.max(0, score - 10);
+        document.getElementById('scoreValue').textContent = score;
+    }
+}
+
+document.getElementById('nextLevel').addEventListener('click', () => {
+    currentLevel++;
+    currentPattern = levelPatterns[currentLevel];
+    initializeLevel();
+});
+
+initializeLevel();
+</script>
+</body></html>
