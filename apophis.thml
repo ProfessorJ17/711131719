@@ -1,0 +1,879 @@
+<html><head><base href="."> <style>
+body {
+  margin: 0;
+  padding: 0;
+  background: #000;
+  color: #fff;
+  font-family: 'Montserrat', sans-serif;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+}
+
+.container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 30px;
+  z-index: 1;
+}
+
+.title {
+  font-size: 2.4em;
+  color: #ff0000;
+  text-shadow: 0 0 10px rgba(255, 0, 0, 0.3);
+  font-weight: normal;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  font-family: 'Courier New', monospace;
+  border-bottom: 2px solid #ff0000;
+  padding-bottom: 10px;
+  margin-bottom: 30px;
+  animation: redPulse 3s infinite !important;
+}
+
+.countdown, .time-unit, .info-panel, .prediction-panel, .stat, 
+.chat-container, .message, .chat-input, .chat-input input,
+.chat-input button, .date-unit, .info-section, .data-item,
+.step, .fact {
+  border-radius: 10px !important; /* Round all corners */
+  border-color: #ff0000 !important; /* Red borders */
+  box-shadow: 0 0 15px rgba(255, 0, 0, 0.1) !important; /* Red glow */
+}
+
+.countdown {
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  margin: 20px 0 40px !important;
+  padding: 35px !important;
+  background: rgba(0, 0, 0, 0.9) !important;
+  border: 1px solid #ff0000 !important;
+  box-shadow: 
+    0 0 10px rgba(255, 0, 0, 0.2),
+    inset 0 0 20px rgba(255, 0, 0, 0.1) !important;
+}
+
+.time-unit {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  min-width: 140px !important;
+  text-align: center !important;
+  padding: 15px !important;
+}
+
+.time-value {
+  position: relative !important;
+  background: rgba(0, 0, 0, 0.95) !important;
+  border: 1px solid #ff0000 !important;
+  box-shadow: 
+    0 0 10px rgba(255, 0, 0, 0.2),
+    inset 0 0 20px rgba(255, 0, 0, 0.1) !important;
+  width: 100% !important;
+  text-align: center !important;
+  font-size: 3em !important;
+  padding: 15px 10px !important;
+  margin-bottom: 8px !important;
+  font-family: 'Digital-7', 'Courier New', monospace !important;
+  letter-spacing: 2px !important;
+  color: #ff0000 !important;
+  text-shadow: 0 0 5px rgba(255, 0, 0, 0.7) !important;
+}
+
+.time-label {
+  width: 100% !important;
+  text-align: center !important;
+  font-size: 0.85em !important;
+  text-transform: uppercase !important;
+  letter-spacing: 2px !important;
+  padding: 8px 0 !important;
+  margin-top: 10px !important;
+  font-weight: 500 !important;
+}
+
+.info-panel {
+  border: 1px solid #ff0000;
+  background: rgba(0, 0, 0, 0.95);
+  padding: 20px;
+  border-radius: 10px !important;
+  box-shadow: inset 0 0 10px rgba(0,0,0,0.8);
+  position: relative;
+  font-family: 'Courier New', monospace;
+}
+
+.prediction-panel {
+  margin-top: 30px !important;
+  background: rgba(10, 10, 10, 0.95) !important;
+}
+
+.prediction-panel ul {
+  color: #ddd;
+}
+
+.prediction-panel p {
+  color: #eee;
+  margin: 15px 0;
+}
+
+.prediction-panel li {
+  margin: 8px 0;
+  color: #ddd;
+}
+
+.universe {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+}
+
+.star {
+  position: absolute;
+  background: #fff;
+  border-radius: 50%;
+  opacity: 0.6;
+  box-shadow: none;
+  animation: twinkle var(--twinkle-duration) infinite ease-in-out;
+}
+
+@keyframes twinkle {
+  0%, 100% { opacity: 0.2; transform: scale(0.8); }
+  50% { opacity: 1; transform: scale(1); }
+}
+
+.stats {
+  display: flex;
+  justify-content: space-around;
+  margin: 20px 0;
+  gap: 20px;
+  width: 100%;
+  max-width: 800px;
+}
+
+.stat {
+  background: rgba(0, 0, 0, 0.95) !important;
+  border: 1px solid #ff0000 !important;
+  box-shadow: 
+    0 0 15px rgba(255, 0, 0, 0.1),
+    inset 0 0 30px rgba(255, 0, 0, 0.05) !important;
+  padding: 20px;
+  text-align: center;
+}
+
+.stat-value {
+  font-size: 1.1em;
+  color: #ff0000;
+  margin-top: 10px;
+  font-family: 'Digital-7', 'Courier New', monospace;
+  text-shadow: 0 0 5px rgba(255, 0, 0, 0.5);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.chat-container {
+  background: #000;
+  border: 1px solid #333;
+  padding: 15px;
+  box-shadow: inset 0 0 10px rgba(0,0,0,0.8);
+  border-radius: 10px !important;
+  margin: 20px auto;
+  font-family: 'Courier New', monospace;
+  position: relative;
+}
+
+.chat-input {
+  display: flex;
+  gap: 10px;
+  margin-top: 15px;
+  padding: 10px;
+  background: rgba(0, 0, 0, 0.9) !important;
+  border: 1px solid #ff0000 !important;
+  border-radius: 10px !important;
+}
+
+.chat-input input {
+  flex: 1;
+  background: rgba(0, 0, 0, 0.9) !important;
+  border: 1px solid #ff0000 !important;
+  color: #ff0000;
+  font-family: 'Digital-7', 'Courier New', monospace;
+  padding: 12px 20px !important;
+}
+
+.chat-input button {
+  background: rgba(204, 0, 0, 0.9) !important;
+  color: #fff;
+  border: 1px solid #ff0000 !important;
+  padding: 10px 20px;
+  border-radius: 10px !important;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  box-shadow: 0 0 10px rgba(255, 0, 0, 0.2) !important;
+}
+
+.chat-input button:hover {
+  background: rgba(255, 0, 0, 0.9) !important;
+  box-shadow: 0 0 20px rgba(255, 0, 0, 0.4) !important;
+}
+
+.message {
+  background: rgba(10, 10, 10, 0.95) !important;
+  border: 1px solid #ff0000 !important;
+  border-left: 3px solid #ff0000 !important;
+  box-shadow: 0 0 10px rgba(255, 0, 0, 0.1) !important;
+  margin: 5px 0;
+  padding: 8px 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: all 0.3s ease;
+  opacity: 0;
+  transform: translateY(20px);
+  font-family: 'Courier New', monospace;
+  position: relative;
+}
+
+.message:hover {
+  background: rgba(60, 60, 60, 0.5);
+  transform: translateX(5px);
+}
+
+.message::before {
+  content: '>';
+  position: absolute;
+  left: 5px;
+  color: #ff1a1a;
+  opacity: 0.5;
+}
+
+.message-content {
+  flex: 1;
+  word-break: break-word;
+}
+
+.message-timestamp {
+  font-size: 0.8em;
+  color: #888;
+  margin-left: 15px;
+  white-space: nowrap;
+}
+
+.datetime-display {
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+  margin: 20px 0;
+  padding: 15px;
+  background: #000;
+  border: 1px solid #333;
+  border-radius: 10px !important;
+  font-family: 'Digital-7', 'Courier New', monospace;
+}
+
+.date-unit {
+  text-align: center;
+  padding: 10px 20px;
+  background: #111;
+  border: 1px solid #ff0000 !important;
+  border-radius: 10px !important;
+  box-shadow: inset 0 0 10px rgba(255, 0, 0, 0.05);
+}
+
+.date-label {
+  font-size: 0.8em;
+  color: #666;
+  text-transform: uppercase;
+  margin-bottom: 5px;
+  letter-spacing: 1px;
+}
+
+.date-value {
+  font-size: 1.4em;
+  color: #ff0000;
+  text-shadow: 0 0 5px rgba(255, 0, 0, 0.7);
+}
+
+.admin-controls {
+  display: flex;
+  gap: 5px;
+  margin-left: 10px;
+}
+
+.admin-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 2px 5px;
+  opacity: 0.6;
+  transition: all 0.3s ease;
+}
+
+.admin-btn:hover {
+  opacity: 1;
+  transform: scale(1.1);
+}
+
+.delete-btn {
+  color: #ff4444;
+}
+
+.ban-btn {
+  color: #ff0000;
+}
+
+.info-section {
+  margin: 30px 0;
+  padding: 25px;
+  background: rgba(0, 0, 0, 0.95) !important;
+  border: 1px solid #ff0000 !important;
+  box-shadow: 
+    0 0 15px rgba(255, 0, 0, 0.1),
+    inset 0 0 30px rgba(255, 0, 0, 0.05) !important;
+}
+
+.section-title {
+  color: #ff1a1a;
+  font-size: 1.4em;
+  text-align: center;
+  margin-bottom: 20px;
+  font-family: 'Courier New', monospace;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  border-bottom: 1px solid #ff0000;
+  padding-bottom: 10px;
+}
+
+.data-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+  margin-top: 15px;
+}
+
+.data-item {
+  padding: 15px;
+  background: rgba(10, 10, 10, 0.95) !important;
+  border: 1px solid #ff0000 !important;
+  border-radius: 10px !important;
+  box-shadow: 
+    0 0 10px rgba(255, 0, 0, 0.1),
+    inset 0 0 20px rgba(255, 0, 0, 0.05) !important;
+}
+
+.data-label {
+  color: #888;
+  font-size: 0.9em;
+  margin-bottom: 5px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.data-value {
+  color: #ff0000;
+  font-family: 'Digital-7', 'Courier New', monospace;
+  font-size: 1.1em;
+}
+
+.observation-content, .steps-content, .facts-content {
+  line-height: 1.6;
+  color: #ccc;
+}
+
+.step {
+  margin-bottom: 20px;
+  padding: 15px;
+  background: rgba(20, 20, 20, 0.9);
+  border: 1px solid #ff0000 !important;
+  border-radius: 10px !important;
+}
+
+.step h3 {
+  color: #ff0000;
+  margin-bottom: 10px;
+  font-size: 1.1em;
+  font-family: 'Courier New', monospace;
+}
+
+.fact {
+  margin-bottom: 15px;
+  padding: 15px;
+  background: rgba(20, 20, 20, 0.9);
+  border: 1px solid #ff0000 !important;
+  border-radius: 10px !important;
+}
+
+.fact strong {
+  color: #ff0000;
+  font-family: 'Courier New', monospace;
+}
+
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap');
+
+@font-face {
+  font-family: 'Digital-7';
+  src: url('https://fonts.cdnfonts.com/css/digital-7-mono');
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.9);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #ff0000;
+  border-radius: 4px;
+  box-shadow: 0 0 10px rgba(255, 0, 0, 0.5);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #ff3333;
+}
+
+@keyframes redPulse {
+  0% { box-shadow: 0 0 5px rgba(255, 0, 0, 0.1); }
+  50% { box-shadow: 0 0 20px rgba(255, 0, 0, 0.3); }
+  100% { box-shadow: 0 0 5px rgba(255, 0, 0, 0.1); }
+}
+
+</style></head><body>
+<div class="universe" id="universe"></div>
+<div class="container">
+  <div class="title">Apophis Impact Countdown</div>
+  <div style="text-align: center; margin-bottom: 30px; border: 1px solid #ff0000; padding: 15px; background: rgba(255, 0, 0, 0.1);">
+    <p style="color: #ff0000; margin: 0; font-size: 1.2em; font-family: 'Courier New', monospace;">
+      ⚠️ OFFICIAL PLANETARY DEFENSE MONITORING SYSTEM ⚠️
+    </p>
+    <p style="color: #ccc; margin: 10px 0 0 0; font-size: 0.9em;">
+      Real-time monitoring of confirmed asteroid approach
+    </p>
+  </div>
+  <div class="countdown" id="countdown">
+    <div class="time-unit">
+      <div class="time-value" id="days">00</div>
+      <div class="time-label">Days</div>
+    </div>
+    <div class="time-unit">
+      <div class="time-value" id="hours">00</div>
+      <div class="time-label">Hours</div>
+    </div>
+    <div class="time-unit">
+      <div class="time-value" id="minutes">00</div>
+      <div class="time-label">Minutes</div>
+    </div>
+    <div class="time-unit">
+      <div class="time-value" id="seconds">00</div>
+      <div class="time-label">Seconds</div>
+    </div>
+  </div>
+  <div class="datetime-display">
+    <div class="date-unit">
+      <div class="date-label">Current Date (CST)</div>
+      <div class="date-value" id="current-date">--/--/----</div>
+    </div>
+    <div class="date-unit">
+      <div class="date-label">Current Season</div>
+      <div class="date-value" id="current-season">--</div>
+    </div>
+  </div>
+  <div class="stats">
+    <div class="stat">
+      <div>Asteroid Name</div>
+      <div class="stat-value">99942 Apophis</div>
+    </div>
+    <div class="stat">
+      <div>Size Estimate</div>
+      <div class="stat-value">370m</div>
+    </div>
+    <div class="stat">
+      <div>Distance</div>
+      <div class="stat-value" id="distance">19,000 miles</div>
+    </div>
+  </div>
+  
+  <div class="info-section">
+    <h2 class="section-title">Asteroid Data</h2>
+    <div class="data-grid">
+      <div class="data-item">
+        <div class="data-label">Speed</div>
+        <div class="data-value">30.73 km/s (~68,800 mph)</div>
+      </div>
+      <div class="data-item">
+        <div class="data-label">Mass</div>
+        <div class="data-value">Estimated at 61 million tons</div>
+      </div>
+      <div class="data-item">
+        <div class="data-label">Impact Force Potential</div>
+        <div class="data-value">Approximately 1,200 megatons of TNT equivalent</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="info-section">
+    <h2 class="section-title">Current Observations</h2>
+    <div class="observation-content">
+      <p><strong>Tracking Status:</strong> Apophis is being monitored closely by NASA, ESA, and other space agencies. Radar and optical observations will refine its future trajectory.</p>
+      <p><strong>2029 Close Approach:</strong> Apophis will pass within 19,000 miles (31,000 km) of Earth, below the altitude of geosynchronous satellites.</p>
+      <p><strong>Future Approaches:</strong> After 2029, Apophis will make additional close approaches, most notably in 2036 and 2068, though current data suggests no immediate impact threat.</p>
+    </div>
+  </div>
+
+  <div class="info-section">
+    <h2 class="section-title">Next Steps</h2>
+    <div class="steps-content">
+      <div class="step">
+        <h3>2029 Approach</h3>
+        <p>Apophis will be visible to the naked eye as it passes Earth, offering a rare and valuable opportunity for scientific observation.</p>
+      </div>
+      <div class="step">
+        <h3>Long-Term Monitoring</h3>
+        <p>While there is no impact risk in 2029, scientists are closely studying Apophis's orbit for any gravitational influences (such as the Yarkovsky effect) that could alter its future trajectory, particularly during the 2068 approach.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="info-section">
+    <h2 class="section-title">Critical Facts</h2>
+    <div class="facts-content">
+      <div class="fact">
+        <strong>Size:</strong> Apophis is large enough to cause regional devastation if it were to impact Earth in the future.
+      </div>
+      <div class="fact">
+        <strong>Public Safety:</strong> There is no risk in 2029, but governments and space agencies are developing long-term strategies for asteroid deflection should future risks increase.
+      </div>
+    </div>
+  </div>
+
+  <div class="info-panel prediction-panel">
+    <h2 style="color: #ff1a1a; text-align: center; margin-bottom: 20px; font-size: 1.4em; font-weight: 500; letter-spacing: 1px;">
+      Critical Scientific Alert: Close Approach Event - April 13th, 2029
+    </h2>
+    <div style="line-height: 1.6; font-size: 1.1em;">
+      <p>WARNING: This is not a simulation or test. Current data from NASA's Center for Near-Earth Object Studies (CNEOS) and other space agencies confirm that asteroid 99942 Apophis, with a diameter of 370 meters, will pass extremely close to Earth on April 13, 2029. While there is no impact risk for this approach, this will be one of the closest encounters ever recorded for an asteroid of this size.</p>
+      <p>The following effects are not expected in 2029, but future monitoring is essential:</p>
+      <ul>
+        <li>Impact Energy: If Apophis were to collide with Earth in the future, it would release energy equivalent to 1,200 megatons of TNT — about 80,000 times the energy of the Hiroshima bomb.</li>
+        <li>Crater Formation: An impact would create a crater 3-5 kilometers wide (~2-3 miles), with regional destruction over a hundreds of kilometers radius.</li>
+        <li>Airblast and Shockwave: Potential for widespread infrastructure damage and injuries over a large area.</li>
+        <li>Tsunami Potential: A water impact could generate massive tsunamis, affecting coastal regions on multiple continents.</li>
+        <li>Global Climate Effects: The release of dust and aerosols could cause a temporary global cooling effect, disrupting agriculture and ecosystems for years.</li>
+      </ul>
+      <p style="color: #ff4444; margin-top: 20px;">Impact Probability: Currently 0% for 2029, but future approaches in 2068 and beyond are being monitored.</p>
+    </div>
+  </div>
+  <div class="chat-container">
+    <div class="chat-messages" id="chat-messages"></div>
+    <div class="chat-input">
+        <input type="text" id="message-input" placeholder="Share your thoughts about the asteroid...">
+        <div style="display: flex; flex-direction: column; gap: 5px;">
+            <button onclick="sendMessage()">Send</button>
+            <div style="font-size: 0.8em; color: #666; text-align: center;">Comments</div>
+        </div>
+    </div>
+</div>
+</div>
+
+<script>
+const room = new WebsimSocket();
+let isAdmin = false;
+
+// Check if the current user is admin
+room.party.subscribe((peers) => {
+  const currentUser = room.party.client.username;
+  // Add your username here to grant admin rights
+  isAdmin = currentUser === 'your_username_here'; 
+});
+
+// Create stars
+const universe = document.getElementById('universe');
+const initialStarCount = 2000;
+let visibleStars = initialStarCount;
+
+for (let i = 0; i < initialStarCount; i++) {
+  const star = document.createElement('div');
+  star.className = 'star';
+  star.style.left = Math.random() * 100 + '%';
+  star.style.top = Math.random() * 100 + '%';
+  star.style.width = Math.random() * 3 + 'px';
+  star.style.height = star.style.width;
+  star.style.setProperty('--twinkle-duration', (Math.random() * 3 + 1) + 's');
+  universe.appendChild(star);
+}
+
+// Set the target date (April 13, 2029)
+const targetDate = new Date('2029-04-13T00:00:00');
+let heatDeathAudio = new Audio('Heat Death.mp3');
+let isAudioPlaying = false;
+
+// Update stats function
+function updateStats() {
+  const distanceEl = document.getElementById('distance');
+  if (distanceEl) {
+    // Initial and final distance
+    const initialDistance = 273400000; // in km (273.40 million km)
+    const targetDistance = 30000; // in km
+    
+    // Dates
+    const startDate = new Date(2024, 11, 17); // December 17, 2024
+    const targetDate = new Date(2029, 3, 13); // April 13, 2029
+    
+    const now = new Date();
+    
+    // Calculate distance
+    const totalTime = (targetDate - startDate) / 1000; // in seconds
+    const totalDistance = targetDistance - initialDistance; // in km
+    const distancePerSecond = totalDistance / totalTime; // in km per second
+    
+    const elapsedTime = (now - startDate) / 1000; // in seconds
+    const currentDistance = initialDistance + (distancePerSecond * elapsedTime);
+    
+    if (now >= targetDate) {
+      distanceEl.textContent = `${targetDistance.toFixed(8)} km (Target Reached!)`;
+    } else {
+      distanceEl.textContent = `${currentDistance.toFixed(8)} km`;
+    }
+  }
+}
+
+// Scientific constants
+const currentCMBTemp = 2.72548; // Kelvin (±0.00057K)
+const currentAge = 13.787; // billion years (±0.020)
+const timeToHeatDeath = Math.pow(10, 100); // estimated years until heat death
+const universeRadius = 46.5; // billion light years (observable universe radius)
+const expansionRate = 72.9; // km/s/Mpc (Hubble constant latest measurement)
+const darkEnergyDensity = 68.3; // percentage of universe's energy content
+
+function updateCountdown() {
+  const now = new Date();
+  const timeToTarget = targetDate - now;
+  const countdownElement = document.getElementById('countdown');
+  
+  if (timeToTarget <= 0) {
+    countdownElement.innerHTML = `
+      <div class="time-unit">
+        <div class="time-value">Impact Event</div>
+        <div class="time-label">Time Remaining</div>
+      </div>
+    `;
+  } else {
+    const days = Math.floor(timeToTarget / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((timeToTarget % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const minutes = Math.floor((timeToTarget % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((timeToTarget % (1000 * 60)) / 1000);
+    
+    document.getElementById('days').textContent = days.toString().padStart(2, '0');
+    document.getElementById('hours').textContent = hours.toString().padStart(2, '0');
+    document.getElementById('minutes').textContent = minutes.toString().padStart(2, '0');
+    document.getElementById('seconds').textContent = seconds.toString().padStart(2, '0');
+
+    // Add urgent glowing effect and play audio when 5 hours or less remain
+    const totalHoursRemaining = days * 24 + hours;
+    if (totalHoursRemaining <= 5) {
+      countdownElement.classList.add('urgent');
+      playAlertSound();
+      
+      // Start playing the audio if it's not already playing
+      if (!isAudioPlaying) {
+        heatDeathAudio.loop = true;
+        heatDeathAudio.play()
+          .then(() => {
+            isAudioPlaying = true;
+          })
+          .catch(error => {
+            console.error('Error playing audio:', error);
+          });
+      }
+    } else {
+      countdownElement.classList.remove('urgent');
+      if (isAudioPlaying) {
+        heatDeathAudio.pause();
+        heatDeathAudio.currentTime = 0;
+        isAudioPlaying = false;
+      }
+    }
+  }
+  
+  updateStats();
+}
+
+function getSeason(date) {
+  const month = date.getMonth();
+  if (month >= 2 && month <= 4) return "Spring";
+  if (month >= 5 && month <= 7) return "Summer";
+  if (month >= 8 && month <= 10) return "Fall";
+  return "Winter";
+}
+
+function updateDateTime() {
+  // Create date in CST/CDT by using Chicago's timezone
+  const now = new Date().toLocaleString("en-US", {
+    timeZone: "America/Chicago"
+  });
+  const cstDate = new Date(now);
+  
+  // Update current date in CST format
+  const dateStr = cstDate.toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    timeZone: "America/Chicago"
+  });
+  document.getElementById('current-date').textContent = dateStr;
+  
+  // Update current season based on CST date
+  document.getElementById('current-season').textContent = getSeason(cstDate);
+}
+
+// Add interval to update the date time display regularly
+setInterval(updateDateTime, 1000);
+// Call it immediately on load
+updateDateTime();
+
+function playAlertSound() {
+  const alertSound = new Audio('data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcHFmg0N2tchwcXEVJT2V5o9Ddq2AcHFmg0N2tchwcXEZBS3Gn0N2tcRwcXEZBS3Gn0N2tcRwcXEZBS3Gn0N2tcRwcXEZBS3Gn0N2tcRwcXEZBS3HGvpxhS1Bih6jGq3ccGlih0tyrYR4aXqDP3KtiHhpeoM/cq2IeGl6gz9yrYh4aXqDP3KtiHhpeoM/cq2IeGl6gz9yrYh4aXqDP3KtiHhpeoM/cq2IeGl6gz9yrYh4aXqDP3KtiHhpeoM/cq2IeGl5nWmCCq9DbqmAcHFmg0N2tchwcXEZBS3Gn0N2tcRwcXEZBS3Gn0N2tcRwcXEZBS3Gn0N2tcRwcXEZBS3Gn0N2tcRwcXEZBS3Gn');
+  alertSound.play();
+}
+
+// Enhanced chat functionality
+room.collection('messages').subscribe(messages => {
+  const chatMessages = document.getElementById('chat-messages');
+  const wasAtBottom = chatMessages.scrollHeight - chatMessages.scrollTop === chatMessages.clientHeight;
+  
+  chatMessages.innerHTML = '';
+  
+  const sortedMessages = [...messages].sort((a, b) => a.created_at - b.created_at);
+  
+  sortedMessages.forEach(msg => {
+    const messageDiv = document.createElement('div');
+    messageDiv.className = 'message';
+    messageDiv.style.opacity = '0';
+    messageDiv.style.transform = 'translateY(20px)';
+    
+    const contentDiv = document.createElement('div');
+    contentDiv.className = 'message-content';
+    
+    // Check if user is banned
+    const isBanned = room.collection('bans').filter({ username: msg.username }).getList().length > 0;
+    
+    if (isBanned) {
+      contentDiv.textContent = '[Message removed - User banned]';
+      contentDiv.style.color = '#666';
+      contentDiv.style.fontStyle = 'italic';
+    } else {
+      contentDiv.textContent = `${msg.username}: ${msg.message}`;
+    }
+    
+    const timestampDiv = document.createElement('div');
+    timestampDiv.className = 'message-timestamp';
+    const date = new Date(msg.created_at);
+    timestampDiv.textContent = date.toLocaleString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+    
+    messageDiv.appendChild(contentDiv);
+    messageDiv.appendChild(timestampDiv);
+    
+    // Add admin controls if user is admin
+    if (isAdmin) {
+      const adminControls = document.createElement('div');
+      adminControls.className = 'admin-controls';
+      
+      const deleteBtn = document.createElement('button');
+      deleteBtn.textContent = '🗑️';
+      deleteBtn.className = 'admin-btn delete-btn';
+      deleteBtn.onclick = async () => {
+        await room.collection('messages').delete(msg.id);
+      };
+      
+      const banBtn = document.createElement('button');
+      banBtn.textContent = '🚫';
+      banBtn.className = 'admin-btn ban-btn';
+      banBtn.onclick = async () => {
+        await room.collection('bans').create({
+          username: msg.username,
+          reason: 'Banned by admin'
+        });
+      };
+      
+      adminControls.appendChild(deleteBtn);
+      adminControls.appendChild(banBtn);
+      messageDiv.appendChild(adminControls);
+    }
+    
+    chatMessages.appendChild(messageDiv);
+    
+    setTimeout(() => {
+      messageDiv.style.transition = 'all 0.3s ease';
+      messageDiv.style.opacity = '1';
+      messageDiv.style.transform = 'translateY(0)';
+    }, 10);
+  });
+  
+  if (wasAtBottom) {
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+  }
+});
+
+// Update the sendMessage function to always scroll to bottom after sending
+async function sendMessage() {
+  const input = document.getElementById('message-input');
+  const message = input.value.trim();
+  
+  if (message) {
+    // Check if user is banned
+    const bans = room.collection('bans').filter({ username: room.party.client.username }).getList();
+    if (bans.length > 0) {
+      alert('You have been banned from sending messages.');
+      return;
+    }
+    
+    await room.collection('messages').create({
+      message: message
+    });
+    input.value = '';
+    
+    const chatMessages = document.getElementById('chat-messages');
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+  }
+}
+
+document.getElementById('message-input').addEventListener('keypress', (e) => {
+  if (e.key === 'Enter') {
+    sendMessage();
+  }
+});
+
+const startTime = Date.now();
+const billion = 1000000000;
+
+setInterval(updateCountdown, 1000);
+updateCountdown();
+
+setInterval(() => {
+  const stars = document.getElementsByClassName('star');
+  for (let star of stars) {
+    if (Math.random() < 0.0001) {
+      star.style.opacity = '0';
+      star.style.transition = 'opacity 30s';
+      visibleStars--;
+      if (visibleStars < 0) visibleStars = 0;
+    }
+  }
+}, 5000);
+</script>
+</body></html>
