@@ -1,0 +1,29 @@
+const functions = require("firebase-functions");
+const admin = require("firebase-admin");
+
+admin.initializeApp();
+
+exports.bitlabsRewardCallback = functions.https.onRequest((req, res) => {
+  // Extract data from the BitLabs POST request
+  const { event, user, reward } = req.body;
+
+  if (event === "reward") {
+    console.log(`Reward event for User ${user}: ${reward} points`);
+
+    // Firestore: Update the user's balance
+    const userRef = admin.firestore().collection("users").doc(user);
+    userRef.update({
+      balance: admin.firestore.FieldValue.increment(reward),
+    })
+    .then(() => {
+      res.status(200).send("Reward processed successfully.");
+    })
+    .catch((err) => {
+      console.error("Error updating user balance:", err);
+      res.status(500).send("Error processing reward.");
+    });
+  } else {
+    console.error("Invalid event type:", event);
+    res.status(400).send("Invalid event type.");
+  }
+});
