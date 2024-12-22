@@ -1,0 +1,33 @@
+body {
+  margin: 0;
+  font-family: 'Arial', sans-serif;
+  background: black;
+  color: white;
+}
+
+.offerwall-container {
+  text-align: center;
+  padding: 20px;
+}
+
+.offers {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
+  margin-top: 20px;
+}
+
+.offer-item {
+  background: rgba(0, 0, 0, 0.8);
+  padding: 15px;
+  border-radius: 5px;
+  box-shadow: 0 0 10px #00ffcc;
+  width: 200px;
+  text-align: center;
+}
+
+.offer-item:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 15px #00ffcc;
+}
