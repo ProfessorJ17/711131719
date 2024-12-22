@@ -1,11 +1,11 @@
 // firebase-config.js
-const firebaseConfig = {
-  apiKey: "AIzaSyB8Ura2PrHeMnIXryULLcMJ0thONSO7_mE",
-  authDomain: "freemoney-4e2e4.firebaseapp.com",
-  projectId: "freemoney-4e2e4",
-  storageBucket: "freemoney-4e2e4.appspot.com",
-  messagingSenderId: "13864207359",
-  appId: "1:13864207359:web:d51b2b0c91de4c91b406d75",
+export const firebaseConfig = {
+  apiKey: process.env.FIREBASE_API_KEY,  // Use GitHub secret for API key
+  authDomain: process.env.FIREBASE_AUTH_DOMAIN, // Use GitHub secret for Auth domain
+  projectId: process.env.FIREBASE_PROJECT_ID,  // Use GitHub secret for project ID
+  storageBucket: process.env.FIREBASE_STORAGE_BUCKET, // Use GitHub secret for storage bucket
+  messagingSenderId: process.env.FIREBASE_MESSAGING_SENDER_ID,  // Use GitHub secret for messaging sender ID
+  appId: process.env.FIREBASE_APP_ID, // Use GitHub secret for app ID
 };
 
 // Initialize Firebase
