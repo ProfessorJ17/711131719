@@ -1,5 +1,4 @@
-// offerwall.js
-import { auth } from "../../firebase-config.js";
+import { auth } from "../firebase-config.js";
 import { onAuthStateChanged } from "firebase/auth";
 
 onAuthStateChanged(auth, (user) => {
@@ -7,9 +6,9 @@ onAuthStateChanged(auth, (user) => {
     alert("You must be logged in to access the offerwall.");
     window.location.href = "../freemoney.html";
   } else {
-    // Load BitLabs SDK
+    // Dynamically set the userId for BitLabs SDK
     const bitlabsScript = document.createElement("script");
-    const token = "d51b2b0c-91de-4c91-b406-d75f4764c084"; // Your BitLabs API token
+    const token = "d51b2b0c-91de-4c91-b406-d75f4764c084"; // BitLabs API token
     const userId = user.uid; // Firebase Auth user ID
 
     bitlabsScript.src = `https://web.bitlabs.ai/web/v1?token=${token}&uid=${userId}`;
