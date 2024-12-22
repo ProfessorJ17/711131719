@@ -1,14 +1,23 @@
-const offers = [
-  { name: "Complete Survey", reward: "100 Points" },
-  { name: "Download App", reward: "200 Points" },
-  { name: "Watch Video", reward: "50 Points" },
-];
+// offerwall.js
+import { auth } from "../../firebase-config.js";
+import { onAuthStateChanged } from "firebase/auth";
 
-const offersContainer = document.querySelector(".offers");
+onAuthStateChanged(auth, (user) => {
+  if (!user) {
+    alert("You must be logged in to access the offerwall.");
+    window.location.href = "../freemoney.html";
+  } else {
+    // Load BitLabs SDK
+    const bitlabsScript = document.createElement("script");
+    const token = "d51b2b0c-91de-4c91-b406-d75f4764c084"; // Your BitLabs API token
+    const userId = user.uid; // Firebase Auth user ID
 
-offers.forEach((offer) => {
-  const offerItem = document.createElement("div");
-  offerItem.classList.add("offer-item");
-  offerItem.innerHTML = `<h3>${offer.name}</h3><p>${offer.reward}</p>`;
-  offersContainer.appendChild(offerItem);
+    bitlabsScript.src = `https://web.bitlabs.ai/web/v1?token=${token}&uid=${userId}`;
+    bitlabsScript.async = true;
+    document.head.appendChild(bitlabsScript);
+
+    bitlabsScript.onload = () => {
+      console.log("BitLabs SDK loaded successfully for user ID:", userId);
+    };
+  }
 });
