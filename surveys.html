@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    /* CSS for positioning the button */
+    .bmc-container {
+      position: fixed;
+      top: 400px;
+      right: 0;
+      z-index: 9999; /* Ensures the button is on top of everything */
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Buy Me a Coffee Button wrapped in a div -->
+  <div class="bmc-container">
+    <script type="text/javascript" src="https://cdnjs.buymeacoffee.com/1.0.0/button.prod.min.js" data-name="bmc-button" data-slug="J3301" data-color="#FFDD00" data-emoji="☕" data-font="Cookie" data-text="Buy me a coffee" data-outline-color="#000000" data-font-color="#000000" data-coffee-color="#ffffff"></script>
+  </div>
+
+</body>
+</html>
+
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cyberpunk Neon Menu</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #111; /* Dark background */
+            color: white; /* White text */
+        }
+
+        /* Style for the navigation menu */
+        .navbar {
+            background-color: #000; /* Black background for the navbar */
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 9999;
+        }
+
+        /* Navigation links */
+        .navbar a {
+            color: white;
+            text-align: center;
+            padding: 15px 25px;
+            text-decoration: none;
+            font-size: 18px;
+            margin: 0 15px;
+            border-radius: 5px;
+            text-transform: uppercase;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        /* Hover effect for each link with neon glow */
+        .navbar a:hover {
+            color: black;
+            background: linear-gradient(45deg, cyan, magenta, lime, purple);
+            background-clip: text;
+            -webkit-background-clip: text;
+            box-shadow: 0 0 10px 3px cyan, 0 0 20px 5px lime, 0 0 30px 7px magenta, 0 0 40px 10px purple;
+        }
+
+        /* Add a subtle neon glow to the navbar */
+        .navbar a::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            z-index: -1;
+            transform: translate(-50%, -50%);
+            animation: glow 1.5s infinite alternate;
+        }
+
+        /* Neon glow animation */
+        @keyframes glow {
+            0% {
+                box-shadow: 0 0 5px 2px cyan, 0 0 10px 3px lime, 0 0 15px 4px magenta, 0 0 20px 5px purple;
+            }
+            100% {
+                box-shadow: 0 0 15px 6px cyan, 0 0 20px 7px lime, 0 0 30px 8px magenta, 0 0 40px 10px purple;
+            }
+        }
+
+        /* Ensure the content isn't hidden under the fixed navbar */
+        body {
+            padding-top: 80px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navigation Bar -->
+    <div class="navbar">
+        <a href="https://711131719.xyz/free.html">Home</a>
+        <a href="https://711131719.xyz/survey.html">Survey</a>
+        <a href="https://711131719.xyz/gamemods.html">Game Mods</a>
+    </div>
+
+    <!-- Page Content Here -->
+    <div class="content">
+        <!-- Your page specific content -->
+    </div>
+
+</body>
+</html>
+
+
+
+
+
