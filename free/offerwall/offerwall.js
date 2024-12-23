@@ -1,58 +1,23 @@
-/* offerwall.css */
-body {
-  font-family: Arial, sans-serif;
-  background-color: #f4f4f9;
-  color: #333;
-}
+// offerwall.js
+import { auth } from '../firebase-config.js';
+import { onAuthStateChanged } from "firebase/auth";
 
-.offerwall-container {
-  width: 80%;
-  margin: 0 auto;
-  padding: 20px;
-  background-color: #fff;
-  border-radius: 10px;
-  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-}
+onAuthStateChanged(auth, (user) => {
+  if (!user) {
+    alert("You must be logged in to access the offerwall.");
+    window.location.href = "../freemoney.html";
+  } else {
+    // Dynamically set the userId for BitLabs SDK
+    const bitlabsScript = document.createElement("script");
+    const token = "d51b2b0c-91de-4c91-b406-d75f4764c084"; // BitLabs API token
+    const userId = user.uid; // Firebase Auth user ID
 
-h1.neon-cyan {
-  font-size: 36px;
-  color: #00ffcc;
-  text-align: center;
-  text-shadow: 0 0 10px #00ffcc, 0 0 20px #00ffcc;
-}
+    bitlabsScript.src = `https://web.bitlabs.ai/web/v1?token=${token}&uid=${userId}`;
+    bitlabsScript.async = true;
+    document.head.appendChild(bitlabsScript);
 
-.offers {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-}
-
-.offer-card {
-  background-color: #0073e6;
-  color: #fff;
-  padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.offer-card p {
-  font-size: 18px;
-}
-
-.offer-card button {
-  background-color: #00cc00;
-  color: #fff;
-  border: none;
-  padding: 10px;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 16px;
-  transition: background-color 0.3s;
-}
-
-.offer-card button:hover {
-  background-color: #009900;
-}
+    bitlabsScript.onload = () => {
+      console.log("BitLabs SDK loaded successfully for user ID:", userId);
+    };
+  }
+});
