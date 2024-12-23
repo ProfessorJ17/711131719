@@ -10,9 +10,29 @@
   <div class="offerwall-container">
     <h1 class="neon-cyan">FreeMoney Offerwall</h1>
     <div class="offers">
-      <!-- Offerwall items will be dynamically populated -->
+      <p>Loading surveys...</p>
     </div>
   </div>
-  <script src="offerwall/offerwall.js"></script>
+
+  <!-- Add BitLabs SDK Script -->
+  <script>
+    const token = "d51b2b0c-91de-4c91-b406-d75f4764c084"; // Your App/API Token
+    const userId = "unique_user_id"; // Replace with the user's unique ID (e.g., from Firebase Auth)
+
+    // Dynamically load the BitLabs SDK script
+    const bitlabsScript = document.createElement("script");
+    bitlabsScript.src = `https://web.bitlabs.ai/web/v1?token=${token}&uid=${userId}`;
+    bitlabsScript.async = true;
+    document.head.appendChild(bitlabsScript);
+
+    // Log when the SDK is successfully loaded
+    bitlabsScript.onload = () => {
+      console.log("BitLabs SDK loaded successfully.");
+    };
+  </script>
+
+  <!-- Firebase Config and Auth -->
+  <script type="module" src="../firebase-config.js"></script>
+  <script type="module" src="offerwall.js"></script>
 </body>
 </html>
