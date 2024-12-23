@@ -109,9 +109,8 @@
 
 
 
-
-
-<html><head><base href="."><title>Minecraft Roblox GTA 5 FORTNITE MOD HACKS</title>
+<html><head><base href=".">
+<title>Cyberpunk Neon Menu</title>
 <style>
 :root {
   --neon-pink: #ff2d55;
@@ -229,12 +228,89 @@ body {
   -webkit-text-fill-color: transparent;
   text-shadow: 0 0 10px rgba(255,255,255,0.5);
   animation: textGlow 2s infinite;
+  position: relative;
+  margin-top: 80px;
+  margin-bottom: 2rem;
+  z-index: 1;
 }
 
 @keyframes textGlow {
   0% { filter: brightness(100%) blur(0); }
   50% { filter: brightness(150%) blur(1px); }
   100% { filter: brightness(100%) blur(0); }
+}
+
+/* Style for the navigation menu */
+.navbar {
+  background-color: #000; /* Black background for the navbar */
+  padding: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
+  position: fixed;
+  width: 100%;
+  top: 0;
+  z-index: 9999;
+  margin-bottom: 20px;
+}
+
+/* Navigation links */
+.navbar a {
+  color: white;
+  text-align: center;
+  padding: 15px 25px;
+  text-decoration: none;
+  font-size: 18px;
+  margin: 0 15px;
+  border-radius: 5px;
+  text-transform: uppercase;
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+/* Hover effect for each link with neon glow */
+.navbar a:hover {
+  color: black;
+  background: linear-gradient(45deg, cyan, magenta, lime, purple);
+  background-clip: text;
+  -webkit-background-clip: text;
+  box-shadow: 0 0 10px 3px cyan, 0 0 20px 5px lime, 0 0 30px 7px magenta, 0 0 40px 10px purple;
+}
+
+/* Add a subtle neon glow to the navbar */
+.navbar a::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  z-index: -1;
+  transform: translate(-50%, -50%);
+  animation: glow 1.5s infinite alternate;
+}
+
+/* Neon glow animation */
+@keyframes glow {
+  0% {
+    box-shadow: 0 0 5px 2px cyan, 0 0 10px 3px lime, 0 0 15px 4px magenta, 0 0 20px 5px purple;
+  }
+  100% {
+    box-shadow: 0 0 15px 6px cyan, 0 0 20px 7px lime, 0 0 30px 8px magenta, 0 0 40px 10px purple;
+  }
+}
+
+/* Ensure the content isn't hidden under the fixed navbar */
+body {
+  font-family: 'Arial', sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #111; /* Dark background */
+  color: white; /* White text */
+  padding-top: 120px; /* Increased from 80px to make room for title */
 }
 </style>
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&amp;display=swap" rel="stylesheet">
@@ -243,6 +319,12 @@ body {
 
 <div class="cyber-container">
   <div class="cyber-grid"></div>
+  
+  <div class="navbar">
+    <a href="https://711131719.xyz/free.html">Home</a>
+    <a href="https://711131719.xyz/survey.html">Survey</a>
+    <a href="https://711131719.xyz/gamemods.html">Game Mods</a>
+  </div>
   
   <h1 class="neon-text">ULTIMATE GAMES MODS & HACKS</h1>
   
