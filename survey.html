@@ -14,6 +14,7 @@ body {
   font-family: 'Orbitron', sans-serif;
   color: #fff;
   overflow-x: hidden;
+  padding-top: 120px;
 }
 
 .cyber-container {
@@ -201,13 +202,47 @@ body {
   animation: none;
 }
 
-body {
-  font-family: 'Arial', sans-serif;
-  margin: 0;
-  padding: 0;
-  background-color: #111; 
-  color: white; 
-  padding-top: 120px; 
+.reward-container {
+  display: flex;
+  gap: 2rem;
+  margin-top: 2rem;
+  z-index: 1;
+}
+
+.reward-card {
+  background: rgba(20, 20, 20, 0.8);
+  border: 2px solid var(--neon-pink);
+  border-radius: 10px;
+  padding: 1.5rem;
+  width: 300px;
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+.reward-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 0 20px var(--neon-pink);
+}
+
+.reward-icon {
+  width: 100px;
+  height: 100px;
+  margin-bottom: 1rem;
+}
+
+.reward-link {
+  color: var(--neon-blue);
+  text-decoration: none;
+  font-size: 1.2rem;
+  display: block;
+  margin-top: 1rem;
+  text-transform: uppercase;
+  transition: all 0.3s ease;
+}
+
+.reward-link:hover {
+  color: var(--neon-pink);
+  text-shadow: 0 0 10px var(--neon-pink);
 }
 </style>
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&amp;display=swap" rel="stylesheet">
@@ -224,12 +259,41 @@ body {
     <a href="https://711131719.xyz/mysterybox.html">Mystery</a>
     <a href="https://711131719.xyz/donation.html">Donate</a>
   </div>
-  
 
+  <div class="reward-container">
+    <div class="reward-card">
+      <svg class="reward-icon" viewBox="0 0 100 100">
+        <circle cx="50" cy="50" r="45" fill="none" stroke="var(--neon-pink)" stroke-width="2"/>
+        <text x="50" y="55" text-anchor="middle" fill="var(--neon-pink)" font-size="14">SB</text>
+        <path d="M35 65 L45 45 L55 55 L65 35" stroke="var(--neon-blue)" stroke-width="2" fill="none"/>
+      </svg>
+      <h3 style="color: var(--neon-pink)">SwagBucks</h3>
+      <p>Earn rewards and gift cards!</p>
+      <a href="https://www.swagbucks.com/profile/r_168853331?rp=1" target="_blank" class="reward-link">Join Now</a>
+    </div>
+    
+    <div class="reward-card">
+      <svg class="reward-icon" viewBox="0 0 100 100">
+        <circle cx="50" cy="50" r="45" fill="none" stroke="var(--neon-purple)" stroke-width="2"/>
+        <text x="50" y="55" text-anchor="middle" fill="var(--neon-purple)" font-size="14">PR</text>
+        <polygon points="30,70 50,30 70,70" fill="none" stroke="var(--neon-blue)" stroke-width="2"/>
+      </svg>
+      <h3 style="color: var(--neon-purple)">PrizeRebel</h3>
+      <p>Complete tasks, get rewarded!</p>
+      <a href="https://www.prizerebel.com/index.php?r=ninjalotus4life" target="_blank" class="reward-link">Start Earning</a>
+    </div>
+  </div>
+
+  <script>
+    document.querySelectorAll('.reward-card').forEach(card => {
+      card.addEventListener('mouseover', () => {
+        card.style.transform = 'translateY(-5px) scale(1.02)';
+      });
+      card.addEventListener('mouseout', () => {
+        card.style.transform = 'translateY(0) scale(1)';
+      });
+    });
+  </script>
+</div>
 </body>
 </html>
-
-
-
-
-
