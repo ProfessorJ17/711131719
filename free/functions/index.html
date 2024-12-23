@@ -1,11 +1,21 @@
 const functions = require("firebase-functions");
 const admin = require("firebase-admin");
+const crypto = require("crypto");
 
 admin.initializeApp();
 
 exports.bitlabsRewardCallback = functions.https.onRequest((req, res) => {
-  // Extract data from the BitLabs POST request
-  const { event, user, reward } = req.body;
+  const { event, user, reward, tx, hash } = req.body;
+
+  // Secure the callback with a hash
+  const secretKey = process.env.BITLABS_SECRET_KEY;
+  const computedHash = crypto.createHmac('sha1', secretKey)
+    .update(`${tx}${reward}${user}`)
+    .digest('hex');
+
+  if (computedHash !== hash) {
+    return res.status(400).send('Invalid callback hash');
+  }
 
   if (event === "reward") {
     console.log(`Reward event for User ${user}: ${reward} points`);
