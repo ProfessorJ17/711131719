@@ -1,4 +1,4 @@
-<html><head><base href=".">
+<html><head><base href="." />
 <title>Cyberpunk Neon Menu</title>
 <style>
 :root {
@@ -10,19 +10,22 @@
 body {
   margin: 0;
   padding: 0;
-  background: #0a0a0a;
+  background: #000000;
   font-family: 'Orbitron', sans-serif;
   color: #fff;
-  overflow-x: hidden;
+  overflow: hidden; /* Changed from overflow-x to overflow */
+  padding-top: 120px;
+  width: 100%;
+  min-height: 100vh;
 }
 
 .cyber-container {
-  min-height: 100vh;
+  width: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 2rem;
   position: relative;
+  background: #000000;
 }
 
 .cyber-grid {
@@ -148,7 +151,7 @@ body {
 }
 
 .navbar {
-  background-color: #0a0a0a; 
+  background-color: #000000;
   padding: 20px;
   display: flex;
   justify-content: center;
@@ -159,7 +162,8 @@ body {
   top: 0;
   z-index: 9999;
   margin-bottom: 20px;
-  border-bottom: 2px solid rgba(0,255,159,0.1); 
+  border-bottom: 2px solid rgba(0,255,159,0.1);
+  flex-wrap: wrap;
 }
 
 .navbar a {
@@ -174,7 +178,7 @@ body {
   position: relative;
   transition: all 0.3s ease;
   border: 1px solid rgba(0,255,159,0.1);
-  background: #0a0a0a;
+  background: #000000;
 }
 
 .navbar a:hover {
@@ -201,18 +205,40 @@ body {
   animation: none;
 }
 
-body {
-  font-family: 'Arial', sans-serif;
-  margin: 0;
-  padding: 0;
-  background-color: #111; 
-  color: white; 
-  padding-top: 120px; 
+.responsive-iframe {
+  width: 100%;
+  height: 690px;
+  border: none;
+  position: relative;
+  z-index: 1;
+  background: #000000;
+  overflow: hidden;
+}
+
+@media screen and (max-width: 768px) {
+  .navbar {
+    padding: 10px;
+  }
+  
+  .navbar a {
+    margin: 5px;
+    padding: 10px 15px;
+    font-size: 16px;
+  }
+  
+  body {
+    padding-top: 180px;
+  }
 }
 </style>
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&amp;display=swap" rel="stylesheet">
 </head>
 <body>
+
+<iframe sandbox="allow-popups allow-same-origin allow-scripts allow-top-navigation-by-user-activation allow-popups-to-escape-sandbox" 
+        src="https://www.mobtrk.link/list/51892" 
+        class="responsive-iframe"
+        frameborder="0"></iframe>
 
 <div class="cyber-container">
   <div class="cyber-grid"></div>
@@ -224,13 +250,20 @@ body {
     <a href="https://711131719.xyz/mysterybox.html">Mystery</a>
     <a href="https://711131719.xyz/donation.html">Donate</a>
   </div>
-  
 
+  <script>
+  document.querySelectorAll('.mod-card').forEach(card => {
+    card.addEventListener('mouseover', () => {
+      card.style.transform = 'translateY(-5px) scale(1.02)';
+      card.style.boxShadow = `0 0 20px var(--neon-blue)`;
+    });
+    card.addEventListener('mouseout', () => {
+      card.style.transform = 'translateY(0) scale(1)';
+      card.style.boxShadow = 'none';
+    });
+  });
+  </script>
+  
+</div>
 </body>
 </html>
-
-
-<iframe sandbox="allow-popups allow-same-origin allow-scripts allow-top-navigation-by-user-activation allow-popups-to-escape-sandbox" 
-        src="https://www.mobtrk.link/list/51892" 
-        style="width:100%; height:690px; border:none;" 
-        frameborder="0"></iframe>
