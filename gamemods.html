@@ -1,114 +1,3 @@
-
-
-
-
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cyberpunk Neon Menu</title>
-    <style>
-        body {
-            font-family: 'Arial', sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #111; /* Dark background */
-            color: white; /* White text */
-        }
-
-        /* Style for the navigation menu */
-        .navbar {
-            background-color: #000; /* Black background for the navbar */
-            padding: 20px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
-            position: fixed;
-            width: 100%;
-            top: 0;
-            z-index: 9999;
-        }
-
-        /* Navigation links */
-        .navbar a {
-            color: white;
-            text-align: center;
-            padding: 15px 25px;
-            text-decoration: none;
-            font-size: 18px;
-            margin: 0 15px;
-            border-radius: 5px;
-            text-transform: uppercase;
-            position: relative;
-            transition: all 0.3s ease;
-        }
-
-        /* Hover effect for each link with neon glow */
-        .navbar a:hover {
-            color: black;
-            background: linear-gradient(45deg, cyan, magenta, lime, purple);
-            background-clip: text;
-            -webkit-background-clip: text;
-            box-shadow: 0 0 10px 3px cyan, 0 0 20px 5px lime, 0 0 30px 7px magenta, 0 0 40px 10px purple;
-        }
-
-        /* Add a subtle neon glow to the navbar */
-        .navbar a::after {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 100%;
-            height: 100%;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 10px;
-            z-index: -1;
-            transform: translate(-50%, -50%);
-            animation: glow 1.5s infinite alternate;
-        }
-
-        /* Neon glow animation */
-        @keyframes glow {
-            0% {
-                box-shadow: 0 0 5px 2px cyan, 0 0 10px 3px lime, 0 0 15px 4px magenta, 0 0 20px 5px purple;
-            }
-            100% {
-                box-shadow: 0 0 15px 6px cyan, 0 0 20px 7px lime, 0 0 30px 8px magenta, 0 0 40px 10px purple;
-            }
-        }
-
-        /* Ensure the content isn't hidden under the fixed navbar */
-        body {
-            padding-top: 80px;
-        }
-    </style>
-</head>
-<body>
-
-    <!-- Navigation Bar -->
-    <div class="navbar">
-        <a href="https://711131719.xyz/free.html">Home</a>
-        <a href="https://711131719.xyz/survey.html">Survey</a>
-        <a href="https://711131719.xyz/gamemods.html">Game Mods</a>
-    </div>
-
-    <!-- Page Content Here -->
-    <div class="content">
-        <!-- Your page specific content -->
-    </div>
-
-</body>
-</html>
-
-
-
-
-
-
-
-
 <html><head><base href=".">
 <title>Cyberpunk Neon Menu</title>
 <style>
@@ -221,28 +110,45 @@ body {
 .neon-text {
   font-size: 3rem;
   text-transform: uppercase;
-  margin-bottom: 2rem;
+  margin-bottom: 0.5rem;
   text-align: center;
-  background: linear-gradient(45deg, var(--neon-pink), var(--neon-blue), var(--neon-purple));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  text-shadow: 0 0 10px rgba(255,255,255,0.5);
-  animation: textGlow 2s infinite;
   position: relative;
-  margin-top: 80px;
-  margin-bottom: 2rem;
+  margin-top: 60px;
   z-index: 1;
+  color: #fff;
+  text-shadow: 
+    0 0 5px rgba(255,45,85,0.8),
+    0 0 10px rgba(0,255,159,0.8), 
+    0 0 15px rgba(181,55,242,0.8);
+  letter-spacing: 0.1em;
 }
 
-@keyframes textGlow {
-  0% { filter: brightness(100%) blur(0); }
-  50% { filter: brightness(150%) blur(1px); }
-  100% { filter: brightness(100%) blur(0); }
+.neon-text::before {
+  content: attr(data-text);
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  color: #fff;
+  filter: blur(15px);
+  z-index: -1;
 }
 
-/* Style for the navigation menu */
+.game-types {
+  font-size: 1.8rem;
+  text-transform: uppercase;
+  text-align: center;
+  color: #fff;
+  margin-bottom: 2rem;
+  letter-spacing: 0.1em;
+  text-shadow: 0 0 3px rgba(255,45,85,0.5),
+               0 0 5px rgba(0,255,159,0.5),
+               0 0 8px rgba(181,55,242,0.5);
+}
+
 .navbar {
-  background-color: #000; /* Black background for the navbar */
+  background-color: #0a0a0a; 
   padding: 20px;
   display: flex;
   justify-content: center;
@@ -253,11 +159,11 @@ body {
   top: 0;
   z-index: 9999;
   margin-bottom: 20px;
+  border-bottom: 2px solid rgba(0,255,159,0.1); 
 }
 
-/* Navigation links */
 .navbar a {
-  color: white;
+  color: #fff;
   text-align: center;
   padding: 15px 25px;
   text-decoration: none;
@@ -267,18 +173,17 @@ body {
   text-transform: uppercase;
   position: relative;
   transition: all 0.3s ease;
+  border: 1px solid rgba(0,255,159,0.1);
+  background: #0a0a0a;
 }
 
-/* Hover effect for each link with neon glow */
 .navbar a:hover {
-  color: black;
-  background: linear-gradient(45deg, cyan, magenta, lime, purple);
-  background-clip: text;
-  -webkit-background-clip: text;
-  box-shadow: 0 0 10px 3px cyan, 0 0 20px 5px lime, 0 0 30px 7px magenta, 0 0 40px 10px purple;
+  color: #00ffff; 
+  text-shadow: 0 0 5px #00ffff;
+  background: rgba(0,255,255,0.05);
+  border-color: #00ffff;
 }
 
-/* Add a subtle neon glow to the navbar */
 .navbar a::after {
   content: '';
   position: absolute;
@@ -290,27 +195,19 @@ body {
   border-radius: 10px;
   z-index: -1;
   transform: translate(-50%, -50%);
-  animation: glow 1.5s infinite alternate;
+  box-shadow: 0 0 5px rgba(0,255,255,0.5),
+              0 0 10px rgba(0,255,0,0.5),
+              0 0 15px rgba(255,0,255,0.5);
+  animation: none;
 }
 
-/* Neon glow animation */
-@keyframes glow {
-  0% {
-    box-shadow: 0 0 5px 2px cyan, 0 0 10px 3px lime, 0 0 15px 4px magenta, 0 0 20px 5px purple;
-  }
-  100% {
-    box-shadow: 0 0 15px 6px cyan, 0 0 20px 7px lime, 0 0 30px 8px magenta, 0 0 40px 10px purple;
-  }
-}
-
-/* Ensure the content isn't hidden under the fixed navbar */
 body {
   font-family: 'Arial', sans-serif;
   margin: 0;
   padding: 0;
-  background-color: #111; /* Dark background */
-  color: white; /* White text */
-  padding-top: 120px; /* Increased from 80px to make room for title */
+  background-color: #111; 
+  color: white; 
+  padding-top: 120px; 
 }
 </style>
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&amp;display=swap" rel="stylesheet">
@@ -322,11 +219,14 @@ body {
   
   <div class="navbar">
     <a href="https://711131719.xyz/free.html">Home</a>
-    <a href="https://711131719.xyz/survey.html">Survey</a>
+    <a href="https://711131719.xyz/survey.html">Survey</a> 
     <a href="https://711131719.xyz/gamemods.html">Game Mods</a>
+    <a href="https://711131719.xyz/mysterybox.html">Mystery</a>
+    <a href="https://711131719.xyz/donation.html">Donate</a>
   </div>
   
-  <h1 class="neon-text">ULTIMATE GAMES MODS & HACKS</h1>
+  <h1 class="neon-text" data-text="ULTIMATE GAMES MODS &amp; HACKS">ULTIMATE GAMES MODS &amp; HACKS</h1>
+  <h2 class="game-types">Minecraft &#x2022; Roblox &#x2022; GTA 5 &#x2022; Fortnite</h2>
   
   <div class="mod-grid">
     <a href="https://www.modcraftforge.com/minecraft/ambush-padoru?pub=3215063" target="_blank" class="mod-card">
@@ -405,7 +305,7 @@ body {
         </div>
       </div>
       <div class="p-4 transition-all text-center duration-300 ease-in-out">
-        <h3 class="font-semibold text-lg mb-2 text-slate-800 dark:text-white group-hover:text-green-600 dark:group-hover:text-green-200 transition-all duration-300 ease-in-out transform group-hover:scale-105">Interactive Directional Signs: Wayfinding's Future</h3>
+        <h3 class="font-semibold text-lg mb-2 text-slate-800 dark:text-white group-hover:text-green-600 dark:group-hover:text-green-200 transition-all duration-300 ease-in-out transform group-hover:scale-105">Interactive Directional Signs: Wayfinding&apos;s Future</h3>
       </div>
       <div class="absolute inset-0 rounded-lg opacity-0 group-hover:opacity-100 transition-all duration-300 ease-in-out pointer-events-none glow-effect"></div>
     </a>
@@ -517,7 +417,7 @@ body {
         </div>
       </div>
       <div class="p-4 transition-all text-center duration-300 ease-in-out">
-        <h3 class="font-semibold text-lg mb-2 text-slate-800 dark:text-white group-hover:text-green-600 dark:group-hover:text-green-200 transition-all duration-300 ease-in-out transform group-hover:scale-105">Chapter 6's Ultimate XP Map: Fast Leveling Tactics</h3>
+        <h3 class="font-semibold text-lg mb-2 text-slate-800 dark:text-white group-hover:text-green-600 dark:group-hover:text-green-200 transition-all duration-300 ease-in-out transform group-hover:scale-105">Chapter 6&apos;s Ultimate XP Map: Fast Leveling Tactics</h3>
       </div>
       <div class="absolute inset-0 rounded-lg opacity-0 group-hover:opacity-100 transition-all duration-300 ease-in-out pointer-events-none glow-effect"></div>
     </a>
@@ -597,7 +497,7 @@ body {
         </div>
       </div>
       <div class="p-4 transition-all text-center duration-300 ease-in-out">
-        <h3 class="font-semibold text-lg mb-2 text-slate-800 dark:text-white group-hover:text-green-600 dark:group-hover:text-green-200 transition-all duration-300 ease-in-out transform group-hover:scale-105">TaCZ: Leawind's Third Person Perspective</h3>
+        <h3 class="font-semibold text-lg mb-2 text-slate-800 dark:text-white group-hover:text-green-600 dark:group-hover:text-green-200 transition-all duration-300 ease-in-out transform group-hover:scale-105">TaCZ: Leawind&apos;s Third Person Perspective</h3>
       </div>
       <div class="absolute inset-0 rounded-lg opacity-0 group-hover:opacity-100 transition-all duration-300 ease-in-out pointer-events-none glow-effect"></div>
     </a>
@@ -773,7 +673,7 @@ body {
         </div>
       </div>
       <div class="p-4 transition-all text-center duration-300 ease-in-out">
-        <h3 class="font-semibold text-lg mb-2 text-slate-800 dark:text-white group-hover:text-green-600 dark:group-hover:text-green-200 transition-all duration-300 ease-in-out transform group-hover:scale-105">Nouvelle Carte XP Glitch Illimitée Chapitre 6</h3>
+        <h3 class="font-semibold text-lg mb-2 text-slate-800 dark:text-white group-hover:text-green-600 dark:group-hover:text-green-200 transition-all duration-300 ease-in-out transform group-hover:scale-105">Nouvelle Carte XP Glitch Illimit&#xe9;e Chapitre 6</h3>
       </div>
       <div class="absolute inset-0 rounded-lg opacity-0 group-hover:opacity-100 transition-all duration-300 ease-in-out pointer-events-none glow-effect"></div>
     </a>
@@ -917,7 +817,7 @@ body {
         </div>
       </div>
       <div class="p-4 transition-all text-center duration-300 ease-in-out">
-        <h3 class="font-semibold text-lg mb-2 text-slate-800 dark:text-white group-hover:text-green-600 dark:group-hover:text-green-200 transition-all duration-300 ease-in-out transform group-hover:scale-105">Warlery's Turrets: Defense Mastery</h3>
+        <h3 class="font-semibold text-lg mb-2 text-slate-800 dark:text-white group-hover:text-green-600 dark:group-hover:text-green-200 transition-all duration-300 ease-in-out transform group-hover:scale-105">Warlery&apos;s Turrets: Defense Mastery</h3>
       </div>
       <div class="absolute inset-0 rounded-lg opacity-0 group-hover:opacity-100 transition-all duration-300 ease-in-out pointer-events-none glow-effect"></div>
     </a>
