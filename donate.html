@@ -1,0 +1,318 @@
+<html><head><base href=".">
+<title>Cyberpunk Neon Menu</title>
+<style>
+:root {
+  --neon-pink: #ff2d55;
+  --neon-blue: #00ff9f;
+  --neon-purple: #b537f2;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background: #0a0a0a;
+  font-family: 'Orbitron', sans-serif;
+  color: #fff;
+  overflow-x: hidden;
+}
+
+.cyber-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 2rem;
+  position: relative;
+}
+
+.cyber-grid {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: 
+    linear-gradient(transparent 0%, rgba(0,255,159,0.1) 10%, transparent 20%),
+    linear-gradient(90deg, transparent 0%, rgba(255,45,85,0.1) 10%, transparent 20%);
+  background-size: 100px 100px;
+  animation: gridMove 20s linear infinite;
+  z-index: 0;
+}
+
+.mod-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+  width: 100%;
+  max-width: 1400px;
+  z-index: 1;
+}
+
+.mod-card {
+  background: rgba(20, 20, 20, 0.8);
+  border: 2px solid var(--neon-blue);
+  border-radius: 10px;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.mod-card:hover {
+  transform: translateY(-5px) scale(1.02);
+  box-shadow: 0 0 20px var(--neon-blue);
+}
+
+.mod-image {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+}
+
+.mod-tag {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  animation: glowPulse 2s infinite;
+}
+
+.tag-minecraft { background: linear-gradient(45deg, #4CAF50, #2E7D32); }
+.tag-roblox { background: linear-gradient(45deg, #2196F3, #1565C0); }
+.tag-gta { background: linear-gradient(45deg, #F44336, #C62828); }
+.tag-fortnite { background: linear-gradient(45deg, #9C27B0, #6A1B9A); }
+
+.mod-content {
+  padding: 1.5rem;
+}
+
+.mod-title {
+  font-size: 1.2rem;
+  margin: 0 0 1rem 0;
+  color: var(--neon-blue);
+  text-shadow: 0 0 5px var(--neon-blue);
+}
+
+@keyframes gridMove {
+  0% { background-position: 0 0; }
+  100% { background-position: 100px 100px; }
+}
+
+@keyframes glowPulse {
+  0% { box-shadow: 0 0 5px rgba(255,255,255,0.5); }
+  50% { box-shadow: 0 0 20px rgba(255,255,255,0.8); }
+  100% { box-shadow: 0 0 5px rgba(255,255,255,0.5); }
+}
+
+.neon-text {
+  font-size: 3rem;
+  text-transform: uppercase;
+  margin-bottom: 0.5rem;
+  text-align: center;
+  position: relative;
+  margin-top: 60px;
+  z-index: 1;
+  color: #fff;
+  text-shadow: 
+    0 0 5px rgba(255,45,85,0.8),
+    0 0 10px rgba(0,255,159,0.8), 
+    0 0 15px rgba(181,55,242,0.8);
+  letter-spacing: 0.1em;
+}
+
+.neon-text::before {
+  content: attr(data-text);
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  color: #fff;
+  filter: blur(15px);
+  z-index: -1;
+}
+
+.game-types {
+  font-size: 1.8rem;
+  text-transform: uppercase;
+  text-align: center;
+  color: #fff;
+  margin-bottom: 2rem;
+  letter-spacing: 0.1em;
+  text-shadow: 0 0 3px rgba(255,45,85,0.5),
+               0 0 5px rgba(0,255,159,0.5),
+               0 0 8px rgba(181,55,242,0.5);
+}
+
+.navbar {
+  background-color: #0a0a0a; 
+  padding: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
+  position: fixed;
+  width: 100%;
+  top: 0;
+  z-index: 9999;
+  margin-bottom: 20px;
+  border-bottom: 2px solid rgba(0,255,159,0.1); 
+}
+
+.navbar a {
+  color: #fff;
+  text-align: center;
+  padding: 15px 25px;
+  text-decoration: none;
+  font-size: 18px;
+  margin: 0 15px;
+  border-radius: 5px;
+  text-transform: uppercase;
+  position: relative;
+  transition: all 0.3s ease;
+  border: 1px solid rgba(0,255,159,0.1);
+  background: #0a0a0a;
+}
+
+.navbar a:hover {
+  color: #00ffff; 
+  text-shadow: 0 0 5px #00ffff;
+  background: rgba(0,255,255,0.05);
+  border-color: #00ffff;
+}
+
+.navbar a::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  z-index: -1;
+  transform: translate(-50%, -50%);
+  box-shadow: 0 0 5px rgba(0,255,255,0.5),
+              0 0 10px rgba(0,255,0,0.5),
+              0 0 15px rgba(255,0,255,0.5);
+  animation: none;
+}
+
+body {
+  font-family: 'Arial', sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #111; 
+  color: white; 
+  padding-top: 120px; 
+}
+
+.donation-container {
+  max-width: 800px;
+  margin: 40px auto;
+  padding: 2rem;
+  background: rgba(20, 20, 20, 0.8);
+  border: 2px solid var(--neon-blue);
+  border-radius: 15px;
+  text-align: center;
+  z-index: 1;
+  position: relative;
+}
+
+.donation-icon {
+  width: 150px;
+  height: 150px;
+  margin: 0 auto 2rem;
+}
+
+.donation-links {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  margin-top: 2rem;
+}
+
+.donation-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem 2rem;
+  background: linear-gradient(45deg, rgba(0,255,159,0.1), rgba(181,55,242,0.1));
+  border: 2px solid var(--neon-blue);
+  border-radius: 8px;
+  color: #fff;
+  text-decoration: none;
+  font-size: 1.2rem;
+  transition: all 0.3s ease;
+}
+
+.donation-button:hover {
+  background: linear-gradient(45deg, rgba(0,255,159,0.2), rgba(181,55,242,0.2));
+  transform: translateY(-3px);
+  box-shadow: 0 0 20px var(--neon-blue);
+}
+
+.donation-icon svg {
+  filter: drop-shadow(0 0 10px var(--neon-blue));
+}
+</style>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&amp;display=swap" rel="stylesheet">
+</head>
+<body>
+
+<div class="cyber-container">
+  <div class="cyber-grid"></div>
+  
+  <div class="navbar">
+    <a href="https://711131719.xyz/free.html">Home</a>
+    <a href="https://711131719.xyz/survey.html">Survey</a> 
+    <a href="https://711131719.xyz/gamemods.html">Game Mods</a>
+    <a href="https://711131719.xyz/mysterybox.html">Mystery</a>
+    <a href="https://711131719.xyz/donation.html">Donate</a>
+  </div>
+
+  <div class="donation-container">
+    <div class="donation-icon">
+      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" fill="#00ff9f"/>
+      </svg>
+    </div>
+    
+    <h1 class="neon-text" data-text="Support Our Work">Support Our Work</h1>
+    
+    <div class="donation-links">
+      <a href="https://patreon.com/jesse_james/membership" target="_blank" class="donation-button">
+        Support on Patreon
+      </a>
+      
+      <a href="https://paypal.me/3301j?country.x=US&locale.x=en_US" target="_blank" class="donation-button">
+        Donate via PayPal
+      </a>
+      
+      <a href="https://cash.app/$jjh1337" target="_blank" class="donation-button">
+        Send via CashApp - $jjh1337
+      </a>
+    </div>
+  </div>
+  
+  <script>
+  document.querySelectorAll('.donation-button').forEach(button => {
+    button.addEventListener('mouseover', () => {
+      button.style.transform = 'translateY(-3px)';
+      button.style.boxShadow = '0 0 20px var(--neon-blue)';
+    });
+    
+    button.addEventListener('mouseout', () => {
+      button.style.transform = 'translateY(0)';
+      button.style.boxShadow = 'none';
+    });
+  });
+  </script>
+  
+</div>
+
+</body>
+</html>
