@@ -1,53 +1,58 @@
-body {
+/* style.css */
+
+/* Global reset for margins and padding */
+* {
   margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
   font-family: 'Arial', sans-serif;
-  background: black url('assets/neon-background.jpg') no-repeat center center fixed;
-  background-size: cover;
-  color: white;
+  line-height: 1.6;
+  background-color: #fafafa;
+  color: #333;
 }
 
-.container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
+h1, h2, h3 {
+  color: #222;
 }
 
-.login-box {
-  background: rgba(0, 0, 0, 0.8);
-  padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0 0 20px #00ffcc;
+a {
+  text-decoration: none;
+  color: #0073e6;
+}
+
+a:hover {
+  color: #005bb5;
+}
+
+/* Footer */
+footer {
+  background-color: #222;
+  color: #fff;
   text-align: center;
-}
-
-input {
-  display: block;
+  padding: 15px 0;
+  position: fixed;
+  bottom: 0;
   width: 100%;
-  margin: 10px 0;
-  padding: 10px;
-  border: none;
-  border-radius: 5px;
 }
 
+footer p {
+  margin: 0;
+}
+
+/* Button Styling */
 button {
-  padding: 10px;
+  background-color: #0073e6;
+  color: #fff;
   border: none;
+  padding: 12px 20px;
   border-radius: 5px;
   cursor: pointer;
+  transition: background-color 0.3s ease;
 }
 
-.neon-cyan {
-  color: #00ffcc;
-  text-shadow: 0 0 5px #00ffcc, 0 0 10px #00ffcc;
-}
-
-.neon-green {
-  color: #00ff00;
-  text-shadow: 0 0 5px #00ff00, 0 0 10px #00ff00;
-}
-
-.neon-pink {
-  color: #ff00ff;
-  text-shadow: 0 0 5px #ff00ff, 0 0 10px #ff00ff;
+button:hover {
+  background-color: #005bb5;
 }
