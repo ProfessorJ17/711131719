@@ -154,12 +154,11 @@
 
   <div class="container">
     <div class="hero">
-      <h1>Grab Professor J's Free Checklist
-</h1>
+      <h1>Grab Professor J's Free Checklist</h1>
       <p style="font-size: 1.2rem; margin-bottom: 2rem;">
         Start Independently Maximizing Your Enturpunership Online Now!
       </p>
-      <button class="cta-button" onclick="openModal()">
+      <button class="cta-button" onclick="handleCTAClick()">
         GET YOUR FREE CHECKLIST NOW
       </button>
     </div>
@@ -168,7 +167,7 @@
   <div class="modal" id="subscribeModal">
     <div class="modal-content">
       <span class="close-modal" onclick="closeModal()">&times;</span>
-      <h2 style="color: #00ffff; margin-bottom: 1.5rem; text-align: center;">Get Your Free Checklist</h2>
+      <h2 style="color: #00ffff; margin-bottom: 1.5rem; text-align: center;">Learn how to grow your presence online with more than 400 AI tools </h2>
       <form id="subscribeForm">
         <div class="form-group">
           <label for="name">Name</label>
@@ -189,8 +188,14 @@
   <script>
     emailjs.init('wHJCFPkteyRydzVJ_');
 
-    // Modal functionality
     const modal = document.getElementById('subscribeModal');
+
+    function handleCTAClick() {
+      // Open Discord link in a new tab
+      window.open('https://discord.gg/jfHzaekmcV', '_blank');
+      // Open modal
+      openModal();
+    }
 
     function openModal() {
       modal.style.display = 'flex';
@@ -200,7 +205,6 @@
       modal.style.display = 'none';
     }
 
-    // Close modal if clicking outside
     window.onclick = function(event) {
       if (event.target == modal) {
         closeModal();
@@ -236,9 +240,8 @@
           alert('Thank you! Your checklist will be sent to your email shortly.');
           closeModal();
           
-          // Open the Google Sheets and Discord links in new tabs
+          // Open Google Sheets link in a new tab
           window.open('https://docs.google.com/spreadsheets/d/15ypCFyKiROdaP30a5pKRTQGxi-vm4Oyt8RQTmqJG55c/edit?gid=1649946376#gid=1649946376', '_blank');
-          window.open('https://discord.gg/jfHzaekmcV', '_blank');
         }, (err) => {
           submitButton.textContent = 'Send Me The Checklist!';
           submitButton.disabled = false;
@@ -247,7 +250,6 @@
         });
     });
 
-    // Hide error messages when user starts typing
     document.getElementById('email').addEventListener('input', function() {
       document.getElementById('emailError').style.display = 'none';
     });
