@@ -477,8 +477,26 @@
     color: green;
     font-weight: bold;
   }
-</style></head><body>
+  
+  .shop-link {
+    position: fixed;
+    top: 10px;
+    left: 10px;
+    z-index: 1000;
+    font-size: 14px;
+    text-decoration: none;
+    color: #8b4513;
+    background: rgba(255, 255, 255, 0.5);
+    padding: 5px 10px;
+    border-radius: 5px;
+    backdrop-filter: blur(5px);
+  }
 
+  .shop-link:hover {
+    background: rgba(255, 255, 255, 0.7);
+  }
+</style></head><body>
+<a href="https://caimeo.shop" class="shop-link" target="_blank">Visit Caimeo Shop</a>
 <div id="startScreen">
   <h2>Welcome to the Game!</h2>
   <div id="playerSelect">
