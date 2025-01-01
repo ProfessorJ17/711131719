@@ -1,0 +1,1538 @@
+<html><head><base href="https://example.com/">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<style>
+  body {
+    background: linear-gradient(45deg, #d4c5a9, #f5f2eb);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+    font-family: Arial, sans-serif;
+    overflow: hidden;
+  }
+
+  #startScreen {
+    background: white;
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 0 20px rgba(0,0,0,0.2);
+    text-align: center;
+    margin-bottom: 20px;
+    min-width: 280px;
+  }
+
+  #playerSelect {
+    margin: 20px 0;
+  }
+
+  .color-option {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: inline-block;
+    margin: 5px;
+    cursor: pointer;
+    border: 2px solid transparent;
+  }
+
+  .color-option:hover {
+    transform: scale(1.1);
+  }
+
+  .color-option.selected {
+    border: 2px solid black;
+  }
+
+  button {
+    padding: 10px 20px;
+    font-size: 16px;
+    background: #8b4513;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin: 10px;
+  }
+
+  button:hover {
+    background: #a0522d;
+  }
+
+  button:disabled {
+    background: #cccccc;
+    cursor: not-allowed;
+  }
+
+  .player-token {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    position: absolute;
+    border: 2px solid black;
+    background: repeating-conic-gradient(currentColor 0% 25%, white 25% 50%);
+    transition: left 0.3s, top 0.3s;
+  }
+
+  .board {
+    width: min(90vh, 90vw);
+    height: min(90vh, 90vw);
+    transform-origin: center;
+    transition: transform 0.3s ease;
+    background: #f9f6f0;
+    border: 4px solid #8b4513;
+    display: grid;
+    grid-template-columns: minmax(120px, 1fr) repeat(9, minmax(80px, 1fr)) minmax(120px, 1fr);
+    grid-template-rows: minmax(120px, 1fr) repeat(9, minmax(80px, 1fr)) minmax(120px, 1fr);
+    gap: 1px;
+    padding: 1px;
+    box-shadow: 0 0 20px rgba(139, 69, 19, 0.3);
+    position: relative;
+    cursor: grab;
+  }
+
+  .board.dragging {
+    cursor: grabbing;
+    user-select: none;
+  }
+
+  .space {
+    border: 1px solid #8b4513;
+    background: #90EE90;  
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    font-size: clamp(8px, 1.2vw, 14px);
+    font-family: 'Times New Roman', serif;
+    transition: all 0.3s;
+    padding: 8px;
+    line-height: 1.3;
+    position: relative;
+    word-wrap: break-word;
+  }
+
+  .space:hover {
+    transform: scale(1.05);
+    z-index: 1;
+  }
+
+  .corner {
+    font-size: clamp(10px, 1.4vw, 16px);
+    font-weight: bold;
+    padding: 10px;
+  }
+
+  .white-bg {
+    background: white !important;
+  }
+
+  .red-bg {
+    background: #ffcccb !important;
+  }
+
+  .blue-bg {
+    background: #ADD8E6 !important;
+  }
+
+  .gold-bg {
+    background: gold !important;
+  }
+
+  .yellow-bg {
+    background: #FFFF99 !important;
+  }
+
+  .purple-bg {
+    background: #DDA0DD !important;
+  }
+
+  .gray-bg {
+    background: #808080 !important;
+  }
+
+  .dark-blue-bg {
+    background: #00008B !important;
+    color: white;
+  }
+
+  .dark-green-bg {
+    background: #006400 !important;
+    color: white;
+  }
+  
+  .space::before {
+    content: attr(data-number);
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    font-size: min(10px, 1.2vw);
+    color: #8b4513;
+    font-weight: bold;
+  }
+
+  .center {
+    grid-column: 2 / 11;
+    grid-row: 2 / 11;
+    background: #f9f6f0;
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr 1fr;
+    border: 2px solid #8b4513;
+    position: relative;
+  }
+
+  .center-section {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: clamp(16px, 2vw, 24px);
+    font-family: 'Times New Roman', serif;
+    color: #8b4513;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    padding: 25px;
+  }
+
+  .public-treasury {
+    background: #f0e6d9;
+    border-bottom: none;
+    position: relative;
+  }
+
+  .misc {
+    background: #e6d9cc;
+    position: relative;
+  }
+
+  .corner-square {
+    position: absolute;
+    width: 120px;
+    height: 120px;
+    border: 2px solid #8b4513;
+    background: #FFFF99;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    font-size: clamp(9px, 1.1vw, 13px);
+    color: #8b4513;
+    padding: 8px;
+    text-align: center;
+  }
+
+  .corner-square::before {
+    content: attr(data-number);
+    font-weight: bold;
+    font-size: 14px;
+    margin-bottom: 5px;
+  }
+
+  .top-left { top: 0; left: 0; }
+  .top-right { top: 0; right: 0; }
+  .bottom-left { bottom: 0; left: 0; }
+  .bottom-right { bottom: 0; right: 0; }
+  
+  .money-section {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    font-family: 'Times New Roman', serif;
+    color: #8b4513;
+    z-index: 2;
+  }
+
+  .money-title {
+    font-size: clamp(18px, 2.2vw, 28px);
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
+
+  .money-values {
+    font-size: clamp(14px, 1.8vw, 22px);
+    line-height: 1.5;
+  }
+
+  .tax-collection {
+    margin-top: 10px;
+    font-size: 16px;
+    font-weight: bold;
+    color: darkgreen;
+  }
+
+  #gameMenu {
+    position: fixed;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(255, 255, 255, 0.5);
+    border-radius: 0 0 10px 10px;
+    padding: 10px;
+    z-index: 1000;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+    min-width: 280px;
+    backdrop-filter: blur(5px);
+  }
+
+  #menuHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    padding: 5px;
+    font-size: 14px;
+  }
+
+  #menuContent {
+    display: none;
+    padding: 10px;
+    border-top: 1px solid rgba(238, 238, 238, 0.5);
+    font-size: 12px;
+  }
+
+  #menuContent.expanded {
+    display: block;
+  }
+
+  .menu-icon {
+    font-size: 20px;
+    transition: transform 0.3s;
+  }
+
+  .menu-icon.expanded {
+    transform: rotate(180deg);
+  }
+
+  .player-info {
+    display: flex;
+    align-items: center;
+    margin: 5px 0;
+    gap: 5px;
+    padding: 5px;
+    border-bottom: 1px solid rgba(238, 238, 238, 0.5);
+    font-size: 11px;
+  }
+
+  .player-type {
+    font-style: italic;
+    color: #666;
+    font-size: 10px;
+  }
+
+  .player-money {
+    font-weight: bold;
+    font-size: 11px;
+  }
+  
+  .dice {
+    width: 40px;
+    height: 40px;
+    background: rgba(255, 255, 255, 0.8);
+    border: 2px solid rgba(51, 51, 51, 0.8);
+    border-radius: 10px;
+    margin: 10px;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 18px;
+    font-weight: bold;
+  }
+
+  #rollButton {
+    font-size: 12px;
+    padding: 5px 10px;
+    margin-top: 5px;
+  }
+
+  #rollResult {
+    margin-top: 5px;
+    font-weight: bold;
+    font-size: 11px;
+  }
+  
+  .properties-owned {
+    margin-top: 3px;
+    font-size: 10px;
+  }
+
+  .property-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .property-item {
+    font-size: 9px;
+    padding: 1px 3px;
+    margin: 1px 0;
+  }
+
+  .buy-property-dialog {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.2);
+    text-align: center;
+    z-index: 2000;
+    display: none;
+    min-width: 280px;
+  }
+
+  .buy-property-dialog button {
+    margin: 5px;
+  }
+  
+  .payment-notification {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.2);
+    text-align: center;
+    z-index: 2500;
+    display: none;
+    animation: fadeInOut 2s ease-in-out;
+    max-width: 80%;
+    word-wrap: break-word;
+    min-width: 280px;
+  }
+
+  @keyframes fadeInOut {
+    0% { opacity: 0; }
+    10% { opacity: 1; }
+    90% { opacity: 1; }
+    100% { opacity: 0; }
+  }
+  
+  .possible-move {
+    border: 3px solid yellow !important;
+    cursor: pointer;
+    animation: pulse 1s infinite;
+  }
+
+  @keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+  }
+  
+  .property-owner-marker {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    border: 1px solid black;
+    background: repeating-conic-gradient(currentColor 0% 25%, white 25% 50%);
+  }
+  
+  .thinking-indicator {
+    animation: pulse 1s infinite;
+  }
+
+  @keyframes thinking {
+    0% { opacity: 0.5; }
+    50% { opacity: 1; }
+    100% { opacity: 0.5; }
+  }
+  .resource-bonuses {
+    font-size: 11px;
+    color: green;
+    margin-top: 5px;
+    font-style: italic;
+  }
+
+  .tax-collection {
+    margin-top: 10px;
+    font-size: 16px;
+    font-weight: bold;
+    color: darkgreen;
+  }
+
+  .dragging {
+    opacity: 0.8;
+  }
+
+  .upgraded-property {
+    position: relative;
+  }
+
+  .upgraded-property::after {
+    content: '+10';
+    position: absolute;
+    top: 2px;
+    right: 20px;
+    font-size: 10px;
+    color: green;
+    font-weight: bold;
+  }
+</style></head><body>
+
+<div id="startScreen">
+  <h2>Welcome to the Game!</h2>
+  <div id="playerSelect">
+    <h3>Select Number of Players (2-7):</h3>
+    <select id="playerCount">
+      <option value="2">2 Players</option>
+      <option value="3">3 Players</option>
+      <option value="4">4 Players</option>
+      <option value="5">5 Players</option>
+      <option value="6">6 Players</option>
+      <option value="7">7 Players</option>
+    </select>
+  </div>
+  <div id="colorSelect">
+    <h3>Select Your Color:</h3>
+    <div class="color-option" style="background: red" data-color="red"></div>
+    <div class="color-option" style="background: orange" data-color="orange"></div>
+    <div class="color-option" style="background: yellow" data-color="yellow"></div>
+    <div class="color-option" style="background: green" data-color="green"></div>
+    <div class="color-option" style="background: blue" data-color="blue"></div>
+    <div class="color-option" style="background: indigo" data-color="indigo"></div>
+    <div class="color-option" style="background: violet" data-color="violet"></div>
+  </div>
+  <button id="startGame">Start Game</button>
+</div>
+
+<div id="gameMenu">
+  <div id="menuHeader">
+    <span>Stats and Dice</span>
+    <span class="menu-icon">&#x25bc;</span>
+  </div>
+  <div id="menuContent">
+    <div id="diceSection">
+      <div id="dice1" class="dice">1</div>
+      <div id="dice2" class="dice">1</div>
+      <button id="rollButton">Roll Dice</button>
+      <div id="rollResult"></div>
+    </div>
+    <hr>
+    <div id="playerList">
+    </div>
+  </div>
+</div>
+
+<div class="board" style="display: none;">
+  <div class="space corner white-bg" data-number="1">MOTHER EARTH</div>
+  <div class="space" data-number="2">WAYBACK<br>Sale &#x24;25<br>Rent &#x24;0</div>
+  <div class="space blue-bg" data-number="3">ABSOLUTE NECESSITY<br>PAY TAXES &#x24;10-FUEL</div>
+  <div class="space" data-number="4">LONELY LANE<br>Sale &#x24;25<br>Rent &#x24;2</div>
+  <div class="space dark-green-bg" data-number="5">GAME PRESERVES<br>NO TRESPASSING<br>GO TO JAIL</div>
+  <div class="space red-bg" data-number="6">ROYAL RUSHER R.R.<br>Sale &#x24;50<br>Rent &#x24;5</div>
+  <div class="space" data-number="7">THE PIKE<br>Sale &#x24;25<br>Rent &#x24;4</div>
+  <div class="space" data-number="8">THE FARM<br>Sale &#x24;25<br>Rent &#x24;4</div>
+  <div class="space purple-bg" data-number="9">BROKER<br>Sale &#x24;40<br>Rent &#x24;0</div>
+  <div class="space" data-number="10">RUBEVILLE<br>Sale &#x24;25<br>Rent &#x24;6</div>
+  <div class="space corner white-bg" data-number="11">JAIL OR SHELTER<br>PAY &#x24;10</div>
+  
+  <div class="space gold-bg" data-number="40">LUXURY<br>PAY 75&#x24; or 10%</div>
+  <div class="space" data-number="12">BOOMTOWN<br>Sale &#x24;50<br>Rent &#x24;6</div>
+  <div class="space" data-number="39">WALLSTREET<br>Sale &#x24;50<br>Rent &#x24;22</div>
+  <div class="space" data-number="13">GOAT ALLEY<br>Sale &#x24;50<br>Rent &#x24;8</div>
+  <div class="space red-bg" data-number="38">CHANCE</div>
+  <div class="space gray-bg" data-number="14">SOAKUM LIGHTING SYSTEM<br>Sale &#x24;50<br>Rent &#x24;5</div>
+  <div class="space" data-number="37">GRAND BOULEVARD<br>Sale &#x24;100<br>Rent &#x24;22</div>
+  <div class="space" data-number="15">BEGGARMAN&apos;S COURT<br>Sale &#x24;50<br>Rent &#x24;8</div>
+  <div class="space red-bg" data-number="36">P.D.Q. R.R.<br>Sale &#x24;50<br>Rent &#x24;7</div>
+  <div class="space red-bg" data-number="16">SHOOTING STAR R.R.<br>Sale &#x24;50<br>Rent &#x24;5</div>
+  
+  <div class="space" data-number="35">FIFTH AVENUE<br>Sale &#x24;100<br>Rent &#x24;20</div>
+  <div class="space" data-number="17">RICKETY ROW<br>Sale &#x24;50<br>Rent &#x24;10</div>
+  <div class="space" data-number="34">MADISON SQUARE<br>Sale &#x24;100<br>Rent &#x24;20</div>
+  <div class="space blue-bg" data-number="18">ABSOLUTE NECESSITY<br>TAXES &#x24;10 FOOD</div>
+  <div class="space blue-bg" data-number="33">ABSOLUTE NECESSITY<br>TAXES &#x24;10 CLOTHING</div>
+  <div class="space" data-number="19">MARKET PLACE<br>Sale &#x24;50<br>Rent &#x24;10</div>
+  <div class="space" data-number="32">BROADWAY<br>Sale &#x24;100<br>Rent &#x24;18</div>
+  <div class="space" data-number="20">COTTAGE TERRACE<br>Sale &#x24;50<br>Rent &#x24;12</div>
+  <div class="space white-bg" data-number="31">Goto Jail</div>
+  <div class="space" data-number="30">THE BOWERY<br>Sale &#x24;75<br>Rent &#x24;18</div>
+  
+  <div class="space" data-number="29">JOHNSON CIRCLE<br>Sale &#x24;75<br>Rent &#x24;16</div>
+  <div class="space dark-blue-bg" data-number="28">SLAMBANG TROLLEY<br>Sale &#x24;50<br>Rent &#x24;5</div>
+  <div class="space" data-number="27">FAIRHOPE AVENUE<br>Sale &#x24;75<br>Rent &#x24;16</div>
+  <div class="space red-bg" data-number="26">GEE WHIZ R.R.<br>Sale &#x24;50<br>Rent &#x24;5</div>
+  <div class="space" data-number="25">MAGUIRE FLATS<br>Sale &#x24;75<br>Rent &#x24;14</div>
+  <div class="space" data-number="24">GEORGE STREET<br>Sale &#x24;75<br>Rent &#x24;14</div>
+  <div class="space red-bg" data-number="23">CHANCE</div>
+  <div class="space" data-number="22">EASY STREET<br>Sale &#x24;75<br>Rent &#x24;12</div>
+  <div class="space white-bg" data-number="21">Poor House or Central Park Free</div>
+  
+  <div class="center">
+    <div class="center-section public-treasury">
+      PUBLIC TREASURY
+      <div class="corner-square top-left" data-number="2.5">TIMBERLAND<br>WAGES &#x24;40<br>RENT 0<br>NO MAN&apos;S LAND</div>
+      <div class="corner-square top-right" data-number="10.5">FARMLANDS<br>WAGES &#x24;60<br>RENT &#x24;25<br>Go Away</div>
+    </div>
+    <div class="center-section misc">
+      SINGLE TAX
+      <div class="corner-square bottom-left" data-number="32.5">OIL FIELDS<br>WAGES &#x24;100<br>RENT &#x24;75<br>KEEP OFF</div>
+      <div class="corner-square bottom-right" data-number="22.5">COAL MINES<br>WAGES &#x24;80<br>RENT &#x24;50<br>NO TRESPASSING</div>
+    </div>
+    <div class="money-section">
+      <div class="money-title">MONEY &amp; TAXES</div>
+      <div class="money-values">
+        &#x24;1, &#x24;5, &#x24;10, &#x24;50, &#x24;100
+      </div>
+      <div class="tax-collection">
+        Public Treasury: &#x24;<span id="taxCollection">0</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="buyPropertyDialog" class="buy-property-dialog">
+  <h3>Would you like to buy this property?</h3>
+  <p id="propertyDetails"></p>
+  <button id="buyPropertyBtn">Buy</button>
+  <button id="passPropertyBtn">Pass</button>
+</div>
+
+<div id="paymentNotification" class="payment-notification"></div>
+
+<div id="brokerDialog" class="buy-property-dialog">
+  <h3>Choose a property to upgrade</h3>
+  <select id="propertyToUpgrade">
+  </select>
+  <p>Pay &#x24;40 to increase rent/fare by &#x24;10</p>
+  <button id="upgradePropBtn">Upgrade</button>
+  <button id="cancelUpgradeBtn">Cancel</button>
+</div>
+
+<script>const CHANCE_CARDS = [{
+  text: "Advance to Mother Earth (Collect $100)",
+  action: player => {
+    movePlayerToSpace(player, 1);
+    player.money += 100;
+    updatePlayerPanel();
+    showNotification(`${player.isHuman ? 'Player' : 'AI'} ${players.indexOf(player) + 1} collected $100`);
+  }
+}, {
+  text: "Advance to MAGUIRE FLATS",
+  action: player => movePlayerToSpace(player, 25)
+}, {
+  text: "Advance to BOOMTOWN",
+  action: player => movePlayerToSpace(player, 12)
+}, {
+  text: "Advance token to SOAKUM LIGHTING SYSTEM",
+  action: player => {
+    movePlayerToSpace(player, 14);
+    const space = document.querySelector('[data-number="14"]');
+    const owner = players.find(p => p.properties.some(prop => prop.name === 'SOAKUM LIGHTING SYSTEM'));
+    if (owner && owner !== player) {
+      const diceRoll = rollDice();
+      const rent = diceRoll.total * 10;
+      player.money -= rent;
+      owner.money += rent;
+      updatePlayerPanel();
+      showNotification(`${player.isHuman ? 'Player' : 'AI'} ${players.indexOf(player) + 1} paid $${rent}`);
+    }
+  }
+}, {
+  text: "Advance token to nearest Railroad",
+  action: player => {
+    const railroadSpaces = [6, 16, 26, 28];
+    const currentPos = parseInt(document.querySelector(`.player-token[style*="color: ${player.color}"]`).dataset.position);
+    const nextRR = railroadSpaces.find(pos => pos > currentPos) || railroadSpaces[0];
+    movePlayerToSpace(player, nextRR);
+    const space = document.querySelector(`[data-number="${nextRR}"]`);
+    const owner = players.find(p => p.properties.some(prop => prop.name === space.innerText.split('\n')[0].trim()));
+    if (owner && owner !== player) {
+      const rent = parseInt(space.innerText.match(/FARE \$(\d+)/)[1]) * 2;
+      player.money -= rent;
+      owner.money += rent;
+      updatePlayerPanel();
+    }
+  }
+}, {
+  text: "Bank pays you dividend of $20",
+  action: player => {
+    player.money += 20;
+    updatePlayerPanel();
+  }
+}, {
+  text: "Get Out of Jail Free",
+  action: player => {
+    player.hasJailFreeCard = true;
+  }
+}, {
+  text: "Go Back 3 Spaces",
+  action: player => {
+    const token = document.querySelector(`.player-token[style*="color: ${player.color}"]`);
+    let newPos = parseInt(token.dataset.position) - 3;
+    if (newPos < 1) newPos = 40 + newPos;
+    movePlayerToSpace(player, newPos);
+  }
+}, {
+  text: "Go to Jail",
+  action: player => {
+    movePlayerToSpace(player, 11);
+    player.inJail = true;
+  }
+}, {
+  text: "Make general repairs",
+  action: player => {
+    const cost = player.properties.length * 5;
+    player.money -= cost;
+    updatePlayerPanel();
+    showNotification(`${player.isHuman ? 'Player' : 'AI'} ${players.indexOf(player) + 1} paid $${cost} for repairs`);
+  }
+}, {
+  text: "Pay poor tax of $5",
+  action: player => {
+    player.money -= 5;
+    updatePlayerPanel();
+  }
+}, {
+  text: "Take a trip to ROYAL RUSHER R.R.",
+  action: player => movePlayerToSpace(player, 6)
+}, {
+  text: "Advance token to WALLSTREET",
+  action: player => movePlayerToSpace(player, 39)
+}, {
+  text: "You have been elected Chairman",
+  action: player => {
+    const payment = players.length * 20;
+    player.money -= payment;
+    players.forEach(p => {
+      if (p !== player) p.money += 20;
+    });
+    updatePlayerPanel();
+  }
+}, {
+  text: "Building loan matures—Collect $75",
+  action: player => {
+    player.money += 75;
+    updatePlayerPanel();
+  }
+}];
+function movePlayerToSpace(player, spaceNumber) {
+  const token = document.querySelector(`.player-token[style*="color: ${player.color}"]`);
+  const targetSpace = document.querySelector(`[data-number="${spaceNumber}"]`);
+  if (token && targetSpace) {
+    token.dataset.position = spaceNumber;
+    targetSpace.appendChild(token);
+  }
+  const board = document.querySelector('.board');
+  const currentTransform = board.style.transform;
+  const match = currentTransform.match(/translate\(([-\d.]+)px,\s*([-\d.]+)px\)/);
+  const translateX = match ? match[1] : 0;
+  const translateY = match ? match[2] : 0;
+  board.style.transform = `translate(${translateX}px, ${translateY}px) scale(${currentZoom})`;
+}
+function showNotification(message) {
+  const notification = document.getElementById('paymentNotification');
+  notification.textContent = message;
+  notification.style.display = 'block';
+  setTimeout(() => {
+    notification.style.display = 'none';
+  }, 2000);
+}
+function drawChanceCard(player) {
+  const cardIndex = Math.floor(Math.random() * CHANCE_CARDS.length);
+  const card = CHANCE_CARDS[cardIndex];
+  showNotification(`Chance: ${card.text}`);
+  setTimeout(() => {
+    card.action(player);
+  }, 2000);
+}
+function calculatePropertyDesirability(space) {
+  if (space.classList.contains('blue-bg')) {
+    return -20;
+  }
+  const desirability = Math.random() * 100;
+  return desirability;
+}
+function checkForBoardLoop(currentPos, newPos, lastPos) {
+  if (!lastPos) return false;
+  const difference = newPos - lastPos;
+  if (Math.abs(difference) >= 40) {
+    return true;
+  }
+  return false;
+}
+document.addEventListener('DOMContentLoaded', () => {
+  let currentZoom = 1;
+  const zoomSpeed = 0.1;
+  const minZoom = 0.5;
+  const maxZoom = 2;
+  document.addEventListener('wheel', e => {
+    e.preventDefault();
+    if (e.deltaY < 0) {
+      currentZoom = Math.min(currentZoom + zoomSpeed, maxZoom);
+    } else {
+      currentZoom = Math.max(currentZoom - zoomSpeed, minZoom);
+    }
+    const board = document.querySelector('.board');
+    if (board) {
+      board.style.transform = `scale(${currentZoom})`;
+    }
+  }, {
+    passive: false
+  });
+  const meta = document.createElement('meta');
+  meta.name = 'viewport';
+  meta.content = 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no';
+  document.head.appendChild(meta);
+  window.addEventListener('resize', () => {
+    const board = document.querySelector('.board');
+    if (board) {
+      board.style.transform = `scale(${currentZoom})`;
+    }
+  });
+  const startScreen = document.getElementById('startScreen');
+  const board = document.querySelector('.board');
+  const colorOptions = document.querySelectorAll('.color-option');
+  const startGameBtn = document.getElementById('startGame');
+  let selectedColor = null;
+  const colors = ['red', 'orange', 'yellow', 'green', 'blue', 'indigo', 'violet'];
+  let players = [];
+  let initialRolls = [];
+  let currentPlayerIndex = 0;
+  let hasRolledInitial = false;
+  let gameStarted = false;
+  let currentPropertySpace;
+  let turnsPerPlayer = 0;
+  let consecutiveDoubles = 0;
+  let taxCollection = 0;
+  let boardDrag = {
+    isDragging: false,
+    startX: 0,
+    startY: 0,
+    scrollLeft: 0,
+    scrollTop: 0
+  };
+  colorOptions.forEach(option => {
+    option.addEventListener('click', () => {
+      colorOptions.forEach(opt => opt.classList.remove('selected'));
+      option.classList.add('selected');
+      selectedColor = option.dataset.color;
+    });
+  });
+  startGameBtn.addEventListener('click', () => {
+    if (!selectedColor) {
+      alert('Please select a color!');
+      return;
+    }
+    const playerCount = parseInt(document.getElementById('playerCount').value);
+    const availableColors = colors.filter(color => color !== selectedColor);
+    const aiColors = [];
+    for (let i = 0; i < playerCount - 1; i++) {
+      const randomIndex = Math.floor(Math.random() * availableColors.length);
+      aiColors.push(availableColors.splice(randomIndex, 1)[0]);
+    }
+    startScreen.style.display = 'none';
+    board.style.display = 'grid';
+    const startSpace = document.querySelector('[data-number="1"]');
+    const playerToken = document.createElement('div');
+    playerToken.className = 'player-token';
+    playerToken.style.color = selectedColor;
+    playerToken.dataset.position = 1;
+    startSpace.appendChild(playerToken);
+    aiColors.forEach((color, index) => {
+      const aiToken = document.createElement('div');
+      aiToken.className = 'player-token';
+      aiToken.style.color = color;
+      aiToken.dataset.position = 1;
+      aiToken.style.left = `${10 + (index + 1) * 10}px`;
+      aiToken.style.top = `${10 + (index + 1) * 10}px`;
+      startSpace.appendChild(aiToken);
+    });
+    players = [{
+      color: selectedColor,
+      money: 500,
+      isHuman: true,
+      properties: []
+    }];
+    aiColors.forEach(color => {
+      players.push({
+        color: color,
+        money: 500,
+        isHuman: false,
+        properties: []
+      });
+    });
+    initializePanel();
+    initializeDice();
+    board.addEventListener('mousedown', e => {
+      boardDrag.isDragging = true;
+      board.classList.add('dragging');
+      boardDrag.startX = e.pageX - board.offsetLeft;
+      boardDrag.startY = e.pageY - board.offsetTop;
+    });
+    document.addEventListener('mousemove', e => {
+      if (!boardDrag.isDragging) return;
+      e.preventDefault();
+      const x = e.pageX - board.offsetLeft;
+      const y = e.pageY - board.offsetTop;
+      const moveX = x - boardDrag.startX;
+      const moveY = y - boardDrag.startY;
+      board.style.transform = `translate(${moveX}px, ${moveY}px) scale(${currentZoom})`;
+    });
+    document.addEventListener('mouseup', () => {
+      boardDrag.isDragging = false;
+      board.classList.remove('dragging');
+    });
+  });
+  function updatePlayerPanel() {
+    const playerList = document.getElementById('playerList');
+    playerList.innerHTML = '';
+    players.forEach((player, index) => {
+      const playerDiv = document.createElement('div');
+      playerDiv.className = 'player-info';
+      const checkerDiv = document.createElement('div');
+      checkerDiv.className = 'player-checker';
+      checkerDiv.style.color = player.color;
+      const playerDetails = document.createElement('div');
+      playerDetails.innerHTML = `
+        <div>${player.isHuman ? 'Player' : 'AI'} ${index + 1}</div>
+        <div class="player-type">${player.isHuman ? 'Human' : 'Computer'}</div>
+        <div class="player-money">$${player.money}</div>
+        ${player.properties ? `
+        <div class="properties-owned">
+          <div>Properties:</div>
+          <ul class="property-list">
+            ${player.properties.map(property => `<li class="property-item" 
+              onmouseover="this.style.outline='2px solid ${player.color}'" 
+              onmouseout="this.style.outline='none'">${property.name}</li>`).join('')}
+          </ul>
+          ${(() => {
+        const bonuses = checkResourceConnections(player);
+        let bonusText = '';
+        if (bonuses.waybackBonus) bonusText += '<div>WAYBACK + TIMBERLAND bonus active</div>';
+        if (bonuses.rubevilleBonus) bonusText += '<div>BOOMTOWN + FARMLANDS bonus active</div>';
+        if (bonuses.easyStreetBonus) bonusText += '<div>EASY STREET + COAL MINES bonus active</div>';
+        if (bonuses.broadwayBonus) bonusText += '<div>BROADWAY + OIL FIELDS bonus active</div>';
+        return bonusText ? `<div class="resource-bonuses">${bonusText}</div>` : '';
+      })()}
+        </div>` : ''}
+      `;
+      playerDiv.appendChild(checkerDiv);
+      playerDiv.appendChild(playerDetails);
+      playerList.appendChild(playerDiv);
+      if (player.properties) {
+        const propertyItems = playerDiv.querySelectorAll('.property-item');
+        player.properties.forEach((property, propertyIndex) => {
+          propertyItems[propertyIndex].propertySpace = property.space;
+        });
+      }
+    });
+  }
+  function initializePanel() {
+    const menuHeader = document.getElementById('menuHeader');
+    const menuContent = document.getElementById('menuContent');
+    const menuIcon = document.querySelector('.menu-icon');
+    menuHeader.addEventListener('click', () => {
+      menuContent.classList.toggle('expanded');
+      menuIcon.classList.toggle('expanded');
+    });
+    updatePlayerPanel();
+    document.getElementById('buyPropertyBtn').addEventListener('click', () => {
+      if (currentPropertySpace) {
+        buyProperty(players[currentPlayerIndex], currentPropertySpace);
+      }
+    });
+    document.getElementById('passPropertyBtn').addEventListener('click', passProperty);
+  }
+  function rollDice() {
+    const die1 = Math.floor(Math.random() * 6) + 1;
+    const die2 = Math.floor(Math.random() * 6) + 1;
+    return {
+      die1,
+      die2,
+      total: die1 + die2
+    };
+  }
+  function updateDiceDisplay(rollResult) {
+    const dice1Element = document.getElementById('dice1');
+    const dice2Element = document.getElementById('dice2');
+    dice1Element.textContent = rollResult.die1;
+    dice2Element.textContent = rollResult.die2;
+  }
+  function handleInitialRolls() {
+    const result = rollDice();
+    updateDiceDisplay(result);
+    initialRolls.push({
+      player: currentPlayerIndex,
+      roll: result.total
+    });
+    const resultDiv = document.getElementById('rollResult');
+    resultDiv.textContent = `${players[currentPlayerIndex].isHuman ? 'Player' : 'AI'} ${currentPlayerIndex + 1} rolled ${result.total} (${result.die1} + ${result.die2})`;
+    if (players[currentPlayerIndex].isHuman) {
+      document.getElementById('rollButton').disabled = true;
+    }
+    setTimeout(() => {
+      currentPlayerIndex++;
+      if (currentPlayerIndex < players.length) {
+        handleInitialRolls();
+      } else {
+        hasRolledInitial = true;
+        const sortedRolls = initialRolls.sort((a, b) => b.roll - a.roll);
+        const winner = sortedRolls[0];
+        const winnerPlayer = players[winner.player];
+        resultDiv.textContent = `${winnerPlayer.isHuman ? 'Player' : 'AI'} ${winner.player + 1} won with a roll of ${winner.roll} and goes first!`;
+        players = sortedRolls.map(roll => players[roll.player]);
+        updatePlayerPanel();
+        currentPlayerIndex = 0;
+        setTimeout(() => {
+          document.getElementById('rollButton').removeEventListener('click', handleInitialRolls);
+          document.getElementById('rollButton').addEventListener('click', handleGameRoll);
+          document.getElementById('rollButton').disabled = false;
+          gameStarted = true;
+          const dice1Element = document.getElementById('dice1');
+          const dice2Element = document.getElementById('dice2');
+          dice1Element.textContent = '1';
+          dice2Element.textContent = '1';
+          const rollResult = document.getElementById('rollResult');
+          rollResult.textContent = 'Roll to move!';
+        }, 2000);
+      }
+    }, 1000);
+  }
+  function advanceTurn(diceResult) {
+    if (diceResult.die1 === diceResult.die2) {
+      const rollResult = document.getElementById('rollResult');
+      rollResult.textContent = `${players[currentPlayerIndex].isHuman ? 'Player' : 'AI'} ${currentPlayerIndex + 1} rolled doubles! Roll again!`;
+      if (players[currentPlayerIndex].isHuman) {
+        document.getElementById('rollButton').disabled = false;
+      } else {
+        setTimeout(() => {
+          handleGameRoll();
+        }, 2500);
+      }
+      return;
+    }
+    consecutiveDoubles = 0;
+    if (players.length === 1) {
+      return;
+    }
+    const rollResult = document.getElementById('rollResult');
+    rollResult.textContent = `${players[currentPlayerIndex].isHuman ? 'Player' : 'AI'} ${currentPlayerIndex + 1} rolled ${diceResult.total} (${diceResult.die1} + ${diceResult.die2})`;
+    const prevPlayerIndex = currentPlayerIndex;
+    currentPlayerIndex = (currentPlayerIndex + 1) % players.length;
+    if (currentPlayerIndex <= prevPlayerIndex) {
+      turnsPerPlayer++;
+      if (turnsPerPlayer === 4) {
+        players.forEach(player => {
+          const bonuses = checkResourceConnections(player);
+          const totalBonus = bonuses.waybackBonus + bonuses.rubevilleBonus + bonuses.easyStreetBonus + bonuses.broadwayBonus;
+          player.money += 100 + totalBonus;
+          const notification = document.getElementById('paymentNotification');
+          notification.textContent = `${player.isHuman ? 'Player' : 'AI'} ${players.indexOf(player) + 1} received $100 base bonus${totalBonus > 0 ? ` plus $${totalBonus} resource bonus` : ''} for completing 4 turns!`;
+          notification.style.display = 'block';
+          setTimeout(() => {
+            notification.style.display = 'none';
+          }, 2000);
+        });
+        updatePlayerPanel();
+        turnsPerPlayer = 0;
+      }
+    }
+    if (!players[currentPlayerIndex].isHuman) {
+      document.getElementById('rollButton').disabled = true;
+      setTimeout(() => {
+        handleGameRoll();
+      }, 2500);
+    } else {
+      document.getElementById('rollButton').disabled = false;
+    }
+  }
+  function buyProperty(player, propertySpace) {
+    if (!propertySpace || !propertySpace.innerText) {
+      console.error('Invalid property space');
+      return;
+    }
+    let price;
+    let name;
+    const priceMatch = propertySpace.innerText.match(/Sale \$(\d+)/);
+    const nameMatch = propertySpace.innerText.match(/(.*?)(?=\s*Sale|\s*$)/);
+    if (priceMatch && nameMatch) {
+      price = parseInt(priceMatch[1]);
+      name = nameMatch[1].trim();
+    } else {
+      const lines = propertySpace.innerText.split('\n');
+      name = lines[0].trim();
+      if (name.includes('R.R.')) {
+        price = 50;
+      } else if (name === 'BROKER') {
+        price = 40;
+      } else if (name === 'SOAKUM LIGHTING SYSTEM' || name === 'SLAMBANG TROLLEY') {
+        price = 50;
+      } else {
+        console.error('Could not parse property details');
+        return;
+      }
+    }
+    if (player.money < price) {
+      if (player.isHuman) {
+        alert("You don't have enough money to buy this property!");
+      }
+      passProperty();
+      return;
+    }
+    const marker = document.createElement('div');
+    marker.className = 'property-owner-marker';
+    marker.style.color = player.color;
+    propertySpace.appendChild(marker);
+    player.money -= price;
+    player.properties.push({
+      name: name,
+      price: price,
+      space: propertySpace
+    });
+    updatePlayerPanel();
+    passProperty();
+  }
+  function passProperty() {
+    currentPropertySpace = null;
+    document.getElementById('buyPropertyDialog').style.display = 'none';
+    advanceTurn({
+      total: document.getElementById('dice1').textContent * 1 + document.getElementById('dice2').textContent * 1,
+      die1: document.getElementById('dice1').textContent * 1,
+      die2: document.getElementById('dice2').textContent * 1
+    });
+  }
+  function showBuyPropertyDialog(propertySpace) {
+    currentPropertySpace = propertySpace;
+    document.getElementById('buyPropertyDialog').style.display = 'block';
+    document.getElementById('propertyDetails').innerText = propertySpace.innerText;
+  }
+  function handleGameRoll() {
+    if (!gameStarted) return;
+    document.getElementById('rollButton').disabled = true;
+    const result = rollDice();
+    updateDiceDisplay(result);
+    if (result.die1 === result.die2) {
+      consecutiveDoubles++;
+      if (consecutiveDoubles === 3) {
+        const currentPlayer = players[currentPlayerIndex];
+        const currentPlayerToken = document.querySelector(`.player-token[style*="color: ${currentPlayer.color}"]`);
+        const jailSpace = document.querySelector('[data-number="11"]');
+        currentPlayerToken.dataset.position = "11";
+        jailSpace.appendChild(currentPlayerToken);
+        const notification = document.getElementById('paymentNotification');
+        notification.textContent = `${currentPlayer.isHuman ? 'Player' : 'AI'} ${currentPlayerIndex + 1} rolled doubles 3 times and was sent to jail!`;
+        notification.style.display = 'block';
+        setTimeout(() => {
+          notification.style.display = 'none';
+          consecutiveDoubles = 0;
+          advanceTurn(result);
+        }, 2000);
+        return;
+      }
+    }
+    const currentPlayer = players[currentPlayerIndex];
+    const currentPlayerToken = document.querySelector(`.player-token[style*="color: ${currentPlayer.color}"]`);
+    if (currentPlayerToken) {
+      let currentPosition = parseInt(currentPlayerToken.dataset.position);
+      let forwardPosition = currentPosition + result.total;
+      if (forwardPosition > 40) forwardPosition = forwardPosition - 40;
+      let backwardPosition = currentPosition - result.total;
+      if (backwardPosition < 1) backwardPosition = 40 + backwardPosition;
+      const forwardSpace = document.querySelector(`[data-number="${forwardPosition}"]`);
+      const backwardSpace = document.querySelector(`[data-number="${backwardPosition}"]`);
+      forwardSpace.classList.add('possible-move');
+      backwardSpace.classList.add('possible-move');
+      const moveHandler = (newPosition, space) => {
+        forwardSpace.classList.remove('possible-move');
+        backwardSpace.classList.remove('possible-move');
+        const lastPosition = parseInt(currentPlayerToken.dataset.lastPosition || "0");
+        currentPlayerToken.dataset.lastPosition = currentPosition;
+        if (checkForBoardLoop(currentPosition, newPosition, lastPosition)) {
+          currentPlayer.money += 100;
+          const notification = document.getElementById('paymentNotification');
+          notification.textContent = `${currentPlayer.isHuman ? 'Player' : 'AI'} ${currentPlayerIndex + 1} completed a lap and received $100!`;
+          notification.style.display = 'block';
+          setTimeout(() => {
+            notification.style.display = 'none';
+          }, 2000);
+          updatePlayerPanel();
+        }
+        currentPlayerToken.dataset.position = newPosition;
+        space.appendChild(currentPlayerToken);
+        const isPurchasableProperty = !space.classList.contains('blue-bg') && !space.classList.contains('white-bg') && !space.classList.contains('gold-bg') && !space.classList.contains('dark-green-bg') && (space.innerText.includes('Sale $') || space.innerText.includes('ROYAL RUSHER R.R.') || space.innerText.includes('SHOOTING STAR R.R.') || space.innerText.includes('GEE WHIZ R.R.') || space.innerText.includes('P.D.Q. R.R.') || space.innerText.includes('BROKER') || space.innerText.includes('SOAKUM LIGHTING SYSTEM') || space.innerText.includes('SLAMBANG TROLLEY'));
+        const propertyOwner = players.find(p => p.properties.some(prop => prop.name === space.innerText.split('\n')[0].trim()));
+        if (space.classList.contains('blue-bg')) {
+          const taxAmount = 10;
+          if (currentPlayer.money < taxAmount) {
+            const canPay = sellPropertiesUntilSolvent(currentPlayer, taxAmount);
+            if (!canPay) {
+              document.getElementById('diceContainer').style.display = 'none';
+              return;
+            }
+          }
+          currentPlayer.money -= taxAmount;
+          taxCollection += taxAmount;
+          document.getElementById('taxCollection').textContent = taxCollection;
+          updatePlayerPanel();
+          const notification = document.getElementById('paymentNotification');
+          notification.textContent = `${currentPlayer.isHuman ? 'Player' : 'AI'} ${currentPlayerIndex + 1} paid $${taxAmount} tax on necessity space!`;
+          notification.style.display = 'block';
+          setTimeout(() => {
+            notification.style.display = 'none';
+            advanceTurn(result);
+          }, 2000);
+          return;
+        } else if (space.innerText.includes('JAIL OR SHELTER')) {
+          const taxAmount = 10;
+          if (currentPlayer.money < taxAmount) {
+            const canPay = sellPropertiesUntilSolvent(currentPlayer, taxAmount);
+            if (!canPay) {
+              document.getElementById('diceContainer').style.display = 'none';
+              return;
+            }
+          }
+          currentPlayer.money -= taxAmount;
+          taxCollection += taxAmount;
+          document.getElementById('taxCollection').textContent = taxCollection;
+          updatePlayerPanel();
+          const notification = document.getElementById('paymentNotification');
+          notification.textContent = `${currentPlayer.isHuman ? 'Player' : 'AI'} ${currentPlayerIndex + 1} paid $${taxAmount} jail tax!`;
+          notification.style.display = 'block';
+          setTimeout(() => {
+            notification.style.display = 'none';
+            advanceTurn(result);
+          }, 2000);
+          return;
+        } else if (space.classList.contains('gold-bg')) {
+          const totalAssets = calculateTotalAssets(currentPlayer);
+          const percentageTax = Math.round(totalAssets * 0.1);
+          const fixedTax = 75;
+          const taxAmount = Math.min(percentageTax, fixedTax);
+          if (currentPlayer.money < taxAmount) {
+            const canPay = sellPropertiesUntilSolvent(currentPlayer, taxAmount);
+            if (!canPay) {
+              document.getElementById('diceContainer').style.display = 'none';
+              return;
+            }
+          }
+          currentPlayer.money -= taxAmount;
+          taxCollection += taxAmount;
+          document.getElementById('taxCollection').textContent = taxCollection;
+          updatePlayerPanel();
+          const notification = document.getElementById('paymentNotification');
+          notification.textContent = `${currentPlayer.isHuman ? 'Player' : 'AI'} ${currentPlayerIndex + 1} paid $${taxAmount} luxury tax!`;
+          notification.style.display = 'block';
+          setTimeout(() => {
+            notification.style.display = 'none';
+            advanceTurn(result);
+          }, 2000);
+          return;
+        } else if (space.innerText.includes('GAME PRESERVES')) {
+          const jailSpace = document.querySelector('[data-number="11"]');
+          currentPlayerToken.dataset.position = "11";
+          jailSpace.appendChild(currentPlayerToken);
+          const taxAmount = 10;
+          if (currentPlayer.money < taxAmount) {
+            const canPay = sellPropertiesUntilSolvent(currentPlayer, taxAmount);
+            if (!canPay) {
+              document.getElementById('diceContainer').style.display = 'none';
+              return;
+            }
+          }
+          currentPlayer.money -= taxAmount;
+          taxCollection += taxAmount;
+          document.getElementById('taxCollection').textContent = taxCollection;
+          updatePlayerPanel();
+          const notification = document.getElementById('paymentNotification');
+          notification.textContent = `${currentPlayer.isHuman ? 'Player' : 'AI'} ${currentPlayerIndex + 1} was sent to jail and paid $${taxAmount}!`;
+          notification.style.display = 'block';
+          setTimeout(() => {
+            notification.style.display = 'none';
+            advanceTurn(result);
+          }, 2000);
+          return;
+        } else if (propertyOwner && propertyOwner !== currentPlayer) {
+          let rent = 0;
+          const propertyText = space.innerText;
+          const rentMatch = propertyText.match(/Rent \$(\d+)/);
+          if (rentMatch) rent = parseInt(rentMatch[1]);
+          if (currentPlayer.money < rent) {
+            const canPay = sellPropertiesUntilSolvent(currentPlayer, rent);
+            if (!canPay) {
+              document.getElementById('diceContainer').style.display = 'none';
+              return;
+            }
+          }
+          currentPlayer.money -= rent;
+          propertyOwner.money += rent;
+          updatePlayerPanel();
+          const notification = document.getElementById('paymentNotification');
+          notification.textContent = `${currentPlayer.isHuman ? 'Player' : 'AI'} ${currentPlayerIndex + 1} paid $${rent} to ${propertyOwner.isHuman ? 'Player' : 'AI'} ${players.indexOf(propertyOwner) + 1}`;
+          notification.style.display = 'block';
+          setTimeout(() => {
+            notification.style.display = 'none';
+            advanceTurn(result);
+          }, 2000);
+          return;
+        } else if (isPurchasableProperty && !propertyOwner) {
+          currentPropertySpace = space;
+          if (!currentPlayer.isHuman) {
+            try {
+              const price = parseInt(space.innerText.match(/Sale \$(\d+)/)[1]) || 50;
+              const desirability = calculatePropertyDesirability(space);
+              const buyThreshold = 0.7 - desirability / 100;
+              if (currentPlayer.money >= price && Math.random() > buyThreshold) {
+                buyProperty(currentPlayer, space);
+              } else {
+                passProperty();
+              }
+            } catch (err) {
+              console.error('Error parsing AI property purchase:', err);
+              passProperty();
+            }
+          } else {
+            document.getElementById('buyPropertyDialog').style.display = 'block';
+            document.getElementById('propertyDetails').innerText = space.innerText;
+          }
+          return;
+        } else if (space.classList.contains('red-bg') && space.innerText.includes('CHANCE')) {
+          drawChanceCard(currentPlayer);
+          setTimeout(() => {
+            advanceTurn(result);
+          }, 4000);
+          return;
+        } else if (space.innerText.includes('Poor House or Central Park')) {
+          currentPlayer.money += taxCollection;
+          const notification = document.getElementById('paymentNotification');
+          notification.textContent = `${currentPlayer.isHuman ? 'Player' : 'AI'} ${currentPlayerIndex + 1} collected $${taxCollection} from Public Treasury!`;
+          notification.style.display = 'block';
+          taxCollection = 0;
+          document.getElementById('taxCollection').textContent = '0';
+          setTimeout(() => {
+            notification.style.display = 'none';
+            advanceTurn(result);
+          }, 2000);
+          return;
+        } else if (space.innerText.includes('BROKER')) {
+          if (currentPlayer.properties.length === 0) {
+            const notification = document.getElementById('paymentNotification');
+            notification.textContent = `${currentPlayer.isHuman ? 'Player' : 'AI'} ${currentPlayerIndex + 1} has no properties to upgrade!`;
+            notification.style.display = 'block';
+            setTimeout(() => {
+              notification.style.display = 'none';
+              advanceTurn(result);
+            }, 2000);
+            return;
+          }
+          if (currentPlayer.money < 40) {
+            const notification = document.getElementById('paymentNotification');
+            notification.textContent = `${currentPlayer.isHuman ? 'Player' : 'AI'} ${currentPlayerIndex + 1} cannot afford broker fee!`;
+            notification.style.display = 'block';
+            setTimeout(() => {
+              notification.style.display = 'none';
+              advanceTurn(result);
+            }, 2000);
+            return;
+          }
+          if (!currentPlayer.isHuman) {
+            const availableProperties = currentPlayer.properties.filter(p => !p.upgraded);
+            if (availableProperties.length > 0) {
+              const randomProperty = availableProperties[Math.floor(Math.random() * availableProperties.length)];
+              upgradeProperty(currentPlayer, randomProperty);
+            }
+            advanceTurn(result);
+          } else {
+            const brokerDialog = document.getElementById('brokerDialog');
+            const propertySelect = document.getElementById('propertyToUpgrade');
+            propertySelect.innerHTML = '';
+            currentPlayer.properties.forEach(property => {
+              if (!property.upgraded) {
+                const option = document.createElement('option');
+                option.value = property.name;
+                option.textContent = property.name;
+                propertySelect.appendChild(option);
+              }
+            });
+            brokerDialog.style.display = 'block';
+          }
+          return;
+        }
+        advanceTurn(result);
+      };
+      const forwardHandler = () => moveHandler(forwardPosition, forwardSpace);
+      const backwardHandler = () => moveHandler(backwardPosition, backwardSpace);
+      if (!currentPlayer.isHuman) {
+        const thinkingNotification = document.getElementById('paymentNotification');
+        thinkingNotification.textContent = `AI Player ${currentPlayerIndex + 1} is thinking...`;
+        thinkingNotification.style.display = 'block';
+        setTimeout(() => {
+          thinkingNotification.style.display = 'none';
+          const forwardDesirability = calculatePropertyDesirability(forwardSpace);
+          const backwardDesirability = calculatePropertyDesirability(backwardSpace);
+          const forwardOwner = players.find(p => p.properties.some(prop => prop.name === forwardSpace.innerText.split('\n')[0].trim()));
+          const backwardOwner = players.find(p => p.properties.some(prop => prop.name === backwardSpace.innerText.split('\n')[0].trim()));
+          if (forwardOwner && forwardOwner !== currentPlayer) {
+            const rentMatch = forwardSpace.innerText.match(/Rent \$(\d+)/);
+            if (rentMatch && parseInt(rentMatch[1]) > currentPlayer.money / 3) {
+              forwardDesirability -= 50;
+            }
+          }
+          if (backwardOwner && backwardOwner !== currentPlayer) {
+            const rentMatch = backwardSpace.innerText.match(/Rent \$(\d+)/);
+            if (rentMatch && parseInt(rentMatch[1]) > currentPlayer.money / 3) {
+              backwardDesirability -= 50;
+            }
+          }
+          const randomFactor = (Math.random() - 0.5) * 20;
+          if (backwardDesirability > forwardDesirability + randomFactor) {
+            backwardHandler();
+          } else {
+            forwardHandler();
+          }
+        }, 2500);
+      } else {
+        forwardSpace.addEventListener('click', forwardHandler);
+        backwardSpace.addEventListener('click', backwardHandler);
+      }
+    }
+  }
+  function sellPropertiesUntilSolvent(player, amount) {
+    let soldProperties = 0;
+    while (player.money < amount && player.properties.length > 0) {
+      const cheapestProperty = player.properties.reduce((min, current) => current.price < min.price ? current : min);
+      const marker = cheapestProperty.space.querySelector('.property-owner-marker');
+      if (marker) {
+        marker.remove();
+      }
+      player.money += cheapestProperty.price;
+      player.properties.splice(player.properties.indexOf(cheapestProperty), 1);
+      soldProperties++;
+    }
+    if (player.money < amount && player.properties.length === 0) {
+      const playerIndex = players.indexOf(player);
+      if (playerIndex > -1) {
+        players.splice(playerIndex, 1);
+        const token = document.querySelector(`.player-token[style*="color: ${player.color}"]`);
+        if (token) {
+          token.remove();
+        }
+        updatePlayerPanel();
+        const notification = document.getElementById('paymentNotification');
+        notification.textContent = `${player.isHuman ? 'Player' : 'AI'} ${playerIndex + 1} has been eliminated!`;
+        notification.style.display = 'block';
+        setTimeout(() => {
+          notification.style.display = 'none';
+        }, 2000);
+      }
+    }
+    return player.money >= amount;
+  }
+  function initializeDice() {
+    const rollButton = document.getElementById('rollButton');
+    rollButton.addEventListener('click', handleInitialRolls);
+  }
+  function checkForBoardLoop(oldPosition, newPosition, lastPosition) {
+    return oldPosition > newPosition && newPosition === 1 && lastPosition === 40;
+  }
+  function calculatePropertyDesirability(space) {
+    const desirability = Math.random() * 100;
+    return desirability;
+  }
+  function calculateTotalAssets(player) {
+    let totalAssets = player.money;
+    player.properties.forEach(property => {
+      totalAssets += property.price;
+    });
+    return totalAssets;
+  }
+  function checkResourceConnections(player) {
+    const waybackAndTimber = player.properties.some(p => p.name === 'WAYBACK') && player.properties.some(p => p.name === 'TIMBERLAND');
+    const boomtownAndFarm = player.properties.some(p => p.name === 'BOOMTOWN') && player.properties.some(p => p.name === 'FARMLANDS');
+    const easyStreetAndCoal = player.properties.some(p => p.name === 'EASY STREET') && player.properties.some(p => p.name === 'COAL MINES');
+    const broadwayAndOil = player.properties.some(p => p.name === 'BROADWAY') && player.properties.some(p => p.name === 'OIL FIELDS');
+    return {
+      waybackBonus: waybackAndTimber ? 40 : 0,
+      rubevilleBonus: boomtownAndFarm ? 40 : 0,
+      easyStreetBonus: easyStreetAndCoal ? 40 : 0,
+      broadwayBonus: broadwayAndOil ? 40 : 0
+    };
+  }
+  function dragElement(elmnt) {
+    let pos1 = 0,
+      pos2 = 0,
+      pos3 = 0,
+      pos4 = 0;
+    elmnt.addEventListener('mousedown', e => {
+      if (!e.target.matches('button') && !e.target.matches('select') && !e.target.matches('.player-info *')) {
+        dragMouseDown(e);
+      }
+    });
+    function dragMouseDown(e) {
+      e = e || window.event;
+      e.preventDefault();
+      pos3 = e.clientX;
+      pos4 = e.clientY;
+      elmnt.classList.add('dragging');
+      document.onmouseup = closeDragElement;
+      document.onmousemove = elementDrag;
+    }
+    function elementDrag(e) {
+      e = e || window.event;
+      e.preventDefault();
+      pos1 = pos3 - e.clientX;
+      pos2 = pos4 - e.clientY;
+      pos3 = e.clientX;
+      pos4 = e.clientY;
+      const newTop = elmnt.offsetTop - pos2;
+      const newLeft = elmnt.offsetLeft - pos1;
+      if (newTop >= 0 && newTop <= window.innerHeight - elmnt.offsetHeight) {
+        elmnt.style.top = newTop + "px";
+      }
+      if (newLeft >= 0 && newLeft <= window.innerWidth - elmnt.offsetWidth) {
+        elmnt.style.left = newLeft + "px";
+      }
+    }
+    function closeDragElement() {
+      document.onmouseup = null;
+      document.onmousemove = null;
+      elmnt.classList.remove('dragging');
+    }
+  }
+  function upgradeProperty(player, property) {
+    player.money -= 40;
+    property.upgraded = true;
+    property.space.classList.add('upgraded-property');
+    updatePlayerPanel();
+    const notification = document.getElementById('paymentNotification');
+    notification.textContent = `${player.isHuman ? 'Player' : 'AI'} ${players.indexOf(player) + 1} upgraded ${property.name}!`;
+    notification.style.display = 'block';
+    setTimeout(() => {
+      notification.style.display = 'none';
+    }, 2000);
+  }
+  document.getElementById('upgradePropBtn').addEventListener('click', () => {
+    const currentPlayer = players[currentPlayerIndex];
+    const propertyName = document.getElementById('propertyToUpgrade').value;
+    const property = currentPlayer.properties.find(p => p.name === propertyName);
+    if (property) {
+      upgradeProperty(currentPlayer, property);
+      document.getElementById('brokerDialog').style.display = 'none';
+      advanceTurn({
+        total: document.getElementById('dice1').textContent * 1 + document.getElementById('dice2').textContent * 1,
+        die1: document.getElementById('dice1').textContent * 1,
+        die2: document.getElementById('dice2').textContent * 1
+      });
+    }
+  });
+  document.getElementById('cancelUpgradeBtn').addEventListener('click', () => {
+    document.getElementById('brokerDialog').style.display = 'none';
+    advanceTurn({
+      total: document.getElementById('dice1').textContent * 1 + document.getElementById('dice2').textContent * 1,
+      die1: document.getElementById('dice1').textContent * 1,
+      die2: document.getElementById('dice2').textContent * 1
+    });
+  });
+});</script>
+
+</body></html>
