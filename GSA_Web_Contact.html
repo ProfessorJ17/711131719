@@ -1,7 +1,336 @@
-<iframe
- style="width: 100%;"
- height="569"
-  src="https://www.create.xyz/app/1a7e9d0f-9c37-4764-bb44-520e66d5a279"
-  title="GSA Online Website Remake"
-  frameBorder="0">
-</iframe>
+<html><head><base href="https://www.gsa-online.de"><meta http-equiv="content-type" content="text/html; charset=UTF-8"><meta name="robots" content="noindex, nofollow"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<script src="https://kit.fontawesome.com/123456789.js"></script>
+<link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+
+<script type="text/babel">
+function App() {
+  const [isLoaded, setIsLoaded] = React.useState(false);
+  
+  React.useEffect(() => {
+    setIsLoaded(true);
+  }, []);
+
+  const products = [
+    {
+      id: 1,
+      name: "GSA Auto SoftSubmit",
+      price: "7.99",
+      paypalLink: "https://www.paypal.com/softsubmit-link",
+      features: [
+        "Submit to software archives",
+        "Automated PAD submission", 
+        "Save time and money",
+        "Easy software promotion"
+      ],
+      image: "https://images.unsplash.com/photo-1518432031352-d6fc5c10da5a?w=400"
+    },
+    {
+      id: 2,
+      name: "GSA Auto Website Submitter",
+      price: "12.99", 
+      paypalLink: "https://www.paypal.com/website-submitter-link",
+      features: [
+        "Submit to search engines",
+        "Special features for titles",
+        "Automatic captcha analysis",
+        "Directory submission"
+      ],
+      image: "https://images.unsplash.com/photo-1547658719-da2b51169166?w=400"
+    },
+    {
+      id: 3,
+      name: "GSA Captcha Breaker",
+      price: "14.99",
+      paypalLink: "https://www.paypal.com/captcha-breaker-link",
+      features: [
+        "Break any captcha type",
+        "Software integration",
+        "No captcha solving fees",
+        "Custom captcha editor"
+      ],
+      image: "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=400"
+    },
+    {
+      id: 4,
+      name: "GSA Content Generator",
+      price: "9.99",
+      paypalLink: "https://www.paypal.com/content-generator-link",
+      features: [
+        "Generate unique content",
+        "Built-in webpage parser",
+        "Scrape data automatically",
+        "Add custom search engines"
+      ],
+      image: "https://images.unsplash.com/photo-1499951360447-b19be8fe80f5?w=400"
+    },
+    {
+      id: 5,
+      name: "GSA Keyword Research",
+      price: "11.99",
+      paypalLink: "https://www.paypal.com/keyword-research-link",
+      features: [
+        "Analyze competitor keywords",
+        "Scrape niche keywords",
+        "Get SEO values",
+        "Filter by SEO-Score"
+      ],
+      image: "https://images.unsplash.com/photo-1504868584819-f56000c27a9a?w=400" 
+    },
+    {
+      id: 6,
+      name: "GSA PR Emulator",
+      price: "8.99",
+      paypalLink: "https://www.paypal.com/pr-emulator-link",
+      features: [
+        "Replace PageRank API",
+        "Use TrustFlow metrics",
+        "CitationFlow integration",
+        "SemRushRank support"
+      ],
+      image: "https://images.unsplash.com/photo-1504384764586-bb4cdc1707b0?w=400"
+    },
+    {
+      id: 7,
+      name: "GSA Platform Identifier",
+      price: "13.99",
+      paypalLink: "https://www.paypal.com/platform-identifier-link",
+      features: [
+        "Detect website platforms",
+        "Multi-threaded analysis",
+        "Sort imported URLs",
+        "Identify CMS systems"
+      ],
+      image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=400"
+    },
+    {
+      id: 8,
+      name: "GSA SEO Indexer",
+      price: "10.99",
+      paypalLink: "https://www.paypal.com/seo-indexer-link",
+      features: [
+        "Fast search engine indexing",
+        "Submit to whois sites",
+        "Generate backlinks",
+        "Quick indexing results"
+      ],
+      image: "https://images.unsplash.com/photo-1504639725590-34d0984388bd?w=400"
+    },
+    {
+      id: 9,
+      name: "GSA Scrape Genie",
+      price: "7.99",
+      paypalLink: "https://www.paypal.com/scrape-genie-link",
+      features: [
+        "Automated data collection",
+        "Email outreach automation",
+        "Parse website data",
+        "Target email collection"
+      ],
+      image: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=400"
+    },
+    {
+      id: 10,
+      name: "GSA Search Engine Ranker",
+      price: "14.99",
+      paypalLink: "https://www.paypal.com/search-engine-ranker-link",
+      features: [
+        "24/7 backlink building",
+        "No database needed",
+        "Automatic site discovery",
+        "Account registration"
+      ],
+      image: "https://images.unsplash.com/photo-1557853197-aefb550b6fdc?w=400"
+    },
+    {
+      id: 11,
+      name: "GSA URL Redirect PRO",
+      price: "9.99",
+      paypalLink: "https://www.paypal.com/url-redirect-link",
+      features: [
+        "Shorten long URLs",
+        "Keyword related URLs",
+        "Batch processing",
+        "Twitter optimization"
+      ],
+      image: "https://images.unsplash.com/photo-1432888498266-38ffec3eaf0a?w=400"
+    },
+    {
+      id: 12,
+      name: "GSA Website Contact",
+      price: "12.99",
+      paypalLink: "https://www.paypal.com/website-contact-link",
+      features: [
+        "Automated form submission",
+        "Custom content support",
+        "Search engine selection",
+        "Personal messaging"
+      ],
+      image: "https://images.unsplash.com/photo-1423666639041-f56000c27a9a?w=400"
+    }
+  ].map(p => ({...p}));
+
+  return (
+    <main className={`min-h-screen bg-gray-900 transition-opacity duration-1000 ${isLoaded ? 'opacity-100' : 'opacity-0'}`}>
+      <nav className="bg-black text-white p-4 border-b border-blue-500">
+        <div className="container mx-auto flex justify-between items-center">
+          <h1 className="text-2xl font-bold font-tech">GSA Online</h1>
+        </div>
+      </nav>
+      
+      <header className="relative bg-black text-white py-20 overflow-hidden">
+        <div className="absolute inset-0">
+          <svg className="absolute w-full h-full opacity-20" viewBox="0 0 100 100">
+            <defs>
+              <pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse">
+                <path d="M 10 0 L 0 0 0 10" fill="none" stroke="#4299e1" strokeWidth="0.5"/>
+              </pattern>
+            </defs>
+            <rect width="100" height="100" fill="url(#grid)" />
+            
+            <g className="animate-spin-slow" style={{transformOrigin: 'center'}}>
+              <circle cx="50" cy="50" r="20" fill="none" stroke="#4299e1" strokeWidth="0.5"/>
+              <path d="M 50 30 L 50 70 M 30 50 L 70 50" stroke="#4299e1" strokeWidth="0.5"/>
+            </g>
+          </svg>
+        </div>
+        
+        <div className="container mx-auto text-center px-4 relative z-10">
+          <h2 className="text-4xl md:text-6xl font-bold mb-6 font-tech animate-float">
+            <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-400 via-cyan-400 to-blue-500">
+              GSA Online Solutions
+            </span>
+          </h2>
+          <p className="text-xl md:text-2xl mb-8 font-tech animate-float-delayed text-blue-300">
+            Professional SEO and Online Marketing Solutions
+          </p>
+        </div>
+      </header>
+
+      <section id="products" className="py-16 bg-gray-900 relative overflow-hidden">
+        <div className="absolute inset-0">
+          <svg className="w-full h-full opacity-5" viewBox="0 0 100 100">
+            <pattern id="circuit" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse">
+              <path d="M 0 10 H 20 M 10 0 V 20" stroke="#4299e1" strokeWidth="0.5" fill="none"/>
+              <circle cx="10" cy="10" r="2" fill="#4299e1"/>
+            </pattern>
+            <rect width="100" height="100" fill="url(#circuit)"/>
+          </svg>
+        </div>
+        
+        <div className="container mx-auto px-4 relative z-10">
+          <h3 className="text-3xl font-bold text-center mb-12 font-tech text-white">
+            Our Products
+          </h3>
+          <article className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+            {products.map((product) => (
+              <section
+                key={product.id}
+                className="bg-gray-800 rounded-lg p-6 flex flex-col justify-between border border-blue-500 transform transition-all duration-300 hover:scale-105 hover:shadow-xl hover:shadow-blue-500/20"
+              >
+                <div className="relative mb-4">
+                  <img
+                    src={product.image}
+                    alt={`${product.name} - SEO and automation software`}
+                    className="w-full h-48 object-cover rounded-lg opacity-80"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-gray-800 via-transparent to-transparent"/>
+                  <div className="absolute top-2 right-2">
+                    <svg className="w-8 h-8 text-blue-500 animate-spin-slow" viewBox="0 0 24 24">
+                      <path fill="currentColor" d="M12,8V12L14.5,14.5L15.5,13.5L13.5,11.5V8H12M12,4C7.58,4 4,7.58 4,12C4,16.42 7.58,20 12,20C16.42,20 20,16.42 20,12C20,7.58 16.42,4 12,4Z"/>
+                    </svg>
+                  </div>
+                </div>
+                
+                <h4 className="text-xl font-bold mb-3 font-tech text-white">
+                  {product.name}
+                </h4>
+                <p className="text-2xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-cyan-400 font-tech">
+                  ${product.price}
+                </p>
+                <ul className="mb-6 space-y-2 flex-grow">
+                  {product.features.map((feature, index) => (
+                    <li
+                      key={index}
+                      className="flex items-start text-gray-300 font-tech text-sm"
+                    >
+                      <i className="fas fa-microchip text-blue-400 mr-2 mt-1"></i>
+                      <span>{feature}</span>
+                    </li>
+                  ))}
+                </ul>
+                <a
+                  href={product.paypalLink}
+                  className="block w-full relative overflow-hidden group bg-blue-600 text-white text-center py-3 rounded-lg transition-all duration-300 transform hover:translate-y-[-2px] font-tech"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <span className="relative z-10">Initialize Purchase</span>
+                  <div className="absolute inset-0 w-full h-full bg-gradient-to-r from-cyan-500 to-blue-600 transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left"></div>
+                </a>
+              </section>
+            ))}
+          </article>
+        </div>
+      </section>
+
+      <footer className="bg-black text-white py-8 border-t border-blue-500">
+        <div className="container mx-auto px-4 text-center">
+          <small className="font-tech">
+            2025 GSA Online. All rights reserved.
+          </small>
+        </div>
+      </footer>
+    </main>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+
+<style>
+.font-tech {
+  font-family: 'Share Tech Mono', monospace;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+@keyframes float-delayed {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+.animate-float-delayed {
+  animation: float-delayed 5s ease-in-out infinite;
+  animation-delay: 0.5s;
+}
+
+.animate-spin-slow {
+  animation: spin 10s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 0.2; }
+  50% { opacity: 0.1; }
+}
+</style>
+</head>
+<body class="bg-gray-900">
+<div id="root"></div>
+</body>
+</html>
