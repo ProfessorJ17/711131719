@@ -1,0 +1,1348 @@
+<html><head><base href="." target="_blank">
+<style>
+body {
+    background: #1a1a1a;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+    font-family: Arial, sans-serif;
+}
+
+#game {
+    width: 80vw;
+    max-width: 1200px;
+    height: 90vh;
+    max-height: 1000px;
+    background: #2a2a2a;
+    position: relative;
+    overflow: hidden;
+}
+
+.peg {
+    width: 8px;
+    height: 8px;
+    background: #4a90e2;
+    border-radius: 50%;
+    position: absolute;
+    transform: translate(-50%, -50%);
+}
+
+.dot {
+    width: 12px;
+    height: 12px;
+    background: #000;
+    border-radius: 50%;
+    position: absolute;
+    transform: translate(-50%, -50%);
+    cursor: pointer;
+}
+
+.ball {
+    width: 30px;
+    height: 30px;
+    background: white;
+    border-radius: 50%;
+    position: absolute;
+    transform: translate(-50%, -50%);
+}
+
+.ball::after {
+    content: '';
+    position: absolute;
+    width: 18px;  
+    height: 8px;  
+    background: linear-gradient(135deg, #333, #000); 
+    border-radius: 50% 50% 50% 50%; 
+    top: 50%;
+    left: 50%;
+    transform-origin: center;
+    box-shadow: inset -2px -2px 4px rgba(255,255,0,0.3); 
+    transform: translate(-50%, -50%) rotate(90deg);
+}
+
+#score, #balls-left {
+    position: absolute;
+    color: white;
+    font-size: 20px;
+}
+
+#score {
+    top: 20px;
+    right: 20px;
+}
+
+#balls-left {
+    top: 20px;
+    left: 20px;
+}
+
+#previewBall {
+    width: 36px;
+    height: 36px;
+    background: radial-gradient(circle at 40% 40%, #ffffff 0%, #dddddd 60%, #999999 100%);
+    border-radius: 50%;
+    position: absolute;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+    box-shadow: inset -2px -2px 6px rgba(0,0,0,0.2);
+}
+
+#previewBall::after {
+    content: '';
+    position: absolute;
+    width: 18px !important;
+    height: 4px !important;
+    background: linear-gradient(135deg, #ff0000, #660000);
+    border-radius: 50% 50% 50% 50%;
+    top: 50%;
+    left: 50%;
+    transform-origin: center;
+    box-shadow: 0 0 8px #ff0000, inset 0 0 4px #ff0000;
+    transform: translate(calc(-50% + var(--pupil-x, 0px)), calc(-50% + var(--pupil-y, 0px))) rotate(90deg) !important;
+    transition: transform 0.1s ease-out !important;
+}
+
+.card-selection {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    gap: 20px;
+    z-index: 100;
+}
+
+.card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: #333;
+    padding: 15px;
+    border-radius: 10px;
+    width: 200px;
+    height: auto;
+    text-align: center;
+}
+
+.card .emoji {
+    font-size: 48px;
+    margin-bottom: 10px;
+}
+
+.card .description {
+    font-size: 14px;
+    color: white;
+    line-height: 1.3;
+}
+
+.placed-number {
+    width: 40px;
+    height: 40px;
+    background: white;
+    border-radius: 50%;
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 24px;
+    transform: translate(-50%, -50%);
+    transition: opacity 0.3s;
+}
+
+.placed-number.on-cooldown {
+    opacity: 0.5;
+}
+
+.placed-number.teleporter-cooldown {
+    opacity: 0.3;
+    pointer-events: none;
+}
+
+.placed-number[data-powerup-type="1"] {
+    font-size: 28px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: transparent;
+}
+
+.placed-number[data-powerup-type="2"] {
+    font-size: 28px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: transparent;
+}
+
+.placed-number[data-powerup-type="3"] {
+    font-size: 28px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: transparent;
+}
+
+.placed-number[data-powerup-type="4"] {
+    font-size: 28px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: transparent;
+}
+
+.placed-number[data-powerup-type="5"] {
+    font-size: 28px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(45deg, #800080, #4B0082); 
+    color: white;
+}
+
+.placed-number[data-powerup-type="6"] {
+    font-size: 28px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: transparent;
+}
+
+.placed-number[data-powerup-type="7"] {
+    font-size: 28px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: transparent;
+}
+
+.placed-number[data-powerup-type="8"] {
+    font-size: 28px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: transparent;
+}
+
+.placed-number[data-powerup-type="9"] {
+    font-size: 28px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: transparent;
+}
+
+@keyframes rotate-emoji {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+.rotating-emoji {
+    display: inline-block;
+    animation: rotate-emoji 4s linear infinite;
+}
+
+@keyframes timer-pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.2); }
+    100% { transform: scale(1); }
+}
+
+.timer-pulse {
+    animation: timer-pulse 0.3s ease-out;
+}
+
+@keyframes teleport-flash {
+    0% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+    50% { transform: translate(-50%, -50%) scale(1.5); opacity: 0; }
+    100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+}
+
+.teleport-effect {
+    animation: teleport-flash 0.3s ease-out;
+}
+
+@keyframes reverse-gravity {
+    0% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+    50% { transform: translate(-50%, -50%) scale(1.2); opacity: 0.7; }
+    100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+}
+
+.reverse-gravity-effect {
+    animation: reverse-gravity 0.3s ease-out;
+}
+
+@keyframes rollLeft {
+    from { transform: translate(-50%, -50%) rotate(90deg); }
+    to { transform: translate(-50%, -50%) rotate(-270deg); }
+}
+
+@keyframes rollRight {
+    from { transform: translate(-50%, -50%) rotate(90deg); }
+    to { transform: translate(-50%, -50%) rotate(450deg); }
+}
+
+@keyframes purple-spawn {
+    0% { transform: translate(-50%, -50%) scale(0); opacity: 0; }
+    100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+}
+
+.purple-spawn {
+    animation: purple-spawn 0.3s ease-out;
+}
+
+@keyframes rotate {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+@keyframes score-popup {
+    0% {
+        opacity: 0;
+        transform: translateY(0);
+    }
+    20% {
+        opacity: 1;
+        transform: translateY(-20px);
+    }
+    80% {
+        opacity: 1;
+        transform: translateY(-20px);
+    }
+    100% {
+        opacity: 0;
+        transform: translateY(-40px);
+    }
+}
+
+.score-popup {
+    position: absolute;
+    pointer-events: none;
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    z-index: 1000;
+    animation: score-popup 1s ease-out forwards;
+}
+
+.score-popup .back {
+    position: absolute;
+    color: rgba(0, 255, 0, 0.3);
+    font-weight: bold;
+    transform: scale(1.2);
+    text-shadow: 0 0 4px rgba(0, 255, 0, 0.3);
+}
+
+.score-popup .front {
+    position: relative;
+    color: white;
+    font-weight: bold;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+@keyframes item7-spin {
+    from { transform: translate(-50%, -50%) rotate(0deg); }
+    to { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+.item7-spinning {
+    animation: item7-spin 2s linear infinite;
+}
+
+@keyframes tree-shake {
+    0% { transform: translate(-50%, -50%) rotate(0deg); }
+    25% { transform: translate(-50%, -50%) rotate(-5deg); }
+    75% { transform: translate(-50%, -50%) rotate(5deg); }
+    100% { transform: translate(-50%, -50%) rotate(0deg); }
+}
+
+.tree-shake {
+    animation: tree-shake 0.3s ease-out;
+}
+
+@keyframes multiply-pulse {
+    0% { transform: translate(-50%, -50%) scale(1); }
+    50% { transform: translate(-50%, -50%) scale(1.3); opacity: 0.7; }
+    100% { transform: translate(-50%, -50%) scale(1); }
+}
+
+.multiply-pulse {
+    animation: multiply-pulse 0.3s ease-out;
+}
+
+@media (max-width: 600px) {
+    #game {
+        width: 100vw;
+        height: 100vh;
+    }
+}
+
+.gold-ball {
+    width: 30px;
+    height: 30px;
+    background: linear-gradient(45deg, #FFD700, #FFA500);
+    border-radius: 50%;
+    position: absolute;
+    transform: translate(-50%, -50%);
+}
+
+.gold-ball::after {
+    content: '';
+    position: absolute;
+    width: 8px;   
+    height: 18px;  
+    background: linear-gradient(135deg, #8B4513, #654321); 
+    border-radius: 50% 50% 50% 50%; 
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%); 
+    box-shadow: inset -2px -2px 4px rgba(255,215,0,0.3);
+}
+
+.purple-ball {
+    width: 30px;
+    height: 30px;
+    background: linear-gradient(45deg, #800080, #4B0082);
+    border-radius: 50%;
+    position: absolute;
+    transform: translate(-50%, -50%);
+}
+
+.purple-ball::after {
+    content: '';
+    position: absolute; 
+    width: 8px;   
+    height: 18px;  
+    background: linear-gradient(135deg, #2A0845, #1A0527); 
+    border-radius: 50% 50% 50% 50%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    box-shadow: inset -2px -2px 4px rgba(147,112,219,0.3);
+}
+
+.delete-button {
+    position: absolute;
+    right: 20px;
+    top: 60px;
+    background: #ff4444;
+    color: white;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    z-index: 100;
+}
+
+.placed-number.delete-mode {
+    cursor: pointer;
+}
+
+.placed-number.delete-mode:hover {
+    background: #ff4444;
+    color: white;
+}
+
+@keyframes spring {
+    0% { transform: translate(-50%, -50%) scale(1); }
+    50% { transform: translate(-50%, -50%) scale(1.3); }
+    100% { transform: translate(-50%, -50%) scale(1); }
+}
+
+@keyframes spring-compress {
+    0% { transform: translate(-50%, -50%) scaleY(1); }
+    50% { transform: translate(-50%, -50%) scaleY(0.7); }
+    100% { transform: translate(-50%, -50%) scaleY(1); }
+}
+
+.spring-effect {
+    animation: spring-compress 0.3s ease-out !important;
+}
+
+.multiplier-badge {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  font-size: 10px;
+  color: white;
+  text-shadow: 1px 1px 1px black;
+  pointer-events: none;
+}
+</style>
+</head>
+<body>
+<div id="game">
+    <div id="score">&#x24;0</div>
+    <div id="balls-left">Balls Left: 99</div>
+    <div id="previewBall"></div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/matter-js/0.18.0/matter.min.js"></script>
+<script>let engine;
+const gameElement = document.getElementById('game');
+let gameWidth = gameElement.clientWidth;
+let gameHeight = gameElement.clientHeight;
+let score = 0;
+let ballsLeft = 99;
+let collidedPegs = new Set();
+let canDropBall = true;
+let currentBall = null;
+let placementMode = false;
+let selectedNumber = null;
+let ballDropCount = 0;
+let powerupCooldowns = new Map();
+let deleteMode = false;
+let canDeleteThisRound = true;
+let stopwatchTimers = new Map();
+function updateScore(amount) {
+  score += amount;
+  document.getElementById('score').textContent = '$' + score;
+  if (amount > 0) {
+    let x, y;
+    if (currentBall) {
+      x = currentBall.position.x;
+      y = currentBall.position.y;
+    } else {
+      x = gameWidth / 2;
+      y = gameHeight / 2;
+    }
+    showScorePopup(amount, x, y);
+  }
+}
+function showScorePopup(amount, x, y) {
+  const popup = document.createElement('div');
+  popup.className = 'score-popup';
+  popup.style.left = x + 'px';
+  popup.style.top = y + 'px';
+  const back = document.createElement('div');
+  back.className = 'back';
+  back.textContent = '$' + amount;
+  const front = document.createElement('div');
+  front.className = 'front';
+  front.textContent = '$' + amount;
+  popup.appendChild(back);
+  popup.appendChild(front);
+  gameElement.appendChild(popup);
+  setTimeout(() => {
+    popup.remove();
+  }, 1000);
+}
+function showCardSelection() {
+  const cardSelection = document.createElement('div');
+  cardSelection.className = 'card-selection';
+  const styleSheet = document.createElement('style');
+  styleSheet.textContent = `
+    .card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      background: #333;
+      padding: 15px;
+      border-radius: 10px;
+      width: 200px;
+      height: auto;
+      text-align: center;
+    }
+    
+    .card .emoji {
+      font-size: 48px;
+      margin-bottom: 10px;
+    }
+    
+    .card .description {
+      font-size: 14px;
+      color: white;
+      line-height: 1.3;
+    }
+  `;
+  document.head.appendChild(styleSheet);
+  const powerups = [{
+    num: 1,
+    emoji: '🔩',
+    desc: 'Spring: Bounce ball with increased speed'
+  }, {
+    num: 2,
+    emoji: '🌌',
+    desc: 'Portal: Teleport ball to higher portal'
+  }, {
+    num: 3,
+    emoji: '🧱',
+    desc: 'Brick: Hit from below to spawn gold coin'
+  }, {
+    num: 4,
+    emoji: '🪂',
+    desc: 'Triangle: Reverse gravity when hit'
+  }, {
+    num: 5,
+    emoji: '🟣',
+    desc: 'Purple Coin: Spawns multiplier ball'
+  }, {
+    num: 6,
+    emoji: '☀️',
+    desc: 'Sun: Rapid bounce with no cooldown'
+  }, {
+    num: 7,
+    emoji: '⌛',
+    desc: 'Timer: Count hits for bonus points'
+  }, {
+    num: 8,
+    emoji: '🌳',
+    desc: 'Tree: Hit from below for $400'
+  }, {
+    num: 9,
+    emoji: '💎',
+    desc: 'Diamond: Multiply nearby powerup values'
+  }];
+  let selectedPowerups = [];
+  while (selectedPowerups.length < 3) {
+    const randomPowerup = powerups[Math.floor(Math.random() * powerups.length)];
+    if (!selectedPowerups.find(p => p.num === randomPowerup.num)) {
+      selectedPowerups.push(randomPowerup);
+    }
+  }
+  selectedPowerups.forEach(powerup => {
+    const card = document.createElement('div');
+    card.className = 'card';
+    const emojiDiv = document.createElement('div');
+    emojiDiv.className = 'emoji';
+    emojiDiv.textContent = powerup.emoji;
+    const descDiv = document.createElement('div');
+    descDiv.className = 'description';
+    descDiv.textContent = powerup.desc;
+    card.appendChild(emojiDiv);
+    card.appendChild(descDiv);
+    card.onclick = () => {
+      selectedNumber = powerup.num;
+      placementMode = true;
+      cardSelection.remove();
+      document.querySelectorAll('.dot').forEach(dot => {
+        dot.style.cursor = 'pointer';
+        dot.onclick = e => placePowerup(e.target, powerup.num);
+      });
+    };
+    cardSelection.appendChild(card);
+  });
+  gameElement.appendChild(cardSelection);
+}
+function activateSpring(placedNumber) {
+  placedNumber.classList.remove('spring-effect');
+  void placedNumber.offsetWidth;
+  placedNumber.classList.add('spring-effect');
+  const rect = placedNumber.getBoundingClientRect();
+  const gameRect = gameElement.getBoundingClientRect();
+  updateScore(200);
+  showScorePopup(200, rect.left - gameRect.left + rect.width / 2, rect.top - gameRect.top);
+  setTimeout(() => {
+    placedNumber.classList.remove('spring-effect');
+  }, 300);
+}
+function placePowerup(dot, number) {
+  if (!placementMode) return;
+  const placedNumber = document.createElement('div');
+  placedNumber.className = 'placed-number';
+  placedNumber.dataset.powerupType = number;
+  placedNumber.dataset.powerupId = 'powerup_' + Date.now();
+  placedNumber.style.left = dot.style.left;
+  placedNumber.style.top = dot.style.top;
+  switch (number) {
+    case 1:
+      placedNumber.textContent = '🔩';
+      break;
+    case 2:
+      placedNumber.innerHTML = '<span class="rotating-emoji">🌌</span>';
+      break;
+    case 3:
+      placedNumber.textContent = '🧱';
+      break;
+    case 4:
+      placedNumber.textContent = '🪂';
+      break;
+    case 5:
+      placedNumber.textContent = '🟣';
+      break;
+    case 6:
+      placedNumber.textContent = '☀️';
+      break;
+    case 7:
+      placedNumber.textContent = '⌛';
+      break;
+    case 8:
+      placedNumber.textContent = '🌳';
+      break;
+    case 9:
+      placedNumber.textContent = '💎';
+      placedNumber.dataset.multiplier = '1';
+      const multiplierBadge = document.createElement('span');
+      multiplierBadge.className = 'multiplier-badge';
+      multiplierBadge.textContent = 'x1';
+      placedNumber.appendChild(multiplierBadge);
+      break;
+    default:
+      placedNumber.textContent = number;
+  }
+  gameElement.appendChild(placedNumber);
+  placementMode = false;
+  selectedNumber = null;
+  document.querySelectorAll('.dot').forEach(dot => {
+    dot.style.cursor = 'default';
+    dot.onclick = null;
+  });
+  if (deleteMode) {
+    toggleDeleteMode();
+  }
+}
+function checkPowerupCollision(ballX, ballY, ball = currentBall) {
+  const powerups = document.querySelectorAll('.placed-number');
+  powerups.forEach(powerup => {
+    const powerupRect = powerup.getBoundingClientRect();
+    const gameRect = gameElement.getBoundingClientRect();
+    const powerupX = powerupRect.left - gameRect.left + powerupRect.width / 2;
+    const powerupY = powerupRect.top - gameRect.top + powerupRect.height / 2;
+    const distance = Math.sqrt(Math.pow(ballX - powerupX, 2) + Math.pow(ballY - powerupY, 2));
+    if (distance < 30) {
+      const powerupId = powerup.dataset.powerupId;
+      const now = Date.now();
+      const isGoldBall = ball.label === 'gold_ball';
+      if (powerup.dataset.powerupType === "1") {
+        if (!powerupCooldowns.has(powerupId) || now - powerupCooldowns.get(powerupId) >= 3000) {
+          activateSpring(powerup);
+          const ballVelocity = {
+            x: ball.velocity.x,
+            y: ball.velocity.y
+          };
+          let normalY = ballY - powerupY;
+          let normalX = ballX - powerupX;
+          const magnitude = Math.sqrt(normalX * normalX + normalY * normalY);
+          let normalizedX = normalX / magnitude;
+          let normalizedY = normalY / magnitude;
+          const randomAngle = (Math.random() - 0.5) * Math.PI / 6;
+          const cos = Math.cos(randomAngle);
+          const sin = Math.sin(randomAngle);
+          const rotatedX = normalizedX * cos - normalizedY * sin;
+          const rotatedY = normalizedX * sin + normalizedY * cos;
+          const speed = Math.sqrt(ballVelocity.x * ballVelocity.x + ballVelocity.y * ballVelocity.y);
+          let upwardBias = -0.3;
+          normalizedY += upwardBias;
+          const norm = Math.sqrt(normalizedX * normalizedX + normalizedY * normalizedY);
+          normalizedX /= norm;
+          normalizedY /= norm;
+          const adjustedRotatedX = normalizedX * cos - normalizedY * sin;
+          const adjustedRotatedY = normalizedX * sin + normalizedY * cos;
+          Matter.Body.setVelocity(ball, {
+            x: adjustedRotatedX * speed * 1.5,
+            y: adjustedRotatedY * speed * 1.5
+          });
+          powerupCooldowns.set(powerupId, now);
+          powerup.classList.add('on-cooldown');
+          setTimeout(() => {
+            powerup.classList.remove('on-cooldown');
+          }, 3000);
+        }
+      } else if (powerup.dataset.powerupType === "2") {
+        if (!powerup.classList.contains('teleporter-cooldown')) {
+          const currentRect = powerup.getBoundingClientRect();
+          const gameRect = gameElement.getBoundingClientRect();
+          const currentY = currentRect.top - gameRect.top + currentRect.height / 2;
+          let nextHighestTeleporter = null;
+          let nextHighestY = 0;
+          document.querySelectorAll('.placed-number[data-powerup-type="2"]').forEach(tel => {
+            const telRect = tel.getBoundingClientRect();
+            const telY = telRect.top - gameRect.top + telRect.height / 2;
+            if (telY < currentY && tel !== powerup && !tel.classList.contains('teleporter-cooldown')) {
+              if (telY > nextHighestY || !nextHighestTeleporter) {
+                nextHighestY = telY;
+                nextHighestTeleporter = tel;
+              }
+            }
+          });
+          if (nextHighestTeleporter) {
+            updateScore(100);
+            showScorePopup(100, powerupX, powerupY);
+            powerup.classList.add('teleport-effect');
+            nextHighestTeleporter.classList.add('teleport-effect');
+            const nextTelRect = nextHighestTeleporter.getBoundingClientRect();
+            const nextTelX = nextTelRect.left - gameRect.left + nextTelRect.width / 2;
+            const nextTelY = nextTelRect.top - gameRect.top + nextTelRect.height / 2;
+            Matter.Body.setPosition(ball, {
+              x: nextTelX,
+              y: nextTelY
+            });
+            powerup.classList.add('teleporter-cooldown');
+            nextHighestTeleporter.classList.add('teleporter-cooldown');
+            setTimeout(() => {
+              powerup.classList.remove('teleport-effect');
+              nextHighestTeleporter.classList.remove('teleport-effect');
+            }, 300);
+            setTimeout(() => {
+              powerup.classList.remove('teleporter-cooldown');
+              nextHighestTeleporter.classList.remove('teleporter-cooldown');
+            }, 10000);
+          }
+        }
+      } else if (powerup.dataset.powerupType === "3") {
+        if (ball && ball.velocity.y < 0 && ballY > powerupY) {
+          if (!powerupCooldowns.has(powerupId) || now - powerupCooldowns.get(powerupId) >= 5000) {
+            spawnGoldBall(powerupX, powerupY);
+            powerupCooldowns.set(powerupId, now);
+            powerup.classList.add('on-cooldown');
+            setTimeout(() => {
+              powerup.classList.remove('on-cooldown');
+            }, 5000);
+          }
+        }
+      } else if (powerup.dataset.powerupType === "4") {
+        if (!powerupCooldowns.has(powerupId) || now - powerupCooldowns.get(powerupId) >= 5000) {
+          powerup.classList.add('reverse-gravity-effect');
+          Matter.Body.setVelocity(ball, {
+            x: 0,
+            y: 0
+          });
+          ball.reverseGravity = true;
+          Matter.Body.setVelocity(ball, {
+            x: 0,
+            y: -8
+          });
+          powerupCooldowns.set(powerupId, now);
+          powerup.classList.add('on-cooldown');
+          setTimeout(() => {
+            powerup.classList.remove('reverse-gravity-effect');
+          }, 300);
+          setTimeout(() => {
+            powerup.classList.remove('on-cooldown');
+          }, 5000);
+        }
+      } else if (powerup.dataset.powerupType === "5") {
+        if (!powerupCooldowns.has(powerupId) || now - powerupCooldowns.get(powerupId) >= 5000) {
+          powerup.classList.add('reverse-gravity-effect');
+          spawnPurpleBall(powerupX, powerupY);
+          powerupCooldowns.set(powerupId, now);
+          powerup.classList.add('on-cooldown');
+          setTimeout(() => {
+            powerup.classList.remove('reverse-gravity-effect');
+          }, 300);
+          setTimeout(() => {
+            powerup.classList.remove('on-cooldown');
+          }, 5000);
+        }
+      } else if (powerup.dataset.powerupType === "6") {
+        if (!powerupCooldowns.has(powerupId) || now - powerupCooldowns.get(powerupId) >= powerupCooldowns.get(powerupId + '_nextCooldown')) {
+          updateScore(100);
+          const ballVelocity = {
+            x: ball.velocity.x,
+            y: ball.velocity.y
+          };
+          let normalY = ballY - powerupY;
+          let normalX = ballX - powerupX;
+          const magnitude = Math.sqrt(normalX * normalX + normalY * normalY);
+          let normalizedX = normalX / magnitude;
+          let normalizedY = normalY / magnitude;
+          const randomAngle = (Math.random() - 0.5) * Math.PI / 6;
+          const cos = Math.cos(randomAngle);
+          const sin = Math.sin(randomAngle);
+          const rotatedX = normalizedX * cos - normalizedY * sin;
+          const rotatedY = normalizedX * sin + normalizedY * cos;
+          const speed = Math.sqrt(ballVelocity.x * ballVelocity.x + ballVelocity.y * ballVelocity.y);
+          let upwardBias = -0.4;
+          normalizedY += upwardBias;
+          const norm = Math.sqrt(normalizedX * normalizedX + normalizedY * normalizedY);
+          normalizedX /= norm;
+          normalizedY /= norm;
+          const adjustedRotatedX = normalizedX * cos - normalizedY * sin;
+          const adjustedRotatedY = normalizedX * sin + normalizedY * cos;
+          Matter.Body.setVelocity(ball, {
+            x: adjustedRotatedX * speed * 1.2,
+            y: adjustedRotatedY * speed * 1.2
+          });
+          const randomCooldown = Math.random() * (500 - 250) + 250;
+          powerupCooldowns.set(powerupId + '_nextCooldown', randomCooldown);
+          powerupCooldowns.set(powerupId, now);
+          powerup.classList.add('on-cooldown');
+          setTimeout(() => {
+            powerup.classList.remove('on-cooldown');
+          }, randomCooldown);
+        }
+      } else if (powerup.dataset.powerupType === "7") {
+        if (!powerupCooldowns.has(powerupId) || now - powerupCooldowns.get(powerupId) >= 3000) {
+          powerup.classList.add('timer-pulse');
+          powerup.classList.add('item7-spinning');
+          const timerId = 'timer_' + powerupId;
+          let hitCount = stopwatchTimers.get(timerId)?.hitCount || 0;
+          if (stopwatchTimers.has(timerId)) {
+            clearInterval(stopwatchTimers.get(timerId).interval);
+          }
+          let scoreDisplay = stopwatchTimers.get(timerId)?.scoreDisplay;
+          if (!scoreDisplay) {
+            scoreDisplay = document.createElement('div');
+            scoreDisplay.style.position = 'absolute';
+            scoreDisplay.style.left = powerupX + 'px';
+            scoreDisplay.style.top = powerupY - 20 + 'px';
+            scoreDisplay.style.color = 'white';
+            scoreDisplay.style.fontSize = '16px';
+            scoreDisplay.style.fontWeight = 'bold';
+            scoreDisplay.style.textShadow = '2px 2px 2px black';
+            gameElement.appendChild(scoreDisplay);
+          }
+          const interval = setInterval(() => {
+            const bodies = Matter.Composite.allBodies(engine.world);
+            const ballsInPlay = bodies.filter(body => !body.isStatic && (body === currentBall || body.label === 'gold_ball' || body.label === 'purple_ball'));
+            if (ballsInPlay.length === 0) {
+              return;
+            }
+            hitCount++;
+            const points = hitCount * 10;
+            updateScore(points);
+            const rect = powerup.getBoundingClientRect();
+            const gameRect = gameElement.getBoundingClientRect();
+            showScorePopup(points, rect.left - gameRect.left + rect.width / 2, rect.top - gameRect.top);
+            scoreDisplay.textContent = '+' + hitCount * 10;
+          }, 1000);
+          stopwatchTimers.set(timerId, {
+            interval: interval,
+            hitCount: hitCount,
+            scoreDisplay: scoreDisplay
+          });
+          Matter.Body.setVelocity(ball, {
+            x: ball.velocity.x * 0.3,
+            y: ball.velocity.y * 0.3
+          });
+          powerupCooldowns.set(powerupId, now);
+          powerup.classList.add('on-cooldown');
+          setTimeout(() => {
+            powerup.classList.remove('timer-pulse');
+            powerup.classList.remove('on-cooldown');
+          }, 3000);
+        }
+      } else if (powerup.dataset.powerupType === "8") {
+        if (!powerupCooldowns.has(powerupId) || now - powerupCooldowns.get(powerupId) >= 5000) {
+          if (ball && ball.velocity.y < 0 && ballY > powerupY) {
+            powerup.classList.remove('tree-shake');
+            void powerup.offsetWidth;
+            powerup.classList.add('tree-shake');
+            const multipliedValue = parseInt(powerup.dataset.multipliedValue) || 0.2;
+            updateScore(multipliedValue);
+            showScorePopup(multipliedValue, powerupX, powerupY);
+            powerupCooldowns.set(powerupId, now);
+            powerup.classList.add('on-cooldown');
+            setTimeout(() => {
+              powerup.classList.remove('tree-shake');
+              powerup.classList.remove('on-cooldown');
+            }, 5000);
+          }
+        }
+      } else if (powerup.dataset.powerupType === "9") {
+        if (!powerupCooldowns.has(powerupId) || now - powerupCooldowns.get(powerupId) >= 3000) {
+          powerup.classList.remove('multiply-pulse');
+          void powerup.offsetWidth;
+          powerup.classList.add('multiply-pulse');
+          const nearbyPowerups = document.querySelectorAll('.placed-number');
+          const currentMultiplier = parseInt(powerup.dataset.multiplier) || 1;
+          const newMultiplier = currentMultiplier * 2;
+          powerup.dataset.multiplier = newMultiplier;
+          const multiplierBadge = powerup.querySelector('.multiplier-badge');
+          if (multiplierBadge) {
+            multiplierBadge.textContent = 'x' + newMultiplier;
+          }
+          nearbyPowerups.forEach(nearbyPowerup => {
+            if (nearbyPowerup === powerup) return;
+            const nearbyRect = nearbyPowerup.getBoundingClientRect();
+            const nearbyX = nearbyRect.left - gameRect.left + nearbyRect.width / 2;
+            const nearbyY = nearbyRect.top - gameRect.top + nearbyRect.height / 2;
+            const distance = Math.sqrt(Math.pow(powerupX - nearbyX, 2) + Math.pow(powerupY - nearbyY, 2));
+            if (distance < 100) {
+              if (nearbyPowerup.dataset.powerupType === "8") {
+                const baseValue = 400;
+                const multipliedValue = baseValue * newMultiplier;
+                nearbyPowerup.dataset.multipliedValue = multipliedValue;
+              }
+            }
+          });
+          powerupCooldowns.set(powerupId, now);
+          powerup.classList.add('on-cooldown');
+          setTimeout(() => {
+            powerup.classList.remove('multiply-pulse');
+            powerup.classList.remove('on-cooldown');
+          }, 3000);
+        }
+      }
+    }
+  });
+}
+function initGame() {
+  stopwatchTimers.forEach(timer => {
+    clearInterval(timer.interval);
+    if (timer.scoreDisplay && timer.scoreDisplay.parentNode) {
+      timer.scoreDisplay.parentNode.removeChild(timer.scoreDisplay);
+    }
+  });
+  stopwatchTimers.clear();
+  while (gameElement.firstChild) {
+    gameElement.removeChild(gameElement.firstChild);
+  }
+  gameElement.innerHTML = `
+        <div id="score">$${score}</div>
+        <div id="balls-left">Balls Left: ${ballsLeft}</div>
+        <div id="previewBall"></div>
+    `;
+  const deleteButton = document.createElement('button');
+  deleteButton.className = 'delete-button';
+  deleteButton.textContent = 'Delete Item';
+  deleteButton.onclick = toggleDeleteMode;
+  gameElement.appendChild(deleteButton);
+  engine = Matter.Engine.create({
+    enableSleeping: true
+  });
+  const world = engine.world;
+  const render = Matter.Render.create({
+    element: gameElement,
+    engine: engine,
+    options: {
+      width: gameWidth,
+      height: gameHeight,
+      wireframes: false,
+      background: 'transparent'
+    }
+  });
+  const walls = [Matter.Bodies.rectangle(0, gameHeight / 2, 20, gameHeight, {
+    isStatic: true,
+    isSensor: true,
+    label: 'wall'
+  }), Matter.Bodies.rectangle(gameWidth, gameHeight / 2, 20, gameHeight, {
+    isStatic: true,
+    isSensor: true,
+    label: 'wall'
+  }), Matter.Bodies.rectangle(gameWidth / 2, gameHeight, gameWidth, 20, {
+    isStatic: true,
+    isSensor: true,
+    label: 'wall'
+  }), Matter.Bodies.rectangle(gameWidth / 2, 0, gameWidth, 20, {
+    isStatic: true,
+    isSensor: true,
+    label: 'wall'
+  })];
+  Matter.World.add(world, walls);
+  const pegRows = 11;
+  const pegSpacing = Math.min(gameWidth / 8, gameHeight / 10);
+  const startX = gameWidth / 2;
+  const startY = gameHeight * 0.15;
+  const pegs = [];
+  const previewBall = document.getElementById('previewBall');
+  previewBall.style.left = startX + 'px';
+  previewBall.style.top = startY - 50 + 'px';
+  for (let row = 0; row < pegRows; row++) {
+    for (let col = 0; col <= row; col++) {
+      if (row === 0 && col === 0) continue;
+      const x = startX + (col - row / 2) * pegSpacing;
+      const y = startY + row * pegSpacing;
+      const peg = Matter.Bodies.circle(x, y, 4, {
+        isStatic: true,
+        render: {
+          fillStyle: '#4a90e2'
+        },
+        label: `peg_${row}_${col}`
+      });
+      pegs.push(peg);
+      Matter.World.add(world, peg);
+      const pegDiv = document.createElement('div');
+      pegDiv.className = 'peg';
+      pegDiv.style.left = x + 'px';
+      pegDiv.style.top = y + 'px';
+      gameElement.appendChild(pegDiv);
+    }
+  }
+  for (let row = 0; row < pegRows - 1; row++) {
+    for (let col = 0; col <= row; col++) {
+      const x1 = startX + (col - row / 2) * pegSpacing;
+      const y1 = startY + row * pegSpacing;
+      const x2 = startX + (col - (row + 1) / 2) * pegSpacing;
+      const y2 = startY + (row + 1) * pegSpacing;
+      const x3 = startX + (col + 1 - (row + 1) / 2) * pegSpacing;
+      const y3 = startY + (row + 1) * pegSpacing;
+      const centerX = (x1 + x2 + x3) / 3;
+      const centerY = (y1 + y2 + y3) / 3;
+      const dotDiv = document.createElement('div');
+      dotDiv.className = 'dot';
+      dotDiv.style.left = centerX + 'px';
+      dotDiv.style.top = centerY + 'px';
+      gameElement.appendChild(dotDiv);
+    }
+  }
+  Matter.Events.on(engine, 'collisionStart', function (event) {
+    event.pairs.forEach(pair => {
+      const bodyA = pair.bodyA;
+      const bodyB = pair.bodyB;
+      if (bodyA.label === 'wall' || bodyB.label === 'wall') {
+        const ball = bodyA.label === 'wall' ? bodyB : bodyA;
+        if (currentBall && ball === currentBall) {
+          const ballDiv = document.querySelector('.ball');
+          removeBall(currentBall, ballDiv);
+        }
+      }
+      if (bodyA.label && bodyA.label.startsWith('peg_') && !bodyB.isStatic || bodyB.label && bodyB.label.startsWith('peg_') && !bodyA.isStatic) {
+        const pegId = bodyA.label.startsWith('peg_') ? bodyA.label : bodyB.label;
+        const ball = bodyA.isStatic ? bodyB : bodyA;
+        if (!collidedPegs.has(pegId)) {
+          collidedPegs.add(pegId);
+          const pointValue = ball.isMultiplier ? 2 : 1;
+          updateScore(pointValue);
+          showScorePopup(pointValue, ball.position.x, ball.position.y);
+        }
+      }
+    });
+  });
+  function removeBall(ball, ballDiv) {
+    Matter.World.remove(world, ball);
+    if (ballDiv && ballDiv.parentNode) {
+      ballDiv.parentNode.removeChild(ballDiv);
+    }
+    if (ball === currentBall) {
+      currentBall = null;
+      canDropBall = true;
+    }
+  }
+  function dropBall() {
+    canDeleteThisRound = true;
+    if (!canDropBall || ballsLeft <= 0 || currentBall !== null || placementMode) return;
+    canDropBall = false;
+    ballsLeft--;
+    ballDropCount++;
+    if (ballDropCount % 3 === 0) {
+      showCardSelection();
+    }
+    document.getElementById('balls-left').textContent = 'Balls Left: ' + ballsLeft;
+    collidedPegs.clear();
+    const randomX = startX + (Math.random() * 6 - 3);
+    const randomY = startY - 50 + (Math.random() * 6 - 3);
+    const ball = Matter.Bodies.circle(randomX, randomY, 18, {
+      restitution: 0.5,
+      friction: 0.001,
+      density: 0.001,
+      render: {
+        fillStyle: 'white'
+      }
+    });
+    const previewBall = document.getElementById('previewBall');
+    previewBall.style.left = randomX + 'px';
+    previewBall.style.top = randomY + 'px';
+    const ballDiv = document.createElement('div');
+    ballDiv.className = 'ball';
+    gameElement.appendChild(ballDiv);
+    Matter.World.add(world, ball);
+    currentBall = ball;
+    let lastX = randomX;
+    Matter.Events.on(engine, 'afterUpdate', function () {
+      if (currentBall === ball) {
+        ballDiv.style.left = ball.position.x + 'px';
+        ballDiv.style.top = ball.position.y + 'px';
+        const movingRight = ball.position.x > lastX;
+        const pupil = ballDiv.querySelector('::after');
+        if (movingRight) {
+          ballDiv.style.animation = 'rollRight 1s linear infinite';
+        } else {
+          ballDiv.style.animation = 'rollLeft 1s linear infinite';
+        }
+        lastX = ball.position.x;
+        checkPowerupCollision(ball.position.x, ball.position.y);
+        if (isOffScreen(ball.position)) {
+          removeBall(ball, ballDiv);
+        }
+      }
+    });
+  }
+  document.addEventListener('keydown', function (event) {
+    if (event.code === 'Space') {
+      event.preventDefault();
+      if (canDropBall && !placementMode) {
+        if (!currentBall) {
+          setTimeout(() => {
+            dropBall();
+          }, 200);
+        } else {
+          dropBall();
+        }
+      }
+    }
+  });
+  Matter.Events.on(engine, 'beforeUpdate', function () {
+    const bodies = Matter.Composite.allBodies(engine.world);
+    bodies.forEach(body => {
+      if (body.reverseGravity) {
+        Matter.Body.applyForce(body, body.position, {
+          x: 0,
+          y: -0.003
+        });
+      }
+    });
+  });
+  Matter.Engine.run(engine);
+  Matter.Render.run(render);
+}
+function toggleDeleteMode() {
+  if (!canDeleteThisRound) {
+    return;
+  }
+  deleteMode = !deleteMode;
+  const deleteButton = document.querySelector('.delete-button');
+  const placedNumbers = document.querySelectorAll('.placed-number');
+  if (deleteMode) {
+    deleteButton.style.background = '#666';
+    placedNumbers.forEach(num => {
+      num.classList.add('delete-mode');
+      num.onclick = () => deleteItem(num);
+    });
+  } else {
+    deleteButton.style.background = '#ff4444';
+    placedNumbers.forEach(num => {
+      num.classList.remove('delete-mode');
+      num.onclick = null;
+    });
+  }
+}
+function deleteItem(item) {
+  if (!deleteMode || !canDeleteThisRound) return;
+  if (item.dataset.powerupType === "7") {
+    const timerId = 'timer_' + item.dataset.powerupId;
+    if (stopwatchTimers.has(timerId)) {
+      const timer = stopwatchTimers.get(timerId);
+      clearInterval(timer.interval);
+      if (timer.scoreDisplay && timer.scoreDisplay.parentNode) {
+        timer.scoreDisplay.parentNode.removeChild(timer.scoreDisplay);
+      }
+      stopwatchTimers.delete(timerId);
+    }
+    item.classList.remove('item7-spinning');
+  }
+  item.remove();
+  deleteMode = false;
+  canDeleteThisRound = false;
+  const deleteButton = document.querySelector('.delete-button');
+  deleteButton.style.background = '#ff4444';
+  document.querySelectorAll('.placed-number').forEach(num => {
+    num.classList.remove('delete-mode');
+    num.onclick = null;
+  });
+}
+function spawnGoldBall(x, y) {
+  if (!engine) {
+    console.error('Engine not initialized');
+    return;
+  }
+  const goldBall = Matter.Bodies.circle(x, y - 30, 18, {
+    restitution: 0.5,
+    friction: 0.001,
+    density: 0.001,
+    render: {
+      fillStyle: '#FFD700'
+    },
+    label: 'gold_ball'
+  });
+  const goldBallDiv = document.createElement('div');
+  goldBallDiv.className = 'gold-ball';
+  gameElement.appendChild(goldBallDiv);
+  Matter.World.add(engine.world, goldBall);
+  Matter.Body.setVelocity(goldBall, {
+    x: (Math.random() - 0.5) * 2,
+    y: -5 + Math.random() * -2
+  });
+  const updateGoldBall = function () {
+    if (!goldBall.position) return;
+    goldBallDiv.style.left = goldBall.position.x + 'px';
+    goldBallDiv.style.top = goldBall.position.y + 'px';
+    checkPowerupCollision(goldBall.position.x, goldBall.position.y, goldBall);
+    if (isOffScreen(goldBall.position)) {
+      Matter.World.remove(engine.world, goldBall);
+      if (goldBallDiv.parentNode) {
+        goldBallDiv.parentNode.removeChild(goldBallDiv);
+      }
+      Matter.Events.off(engine, 'afterUpdate', updateGoldBall);
+    }
+  };
+  Matter.Events.on(engine, 'afterUpdate', updateGoldBall);
+}
+function spawnPurpleBall(x, y) {
+  if (!engine) {
+    console.error('Engine not initialized');
+    return;
+  }
+  const purpleBall = Matter.Bodies.circle(x, y - 30, 18, {
+    restitution: 0.5,
+    friction: 0.001,
+    density: 0.001,
+    render: {
+      fillStyle: '#800080'
+    },
+    label: 'purple_ball',
+    isMultiplier: true,
+    reverseGravity: true
+  });
+  const purpleBallDiv = document.createElement('div');
+  purpleBallDiv.className = 'purple-ball purple-spawn';
+  gameElement.appendChild(purpleBallDiv);
+  Matter.World.add(engine.world, purpleBall);
+  Matter.Body.setVelocity(purpleBall, {
+    x: (Math.random() - 0.5) * 2,
+    y: -5 + Math.random() * -2
+  });
+  const updatePurpleBall = function () {
+    if (!purpleBall.position) return;
+    purpleBallDiv.style.left = purpleBall.position.x + 'px';
+    purpleBallDiv.style.top = purpleBall.position.y + 'px';
+    checkPowerupCollision(purpleBall.position.x, purpleBall.position.y, purpleBall);
+    if (isOffScreen(purpleBall.position)) {
+      Matter.World.remove(engine.world, purpleBall);
+      if (purpleBallDiv.parentNode) {
+        purpleBallDiv.parentNode.removeChild(purpleBallDiv);
+      }
+      Matter.Events.off(engine, 'afterUpdate', updatePurpleBall);
+    }
+  };
+  Matter.Events.on(engine, 'afterUpdate', updatePurpleBall);
+}
+function isOffScreen(position) {
+  return position.x < 0 || position.x > gameWidth || position.y < 0 || position.y > gameHeight;
+}
+function checkAllBallsOffScreen() {
+  if (!engine) return;
+  const bodies = Matter.Composite.allBodies(engine.world);
+  const ballsInPlay = bodies.filter(body => !body.isStatic && (body === currentBall || body.label === 'gold_ball' || body.label === 'purple_ball'));
+  ballsInPlay.forEach(ball => {
+    if (isOffScreen(ball.position)) {
+      let ballDiv;
+      if (ball === currentBall) {
+        ballDiv = document.querySelector('.ball');
+      } else if (ball.label === 'gold_ball') {
+        ballDiv = document.querySelector('.gold-ball');
+      } else if (ball.label === 'purple_ball') {
+        ballDiv = document.querySelector('.purple-ball');
+      }
+      removeBall(ball, ballDiv);
+    }
+  });
+}
+initGame();
+document.addEventListener('mousemove', function (e) {
+  const previewBall = document.getElementById('previewBall');
+  if (!previewBall) return;
+  const rect = previewBall.getBoundingClientRect();
+  const ballCenterX = rect.left + rect.width / 2;
+  const ballCenterY = rect.top + rect.height / 2;
+  const dx = e.clientX - ballCenterX;
+  const dy = e.clientY - ballCenterY;
+  const distance = Math.sqrt(dx * dx + dy * dy);
+  const maxRadius = 8;
+  const scale = Math.min(1, distance / 100);
+  const moveX = dx / distance * maxRadius * scale;
+  const moveY = dy / distance * maxRadius * scale;
+  previewBall.style.setProperty('--pupil-x', moveX + 'px');
+  previewBall.style.setProperty('--pupil-y', moveY + 'px');
+});
+let resizeTimeout;
+window.addEventListener('resize', function () {
+  clearTimeout(resizeTimeout);
+  resizeTimeout = setTimeout(function () {
+    gameWidth = gameElement.clientWidth;
+    gameHeight = gameElement.clientHeight;
+    initGame();
+  }, 250);
+});
+setInterval(checkAllBallsOffScreen, 100);</script>
+</body></html>
