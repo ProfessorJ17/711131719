@@ -1,0 +1,167 @@
+<html>
+<head>
+  <title>Space Jam</title>
+  <style>
+    body {
+      background: url('https://images.unsplash.com/photo-1464802686167-b939a6910659') no-repeat center center fixed;
+      background-size: cover;
+      font-family: Arial, sans-serif;
+      color: white;
+      text-align: center;
+    }
+    .container {
+      position: relative;
+      width: 100%;
+      height: 100vh;
+    }
+    .logo {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+    .item {
+      position: absolute;
+      cursor: pointer;
+    }
+    .item img {
+      width: 100px;
+      height: 100px;
+    }
+    .item p {
+      margin-top: 10px;
+      font-size: 14px;
+    }
+    .footer {
+      position: absolute;
+      bottom: 20px;
+      width: 100%;
+      text-align: center;
+      font-size: 12px;
+    }
+    .footer a {
+      color: red;
+      margin: 0 10px;
+      text-decoration: none;
+    }
+    .content {
+      display: none;
+    }
+    .content h1 {
+      font-size: 2em;
+      font-weight: bold;
+    }
+    .content p {
+      font-size: 0.9em;
+    }
+    .content img {
+      margin-top: 20px;
+      width: 300px;
+    }
+    #youtube-container {
+      margin-top: 20px;
+    }
+    .back-button {
+      margin-top: 20px;
+      padding: 10px 20px;
+      background-color: red;
+      color: white;
+      border: none;
+      cursor: pointer;
+      font-size: 1em;
+    }
+  </style>
+  <script>
+function showContent(title, youtubeId, imgSrc, smallText) {
+    document.querySelector('.container').style.display = 'none';
+    const contentDiv = document.querySelector('.content');
+    contentDiv.querySelector('h1').innerText = title;
+    
+    // Create the YouTube iframe
+    const youtubeContainer = contentDiv.querySelector('#youtube-container');
+    youtubeContainer.innerHTML = `
+        <iframe width="560" height="315" src="https://www.youtube.com/embed/${youtubeId}" frameborder="0" allowfullscreen></iframe>
+    `;
+    
+    contentDiv.querySelector('img').src = imgSrc;
+
+    // Use innerHTML to allow rendering of hyperlinks
+    contentDiv.querySelector('p').innerHTML = smallText; // Updated from innerText to innerHTML
+    
+    contentDiv.style.display = 'block';
+}
+
+function goBack() {
+    document.querySelector('.content').style.display = 'none';
+    document.querySelector('.container').style.display = 'block';
+}
+
+  </script>
+</head>
+<body>
+  <div class="container">
+    <div class="logo">
+      <img alt="Logo" height="278" src="https://cdn.pixabay.com/photo/2020/05/04/13/40/ufo-5129224_640.png" width="640"/>
+    </div>
+
+  <div class="item" style="top: 10%; left: 20%;" onclick="showContent('#1 Introduction', '01gp2zMSBYI', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT1Qec805W0duFo1Rz00Nf9JcB06ql6iKKf6Q&s', 'Welcome to CE5 Human Initiated Contact. Before we begin, let\'s introduce you to the triangle icon, a symbol of connection, unity, and intention. This icon represents the focus of CE5 (Close Encounters of the Fifth Kind) and acts as a guide for initiating peaceful contact with extraterrestrial intelligence. Step 1: Prepare Your Mind and Spirit by removing any negative thoughts or anything threatening or bad of any kind.<a href=\'https://www.seti.org\'>Learn more about SETI</a> ')">
+  <img alt="#1 Introduction" src="https://png.pngtree.com/png-vector/20230930/ourmid/pngtree-alien-png-with-ai-generated-png-image_10152138.png" />
+  <p>#1 Introduction</p>
+</div>
+
+<div class="item" style="top: 10%; left: 40%;" onclick="showContent('#2 Meditation', 'Zcqh3XYEGT4', 'https://t4.ftcdn.net/jpg/04/79/70/63/360_F_479706337_Bgro0DhYCsFMZyrlZ8xSVKUvtlptEiqI.jpg', 'Begin by entering a state of meditation. Find a quiet place, close your eyes, and focus on being at peace with yourself and the universe. Feel the desire for connection with beings from beyond. These visitors are here to meet you halfway, and it is your openness and peaceful intent that allows this to happen. Step 2: Open Your Heart to the Cosmos.<a href=\'https://www.seti.org\'>Learn more about SETI</a>')">
+  <img alt="#2 Meditation" src="https://img.simplerousercontent.net/scaled_image/11231696/9b59d5c42416f197feb5b7d5aa2ce03d947ffa4b/900-yoga-heart-mind-750w-900h.png" />
+  <p>#2 Meditation</p>
+</div>
+
+<div class="item" style="top: 10%; left: 60%;" onclick="showContent('#3 CE5 Loop', 'JfOcYzQe0Rw', 'https://imageio.forbes.com/specials-images/imageserve/65a9665fb6dbdf520d2a63d0/Blurry-footage-of-tall-aliens-has-dominated-the-first-half-of-January/960x0.jpg?format=jpg&width=960', 'While in this meditative state, open your mind and heart to the idea that extraterrestrials are not to be feared, but respected. Your calmness and goodwill will attract them. Take slow deep breaths and allow your surroundings to fall away. Visualize yourself inviting them in with peaceful intentions. As you meditate, periodically open your eyes and scan the sky. Be aware of any shifts in the environment, changes in light, or sensations of being watched. You may not always see them immediately, but trust that your intention is creating a bridge. Step 3: Play the CE5 Tones. These sounds are specially crafted to resonate with extraterrestrial technology and consciousness, creating an energetic signal that invites them closer. Play these tones on a loop and let them work in harmony with your meditation.<a href=\'https://www.seti.org\'>Learn more about SETI</a>')">
+  <img alt="#3 CE5 Loop" src="https://play-lh.googleusercontent.com/Sw_ZX0Er6luCDYvQ3klvvUjOd84j3sy5KyXHM0g1wYks4HdS7rUsWslrAkYLZBj-Bg" />
+  <p>#3 CE5 Loop</p>
+</div>
+
+<div class="item" style="top: 10%; left: 80%;" onclick="showContent('#4 Real CE5 Footage', 'Mcq_Fox9mj0', 'https://thetablet.org/wp-content/uploads/2024/06/GettyImages-1756575533-1.jpg', 'Understanding the CE1 to CE5 Scale CE1 A simple sighting of a UFO or unknown aerial phenomenon. CE2 Physical evidence of extraterrestrial presence such as crop circles or unexplained imprints. CE3 Direct visual or sensory contact with extraterrestrials. CE4 Abduction or direct interaction with beings, often reported by those who have been taken aboard a craft. CE5 The highest level of contact human-initiated interaction where we invite and facilitate communication through meditation intention and consciousness.<a href=\'https://www.seti.org\'>Learn more about SETI</a>')">
+  <img alt="#4 Real CE5 Footage" src="https://images.fineartamerica.com/images/artworkimages/medium/1/buck-rogers-ray-gun-yopedro-transparent.png" />
+  <p>#4 Real CE5 Footage</p>
+</div>
+
+<div class="item" style="top: 30%; left: 90%;" onclick="showContent('#5 Night Vision', 'v5nC7AYpFB4', 'https://media.npr.org/assets/img/2023/01/13/pentagon-uap-ufo-photo-aliens-11e7eb5f42ab18ff6505a2ba754c091bf6a1ed40.jpg?s=1100&c=85&f=jpeg', 'Enhanced Visual Perception Night vision allows users to see beyond the limitations of the naked eye enabling them to detect subtle movements or anomalies in the dark. Aliens or their craft may operate at wavelengths outside our visible spectrum so this feature could help you catch glimpses of otherwise hidden phenomena. Many UFOs are reported as faint lights or shadows that move swiftly in the night sky. Night vision increases the likelihood of spotting these anomalies showing beings that you are paying attention and actively trying to connect.<a href=\'https://www.seti.org\'>Learn more about SETI</a>')">
+  <img alt="#5 Night Vision" src="https://tr.rbxcdn.com/470ff030a2d0e36d1a6ccaa39de3c712/420/420/Hat/Webp" />
+  <p>#5 Night Vision</p>
+</div>
+
+<div class="item" style="top: 65%; left: 80%;" onclick="showContent('#6 Sounds of Planets in Space', 'IQL53eQ0cNA', 'https://preview.redd.it/lotsu42hj7l31.jpg?width=640&crop=smart&auto=webp&s=5c1d2bf8038590ddce8f33551626e9ca53a6b3cb', 'Resonating Frequencies The natural sounds emitted by planets captured through electromagnetic wavesare unique and cosmic in nature. Playing these sounds during CE5 sessions could serve as a beacon that resonates with extraterrestrial frequencies aligning the users vibrations with those that might be familiar or comforting to alien visitors. Extraterrestrials may perceive sound and vibrations differently than humans. By broadcasting the sounds of planets you may be sending a signal that transcends language barriers acting as a universal greeting to them.<a href=\'https://www.seti.org\'>Learn more about SETI</a>')">
+  <img alt="#6 Sounds of Planets in Space" src="https://static.wikia.nocookie.net/thesolarsystem6361/images/c/cc/SaturnRealHubble.png/revision/latest?cb=20230623213809" />
+  <p>#6 Sounds of Planets in Space</p>
+</div>
+
+    <div class="item" style="top: 80%; left: 60%;" onclick="showContent('#7 Black Knight Satellite ', 'Wn4TVOBPWzE', 'https://cdn.mos.cms.futurecdn.net/TgABPvKRLf3q4HYk8RtsHU.jpg', 'Mysterious Artifact The Black Knight satellite is a legendary object thought by some to be an alien artifact orbiting Earth. Focusing on this mysterious satellite during CE5 meditations might show extraterrestrials that youre aware of their possible involvement in Earths orbit and history. By attuning to this object, you could be signaling an invitation to interact. Energetic Nexus If the Black Knight satellite is indeed extraterrestrial meditating on its presence could align users with its energy field. This may enhance contact efforts creating an energetic pathway for entities connected to the satellite.<a href=\'https://codepen.io/J-17/pen/RwXWjjQ\'>Black Knight satellite By Professor J 17</a>')">
+      <img alt="#7 Black Knight Satellite " src="https://mundimotos.com/cdn/shop/files/A7701023762113_5c22f375-4dbb-419c-b82e-ec24d87fa3e0.png?v=1697751998" />
+      <p>#7 Black Knight Satellite </p>
+    </div>
+<div class="item" style="top: 80%; left: 40%;" onclick="showContent('#8 Binaural Beats', 'https://www.youtube.com/watch?v=mp0y4DCt_Ps&list=PL7fX5d46yZ_EOn4q-nrFzh2741OxXSA08', 'https://static.wikia.nocookie.net/matrix/images/f/f8/Room_101_Computers.png/revision/latest?cb=20130301014821', 'Altered States of Consciousness Binaural beats help induce brainwave states that are conducive to deep meditation lucid dreaming and heightened awareness. When users reach these states their minds may become more attuned to subtle frequencies or communications from extraterrestrial life. Frequency Matching Its believed that certain extraterrestrial entities may communicate telepathically or through vibrational frequencies. By using binaural beats users can tune in to these frequencies potentially opening a communication channel with beings operating on higher dimensional planes.<a href=\'https://codepen.io/J-17/pen/NWQGXqW\'>Binaural beats machine By Professor J 17</a>')">
+  <img alt="#8 Binaural Beats" src="https://cdn3d.iconscout.com/3d/premium/thumb/vr-headset-futuristic-11657681-9490665.png?f=webp" />
+  <p>#8 Binaural Beats</p>
+</div>
+
+    <div class="item" style="top: 65%; left: 20%;" onclick="showContent('#9 Op Intruder Game23', 'fVVqTX5SqWo', 'https://scontent-hou1-1.xx.fbcdn.net/v/t39.30808-6/452226580_2270258979986039_5106734349493198284_n.png?_nc_cat=101&ccb=1-7&_nc_sid=cf85f3&_nc_ohc=EfHJQROhyL0Q7kNvgEVQzRg&_nc_ht=scontent-hou1-1.xx&_nc_gid=A4iHfnMJd2_oTGa9y6Pljt8&oh=00_AYAlSqZ4GNUI2Hank72UHoJQFB_khcydPBW-2aGQd-RGgw&oe=66FFFBA7', 'Interactive Mind Focus Op Intruder Game23 could be a gamified experience where users simulate extraterrestrial contact scenarios training their mind to detect subtle patterns and anomalies in their surroundings. By honing these skills in a game like format users strengthen their perception and awareness during real CE5 sessions. If the game involves elements of augmented reality or virtual reality users could merge these simulated interactions with their surroundings tricking the mind into a heightened state of receptivity. This primes users for potential contact by breaking down the barriers between reality and simulation making it easier for extraterrestrials to appear.<a href=\'https://www.seti.org\'>Learn more about SETI</a>')">
+      <img alt="#9 Op Intruder Game23" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTyQHdYSfNDHQmU-19iTb_Va5zDDSoZ4Qkb_A&s" />
+      <p>#9 Op Intruder Game23</p>
+    </div>
+<div class="item" style="top: 30%; left: 10%;" onclick="showContent('#10 WOW Signal', 'ZAKy_08klrg', 'https://www.seti.org/sites/default/files/styles/original/public/2020-02/vla_panorama_med-1.jpg?itok=jt_YYFCd', 'Participation in a Scientific Initiative Using SETI Search for Extraterrestrial Intelligence signals or data as part of the CE5 experience shows extraterrestrial life that you\'re working with established scientific protocols for contact. This might attract entities who respect or acknowledge these efforts and could encourage them to respond. Signal Amplification Tuning into SETI broadcasts and incorporating their search frequencies into a CE5 session may help align user efforts with those of large-scale scientific endeavors amplifying the call for extraterrestrial attention by harnessing the collective energy of multiple contact efforts. <a href=\'https://www.seti.org\'>Learn more about SETI</a>')">
+  <img alt="#10 WOW! Signal" src="https://static.wikia.nocookie.net/endless-sky/images/d/d5/Tactical_scanner%402x.png/revision/latest/thumbnail/width/360/height/360?cb=20191207063218" />
+  <p>#10 WOW! Signal</p>
+</div>
+
+
+  </div>
+
+  <!-- Content Display Area -->
+  <div class="content">
+    <h1></h1>
+    <div id="youtube-container"></div>
+    <p></p>
+    <img alt="Image"/>
+    <button class="back-button" onclick="goBack()">Go Back</button>
+  </div>
+</body>
+</html>
