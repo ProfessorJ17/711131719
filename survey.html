@@ -154,6 +154,7 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
+  flex-wrap: wrap;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
   position: fixed;
   width: 100%;
@@ -168,8 +169,8 @@ body {
   text-align: center;
   padding: 15px 25px;
   text-decoration: none;
-  font-size: 18px;
-  margin: 0 15px;
+  font-size: 16px;
+  margin: 5px;
   border-radius: 5px;
   text-transform: uppercase;
   position: relative;
@@ -204,9 +205,11 @@ body {
 
 .reward-container {
   display: flex;
+  flex-wrap: wrap;
   gap: 2rem;
   margin-top: 2rem;
   z-index: 1;
+  justify-content: center;
 }
 
 .reward-card {
@@ -243,6 +246,26 @@ body {
 .reward-link:hover {
   color: var(--neon-pink);
   text-shadow: 0 0 10px var(--neon-pink);
+}
+
+@media (max-width: 768px) {
+  .navbar {
+    padding: 10px;
+  }
+  
+  .navbar a {
+    font-size: 14px;
+    padding: 10px 15px;
+  }
+  
+  .reward-card {
+    width: 100%;
+    max-width: 300px;
+  }
+  
+  body {
+    padding-top: 180px;
+  }
 }
 </style>
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&amp;display=swap" rel="stylesheet">
@@ -281,6 +304,17 @@ body {
       <h3 style="color: var(--neon-purple)">PrizeRebel</h3>
       <p>Complete tasks, get rewarded!</p>
       <a href="https://www.prizerebel.com/index.php?r=ninjalotus4life" target="_blank" class="reward-link">Start Earning</a>
+    </div>
+
+    <div class="reward-card">
+      <svg class="reward-icon" viewBox="0 0 100 100">
+        <circle cx="50" cy="50" r="45" fill="none" stroke="var(--neon-blue)" stroke-width="2"/>
+        <text x="50" y="55" text-anchor="middle" fill="var(--neon-blue)" font-size="14">FC</text>
+        <path d="M30 50 L45 65 L70 35" stroke="var(--neon-pink)" stroke-width="2" fill="none"/>
+      </svg>
+      <h3 style="color: var(--neon-blue)">FreeCash</h3>
+      <p>Earn free cash rewards daily!</p>
+      <a href="https://freecash.com/r/102547948682969077808" target="_blank" class="reward-link">Get Started</a>
     </div>
   </div>
 
