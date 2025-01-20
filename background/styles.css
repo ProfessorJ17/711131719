@@ -1,0 +1,161 @@
+body { 
+    margin: 0; 
+    overflow: hidden;
+    background: black;  
+    position: relative;
+}
+
+canvas { 
+    width: 100%; 
+    height: 100%; 
+    background: transparent;
+    position: relative;
+    z-index: 2;
+}
+
+#matrix-rain {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1;
+}
+
+#shop-text {
+    position: absolute;
+    top: 65%;  
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 3rem;
+    color: #00ff8c;
+    text-shadow: 0 0 15px rgba(0,255,140,0.7), 0 0 25px rgba(0,255,140,0.5);
+    opacity: 0.9;
+    letter-spacing: 5px;
+    z-index: 1;
+    animation: chaosRotate 16s infinite;
+    transform-style: preserve-3d;
+}
+
+.glitch {
+    position: relative;
+}
+
+.glitch::before,
+.glitch::after {
+    content: attr(data-text);
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    clip: rect(0, 900px, 0, 0);
+}
+
+.glitch::before {
+    left: 2px;
+    text-shadow: -2px 0 #ff00ff;
+    animation: glitch-1 2s infinite linear alternate-reverse;
+}
+
+.glitch::after {
+    left: -2px;
+    text-shadow: 2px 0 #00ffff;
+    animation: glitch-2 3s infinite linear alternate-reverse;
+}
+
+.glitch-lines {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    pointer-events: none;
+    opacity: 0.5;
+}
+
+.glitch-lines::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(0, 0, 0, 0.5) 2px,
+        rgba(0, 0, 0, 0.5) 4px
+    );
+    animation: scanlines 0.5s infinite;
+}
+
+@keyframes chaosRotate {
+    0%, 100% { 
+        transform: translate(-50%, -50%) rotate3d(0, 0, 0, 0deg) scale(1);
+        animation-timing-function: ease-out;
+    }
+    5% { 
+        transform: translate(-50%, -50%) rotate3d(0, 0, 0, 0deg) scale(1);
+    }
+    15% { 
+        transform: translate(-50%, -50%) rotate3d(1, 1, 0, 90deg) scale(1.5);
+        animation-timing-function: ease-in-out;
+    }
+    25% { 
+        transform: translate(-50%, -50%) rotate3d(0, 1, 1, 180deg) scale(0.7);
+        animation-timing-function: ease-in-out;
+    }
+    35% { 
+        transform: translate(-50%, -50%) rotate3d(1, 0, 1, 270deg) scale(1.3);
+        animation-timing-function: ease-in-out;
+    }
+    45% { 
+        transform: translate(-50%, -50%) rotate3d(1, 1, 1, 90deg) scale(0.8);
+        animation-timing-function: ease-in-out;
+    }
+    55% { 
+        transform: translate(-50%, -50%) rotate3d(-1, 1, 0, 180deg) scale(1.4);
+        animation-timing-function: ease-in-out;
+    }
+    65% { 
+        transform: translate(-50%, -50%) rotate3d(1, -1, 1, 270deg) scale(0.9) skew(10deg);
+        animation-timing-function: ease-in-out;
+    }
+    75% { 
+        transform: translate(-50%, -50%) rotate3d(0, 1, -1, 90deg) scale(1.2);
+        animation-timing-function: ease-in-out;
+    }
+    85% { 
+        transform: translate(-50%, -50%) rotate3d(-1, -1, 1, 180deg) scale(0.8) skew(-10deg);
+        animation-timing-function: ease-in-out;
+    }
+    95% { 
+        transform: translate(-50%, -50%) rotate3d(0, 0, 0, 0deg) scale(1);
+    }
+}
+
+@keyframes glitch-1 {
+    0% { clip: rect(20px, 900px, 36px, 0); }
+    20% { clip: rect(44px, 900px, 98px, 0); }
+    40% { clip: rect(12px, 900px, 56px, 0); }
+    60% { clip: rect(78px, 900px, 92px, 0); }
+    80% { clip: rect(32px, 900px, 68px, 0); }
+    100% { clip: rect(54px, 900px, 82px, 0); }
+}
+
+@keyframes glitch-2 {
+    0% { clip: rect(32px, 900px, 54px, 0); }
+    20% { clip: rect(12px, 900px, 78px, 0); }
+    40% { clip: rect(68px, 900px, 92px, 0); }
+    60% { clip: rect(24px, 900px, 46px, 0); }
+    80% { clip: rect(88px, 900px, 98px, 0); }
+    100% { clip: rect(10px, 900px, 34px, 0); }
+}
+
+@keyframes scanlines {
+    0% { transform: translateY(0); }
+    100% { transform: translateY(4px); }
+}
