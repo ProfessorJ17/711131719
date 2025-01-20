@@ -1,4 +1,4 @@
-​<html><head><base href="/">
+<html><head><base href="/">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Lion 777</title>
@@ -6,21 +6,42 @@
         body {
             margin: 0;
             font-family: 'Courier New', Courier, monospace;
-            background-color: black;
-                background-image: url('https://711131719.xyz/background/index.html');
-            color: white;
             overflow-x: hidden;
+            background-color: transparent;
+        }
+
+        #header-frame {
+            width: 100%;
+            height: 100px;
+            border: none;
+            margin: 0 auto;
+            display: block;
+            margin-bottom: 20px;
+            background-color: transparent;
+        }
+
+        #background-iframe {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+            z-index: -1;
         }
 
         .container {
             text-align: center;
             padding: 20px;
-            background: linear-gradient(45deg, rgba(0,255,255,0.1), rgba(255,0,255,0.1));
+            position: relative;
+            z-index: 1;
+            background: transparent;
+            margin-top: 100px; 
         }
 
         .fixed-images {
             position: fixed;
-            top: 20px;
+            top: 120px; 
             width: 100%;
             pointer-events: none;
             z-index: 100;
@@ -113,8 +134,8 @@
         footer {
             margin-top: 50px;
             padding-bottom: 30px;
-            color: #f0f;
-            text-shadow: 0 0 10px #f0f;
+            color: black;
+            text-shadow: 0 0 10px #39ff14;
         }
 
         main {
@@ -122,7 +143,7 @@
         }
 
         main h2 {
-            color: #39ff14;
+            color: black;
             font-size: 2em;
             margin-bottom: 20px;
             text-shadow: 0 0 15px #39ff14;
@@ -130,24 +151,27 @@
 
         main p {
             font-size: 1.2em;
-            color: #fff;
+            color: black;
             margin-bottom: 20px;
-            text-shadow: 0 0 5px #fff;
+            text-shadow: 0 0 5px #39ff14;
         }
 
         blockquote {
             font-size: 1.3em;
-            color: #f0f;
+            color: black;
             margin: 20px;
             font-style: italic;
             border-left: 3px solid #0ff;
             padding-left: 20px;
-            text-shadow: 0 0 10px #f0f;
-            background: linear-gradient(90deg, rgba(255,0,255,0.1), transparent);
+            text-shadow: 0 0 10px #39ff14;
+            background: transparent;
         }
     </style>
 </head>
 <body>
+    <iframe id="header-frame" src="https://caimeo.shop/header.html" style="background-color: transparent;"></iframe>
+    <iframe id="background-iframe" src="https://711131719.xyz/background/index.html"></iframe>
+
     <div class="fixed-images">
         <img src="https://i.imgur.com/LeHxKpE.jpeg" alt="Lion emblem in cyberpunk style" class="lion-left" width="100" height="100">
         <img src="https://i.imgur.com/LeHxKpE.jpeg" alt="Lion 777 logo in cyberpunk style" class="lion-right" width="100" height="100">
@@ -155,17 +179,15 @@
     <div class="container">
         <header>
             <h1 class="glitch" data-text="Lion 777">Lion 777</h1>
-                        <nav>
+            <nav>
                 <ul>
                     <li><a href="https://711131719.xyz/">Welcome</a></li>
-                  
-
                     <li><a href="https://711131719.xyz/pride">Pride</a></li>
                     <li><a href="https://711131719.xyz/arcana">Arcana</a></li>
                     <li><a href="https://711131719.xyz/libersecundus.html">Liber Secundus</a></li>
                     <li><a href="https://711131719.xyz/initiation.html">Initiation</a></li>
                     <li><a href="https://711131719.xyz/puzzles.html">Puzzles</a></li>
-                                      <li><a href="https://caimeo.shop/about.html">About</a></li>
+                    <li><a href="https://caimeo.shop/about.html">About</a></li>
                 </ul>
             </nav>
         </header>
@@ -178,15 +200,15 @@
             <p>Lion 777 has woven a tapestry of knowledge across the digital landscape, embedding profound teachings within the fabric of technology and consciousness. While these teachings may appear cryptic to the uninitiated, they form a coherent philosophy that points toward a higher understanding of existence. Through careful study and dedication, a clear message emerges:</p>
             <blockquote>
                 <p>In the quantum dance of consciousness, each spark ignites infinity.<br>
-Through the labyrinth of self, you are your own North Star.<br>
-Every mind is a universe unto itself, sacred and boundless.<br>
-For in the grand tapestry of existence, all consciousness flows from the same divine source.</p>
+                Through the labyrinth of self, you are your own North Star.<br>
+                Every mind is a universe unto itself, sacred and boundless.<br>
+                For in the grand tapestry of existence, all consciousness flows from the same divine source.</p>
             </blockquote>
             <p>Welcome to the path, Seeker. May enlightenment illuminate your way.</p>
         </main>
 
         <footer>
-            <p>© 2024 Lion 777. All rights reserved.</p>
+            <p>&#169; 2024 Lion 777. All rights reserved.</p>
         </footer>
     </div>
 </body></html>
