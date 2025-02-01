@@ -1,0 +1,30 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>HelloIKnowWhoYouAre Browser</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div id="browser">
+        <div id="browser-header">
+            <div class="browser-controls">
+                <div class="control-button close"></div>
+                <div class="control-button minimize"></div>
+                <div class="control-button maximize"></div>
+            </div>
+            <div class="address-bar">
+                <input type="text" value="https://helloiknowwhoyouare.com" readonly>
+            </div>
+            <div class="nav-buttons">
+                <button class="back">←</button>
+                <button class="forward">→</button>
+                <button class="refresh">⟳</button>
+            </div>
+        </div>
+        <div id="browser-content">
+            <iframe src="fake-website.html" frameborder="0"></iframe>
+        </div>
+    </div>
+    <script src="browser.js"></script>
+</body>
+</html>
