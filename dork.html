@@ -1,0 +1,1620 @@
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <base href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono:wght@400;700&display=swap">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Share Tech Mono', monospace;
+        }
+
+        html, body {
+            width: 100%;
+            height: 100%;
+            overflow-x: hidden;
+        }
+
+        body {
+            background-color: #0a0a0f;
+            color: #00ff9d;
+            min-height: 100vh;
+            background-image:
+                linear-gradient(45deg, #1a1a2e 25%, transparent 25%),
+                linear-gradient(-45deg, #1a1a2e 25%, transparent 25%),
+                linear-gradient(45deg, transparent 75%, #1a1a2e 75%),
+                linear-gradient(-45deg, transparent 75%, #1a1a2e 75%);
+            background-size: 20px 20px;
+        }
+
+        .landing-page, .app-container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .landing-page {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            text-align: center;
+        }
+
+        .donate-corner {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+
+        .logo {
+            font-size: clamp(2.5em, 10vw, 5em);
+            font-weight: bold;
+            text-transform: uppercase;
+            margin: 20px 10px;
+            position: relative;
+            text-shadow: 0 0 20px #00ff9d;
+            animation: glitch 2s infinite;
+        }
+
+        .tagline, .instructions {
+            max-width: 90%;
+            width: 100%;
+            margin: 20px auto;
+            line-height: 1.6;
+        }
+
+        .enter-button, #sendButton, #startEmailDorkButton {
+            padding: 15px 30px;
+            font-size: clamp(1em, 3vw, 1.5em);
+            background: transparent;
+            border: 2px solid #00ff9d;
+            color: #00ff9d;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 90%;
+            max-width: 400px;
+            border-radius: 25px;
+            animation: cyberpunkGlow 2s infinite alternate;
+        }
+        
+        .donate-button {
+            padding: 10px 20px;
+            font-size: clamp(0.8em, 2vw, 1.2em);
+            background-color: #00ff9d; /* Distinct background */
+            color: #0a0a0f; /* Dark text for contrast */
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-radius: 20px;
+            animation: donate-glow 2s infinite alternate; /* Different animation */
+            box-shadow: 0 0 5px #00ff9d; /* Initial glow */
+        }
+
+
+        @keyframes cyberpunkGlow {
+            0% {
+                box-shadow: 0 0 5px #00ffff, 0 0 10px #00ffff, 0 0 15px #00ffff;
+            }
+            100% {
+                box-shadow: 0 0 5px #ff00aa, 0 0 10px #ff00aa, 0 0 15px #ff00aa;
+            }
+        }
+
+        .container {
+            width: 100%;
+            max-width: 900px;
+            margin: 0 auto;
+            background: rgba(10, 10, 15, 0.9);
+            border: 2px solid #00ff9d;
+            border-radius: 10px;
+        }
+
+        .chat-container {
+            height: 70vh;
+            overflow-y: auto;
+            padding: 20px;
+            scroll-behavior: smooth;
+        }
+
+        .input-container {
+            display: flex;
+            gap: 10px;
+            padding: 20px;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 12px;
+            font-size: 16px;
+            background-color: #000; /* Black background */
+            color: #00ffff; /* Cyan text */
+            border: 1px solid #00ff9d;
+            border-radius: 5px;
+        }
+
+        .email-prompt-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(10, 10, 15, 0.9);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            overflow-y: auto;
+        }
+
+        .email-prompt-container {
+            width: 90%;
+            max-width: 600px;
+            max-height: 90vh;
+            background: #1a1a2e;
+            padding: 30px;
+            border-radius: 10px;
+            border: 2px solid #00ff9d;
+            overflow-y: auto;
+        }
+
+        .url-search-container, .domain-extension-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 10px;
+        }
+
+        @media (max-width: 768px) {
+            .input-container {
+                flex-direction: column;
+            }
+
+            .donate-corner {
+                top: 10px;
+                right: 10px;
+            }
+
+            .logo {
+                font-size: 2.5em;
+            }
+
+            .chat-container {
+                height: 60vh;
+            }
+
+            .email-prompt-container {
+                width: 95%;
+                padding: 15px;
+            }
+        }
+
+        @keyframes glitch {
+            0%, 100% { transform: none; opacity: 1; }
+            7% { transform: skew(-0.5deg, -0.9deg); opacity: 0.75; }
+            10% { transform: none; opacity: 1; }
+            27% { transform: none; opacity: 1; }
+            30% { transform: skew(0.8deg, -0.1deg); opacity: 0.75; }
+            35% { transform: none; opacity: 1; }
+            52% { transform: none; opacity: 1; }
+            55% { transform: skew(-1deg, 0.2deg); opacity: 0.75; }
+            50% { transform: none; opacity: 1; }
+            72% { transform: none; opacity: 1; }
+            75% { transform: skew(0.4deg, 1deg); opacity: 0.75; }
+            80% { transform: none; opacity: 1; }
+            100% { transform: none; opacity: 1; }
+        }
+
+        @keyframes glitch-1 {
+            0% { transform: none; opacity: 1; }
+            7% { transform: translate(-2px, -3px); opacity: 0.75; }
+            10% { transform: none; opacity: 1; }
+            27% { transform: none; opacity: 1; }
+            30% { transform: translate(-5px, -2px); opacity: 0.75; }
+            35% { transform: none; opacity: 1; }
+        }
+
+        @keyframes glitch-2 {
+            0% { transform: none; opacity: 1; }
+            7% { transform: translate(2px, 3px); opacity: 0.75; }
+            10% { transform: none; opacity: 1; }
+            27% { transform: none; opacity: 1; }
+            30% { transform: translate(5px, 2px); opacity: 0.75; }
+            35% { transform: none; opacity: 1; }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes typing {
+            0%, 100% { opacity: 0; }
+            50% { opacity: 1; }
+        }
+
+        @keyframes donate-glow {
+            0% {
+                box-shadow: 0 0 10px #00ff9d80,
+                            0 0 20px #00ff9d40,
+                            0 0 30px #00ff9d20;
+            }
+            100% {
+                box-shadow: 0 0 20px #00ff9d80,
+                            0 0 30px #00ff9d40,
+                            0 0 40px #00ff9d20;
+            }
+        }
+
+        .logo::before,
+        .logo::after {
+            content: 'Dork-n-ator 3000';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        .logo::before {
+            color: #ff00aa;
+            animation: glitch-1 2s infinite;
+            clip-path: polygon(0 0, 100% 0, 100% 45%, 0 45%);
+            transform: translate(-2px);
+        }
+
+        .logo::after {
+            color: #00ffff;
+            animation: glitch-2 2s infinite;
+            clip-path: polygon(0 60%, 100% 60%, 100% 100%, 0 100%);
+            transform: translate(2px);
+        }
+
+        .message {
+            margin: 10px 0;
+            padding: 15px;
+            border-radius: 5px;
+            animation: fadeIn 0.3s ease-in;
+            position: relative;
+        }
+
+        .user-message {
+            background: #1a1a2e;
+            border-left: 3px solid #ff00aa;
+            margin-left: 20px;
+        }
+
+        .bot-message {
+            background: #2a2a3e;
+            border-left: 3px solid #00ff9d;
+            margin-right: 20px;
+        }
+
+        .search-result {
+            background: #2a2a3e;
+            border-left: 3px solid #00ffff;
+            margin-right: 20px;
+        }
+
+        .typing-indicator {
+            display: none;
+            padding: 10px;
+            margin: 10px 0;
+        }
+
+        .typing-indicator span {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            background: #00ff9d;
+            border-radius: 50%;
+            margin: 0 3px;
+            animation: typing 1s infinite;
+        }
+
+        .bot-message a {
+            color: #00ffff;
+            text-decoration: underline;
+            transition: color 0.3s ease;
+        }
+        
+        .bot-message a:hover {
+            color: #ff00aa;
+        }
+
+        #customOccupationInput {
+            width: 100%;
+            margin: 10px 0;
+            padding: 10px;
+            background-color: #000; /* Black background */
+            color: #00ffff; /* Cyan text */
+            border: 2px solid #00ff9d;
+            font-family: 'Share Tech Mono', monospace;
+        }
+        
+        .url-search-container label {
+            display: flex;
+            align-items: center;
+            font-size: 0.8em;
+            background-color: #000; /* Black background */
+            color: #00ffff; /* Cyan text */
+        }
+
+        .url-search-container input[type="checkbox"] {
+            margin-right: 5px;
+            accent-color: #00ff9d;
+            background-color: #000; /* Black background */
+            color: #00ffff; /* Cyan text */
+        }
+        
+        .domain-extension-grid label {
+            display: flex;
+            align-items: center;
+            font-size: 0.8em;
+            background-color: #000; /* Black background */
+            color: #00ffff; /* Cyan text */
+        }
+        
+        .domain-extension-grid input[type="checkbox"] {
+            margin-right: 5px;
+            accent-color: #00ff9d;
+            background-color: #000; /* Black background */
+            color: #00ffff; /* Cyan text */
+        }
+        
+        .scrollable-section {
+            max-height: 200px;
+            overflow-y: auto;
+            border: 2px solid #00ff9d;
+            margin-bottom: 10px;
+            padding: 10px;
+        }
+
+        .scrollable-section::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .scrollable-section::-webkit-scrollbar-track {
+            background: #0a0a0f;
+        }
+
+        .scrollable-section::-webkit-scrollbar-thumb {
+            background: #00ff9d;
+            border-radius: 4px;
+        }
+
+        .scrollable-section::-webkit-scrollbar-thumb:hover {
+            background: #00ffff;
+        }
+
+        .scrollable-content {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+        }
+
+        .scrollable-email-config {
+            max-height: 80vh;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+
+        .scrollable-email-config::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .scrollable-email-config::-webkit-scrollbar-track {
+            background: #0a0a0f;
+        }
+
+        .scrollable-email-config::-webkit-scrollbar-thumb {
+            background: #00ff9d;
+            border-radius: 4px;
+        }
+
+        .scrollable-email-config::-webkit-scrollbar-thumb:hover {
+            background: #00ffff;
+        }
+
+        .collapsible-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+<div class="landing-page" id="landingPage">
+    <div class="logo">Dork-n-ator 3000</div>
+    <div class="tagline">This is an incredibly powerful tool with the potential to generate millions of dollars. Specifically designed to help you find free leads for any purpose, it's the ultimate asset for growing your business or bringing your ideas to life. Using advanced Google dorking techniques, it enables you to target specific occupations, countries, zip codes, email types, and social networks, along with city and state combinations this gathers millions of result, you’ll be able to make valuable new connections and expand your network. Effortlessly gather hundreds of emails in just seconds, and thousands in a matter of minutes. There’s simply no easier way to supercharge your sales with minimal effort. 5 BILLION emails are active at any time and this tool helps you reach out to the rest of the world as simple as a few clicks.
+100% guaranteed results! </div>
+  
+   
+    <button class="enter-button" id="enterButton">Enter Mainframe</button>
+    <div class="donate-corner">
+        <button class="donate-button" id="landingDonateButton">DONATE</button>
+
+    </div>
+</div>
+
+<div class="app-container" id="appContainer" style="display: none;">
+    <div class="donate-corner">
+        <button class="donate-button" id="appDonateButton">DONATE </button>
+
+    </div>
+    <div class="container">
+        <div class="chat-container" id="chatContainer">
+            <!-- Initial bot message will be added dynamically after entering mainframe -->
+        </div>
+        <div class="typing-indicator" id="typingIndicator">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+        <div class="input-container">
+            <input type="text" id="userInput" placeholder="Type /email to start searching for emails, Pilgrim...">
+            <button id="sendButton">EXECUTE</button>
+        </div>
+    </div>
+</div>
+
+<div class="email-prompt-modal" id="emailPromptModal">
+    <div class="email-prompt-container scrollable-email-config">
+        <h3 style="color: #00ff9d; margin-bottom: 20px;">Email Dork Configuration</h3>
+        <input type="text" id="countryInput" placeholder="Optional Country">
+        <select id="countryDropdown" style="width: 100%; margin: 10px 0; padding: 10px; background-color: #000; color: #00ffff; border: 2px solid #00ff9d;">
+            <option value="">Optional Country</option>
+           <option value="Afghanistan">Afghanistan</option>
+<option value="Albania">Albania</option>
+<option value="Algeria">Algeria</option>
+<option value="Andorra">Andorra</option>
+<option value="Angola">Angola</option>
+<option value="Antigua and Barbuda">Antigua and Barbuda</option>
+<option value="Argentina">Argentina</option>
+<option value="Armenia">Armenia</Armenia>
+<option value="Australia">Australia</option>
+<option value="Austria">Austria</option>
+<option value="Azerbaijan">Azerbaijan</option>
+<option value="Bahamas">Bahamas</option>
+<option value="Bahrain">Bahrain</Bahrain>
+<option value="Bangladesh">Bangladesh</option>
+<option value="Barbados">Barbados</option>
+<option value="Belarus">Belarus</option>
+<option value="Belgium">Belgium</option>
+<option value="Belize">Belize</option>
+<option value="Benin">Benin</Benin>
+<option value="Bhutan">Bhutan</option>
+<option value="Bolivia">Bolivia</option>
+<option value="Bosnia and Herzegovina">Bosnia and Herzegovina</option>
+<option value="Botswana">Botswana</option>
+<option value="Brazil">Brazil</option>
+<option value="Brunei">Brunei</Brunei>
+<option value="Bulgaria">Bulgaria</option>
+<option value="Burkina Faso">Burkina Faso</option>
+<option value="Burundi">Burundi</Burundi>
+<option value="Cabo Verde">Cabo Verde</option>
+<option value="Cambodia">Cambodia</option>
+<option value="Cameroon">Cameroon</Cameroon>
+<option value="Canada">Canada</option>
+<option value="Central African Republic">Central African Republic</option>
+<option value="Chad">Chad</Chad>
+<option value="Chile">Chile</option>
+<option value="China">China</option>
+<option value="Colombia">Colombia</option>
+<option value="Comoros">Comoros</option>
+<option value="Costa Rica">Costa Rica</option>
+<option value="Croatia">Croatia</Croatia>
+<option value="Cuba">Cuba</option>
+<option value="Cyprus">Cyprus</option>
+<option value="Czech Republic">Czech Republic</option>
+<option value="Democratic Republic of the Congo">Democratic Republic of the Congo</option>
+<option value="Denmark">Denmark</option>
+<option value="Djibouti">Djibouti</option>
+<option value="Dominica">Dominica</option>
+<option value="Dominican Republic">Dominican Republic</option>
+<option value="East Timor">East Timor</option>
+<option value="Ecuador">Ecuador</Ecuador>
+<option value="Egypt">Egypt</option>
+<option value="El Salvador">El Salvador</option>
+<option value="Equatorial Guinea">Equatorial Guinea</option>
+<option value="Eritrea">Eritrea</option>
+<option value="Estonia">Estonia</option>
+<option value="Eswatini">Eswatini</option>
+<option value="Ethiopia">Ethiopia</option>
+<option value="Fiji">Fiji</Fiji>
+<option value="Finland">Finland</option>
+<option value="France">France</option>
+<option value="Gabon">Gabon</Gabon>
+<option value="Gambia">Gambia</Gambia>
+<option value="Georgia">Georgia</option>
+<option value="Germany">Germany</Germany>
+<option value="Ghana">Ghana</Ghana>
+<option value="Greece">Greece</Greece>
+<option value="Grenada">Grenada</Grenada>
+<option value="Guatemala">Guatemala</Guatemala>
+<option value="Guinea">Guinea</Guinea>
+<option value="Guinea-Bissau">Guinea-Bissau</option>
+<option value="Guyana">Guyana</Guyana>
+<option value="Haiti">Haiti</Haiti>
+<option value="Honduras">Honduras</Honduras>
+<option value="Hungary">Hungary</Hungary>
+<option value="Iceland">Iceland</Iceland>
+<option value="India">India</India>
+<option value="Indonesia">Indonesia</option>
+<option value="Iran">Iran</Iran>
+<option value="Iraq">Iraq</Iraq>
+<option value="Ireland">Ireland</Ireland>
+<option value="Israel">Israel</Israel>
+<option value="Italy">Italy</Italy>
+<option value="Ivory Coast">Ivory Coast</option>
+<option value="Jamaica">Jamaica</Jamaica>
+<option value="Japan">Japan</Japan>
+<option value="Jordan">Jordan</Jordan>
+<option value="Kazakhstan">Kazakhstan</Kazakhstan>
+<option value="Kenya">Kenya</Kenya>
+<option value="Kiribati">Kiribati</Kiribati>
+<option value="Korea, North">Korea, North</option>
+<option value="Korea, South">Korea, South</option>
+<option value="Kuwait">Kuwait</Kuwait>
+<option value="Kyrgyzstan">Kyrgyzstan</Kyrgyzstan>
+<option value="Laos">Laos</Laos>
+<option value="Latvia">Latvia</Latvia>
+<option value="Lebanon">Lebanon</Lebanon>
+<option value="Lesotho">Lesotho</Lesotho>
+<option value="Liberia">Liberia</Liberia>
+<option value="Libya">Libya</Libya>
+<option value="Liechtenstein">Liechtenstein</Liechtenstein>
+<option value="Lithuania">Lithuania</Lithuania>
+<option value="Luxembourg">Luxembourg</Luxembourg>
+<option value="Madagascar">Madagascar</Madagascar>
+<option value="Malawi">Malawi</Malawi>
+<option value="Malaysia">Malaysia</Malaysia>
+<option value="Maldives">Maldives</Maldives>
+<option value="Mali">Mali</Mali>
+<option value="Malta">Malta</Malta>
+<option value="Marshall Islands">Marshall Islands</option>
+<option value="Mauritania">Mauritania</Mauritania>
+<option value="Mauritius">Mauritius</Mauritius>
+<option value="Mexico">Mexico</Mexico>
+<option value="Micronesia">Micronesia</Micronesia>
+<option value="Moldova">Moldova</Moldova>
+<option value="Monaco">Monaco</Monaco>
+<option value="Mongolia">Mongolia</Mongolia>
+<option value="Montenegro">Montenegro</Montenegro>
+<option value="Morocco">Morocco</Morocco>
+<option value="Mozambique">Mozambique</Mozambique>
+<option value="Myanmar">Myanmar</Myanmar>
+<option value="Namibia">Namibia</Namibia>
+<option value="Nauru">Nauru</Nauru>
+<option value="Nepal">Nepal</Nepal>
+<option value="Netherlands">Netherlands</option>
+<option value="New Zealand">New Zealand</option>
+<option value="Nicaragua">Nicaragua</Nicaragua>
+<option value="Niger">Niger</Niger>
+<option value="Nigeria">Nigeria</Nigeria>
+<option value="North Macedonia">North Macedonia</option>
+<option value="Norway">Norway</Norway>
+<option value="Oman">Oman</Oman>
+<option value="Pakistan">Pakistan</Pakistan>
+<option value="Palau">Palau</Palau>
+<option value="Panama">Panama</Panama>
+<option value="Papua New Guinea">Papua New Guinea</option>
+<option value="Paraguay">Paraguay</Paraguay>
+<option value="Peru">Peru</Peru>
+<option value="Philippines">Philippines</Philippines>
+<option value="Poland">Poland</Poland>
+<option value="Portugal">Portugal</Portugal>
+<option value="Qatar">Qatar</Qatar>
+<option value="Romania">Romania</Romania>
+<option value="Russia">Russia</Russia>
+<option value="Rwanda">Rwanda</Rwanda>
+<option value="Saint Kitts and Nevis">Saint Kitts and Nevis</option>
+<option value="Saint Lucia">Saint Lucia</Saint Lucia>
+<option value="Saint Vincent and the Grenadines">Saint Vincent and the Grenadines</option>
+<option value="Samoa">Samoa</Samoa>
+<option value="San Marino">San Marino</San Marino>
+<option value="Sao Tome and Principe">Sao Tome and Principe</option>
+<option value="Saudi Arabia">Saudi Arabia</Saudi Arabia>
+<option value="Senegal">Senegal</Senegal>
+<option value="Serbia">Serbia</Serbia>
+<option value="Seychelles">Seychelles</Seychelles>
+<option value="Sierra Leone">Sierra Leone</Sierra Leone>
+<option value="Singapore">Singapore</Singapore>
+<option value="Slovakia">Slovakia</Slovakia>
+<option value="Slovenia">Slovenia</Slovenia>
+<option value="Solomon Islands">Solomon Islands</option>
+<option value="Somalia">Somalia</Somalia>
+<option value="South Africa">South Africa</South Africa>
+<option value="South Sudan">South Sudan</South Sudan>
+<option value="Spain">Spain</Spain>
+<option value="Sri Lanka">Sri Lanka</Sri Lanka>
+<option value="Sudan">Sudan</Sudan>
+<option value="Suriname">Suriname</Suriname>
+<option value="Sweden">Sweden</Sweden>
+<option value="Switzerland">Switzerland</Switzerland>
+<option value="Syria">Syria</Syria>
+<option value="Taiwan">Taiwan</Taiwan>
+<option value="Tajikistan">Tajikistan</Tajikistan>
+<option value="Tanzania">Tanzania</Tanzania>
+<option value="Thailand">Thailand</Thailand>
+<option value="Togo">Togo</Togo>
+<option value="Tonga">Tonga</Tonga>
+<option value="Trinidad and Tobago">Trinidad and Tobago</option>
+<option value="Tunisia">Tunisia</Tunisia>
+<option value="Turkey">Turkey</Turkey>
+<option value="Turkmenistan">Turkmenistan</Turkmenistan>
+<option value="Tuvalu">Tuvalu</Tuvalu>
+<option value="Uganda">Uganda</Uganda>
+<option value="Ukraine">Ukraine</Ukraine>
+<option value="United Arab Emirates">United Arab Emirates</United Arab Emirates>
+<option value="United Kingdom">United Kingdom</option>
+<option value="United States">United States</United States>
+<option value="Uruguay">Uruguay</Uruguay>
+<option value="Uzbekistan">Uzbekistan</Uzbekistan>
+<option value="Vanuatu">Vanuatu</Vanuatu>
+<option value="Vatican City">Vatican City</option>
+<option value="Venezuela">Venezuela</Venezuela>
+<option value="Vietnam">Vietnam</Vietnam>
+<option value="Yemen">Yemen</Yemen>
+<option value="Zambia">Zambia</Zambia>
+<option value="Zimbabwe">Zimbabwe</Zimbabwe>
+
+        </select>
+        <select id="stateInput" style="width: 100%; margin: 10px 0; padding: 10px; background-color: #000; color: #00ffff; border: 2px solid #00ff9d;">
+            <option value="">Optional State</option>
+            <option value="Alabama">Alabama</option>
+            <option value="Alaska">Alaska</option>
+            <option value="Arizona">Arizona</option>
+            <option value="Arkansas">Arkansas</option>
+            <option value="California">California</option>
+            <option value="Colorado">Colorado</option>
+            <option value="Connecticut">Connecticut</Connecticut>
+            <option value="Delaware">Delaware</Delaware>
+            <option value="Florida">Florida</Florida>
+            <option value="Georgia">Georgia</Georgia>
+            <option value="Hawaii">Hawaii</Hawaii>
+            <option value="Idaho">Idaho</Idaho>
+            <option value="Illinois">Illinois</Illinois>
+            <option value="Indiana">Indiana</Indiana>
+            <option value="Iowa">Iowa</Iowa>
+            <option value="Kansas">Kansas</Kansas>
+            <option value="Kentucky">Kentucky</Kentucky>
+            <option value="Louisiana">Louisiana</Louisiana>
+            <option value="Maine">Maine</Maine>
+            <option value="Maryland">Maryland</Maryland>
+            <option value="Massachusetts">Massachusetts</Massachusetts>
+            <option value="Michigan">Michigan</Michigan>
+            <option value="Minnesota">Minnesota</Minnesota>
+            <option value="Mississippi">Mississippi</Mississippi>
+            <option value="Missouri">Missouri</Missouri>
+            <option value="Montana">Montana</Montana>
+            <option value="Nebraska">Nebraska</Nebraska>
+            <option value="Nevada">Nevada</Nevada>
+            <option value="New Hampshire">New Hampshire</New Hampshire>
+            <option value="New Jersey">New Jersey</New Jersey>
+            <option value="New Mexico">New Mexico</New Mexico>
+            <option value="New York">New York</New York>
+            <option value="North Carolina">North Carolina</North Carolina>
+            <option value="North Dakota">North Dakota</North Dakota>
+            <option value="Ohio">Ohio</Ohio>
+            <option value="Oklahoma">Oklahoma</Oklahoma>
+            <option value="Oregon">Oregon</Oregon>
+            <option value="Pennsylvania">Pennsylvania</Pennsylvania>
+            <option value="Rhode Island">Rhode Island</Rhode>
+            <option value="South Carolina">South Carolina</South Carolina>
+            <option value="South Dakota">South Dakota</South Dakota>
+            <option value="Tennessee">Tennessee</Tennessee>
+            <option value="Texas">Texas</Texas>
+            <option value="Utah">Utah</Utah>
+            <option value="Virginia">Virginia</Virginia>
+            <option value="Vermont">Vermont</Vermont>
+            <option value="Washington">Washington</Washington>
+            <option value="Wisconsin">Wisconsin</Wisconsin>
+            <option value="West Virginia">West Virginia</West Virginia>
+            <option value="Wyoming">Wyoming</Wyoming>
+        </select>
+        <select id="cityInput" style="width: 100%; margin: 10px 0; padding: 10px; background-color: #000; color: #00ffff; border: 2px solid #00ff9d;">
+            <option value="">Optional City</option>
+        </select>
+        <input type="text" id="zipCodeInput" placeholder="Enter ZIP Code (Optional)">
+        <select id="occupationInput" style="width: 100%; margin: 10px 0; padding: 10px; background-color: #000; color: #00ffff; border: 2px solid #00ff9d;">
+            <option value="">Select Occupation (Optional)</option>
+            <option value="Plumber">Plumber</option>
+            <option value="Electrician">Electrician</option>
+            <option value="Teacher">Teacher</option>
+            <option value="Carpenter">Carpenter</option>
+            <option value="Mechanic">Mechanic</option>
+            <option value="Nurse">Nurse</option>
+            <option value="Doctor">Doctor</option>
+            <option value="Lawyer">Lawyer</option>
+            <option value="Accountant">Accountant</option>
+            <option value="Chef">Chef</option>
+            <option value="Waiter/Waitress">Waiter/Waitress</option>
+            <option value="Baker">Baker</option>
+            <option value="Real Estate Agent">Real Estate Agent</option>
+            <option value="Dentist">Dentist</option>
+            <option value="Hairstylist">Hairstylist</option>
+            <option value="Barber">Barber</option>
+            <option value="Massage Therapist">Massage Therapist</option>
+            <option value="Personal Trainer">Personal Trainer</option>
+            <option value="Fitness Coach">Fitness Coach</option>
+            <option value="Security Guard">Security Guard</option>
+            <option value="Janitor">Janitor</option>
+            <option value="Taxi Driver">Taxi Driver</option>
+            <option value="Delivery Driver">Delivery Driver</option>
+            <option value="Pilot">Pilot</option>
+            <option value="Bus Driver">Bus Driver</option>
+            <option value="Librarian">Librarian</option>
+            <option value="Photographer">Photographer</option>
+            <option value="Writer">Writer</option>
+            <option value="Journalist">Journalist</option>
+            <option value="Editor">Editor</option>
+            <option value="Florist">Florist</option>
+            <option value="Gardener">Gardener</option>
+            <option value="Landscaper">Landscaper</option>
+            <option value="Cleaner">Cleaner</option>
+            <option value="Construction Worker">Construction Worker</option>
+            <option value="HVAC Technician">HVAC Technician</option>
+            <option value="Childcare Provider">Childcare Provider</option>
+            <option value="Pet Groomer">Pet Groomer</option>
+            <option value="Veterinarian">Veterinarian</option>
+            <option value="Taxi Dispatcher">Taxi Dispatcher</option>
+            <option value="Barista">Barista</option>
+            <option value="Park Ranger">Park Ranger</option>
+            <option value="Travel Agent">Travel Agent</option>
+            <option value="Event Planner">Event Planner</option>
+            <option value="Marketing Specialist">Marketing Specialist</option>
+            <option value="Sales Associate">Sales Associate</option>
+            <option value="Customer Service Representative">Customer Service Representative</option>
+            <option value="Retail Manager">Retail Manager</option>
+            <option value="Warehouse Worker">Warehouse Worker</option>
+            <option value="Assembly Line Worker">Assembly Line Worker</option>
+            <option value="Fisherman">Fisherman</option>
+            <option value="Farmer">Farmer</option>
+            <option value="Rancher">Rancher</option>
+            <option value="Art Dealer">Art Dealer</option>
+            <option value="Singer">Singer</option>
+            <option value="Musician">Musician</option>
+            <option value="Actor">Actor</option>
+            <option value="Director">Director</option>
+            <option value="Producer">Producer</option>
+            <option value="Dancer">Dancer</option>
+            <option value="Dancer Instructor">Dancer Instructor</option>
+            <option value="Fashion Designer">Fashion Designer</option>
+            <option value="Fashion Stylist">Fashion Stylist</option>
+            <option value="Artist">Artist</option>
+            <option value="Sculptor">Sculptor</option>
+            <option value="Tattoo Artist">Tattoo Artist</option>
+            <option value="Illustrator">Illustrator</option>
+            <option value="Animator">Animator</option>
+            <option value="Dancer">Dancer</option>
+            <option value="Translator">Translator</option>
+            <option value="Interpreter">Interpreter</option>
+            <option value="Massage Therapist">Massage Therapist</option>
+            <option value="Mental Health Counselor">Mental Health Counselor</option>
+            <option value="Nutritionist">Nutritionist</option>
+            <option value="Dietician">Dietician</option>
+            <option value="Pharmacist">Pharmacist</option>
+            <option value="Physical Therapist">Physical Therapist</option>
+            <option value="Audiologist">Audiologist</option>
+            <option value="Speech Therapist">Speech Therapist</option>
+            <option value="Chiropractor">Chiropractor</option>
+            <option value="Optometrist">Optometrist</option>
+            <option value="Psychiatrist">Psychiatrist</option>
+            <option value="Researcher">Researcher</option>
+            <option value="Scientist">Scientist</option>
+            <option value="Analyst">Analyst</option>
+            <option value="Geologist">Geologist</option>
+            <option value="Archaeologist">Archaeologist</option>
+            <option value="Biologist">Biologist</option>
+            <option value="Chemist">Chemist</option>
+            <option value="Photographer">Photographer</option>
+            <option value="Architect">Architect</option>
+            <option value="Interior Designer">Interior Designer</option>
+            <option value="Urban Planner">Urban Planner</option>
+            <option value="Electrician">Electrician</option>
+            <option value="Locksmith">Locksmith</option>
+            <option value="Home Inspector">Home Inspector</option>
+            <option value="Insurance Agent">Insurance Agent</option>
+            <option value="Financial Advisor">Financial Advisor</option>
+            <option value="Social Worker">Social Worker</option>
+            <option value="Project Manager">Project Manager</option>
+            <option value="Software Engineer">Software Engineer</option>
+            <option value="Web Developer">Web Developer</option>
+            <option value="Data Scientist">Data Scientist</option>
+            <option value="Network Engineer">Network Engineer</option>
+            <option value="IT Support Specialist">IT Support Specialist</option>
+            <option value="Cybersecurity Analyst">Cybersecurity Analyst</option>
+            <option value="Cloud Architect">Cloud Architect</option>
+            <option value="AI Specialist">AI Specialist</option>
+            <option value="Machine Learning Engineer">Machine Learning Engineer</option>
+            <option value="App Developer">App Developer</option>
+            <option value="Mobile App Developer">Mobile App Developer</option>
+            <option value="Data Analyst">Data Analyst</option>
+            <option value="Database Administrator">Database Administrator</option>
+            <option value="Game Developer">Game Developer</option>
+            <option value="Software Tester">Software Tester</option>
+            <option value="Front-end Developer">Front-end Developer</option>
+            <option value="Back-end Developer">Back-end Developer</option>
+            <option value="Full Stack Developer">Full Stack Developer</option>
+            <option value="DevOps Engineer">DevOps Engineer</option>
+            <option value="Product Manager">Product Manager</option>
+            <option value="UX/UI Designer">UX/UI Designer</option>
+            <option value="SEO Specialist">SEO Specialist</option>
+            <option value="Digital Marketer">Digital Marketer</option>
+            <option value="E-commerce Manager">E-commerce Manager</option>
+            <option value="Digital Content Creator">Digital Content Creator</option>
+            <option value="Social Media Manager">Social Media Manager</option>
+            <option value="Blockchain Developer">Blockchain Developer</option>
+            <option value="Systems Architect">Systems Architect</option>
+            <option value="Automation Engineer">Automation Engineer</option>
+            <option value="Video Editor">Video Editor</option>
+            <option value="Graphics Designer">Graphics Designer</option>
+            <option value="Web Designer">Web Designer</option>
+            <option value="SEO Expert">SEO Expert</option>
+            <option value="3D Modeler">3D Modeler</option>
+            <option value="Virtual Reality Developer">Virtual Reality Developer</option>
+            <option value="Augmented Reality Developer">Augmented Reality Developer</option>
+            <option value="Cloud Support Engineer">Cloud Support Engineer</option>
+            <option value="Tech Support Specialist">Tech Support Specialist</option>
+            <option value="Embedded Systems Engineer">Embedded Systems Engineer</option>
+            <option value="Big Data Engineer">Big Data Engineer</option>
+            <option value="Hardware Engineer">Hardware Engineer</option>
+            <option value="Robotics Engineer">Robotics Engineer</option>
+            <option value="IT Manager">IT Manager</option>
+            <option value="Cloud Infrastructure Manager">Cloud Infrastructure Manager</option>
+            <option value="API Developer">API Developer</option>
+            <option value="Product Designer">Product Designer</option>
+            <option value="IT Operations Manager">IT Operations Manager</option>
+            <option value="Business & Creative Professions">Business & Creative Professions</option>
+            <option value="Entrepreneur">Entrepreneur</option>
+            <option value="Business Owner">Business Owner</option>
+            <option value="Marketing Director">Marketing Director</option>
+            <option value="Brand Manager">Brand Manager</option>
+            <option value="Copywriter">Copywriter</option>
+            <option value="Content Writer">Content Writer</option>
+            <option value="Blogger">Blogger</option>
+            <option value="Public Relations Specialist">Public Relations Specialist</option>
+            <option value="Advertising Executive">Advertising Executive</option>
+            <option value="Sales Manager">Sales Manager</option>
+            <option value="Graphic Designer">Graphic Designer</option>
+            <option value="Social Media Influencer">Social Media Influencer</option>
+            <option value="Brand Ambassador">Brand Ambassador</option>
+            <option value="E-commerce Seller">E-commerce Seller</option>
+            <option value="Product Photographer">Product Photographer</option>
+            <option value="Public Speaker">Public Speaker</option>
+            <option value="Event Organizer">Event Organizer</option>
+            <option value="Workshop Facilitator">Workshop Facilitator</option>
+            <option value="PR Consultant">PR Consultant</option>
+            <option value="Recruiter">Recruiter</option>
+            <option value="Fashion Blogger">Fashion Blogger</option>
+            <option value="Affiliate Marketer">Affiliate Marketer</option>
+            <option value="Business Consultant">Business Consultant</option>
+            <option value="Wholesale Distributor">Wholesale Distributor</option>
+            <option value="Freelance Writer">Freelance Writer</option>
+            <option value="SEO Consultant">SEO Consultant</option>
+            <option value="Copy Editor">Copy Editor</option>
+            <option value="Email Marketing Specialist">Email Marketing Specialist</option>
+            <option value="Video Producer">Video Producer</option>
+            <option value="Digital Ad Specialist">Digital Ad Specialist</option>
+            <option value="Social Media Strategist">Social Media Strategist</option>
+            <option value="Content Strategist">Content Strategist</option>
+            <option value="Marketing Copywriter">Marketing Copywriter</option>
+            <option value="Merchandise Planner">Merchandise Planner</option>
+            <option value="Digital Advertising Manager">Digital Advertising Manager</option>
+            <option value="Researcher">Researcher</option>
+            <option value="Executive Assistant">Executive Assistant</option>
+            <option value="Operations Manager">Operations Manager</option>
+            <option value="Business Analyst">Business Analyst</option>
+            <option value="Procurement Manager">Procurement Manager</option>
+            <option value="Store Owner">Store Owner</option>
+            <option value="Chef Instructor">Chef Instructor</option>
+            <option value="Jewelry Designer">Jewelry Designer</option>
+            <option value="Professional Photographer">Professional Photographer</option>
+            <option value="Fashion Stylist">Fashion Stylist</option>
+            <option value="Art Curator">Art Curator</option>
+            <option value="Property Manager">Property Manager</option>
+            <option value="Digital Product Creator">Digital Product Creator</option>
+            <option value="Fashion Buyer">Fashion Buyer</option>
+            <option value="Magazine Editor">Magazine Editor</option>
+            <option value="Visual Merchandiser">Visual Merchandiser</option>
+            <option value="Startup Founder">Startup Founder</option>
+            <option value="Business Development Manager">Business Development Manager</option>
+            <option value="Project Coordinator">Project Coordinator</option>
+            <option value="Media Planner">Media Planner</option>
+            <option value="Legal Consultant">Legal Consultant</option>
+            <option value="Event Photographer">Event Photographer</option>
+            <option value="Strategic Planner">Strategic Planner</option>
+            <option value="Web Content Writer">Web Content Writer</option>
+            <option value="HR Manager">HR Manager</option>
+            <option value="Coach">Coach</option>
+            <option value="Fitness Instructor">Fitness Instructor</option>
+            <option value="Counselor">Counselor</option>
+            <option value="Art Therapist">Art Therapist</option>
+            <option value="Music Therapist">Music Therapist</option>
+            <option value="Yoga Instructor">Yoga Instructor</option>
+            <option value="Massage Therapist">Massage Therapist</option>
+            <option value="Life Coach">Life Coach</option>
+            <option value="Financial Planner">Financial Planner</option>
+            <option value="Research Analyst">Research Analyst</option>
+            <option value="HR Specialist">HR Specialist</option>
+            <option value="Technology Evangelist">Technology Evangelist</option>
+            <option value="Science Communicator">Science Communicator</option>
+            <option value="Sales Executive">Sales Executive</option>
+            <option value="Beauty Consultant">Beauty Consultant</option>
+            <option value="Life Coach">Life Coach</option>
+            <option value="Influencer Marketing Specialist">Influencer Marketing Specialist</option>
+            <option value="Digital Editor">Digital Editor</option>
+            <option value="Translator">Translator</option>
+            <option value="Legal Consultant">Legal Consultant</option>
+            <option value="Fundraiser">Fundraiser</option>
+            <option value="Executive Coach">Executive Coach</option>
+            <option value="Marketing Consultant">Marketing Consultant</option>
+            <option value="Construction Manager">Construction Manager</option>
+            <option value="Event Coordinator">Event Coordinator</option>
+            <option value="Market Research Analyst">Market Research Analyst</option>
+            <option value="Video Editor">Video Editor</option>
+            <option value="Health Coach">Health Coach</option>
+            <option value="Insurance Underwriter">Insurance Underwriter</option>
+            <option value="Travel Blogger">Travel Blogger</option>
+            <option value="Public Health Specialist">Public Health Specialist</option>
+            <option value="Public Speaker">Public Speaker</option>
+            <option value="Business Coach">Business Coach</option>
+            <option value="Food Stylist">Food Stylist</option>
+            <option value="Professional Organizer">Professional Organizer</option>
+            <option value="Compliance Officer">Compliance Officer</option>
+            <option value="Travel Influencer">Travel Influencer</option>
+            <option value="Drone Operator">Drone Operator</option>
+            <option value="Stockbroker">Stockbroker</option>
+            <option value="Digital Product Designer">Digital Product Designer</option>
+            <option value="Author">Author</option>
+            <option value="Talent Agent">Talent Agent</option>
+            <option value="Voice-over Artist">Voice-over Artist</option>
+            <option value="Tour Guide">Tour Guide</option>
+            <option value="Freelance Designer">Freelance Designer</option>
+            <option value="Car Detailer">Car Detailer</option>
+            <option value="Dance Instructor">Dance Instructor</option>
+            <option value="Business Intelligence Analyst">Business Intelligence Analyst</option>
+            <option value="Solar Energy Specialist">Solar Energy Specialist</option>
+            <option value="Digital Consultant">Digital Consultant</option>
+            <option value="Cybersecurity Consultant">Cybersecurity Consultant</option>
+        </select>
+        <input type="text" id="customOccupationInput" placeholder="Or enter a custom occupation (Optional)">
+        <select id="emailProviderInput" style="width: 100%; margin: 10px 0; padding: 10px; background-color: #000; color: #00ffff; border: 2px solid #00ff9d;">
+            <option value="">Select Email Provider</option>
+            <option value="@gmail.com">@gmail.com</option>
+            <option value="@yahoo.com">@yahoo.com</option>
+            <option value="@outlook.com">@outlook.com</option>
+            <option value="@hotmail.com">@hotmail.com</option>
+            <option value="@zoho.com">@zoho.com</option>
+            <option value="@gmx.com">@gmx.com</option>
+            <option value="@gmx.us">@gmx.us</option>
+            <option value="@yandex.com">@yandex.com</option>
+            <option value="@yandex.ru">@yandex.ru</option>
+            <option value="@icloud.com">@icloud.com</option>
+            <option value="@aol.com">@aol.com</option>
+            <option value="@protonmail.com">@protonmail.com</option>
+            <option value="@mail.com">@mail.com</option>
+            <option value="@me.com">@me.com</option>
+            <option value="@fastmail.com">@fastmail.com</option>
+            <option value="@live.com">@live.com</option>
+            <option value="@btinternet.com">@btinternet.com</option>
+            <option value="@comcast.net">@comcast.net</option>
+            <option value="@msn.com">@msn.com</option>
+            <option value="@verizon.net">@verizon.net</option>
+            <option value="@126.com">@126.com</option>
+            <option value="@163.com">@163.com</option>
+            <option value="@rediffmail.com">@rediffmail.com</option>
+            <option value="@qq.com">@qq.com</option>
+            <option value="@rocketmail.com">@rocketmail.com</option>
+            <option value="@mail.ru">@mail.ru</option>
+            <option value="@lycos.com">@lycos.com</option>
+            <option value="@bellsouth.net">@bellsouth.net</option>
+            <option value="@earthlink.net">@earthlink.net</option>
+            <option value="@shaw.ca">@shaw.ca</option>
+            <option value="@telus.net">@telus.net</option>
+            <option value="@charter.net">@charter.net</option>
+            <option value="@office365.com">@office365.com</option>
+            <option value="@att.net">@att.net</option>
+            <option value="@cox.net">@cox.net</option>
+            <option value="@wework.com">@wework.com</option>
+            <option value="@salesforce.com">@salesforce.com</option>
+            <option value="@shopify.com">@shopify.com</option>
+            <option value="@hubspot.com">@hubspot.com</option>
+            <option value="@aws.com">@aws.com</option>
+            <option value="@godaddy.com">@godaddy.com</option>
+            <option value="@zoho.eu">@zoho.eu</option>
+            <option value="@inbox.com">@inbox.com</option>
+            <option value="@tutanota.com">@tutanota.com</option>
+            <option value="@post.cz">@post.cz</option>
+            <option value="@seznam.cz">@seznam.cz</option>
+            <option value="@bluewin.ch">@bluewin.ch</option>
+            <option value="@orange.fr">@orange.fr</option>
+            <option value="@web.de">@web.de</option>
+            <option value="@libero.it">@libero.it</option>
+            <option value="@virginmedia.com">@virginmedia.com</option>
+        </select>
+        <select id="socialMediaInput" style="width: 100%; margin: 10px 0; padding: 10px; background-color: #000; color: #00ffff; border: 2px solid #00ff9d;">
+            <option value="">Select Social Media (Optional)</option>
+            <option value="youtube">YouTube</option>
+            <option value="instagram">Instagram</option>
+            <option value="linkedin">LinkedIn</option>
+            <option value="twitter">Twitter</option>
+            <option value="facebook">Facebook</option>
+            <option value="github">GitHub</option>
+            <option value="stackoverflow">Stack Overflow</option>
+            <option value="pinterest">Pinterest</option>
+            <option value="reddit">Reddit</option>
+            <option value="tumblr">Tumblr</option>
+            <option value="fiverr">Fiverr</option>
+            <option value="upwork">Upwork</option>
+            <option value="twitch">Twitch</option>
+            <option value="snapchat">Snapchat</option>
+            <option value="vimeo">Vimeo</option>
+            <option value="deviantart">DeviantArt</option>
+            <option value="medium">Medium</option>
+            <option value="meetup">Meetup</option>
+            <option value="etsy">Etsy</option>
+            <option value="quora">Quora</option>
+            <option value="angellist">AngelList</option>
+            <option value="producthunt">Product Hunt</option>
+            <option value="kickstarter">Kickstarter</option>
+            <option value="indiegogo">Indiegogo</option>
+            <option value="crunchbase">Crunchbase</option>
+            <option value="weebly_wix_squarespace">Weebly, Wix, Squarespace</option>
+        </select>
+        <div class="collapsible-section">
+            <div class="collapsible-header" id="urlSearchTypesHeader">
+                <h4 style="color: #00ff9d; margin-bottom: 10px; cursor: pointer;">
+                    URL Search Types ▼
+                </h4>
+            </div>
+            <div class="collapsible-content" id="urlSearchTypesContent" style="display: none;">
+                <div class="url-search-container">
+                    <label><input type="checkbox" id="urlContactCheckbox">Contact</label>
+                    <label><input type="checkbox" id="urlAboutCheckbox">About</label>
+                    <label><input type="checkbox" id="urlTeamCheckbox">Team</label>
+                    <label><input type="checkbox" id="urlStaffCheckbox">Staff</label>
+                    <label><input type="checkbox" id="urlSupportCheckbox">Support</label>
+                    <label><input type="checkbox" id="urlServicesCheckbox">Services</label>
+                    <label><input type="checkbox" id="urlPartnersCheckbox">Partners</label>
+                    <label><input type="checkbox" id="urlBlogCheckbox">Blog</label>
+                    <label><input type="checkbox" id="urlInfoCheckbox">Info</label>
+                    <label><input type="checkbox" id="urlCustomerServiceCheckbox">Customer Service</label>
+                    <label><input type="checkbox" id="urlCareersCheckbox">Careers</label>
+                    <label><input type="checkbox" id="urlMediaCheckbox">Media</label>
+                    <label><input type="checkbox" id="urlPressCheckbox">Press</label>
+                    <label><input type="checkbox" id="urlFeedbackCheckbox">Feedback</label>
+                    <label><input type="checkbox" id="urlNewsletterCheckbox">Newsletter</label>
+                    <label><input type="checkbox" id="urlSalesCheckbox">Sales</label>
+                    <label><input type="checkbox" id="urlHelpCheckbox">Help</label>
+                    <label><input type="checkbox" id="urlRequestCheckbox">Request</label>
+                    <label><input type="checkbox" id="urlProductCheckbox">Product</label>
+                </div>
+            </div>
+        </div>
+        <!-- Domain Extensions Section with Collapsible Menu -->
+        <div class="collapsible-section">
+            <div class="collapsible-header" id="domainExtensionsHeader">
+                <h4 style="color: #00ff9d; margin-bottom: 10px; cursor: pointer;">
+                    Domain Extensions ▼
+                </h4>
+            </div>
+            <div class="collapsible-content" id="domainExtensionsContent" style="display: none;">
+                <div class="scrollable-section">
+                    <div class="domain-extension-grid scrollable-content">
+                        <label><input type="checkbox" id="domainComCheckbox" value=".com">.com</label>
+                        <label><input type="checkbox" id="domainNetCheckbox" value=".net">.net</label>
+                        <label><input type="checkbox" id="domainOrgCheckbox" value=".org">.org</label>
+                        <label><input type="checkbox" id="domainCoCheckbox" value=".co">.co</label>
+                        <label><input type="checkbox" id="domainIoCheckbox" value=".io">.io</label>
+                        <label><input type="checkbox" id="domainBizCheckbox" value=".biz">.biz</label>
+                        <label><input type="checkbox" id="domainInfoCheckbox" value=".info">.info</label>
+                        <label><input type="checkbox" id="domainUsCheckbox" value=".us">.us</label>
+                        <label><input type="checkbox" id="domainStoreCheckbox" value=".store">.store</label>
+                        <label><input type="checkbox" id="domainShopCheckbox" value=".shop">.shop</label>
+                        <label><input type="checkbox" id="domainMeCheckbox" value=".me">.me</label>
+                        <label><input type="checkbox" id="domainTvCheckbox" value=".tv">.tv</label>
+                        <label><input type="checkbox" id="domainEduCheckbox" value=".edu">.edu</label>
+                        <label><input type="checkbox" id="domainGovCheckbox" value=".gov">.gov</label>
+                        <label><input type="checkbox" id="domainCaCheckbox" value=".ca">.ca</label>
+                        <label><input type="checkbox" id="domainEuCheckbox" value=".eu">.eu</label>
+                        <label><input type="checkbox" id="domainMxCheckbox" value=".mx">.mx</label>
+                        <label><input type="checkbox" id="domainDeCheckbox" value=".de">.de</label>
+                        <label><input type="checkbox" id="domainCoUkCheckbox" value=".co.uk">.co.uk</label>
+                        <label><input type="checkbox" id="domainInCheckbox" value=".in">.in</label>
+                        <label><input type="checkbox" id="domainAuCheckbox" value=".au">.au</label>
+                        <label><input type="checkbox" id="domainJpCheckbox" value=".jp">.jp</label>
+                        <label><input type="checkbox" id="domainCnCheckbox" value=".cn">.cn</label>
+                        <label><input type="checkbox" id="domainFrCheckbox" value=".fr">.fr</label>
+                        <label><input type="checkbox" id="domainItCheckbox" value=".it">.it</label>
+                        <label><input type="checkbox" id="domainBrCheckbox" value=".br">.br</label>
+                        <label><input type="checkbox" id="domainAsiaCheckbox" value=".asia">.asia</label>
+                        <label><input type="checkbox" id="domainAppCheckbox" value=".app">.app</label>
+                        <label><input type="checkbox" id="domainProCheckbox" value=".pro">.pro</label>
+                        <label><input type="checkbox" id="domainXyzCheckbox" value=".xyz">.xyz</label>
+                        <label><input type="checkbox" id="domainTopCheckbox" value=".top">.top</label>
+                        <label><input type="checkbox" id="domainClubCheckbox" value=".club">.club</label>
+                        <label><input type="checkbox" id="domainDesignCheckbox" value=".design">.design</label>
+                        <label><input type="checkbox" id="domainOnlineCheckbox" value=".online">.online</label>
+                        <label><input type="checkbox" id="domainSpaceCheckbox" value=".space">.space</label>
+                        <label><input type="checkbox" id="domainTechCheckbox" value=".tech">.tech</label>
+                        <label><input type="checkbox" id="domainHealthCheckbox" value=".health">.health</label>
+                        <label><input type="checkbox" id="domainLawCheckbox" value=".law">.law</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <button id="startEmailDorkButton" style="width: 100%; margin-top: 10px;">Launch Dork Protocol</button>
+    </div>
+</div>
+
+<script>
+    const landingPage = document.getElementById('landingPage');
+    const appContainer = document.getElementById('appContainer');
+    const enterButton = document.getElementById('enterButton');
+    const chatContainer = document.getElementById('chatContainer');
+    const userInput = document.getElementById('userInput');
+    const typingIndicator = document.getElementById('typingIndicator');
+    const sendButton = document.getElementById('sendButton');
+
+    const emailPromptModal = document.getElementById('emailPromptModal');
+    const stateInput = document.getElementById('stateInput');
+    const cityInput = document.getElementById('cityInput');
+    const zipCodeInput = document.getElementById('zipCodeInput');
+    const emailProviderInput = document.getElementById('emailProviderInput');
+    const occupationInput = document.getElementById('occupationInput');
+    const socialMediaInput = document.getElementById('socialMediaInput');
+    const startEmailDorkButton = document.getElementById('startEmailDorkButton');
+    const countryInput = document.getElementById('countryInput');
+    const customOccupationInput = document.getElementById('customOccupationInput');
+
+    enterButton.addEventListener('click', () => {
+        landingPage.style.display = 'none';
+        appContainer.style.display = 'block';
+
+        // Add initial bot message after entering mainframe
+        const initialBotMessage = document.createElement('div');
+        initialBotMessage.className = 'message bot-message';
+        initialBotMessage.innerHTML = `Greetings, Pilgrim. I am Dork-n-ator 3000, your email leads expert.
+            <br><br>
+            Available protocols:
+            <br>• /email: Launch email intelligence gathering protocol
+            <br>  - Extracts from social media and websites and occupations
+            <br>  - Supports optional country, city, state, ZIP code targeting
+            <br>  - Target specific email providers, terms, domains, pages and more!
+            <br><br>
+            Copy and paste google results into <a href="https://lite14.us" target="_blank" style="color: #00ffff; text-decoration: underline;">lite14.us</a> to verify emails.`;
+        
+        chatContainer.appendChild(initialBotMessage);
+    });
+
+    const cityList = {
+        "Alabama": ["Huntsville", "Birmingham", "Montgomery", "Mobile", "Tuscaloosa", "Hoover", "Auburn", "Dothan", "Decatur", "Madison"],
+        "Alaska": ["Anchorage", "Juneau", "Fairbanks", "Wasilla", "Sitka", "Ketchikan", "Kenai", "Bethel", "Palmer", "Homer"],
+        "Arizona": ["Phoenix", "Tucson", "Mesa", "Chandler", "Gilbert", "Glendale", "Scottsdale", "Peoria", "Tempe", "Surprise"],
+        "Arkansas": ["Little Rock", "Fayetteville", "Fort Smith", "Springdale", "Jonesboro", "Rogers", "Conway", "North Little Rock", "Bentonville", "Pine Bluff"],
+        "California": ["Los Angeles", "San Diego", "San Jose", "San Francisco", "Fresno", "Sacramento", "Long Beach", "Oakland", "Bakersfield", "Anaheim"],
+        "Colorado": ["Denver", "Colorado Springs", "Aurora", "Fort Collins", "Lakewood", "Thornton", "Arvada", "Westminster", "Pueblo", "Centennial"],
+        "Connecticut": ["Bridgeport", "Stamford", "New Haven", "Hartford", "Waterbury", "Norwalk", "Danbury", "New Britain", "Bristol", "Meriden"],
+        "Delaware": ["Wilmington", "Dover", "Newark", "Middletown", "Smyrna", "Milford", "Seaford", "Georgetown", "Elsmere", "New Castle"],
+        "Florida": ["Jacksonville", "Miami", "Tampa", "Orlando", "St. Petersburg", "Hialeah", "Tallahassee", "Cape Coral", "Fort Lauderdale", "Pembroke Pines"],
+        "Georgia": ["Atlanta", "Columbus", "Augusta", "Macon", "Savannah", "Athens", "Sandy Springs", "Roswell", "Johns Creek", "Albany"],
+        "Hawaii": ["Honolulu", "Pearl City", "Hilo", "Kailua", "Waipahu", "Kaneohe", "Mililani Town", "Kahului", "Wailuku", "Ewa Beach"],
+        "Iowa": ["Des Moines", "Cedar Rapids", "Davenport", "Sioux City", "Iowa City", "Waterloo", "West Des Moines", "Ankeny", "Ames", "Council Bluffs"],
+        "Idaho": ["Boise", "Meridian", "Nampa", "Idaho Falls", "Caldwell", "Pocatello", "Coeur d'Alene", "Twin Falls", "Rexburg", "Moscow"],
+        "Illinois": ["Chicago", "Aurora", "Naperville", "Rockford", "Joliet", "Springfield", "Peoria", "Elgin", "Waukegan", "Cicero"],
+        "Indiana": ["Indianapolis", "Fort Wayne", "Evansville", "South Bend", "Carmel", "Bloomington", "Hammond", "Lafayette", "Muncie", "Gary"],
+        "Kansas": ["Wichita", "Overland Park", "Kansas City", "Olathe", "Topeka", "Lawrence", "Manhattan", "Lenexa", "Salina", "Hutchinson"],
+        "Kentucky": ["Louisville", "Lexington", "Bowling Green", "Owensboro", "Covington", "Georgetown", "Richmond", "Florence", "Hopkinsville", "Elizabethtown"],
+        "Louisiana": ["New Orleans", "Baton Rouge", "Shreveport", "Metairie", "Lafayette", "Lake Charles", "Bossier City", "Kenner", "Monroe", "Alexandria"],
+        "Massachusetts": ["Boston", "Worcester", "Springfield", "Cambridge", "Lowell", "Brockton", "Lynn", "New Bedford", "Quincy", "Fall River"],
+        "Maryland": ["Baltimore", "Columbia", "Germantown", "Silver Spring", "Waldorf", "Ellicott City", "Glen Burnie", "Frederick", "Gaithersburg", "Rockville"],
+        "Maine": ["Portland", "Lewiston", "Bangor", "South Portland", "Auburn", "Brunswick", "Biddeford", "Sanford", "Westbrook", "Saco"],
+        "Michigan": ["Detroit", "Grand Rapids", "Warren", "Sterling Heights", "Ann Arbor", "Lansing", "Dearborn", "Livonia", "Troy", "Farmington Hills"],
+        "Minnesota": ["Minneapolis", "Saint Paul", "Rochester", "Duluth", "Bloomington", "Plymouth", "Brooklyn Park", "Woodbury", "Eagan", "Saint Cloud"],
+        "Missouri": ["Kansas City", "St. Louis", "Springfield", "Columbia", "Independence", "Lee's Summit", "O'Fallon", "St. Joseph", "St. Charles", "Blue Springs"],
+        "Mississippi": ["Jackson", "Gulfport", "Southaven", "Hattiesburg", "Biloxi", "Olive Branch", "Tupelo", "Meridian", "Greenville", "Vicksburg"],
+        "Montana": ["Billings", "Missoula", "Great Falls", "Bozeman", "Butte", "Helena", "Kalispell", "Havre", "Anaconda", "Miles City"],
+        "North Carolina": ["Charlotte", "Raleigh", "Greensboro", "Durham", "Winston-Salem", "Fayetteville", "Cary", "Wilmington", "High Point", "Concord"],
+        "North Dakota": ["Fargo", "Bismarck", "Grand Forks", "Minot", "West Fargo", "Williston", "Mandan", "Dickinson", "Jamestown", "Wahpeton"],
+        "Nebraska": ["Omaha", "Lincoln", "Bellevue", "Grand Island", "Kearney", "Fremont", "Hastings", "Norfolk", "Columbus", "North Platte"],
+        "New Hampshire": ["Manchester", "Nashua", "Concord", "Derry", "Dover", "Rochester", "Salem", "Merrimack", "Londonderry", "Hudson"],
+        "New Jersey": ["Jersey City", "Newark", "Paterson", "Elizabeth", "Lakewood", "Woodbridge", "Edison", "Toms River", "Hamilton", "Trenton"],
+        "New Mexico": ["Albuquerque", "Rio Rancho", "Las Cruces", "Santa Fe", "Hobbs", "Roswell", "Farmington", "Clovis", "Alamogordo", "Carlsbad"],
+        "Nevada": ["Las Vegas", "Henderson", "Reno", "North Las Vegas", "Sparks", "Carson City", "Mesquite", "Elko", "Boulder City", "Fallon"],
+        "New York": ["New York City", "Buffalo", "Yonkers", "Rochester", "Syracuse", "Albany", "New Rochelle", "Mount Vernon", "Schenectady", "Utica"],
+        "Ohio": ["Columbus", "Cleveland", "Cincinnati", "Toledo", "Akron", "Dayton", "Parma", "Canton", "Youngstown", "Lorain"],
+        "Oklahoma": ["Oklahoma City", "Tulsa", "Norman", "Broken Arrow", "Edmond", "Lawton", "Moore", "Midwest City", "Stillwater", "Enid"],
+        "Oregon": ["Portland", "Salem", "Eugene", "Gresham", "Hillsboro", "Bend", "Beaverton", "Medford", "Springfield", "Corvallis"],
+        "Pennsylvania": ["Philadelphia", "Pittsburgh", "Allentown", "Erie", "Reading", "Scranton", "Bethlehem", "Lancaster", "Harrisburg", "York"],
+        "Rhode Island": ["Providence", "Warwick", "Cranston", "Pawtucket", "East Providence", "Woonsocket", "Coventry", "Cumberland", "North Providence", "West Warwick"],
+        "South Carolina": ["Charleston", "Columbia", "North Charleston", "Mount Pleasant", "Rock Hill", "Greenville", "Summerville", "Goose Creek", "Sumter", "Florence"],
+        "South Dakota": ["Sioux Falls", "Rapid City", "Aberdeen", "Brookings", "Watertown", "Mitchell", "Yankton", "Pierre", "Huron", "Vermillion"],
+        "Tennessee": ["Nashville", "Memphis", "Knoxville", "Chattanooga", "Clarksville", "Murfreesboro", "Franklin", "Jackson", "Johnson City", "Kingsport"],
+        "Texas": ["Houston", "San Antonio", "Dallas", "Austin", "Fort Worth", "El Paso", "Arlington", "Corpus Christi", "Plano", "Laredo"],
+        "Utah": ["Salt Lake City", "West Valley City", "West Jordan", "Provo", "Sandy", "Orem", "St. George", "Ogden", "Layton", "Taylorsville"],
+        "Virginia": ["Virginia Beach", "Norfolk", "Chesapeake", "Richmond", "Newport News", "Alexandria", "Hampton", "Roanoke", "Portsmouth", "Suffolk"],
+        "Vermont": ["Burlington", "Essex", "South Burlington", "Colchester", "Rutland", "Bennington", "Brattleboro", "Milton", "Hartford", "Williston"],
+        "Washington": ["Seattle", "Spokane", "Tacoma", "Vancouver", "Bellevue", "Kent", "Everett", "Renton", "Federal Way", "Yakima"],
+        "Wisconsin": ["Milwaukee", "Madison", "Green Bay", "Kenosha", "Racine", "Appleton", "Waukesha", "Eau Claire", "Oshkosh", "Janesville"],
+        "West Virginia": ["Charleston", "Huntington", "Morgantown", "Parkersburg", "Wheeling", "Martinsburg", "Fairmont", "Beckley", "Clarksburg", "Moundsville"],
+        "Wyoming": ["Cheyenne", "Casper", "Laramie", "Gillette", "Rock Springs", "Sheridan", "Green River", "Evanston", "Riverton", "Cody"]
+    };
+
+    stateInput.addEventListener('change', () => {
+        const selectedState = stateInput.value;
+        cityInput.innerHTML = '<option value="">Optional City</option>';
+
+        if (selectedState) {
+            cityList[selectedState].forEach(city => {
+                const option = document.createElement('option');
+                option.value = city;
+                option.textContent = city;
+                cityInput.appendChild(option);
+            });
+        }
+    });
+
+    const socialMediaDorks = {
+        youtube: `"{{OCCUPATION}}" "Email: " "{{EMAIL}}" site:youtube.com`,
+        instagram: `"{{OCCUPATION}}" "Email: " "{{EMAIL}}" site:instagram.com`,
+        linkedin: `"{{OCCUPATION}}" "{{LOCATION}}" "Email: " "{{EMAIL}}" -intitle:"profiles" -inurl:"dir/" (site:linkedin.com/in OR site:linkedin.com/pub)`,
+        twitter: `"{{OCCUPATION}}" "Email: " "{{EMAIL}}" -intitle:"profiles" -inurl:"dir/" site:twitter.com`,
+        facebook: `"{{OCCUPATION}}" "{{LOCATION}}" "Email: " "{{EMAIL}}" -intitle:"profiles" -inurl:"dir/" site:facebook.com`,
+        github: `"{{OCCUPATION}}" "Email: " "{{EMAIL}}" site:github.com`,
+        stackoverflow: `"{{OCCUPATION}}" "Email: " "{{EMAIL}}" site:stackoverflow.com`,
+        pinterest: `"{{OCCUPATION}}" "Email: " "{{EMAIL}}" site:pinterest.com`,
+        reddit: `"{{OCCUPATION}}" "Email: " "{{EMAIL}}" site:reddit.com`,
+        tumblr: `"{{OCCUPATION}}" "Email: " "{{EMAIL}}" site:tumblr.com`,
+        fiverr: `"{{OCCUPATION}}" "Email: " "{{EMAIL}}" site:fiverr.com`,
+        upwork: `"{{OCCUPATION}}" "Email: " "{{EMAIL}}" site:upwork.com`,
+        twitch: `"{{OCCUPATION}}" "Email: " "{{EMAIL}}" site:twitch.tv`,
+        snapchat: `"{{OCCUPATION}}" "Email: " "{{EMAIL}}" site:snapchat.com`,
+        vimeo: `"{{OCCUPATION}}" "Email: " "{{EMAIL}}" site:vimeo.com`,
+        deviantart: `"{{OCCUPATION}}" "Email: " "{{EMAIL}}" site:deviantart.com`,
+        medium: `"{{OCCUPATION}}" "Email: " "{{EMAIL}}" site:medium.com`,
+        meetup: `"{{OCCUPATION}}" "Email: " "{{EMAIL}}" site:meetup.com`,
+        etsy: `"{{OCCUPATION}}" "Email: " "{{EMAIL}}" site:etsy.com`,
+        quora: `"{{OCCUPATION}}" "Email: " "{{EMAIL}}" site:quora.com`,
+        angellist: `"{{OCCUPATION}}" "Email: " "{{EMAIL}}" site:angel.co`,
+        producthunt: `"{{OCCUPATION}}" "Email: " "{{EMAIL}}" site:producthunt.com`,
+        kickstarter: `"{{OCCUPATION}}" "Email: " "{{EMAIL}}" site:kickstarter.com`,
+        indiegogo: `"{{OCCUPATION}}" "Email: " "{{EMAIL}}" site:indiegogo.com`,
+        crunchbase: `"{{OCCUPATION}}" "Email: " "{{EMAIL}}" site:crunchbase.com`,
+        weebly_wix_squarespace: `"{{OCCUPATION}}" "Email: " "{{EMAIL}}" site:weebly.com OR site:wix.com OR site:squarespace.com`
+    };
+
+    function constructEmailDorkQuery(country, city, state, zipCode, emailProvider, occupation, customOccupation, socialMedia) {
+        let dorkQuery = '';
+
+        const domainExtensions = [
+            { id: 'domainComCheckbox', ext: '.com' },
+            { id: 'domainNetCheckbox', ext: '.net' },
+            { id: 'domainOrgCheckbox', ext: '.org' },
+            { id: 'domainCoCheckbox', ext: '.co' },
+            { id: 'domainIoCheckbox', ext: '.io' },
+            { id: 'domainBizCheckbox', ext: '.biz' },
+            { id: 'domainInfoCheckbox', ext: '.info' },
+            { id: 'domainUsCheckbox', ext: '.us' },
+            { id: 'domainStoreCheckbox', ext: '.store' },
+            { id: 'domainShopCheckbox', ext: '.shop' },
+            { id: 'domainMeCheckbox', ext: '.me' },
+            { id: 'domainTvCheckbox', ext: '.tv' },
+            { id: 'domainEduCheckbox', ext: '.edu' },
+            { id: 'domainGovCheckbox', ext: '.gov' },
+            { id: 'domainCaCheckbox', ext: '.ca' },
+            { id: 'domainEuCheckbox', ext: '.eu' },
+            { id: 'domainMxCheckbox', ext: '.mx' },
+            { id: 'domainDeCheckbox', ext: '.de' },
+            { id: 'domainCoUkCheckbox', ext: '.co.uk' },
+            { id: 'domainInCheckbox', ext: '.in' },
+            { id: 'domainAuCheckbox', ext: '.au' },
+            { id: 'domainJpCheckbox', ext: '.jp' },
+            { id: 'domainCnCheckbox', ext: '.cn' },
+            { id: 'domainFrCheckbox', ext: '.fr' },
+            { id: 'domainItCheckbox', ext: '.it' },
+            { id: 'domainBrCheckbox', ext: '.br' },
+            { id: 'domainAsiaCheckbox', ext: '.asia' },
+            { id: 'domainAppCheckbox', ext: '.app' },
+            { id: 'domainProCheckbox', ext: '.pro' },
+            { id: 'domainXyzCheckbox', ext: '.xyz' },
+            { id: 'domainTopCheckbox', ext: '.top' },
+            { id: 'domainClubCheckbox', ext: '.club' },
+            { id: 'domainDesignCheckbox', ext: '.design' },
+            { id: 'domainOnlineCheckbox', ext: '.online' },
+            { id: 'domainSpaceCheckbox', ext: '.space' },
+            { id: 'domainTechCheckbox', ext: '.tech' },
+            { id: 'domainHealthCheckbox', ext: '.health' },
+            { id: 'domainLawCheckbox', ext: '.law' }
+        ];
+
+        const selectedDomainExtensions = domainExtensions
+            .filter(ext => document.getElementById(ext.id).checked)
+            .map(ext => `site:${ext.ext}`);
+
+        const urlTypes = [
+            { id: 'urlContactCheckbox', type: 'contact' },
+            { id: 'urlAboutCheckbox', type: 'about' },
+            { id: 'urlTeamCheckbox', type: 'team' },
+            { id: 'urlStaffCheckbox', type: 'staff' },
+            { id: 'urlSupportCheckbox', type: 'support' },
+            { id: 'urlServicesCheckbox', type: 'services' },
+            { id: 'urlPartnersCheckbox', type: 'partners' },
+            { id: 'urlBlogCheckbox', type: 'blog' },
+            { id: 'urlInfoCheckbox', type: 'info' },
+            { id: 'urlCustomerServiceCheckbox', type: 'customer-service' },
+            { id: 'urlCareersCheckbox', type: 'careers' },
+            { id: 'urlMediaCheckbox', type: 'media' },
+            { id: 'urlPressCheckbox', type: 'press' },
+            { id: 'urlFeedbackCheckbox', type: 'feedback' },
+            { id: 'urlNewsletterCheckbox', type: 'newsletter' },
+            { id: 'urlSalesCheckbox', type: 'sales' },
+            { id: 'urlHelpCheckbox', type: 'help' },
+            { id: 'urlRequestCheckbox', type: 'request' },
+            { id: 'urlProductCheckbox', type: 'product' }
+        ];
+
+        const selectedUrls = urlTypes
+            .filter(url => document.getElementById(url.id).checked)
+            .map(url => `inurl:${url.type}`);
+
+        const urlQuery = selectedUrls.length > 0 ? ` (${selectedUrls.join(' OR ')})` : '';
+        const domainQuery = selectedDomainExtensions.length > 0 ? ` (${selectedDomainExtensions.join(' OR ')})` : '';
+
+        if (socialMedia) {
+            let baseQuery = socialMediaDorks[socialMedia];
+            if (!baseQuery) return null;
+
+            let locationComponents = [];
+            if (country) locationComponents.push(`"${country}"`);
+            if (state) locationComponents.push(`"${state}"`);
+            if (city) locationComponents.push(`"${city}"`);
+            if (zipCode) locationComponents.push(`"${zipCode}"`);
+            
+            let locationComponent = locationComponents.join(' ');
+            let finalOccupation = customOccupation || occupation;
+            let emailProviderComponent = emailProvider ? `"${emailProvider}"` : `"@gmail.com"`;
+
+            dorkQuery = baseQuery.replace('{{OCCUPATION}}', `"${finalOccupation}"`)
+                                 .replace('{{LOCATION}}', locationComponent || '')
+                                 .replace('{{EMAIL}}', emailProviderComponent)
+                                 + ` "Email: "` 
+                                 + urlQuery
+                                 + domainQuery;
+        } else {
+            let finalOccupation = customOccupation || occupation;
+            let clauses = [];
+            
+            const countryComponent = country ? `"${country}"` : '';
+            
+            if (city && state) {
+                clauses.push(
+                    `${emailProvider} ${countryComponent} "${city}" "${state}" "${finalOccupation}"`
+                    + ` "Email: " ${urlQuery} ${domainQuery}`
+                );
+            }
+
+            if (zipCode) {
+                clauses.push(
+                    `${emailProvider} ${countryComponent} "${zipCode}" "${finalOccupation}"`
+                    + ` "Email: " ${urlQuery} ${domainQuery}`
+                );
+            }
+
+            if (country && !city && !state && !zipCode) {
+                clauses.push(
+                    `${emailProvider} ${countryComponent} "${finalOccupation}"`
+                    + ` "Email: " ${urlQuery} ${domainQuery}`
+                );
+            }
+
+            dorkQuery = clauses.join(' OR ');
+        }
+
+        return dorkQuery;
+    }
+
+    async function performEmailDork(query, socialMedia) {
+        try {
+            const searchUrl = `https://www.google.com/search?num=1000&q=${encodeURIComponent(query)}`;
+
+            const botMessage = document.createElement('div');
+            botMessage.className = 'message search-result';
+            let messageText = '';
+            if (socialMedia) {
+                messageText = `Social Media Dork Protocol executed for ${socialMediaInput.options[socialMediaInput.selectedIndex].text}, pilgrim. Scanning 1000 potential contact vectors:<br><br>`;
+            } else {
+                messageText = `Email Dork Protocol executed, pilgrim. Scanning 1000 potential contact vectors for ${emailProviderInput.value}:<br><br>`;
+            }
+
+            botMessage.innerHTML = messageText + `
+                <a href="${searchUrl}" target="_blank" style="color: #00ffff; text-decoration: underline;">Breach contact results</a>
+                <p style="font-size: 0.8em; color: #00ff9d;">Warning: Ethical hacking only. Respect privacy protocols.</p>`;
+
+            chatContainer.appendChild(botMessage);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+
+            emailPromptModal.style.display = 'none';
+        } catch (error) {
+            const errorMessage = document.createElement('div');
+            errorMessage.className = 'message bot-message';
+            errorMessage.textContent = "Dork protocol failed. Neural pathways disrupted. Retry, pilgrim.";
+            chatContainer.appendChild(errorMessage);
+        }
+    }
+
+    async function getAIResponse(message) {
+        try {
+            const response = await fetch('/api/ai_completion', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                },
+                body: JSON.stringify({
+                    prompt: `You are a cyberpunk AI assistant named The Coder. Respond to the user's message in a cyberpunk style, maintaining the personality of a skilled hacker/programmer. Keep responses concise but engaging.
+
+                    <typescript-interface>
+                    interface Response {
+                        reply: string;
+                    }
+                    </typescript-interface>
+                    <example>
+                    {
+                        "reply": "Scanning your inquiries through the neural network, pilgrim. The code speaks truth - your hypothesis about quantum algorithms checks out."
+                    }
+                    </example>`,
+                    data: message
+                }),
+            });
+            const data = await response.json();
+            return data.reply;
+        } catch (error) {
+            console.error('Error fetching AI response:', error);
+            return 'Error in neural network connection. Please retry, pilgrim.';
+        }
+    }
+
+    async function sendMessage() {
+        const messageText = userInput.value.trim();
+        if (messageText === '') return;
+
+        const userMessage = document.createElement('div');
+        userMessage.className = 'message user-message';
+        userMessage.textContent = messageText;
+        chatContainer.appendChild(userMessage);
+
+        typingIndicator.style.display = 'block';
+        chatContainer.scrollTop = chatContainer.scrollHeight;
+
+        if (messageText.startsWith('/email')) {
+            const customQuery = messageText.slice(6).trim();
+
+            if (customQuery) {
+                const dorkQuery = [
+                    `"@gmail.com" "${customQuery}"`,
+                    `"@yahoo.com" "${customQuery}"`,
+                    `"@outlook.com" "${customQuery}"`,
+                    `"@hotmail.com" "${customQuery}"`,
+                    `site:.com "${customQuery}" email OR contact OR "get in touch"`,
+                    `site:.org "${customQuery}" email OR contact OR "get in touch"`,
+                    `site:.gov "${customQuery}" email OR contact OR "get in touch"`
+                ].join(' OR ');
+
+                const searchUrl = `https://www.google.com/search?num=1000&q=${encodeURIComponent(dorkQuery)}`;
+
+                const botMessage = document.createElement('div');
+                botMessage.className = 'message search-result';
+                botMessage.innerHTML = `Custom Email Dork Protocol executed, pilgrim. Scanning 1000 potential contact vectors for "${customQuery}":<br><br>
+                    <a href="${searchUrl}" target="_blank" style="color: #00ffff; text-decoration: underline;">Breach custom email query results</a>
+                    <p style="font-size: 0.8em; color: #00ff9d;">Warning: Ethical hacking only. Respect privacy protocols.</p>`;
+
+                chatContainer.appendChild(botMessage);
+                chatContainer.scrollTop = chatContainer.scrollHeight;
+            } else {
+                emailPromptModal.style.display = 'flex';
+            }
+            typingIndicator.style.display = 'none';
+        } else {
+            setTimeout(async () => {
+                typingIndicator.style.display = 'none';
+
+                const aiResponse = await getAIResponse(messageText);
+                const botMessage = document.createElement('div');
+                botMessage.className = 'message bot-message';
+                botMessage.textContent = aiResponse;
+                chatContainer.appendChild(botMessage);
+
+                chatContainer.scrollTop = chatContainer.scrollHeight;
+            }, 1500);
+        }
+
+        userInput.value = '';
+    }
+
+    sendButton.addEventListener('click', sendMessage);
+
+    userInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            sendMessage();
+        }
+    });
+
+    startEmailDorkButton.addEventListener('click', () => {
+        const city = cityInput.value;
+        const state = stateInput.value;
+        const zipCode = zipCodeInput.value.trim();
+        const emailProvider = emailProviderInput.value;
+        const occupation = occupationInput.value;
+        const customOccupation = customOccupationInput.value.trim();
+        const socialMedia = socialMediaInput.value;
+        const country = document.getElementById('countryDropdown').value || countryInput.value.trim().replace(/"/g, '');
+
+        if (!emailProvider && !socialMedia) {
+            alert('Please select an email provider or social media, pilgrim.');
+            return;
+        }
+
+        const dorkQuery = constructEmailDorkQuery(
+            country,
+            city,
+            state,
+            zipCode,
+            emailProvider,
+            occupation,
+            customOccupation,
+            socialMedia
+        );
+
+        if (dorkQuery) {
+            performEmailDork(dorkQuery, socialMedia);
+        } else {
+            alert('Error constructing dork query. Check parameters, pilgrim.');
+        }
+    });
+
+    document.querySelectorAll('.donate-button').forEach(button => {
+        button.addEventListener('click', () => {
+            window.open('https://711131719.xyz/donate.html', '_blank');
+        });
+    });
+
+    chatContainer.addEventListener('wheel', (event) => {
+        event.preventDefault();
+        chatContainer.scrollLeft += event.deltaY;
+    }, { passive: false });
+
+    document.getElementById('domainExtensionsHeader').addEventListener('click', function() {
+        const content = document.getElementById('domainExtensionsContent');
+        const header = this.querySelector('h4');
+        
+        if (content.style.display === 'none') {
+            content.style.display = 'block';
+            header.textContent = 'Domain Extensions ▲';
+        } else {
+            content.style.display = 'none';
+            header.textContent = 'Domain Extensions ▼';
+        }
+    });
+
+    document.getElementById('urlSearchTypesHeader').addEventListener('click', function() {
+        const content = document.getElementById('urlSearchTypesContent');
+        const header = this.querySelector('h4');
+        
+        if (content.style.display === 'none') {
+            content.style.display = 'block';
+            header.textContent = 'URL Search Types ▲';
+        } else {
+            content.style.display = 'none';
+            header.textContent = 'URL Search Types ▼';
+        }
+    });
+</script>
+</body>
+</html>
