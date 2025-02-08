@@ -1,0 +1,705 @@
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Useful Windows Tips - Third-Party Tools</title>
+  <link rel="stylesheet" href="styles.css">
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <style>body {
+  font-family: 'Rajdhani', sans-serif;
+  line-height: 1.6;
+  margin: 0;
+  padding: 0;
+  color: #00f7ff;
+  background-color: #000;
+  font-weight: 400;
+  font-size: 1.2rem;
+}
+
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Rajdhani:wght@400;600;700&display=swap');
+
+header {
+  background: linear-gradient(45deg, #001a33 0%, #00081a 100%);
+  padding: 1rem;
+  border-bottom: 2px solid #00ff9f;
+  box-shadow: 0 0 20px rgba(0, 255, 159, 0.3);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.header-title {
+  fill: #00ff9f;
+  font-family: 'Orbitron', sans-serif;
+  font-size: 2.5rem;
+  text-shadow: 0 0 15px rgba(0, 255, 159, 0.8);
+  letter-spacing: 2px;
+  margin: 0;
+  padding: 0.5rem 0;
+  text-align: center;
+  animation: titleGlow 2s ease-in-out infinite alternate;
+}
+
+@keyframes titleGlow {
+  from {
+    text-shadow: 0 0 10px rgba(0, 255, 159, 0.6),
+                  0 0 20px rgba(0, 255, 159, 0.4),
+                  0 0 30px rgba(0, 255, 159, 0.2);
+  }
+  to {
+    text-shadow: 0 0 20px rgba(0, 255, 159, 0.8),
+                 0 0 30px rgba(0, 255, 159, 0.6),
+                 0 0 40px rgba(0, 255, 159, 0.4);
+  }
+}
+
+.tool-link {
+  color: #00f7ff;
+  text-decoration: none;
+  position: relative;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  text-shadow: 0 0 8px rgba(0, 247, 255, 0.4);
+  background: linear-gradient(90deg, transparent, rgba(0, 247, 255, 0.1), transparent);
+  padding: 2px 5px;
+  border-radius: 3px;
+}
+
+.tool-link::after {
+  content: '';
+  position: absolute;
+  width: 100%;
+  transform: scaleX(0);
+  height: 2px;
+  bottom: 0;
+  left: 0;
+  background: #00ff9f;
+  transform-origin: bottom right;
+  transition: transform 0.25s ease-out;
+}
+
+.tool-link:hover {
+  color: #ff00ff;
+  text-shadow: 0 0 15px rgba(255, 0, 255, 0.8);
+}
+
+.tool-link:hover::after {
+  transform: scaleX(1);
+  transform-origin: bottom left;
+}
+
+.nav-link {
+  color: #00f7ff;
+  text-decoration: none;
+  font-size: 1.1rem;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.nav-link::before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: #00ff9f;
+  transition: width 0.3s ease;
+}
+
+.nav-link:hover::before {
+  width: 100%;
+}
+
+.nav-link:hover {
+  color: #ff00ff;
+  text-shadow: 0 0 15px rgba(255, 0, 255, 0.6);
+}
+
+.navigation ul {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  padding: 0;
+  margin: 1rem 0;
+  flex-wrap: wrap;
+}
+
+.nav-list {
+  display: inline-flex;
+  list-style: none;
+  gap: 2rem;
+  padding: 0;
+}
+
+/* Mobile nav styles */
+@media (max-width: 768px) {
+  .nav-list {
+    flex-direction: column;
+    text-align: center;
+    gap: 0.5rem;
+  }
+
+  .header-title {
+    font-size: 2rem;
+  }
+}
+
+h1, h2, h3 {
+  font-family: 'Orbitron', sans-serif;
+  text-transform: uppercase;
+  position: relative;
+}
+
+h1 {
+  font-size: 2.8rem;
+  margin-bottom: 2rem;
+  animation: titleGlow 2s ease-in-out infinite alternate;
+}
+
+section h1, section h2, section h3 {
+  text-align: center !important;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.tool-item {
+  background: rgba(17, 17, 17, 0.9);
+  border: 1px solid #003366;
+  position: relative;
+  overflow: hidden;
+}
+
+.tool-item::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(45deg,
+    transparent 20%,
+    rgba(0, 255, 159, 0.1) 50%,
+    transparent 80%);
+  animation: scan 6s linear infinite;
+  pointer-events: none;
+}
+
+@keyframes scan {
+  0% { transform: translateY(-100%) rotate(45deg); }
+  100% { transform: translateY(100%) rotate(45deg); }
+}
+
+pre code {
+  color: #00ff9f;
+  text-shadow: 0 0 10px rgba(0, 255, 159, 0.3);
+}
+
+table a {
+  color: #00ff9f;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  padding: 2px 4px;
+  border-radius: 2px;
+}
+
+table a:hover {
+  color: #ff00ff;
+  text-shadow: 0 0 10px rgba(255,0,255,0.5);
+  background: rgba(255,255,255,0.1);
+}
+
+table td:nth-child(4) a::after {
+  content: "";
+  margin-left: 0;
+  font-size: 0;
+}
+
+.tool-link, .nav-link, table a {
+  position: relative;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.copy-btn {
+  background: rgba(0, 55, 102, 0.8);
+  border: 1px solid #00f7ff;
+  color: #00f7ff;
+  transition: all 0.3s ease;
+}
+
+.copy-btn:hover {
+  background: rgba(0, 247, 255, 0.2);
+  box-shadow: 0 0 10px rgba(0, 247, 255, 0.3);
+}
+
+/* Mobile styles for titles */
+@media (max-width: 768px) {
+  h1 {
+    font-size: 2rem;
+  }
+}</style>
+  <header>
+    <h1 class="header-title">SUDO-MASTER</h1>
+    <nav class="navigation">
+      <ul class="nav-list">
+        <li class="nav-item"><a href="#home" class="nav-link">Essential</a></li>
+        <li class="nav-item"><a href="#third-party-tools" class="nav-link">Enhanced</a></li>
+        <li class="nav-item"><a href="#more2" class="nav-link">Proficient</a></li>
+        <li class="nav-item"><a href="#more3" class="nav-link">Elite</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <section id="more">
+      <h1 style="text-align: center;">Essential Setup</h1>
+      <div class="intro-text">
+        <p>
+          These are already on your PC and can make a huge difference when used correctly.
+        </p>
+      </div>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Tool</th>
+            <th>What It Does</th>
+            <th>How to Use</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Task Manager (Ctrl + Shift + Esc)</td>
+            <td>Identifies resource-heavy apps</td>
+            <td>Check what’s using CPU, RAM, and Disk</td>
+          </tr>
+          <tr>
+            <td>Resource Monitor (resmon)</td>
+            <td>Advanced system monitoring</td>
+            <td>See what’s hogging disk or network</td>
+          </tr>
+          <tr>
+            <td>Disk Cleanup (cleanmgr)</td>
+            <td>Removes junk files</td>
+            <td>Run with admin privileges for full cleanup</td>
+          </tr>
+          <tr>
+            <td>Storage Sense</td>
+            <td>Auto-cleans temp/junk files</td>
+            <td>Settings > Storage > Storage Sense > Turn On</td>
+          </tr>
+          <tr>
+            <td>Windows Defender (Windows Security)</td>
+            <td>Built-in antivirus & security</td>
+            <td>Keep updated & run periodic scans</td>
+          </tr>
+          <tr>
+            <td>PowerShell (powershell)</td>
+            <td>Advanced system tweaks</td>
+            <td>Use it for deep performance optimization</td>
+          </tr>
+          <tr>
+            <td>Performance Monitor (perfmon)</td>
+            <td>Analyzes system performance</td>
+            <td>Helps find bottlenecks in CPU, RAM, and disk</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h1 style="text-align: center;">(No Download Required)</h1>
+      <div class="intro-text">
+        <p>
+          These tools come pre-installed on Windows and help with system maintenance and performance.
+        </p>
+      </div>
+
+      <ul class="tool-list">
+        <li class="tool-item">
+          <h2 class="tool-name">Windows Defender (Microsoft Defender Antivirus)</h2>
+          <p class="tool-description"><span class="bullet-point">🔹</span>Protects against viruses, malware, and spyware in real-time</p>
+          <p class="tool-description"><span class="bullet-point">🔹</span>Runs automatically but can be manually scanned via Windows Security settings</p>
+        </li>
+
+        <li class="tool-item">
+          <h2 class="tool-name">Windows Disk Cleanup</h2>
+          <p class="tool-description"><span class="bullet-point">🔹</span>Cleans up temporary files, system cache, and unnecessary data to free up space</p>
+          <p class="tool-description"><span class="bullet-point">🔹</span>Access by searching “Disk Cleanup” in the Start menu</p>
+        </li>
+
+        <li class="tool-item">
+          <h2 class="tool-name">Windows Defragmenter (Optimize Drives)</h2>
+          <p class="tool-description"><span class="bullet-point">🔹</span>Optimizes HDD performance by rearranging fragmented data</p>
+          <p class="tool-description"><span class="bullet-point">🔹</span>SSDs don’t need defragmenting but get trimmed for better efficiency</p>
+          <p class="tool-description"><span class="bullet-point">🔹</span>Open via “Defragment and Optimize Drives” in Windows</p>
+        </li>
+      </ul>
+
+      <section id="third-party-tools">
+        <h1 style="text-align: center;">Enhanced Setup</h1>
+
+        <div class="intro-text">
+          <p>
+            Enhance your Windows experience with these carefully selected third-party tools
+            for better performance, security, and system maintenance.
+          </p>
+        </div>
+
+        <ul class="tool-list">
+          <li class="tool-item">
+            <h2 class="tool-name"><a href="https://www.opera.com/gx" class="tool-link">Opera GX Browser</a></h2>
+            <a href="https://www.opera.com/gx" class="tool-link">https://www.opera.com/gx</a>
+            <p class="tool-description"><span class="bullet-point">🔹</span>A gaming-focused web browser with built-in RAM, CPU, and network limiters.</p>
+            <p class="tool-description"><span class="bullet-point">🔹</span>GX Cleaner removes browser cache, history, and junk files to improve speed.</p>
+          </li>
+
+          <li class="tool-item">
+            <h2 class="tool-name"><a href="https://www.malwarebytes.com" class="tool-link">Malwarebytes</a></h2>
+            <a href="https://www.malwarebytes.com" class="tool-link">https://www.malwarebytes.com</a>
+            <p class="tool-description"><span class="bullet-point">🔹</span>Advanced malware removal tool for scanning viruses, ransomware, and adware.</p>
+            <p class="tool-description"><span class="bullet-point">🔹</span>Works alongside Windows Defender for extra protection.</p>
+          </li>
+
+          <li class="tool-item">
+            <h2 class="tool-name"><a href="https://www.ccleaner.com/ccleaner" class="tool-link">CCleaner</a></h2>
+            <a href="https://www.ccleaner.com/ccleaner" class="tool-link">https://www.ccleaner.com/ccleaner</a>
+            <p class="tool-description"><span class="bullet-point">🔹</span>Cleans junk files, browser caches, and invalid registry entries.</p>
+            <p class="tool-description"><span class="bullet-point">🔹</span>Also manages startup programs to improve boot speed.</p>
+          </li>
+
+          <li class="tool-item">
+            <h2 class="tool-name"><a href="https://www.ccleaner.com/defraggler" class="tool-link">Defraggler</a></h2>
+            <a href="https://www.ccleaner.com/defraggler" class="tool-link">https://www.ccleaner.com/defraggler</a>
+            <p class="tool-description"><span class="bullet-point">🔹</span>Alternative to Windows Defragmenter with more control over HDD optimization.</p>
+            <p class="tool-description"><span class="bullet-point">🔹</span>Allows defragmenting specific files or folders.</p>
+          </li>
+
+          <li class="tool-item">
+            <h2 class="tool-name"><a href="https://crystalmark.info/en/software/crystaldiskinfo/" class="tool-link">CrystalDiskInfo</a></h2>
+            <a href="https://crystalmark.info/en/software/crystaldiskinfo/" class="tool-link">https://crystalmark.info/en/software/crystaldiskinfo/</a>
+            <p class="tool-description"><span class="bullet-point">🔹</span>Monitors HDD & SSD health, temperature, and performance.</p>
+            <p class="tool-description"><span class="bullet-point">🔹</span>Alerts users about failing drives before they crash.</p>
+          </li>
+
+          <li class="tool-item">
+            <h2 class="tool-name"><a href="https://www.seagate.com/support/downloads/seatools/" class="tool-link">SeaTools</a></h2>
+            <a href="https://www.seagate.com/support/downloads/seatools/" class="tool-link">https://www.seagate.com/support/downloads/seatools/</a>
+            <p class="tool-description"><span class="bullet-point">🔹</span>Diagnoses Seagate and non-Seagate hard drives for bad sectors and failures.</p>
+          </li>
+
+          <li class="tool-item">
+            <h2 class="tool-name"><a href="https://www.msi.com/page/afterburner" class="tool-link">MSI Afterburner</a></h2>
+            <a href="https://www.msi.com/page/afterburner" class="tool-link">https://www.msi.com/page/afterburner</a>
+            <p class="tool-description"><span class="bullet-point">🔹</span>GPU overclocking tool to boost graphics performance.</p>
+            <p class="tool-description"><span class="bullet-point">🔹</span>Also monitors FPS, temperatures, and system stats.</p>
+          </li>
+
+          <li class="tool-item">
+            <h2 class="tool-name"><a href="https://sdi-tool.org/" class="tool-link">Snappy Driver Installer</a></h2>
+            <a href="https://sdi-tool.org/" class="tool-link">https://sdi-tool.org/</a>
+            <p class="tool-description"><span class="bullet-point">🔹</span>Updates missing and outdated drivers for better performance and stability.</p>
+            <p class="tool-description"><span class="bullet-point">🔹</span>Works offline with a full driver pack.</p>
+          </li>
+
+          <li class="tool-item">
+            <h2 class="tool-name"><a href="https://www.revouninstaller.com/" class="tool-link">Revo Uninstaller</a></h2>
+            <a href="https://www.revouninstaller.com/" class="tool-link">https://www.revouninstaller.com/</a>
+            <p class="tool-description"><span class="bullet-point">🔹</span>Completely removes programs, including leftover files and registry entries.</p>
+            <p class="tool-description"><span class="bullet-point">🔹</span>Helps get rid of stubborn or broken installations.</p>
+          </li>
+        </ul>
+
+        <section>
+          <h1 style="text-align: center;">Third-Party Performance Tools</h1>
+          <div class="intro-text">
+            <p>
+              These tools take optimization to the next level.
+            </p>
+          </div>
+
+          <table>
+            <thead>
+              <tr>
+                <th>Tool</th>
+                <th>What It Does</th>
+                <th>Why It's Useful</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><a href="https://www.oosoftware.com/en/shutup10">O&O ShutUp10++</a></td>
+                <td>Disables Windows telemetry, background services</td>
+                <td>Reduces background activity & boosts speed</td>
+                <td><a href="https://www.oosoftware.com/en/shutup10"></a></td>
+              </tr>
+              <tr>
+                <td><a href="https://bitsum.com/">Process Lasso</a></td>
+                <td>Manages CPU priority intelligently</td>
+                <td>Prevents system slowdowns from heavy apps</td>
+                <td><a href="https://bitsum.com/"></a></td>
+              </tr>
+              <tr>
+                <td><a href="https://wiztreefree.com/">WizTree</a></td>
+                <td>Super-fast disk usage analyzer</td>
+                <td>Identifies large files/folders instantly</td>
+                <td><a href="https://wiztreefree.com/"></a></td>
+              </tr>
+              <tr>
+                <td><a href="https://docs.microsoft.com/en-us/sysinternals/downloads/autoruns">Autoruns</a></td>
+                <td>Shows everything running at startup</td>
+                <td>Helps disable hidden startup programs</td>
+                <td><a href="https://docs.microsoft.com/en-us/sysinternals/downloads/autoruns"></a></td>
+              </tr>
+              <tr>
+                <td><a href="https://www.msi.com/page/afterburner">MSI Afterburner</a></td>
+                <td>GPU & system monitoring</td>
+                <td>Essential for gaming & temperature control</td>
+                <td><a href="https://www.msi.com/page/afterburner"></a></td>
+              </tr>
+              <tr>
+                <td><a href="https://www.ccleaner.com/ccleaner">CCleaner</a> (Custom Setup)</td>
+                <td>Cleans up unnecessary junk</td>
+                <td>Only use the custom cleaner, not the registry fixer</td>
+                <td><a href="https://www.ccleaner.com/ccleaner"></a></td>
+              </tr>
+              <tr>
+                <td><a href="https://www.iobit.com/en/advancedsystemcarefree.php">Advanced SystemCare</a></td>
+                <td>All-in-one performance booster</td>
+                <td>Cleans junk, optimizes startup, fixes issues</td>
+                <td><a href="https://www.iobit.com/en/advancedsystemcarefree.php"></a></td>
+              </tr>
+              <tr>
+                <td><a href="https://www.speedguide.net/downloads.php">TCP Optimizer</a></td>
+                <td>Optimizes internet speed</td>
+                <td>Tweaks Windows network settings for faster browsing</td>
+                <td><a href="https://www.speedguide.net/downloads.php"></a></td>
+              </tr>
+              <tr>
+                <td><a href="https://www.henrypp.org/product/memreduct">Mem Reduct</a></td>
+                <td>Frees up RAM instantly</td>
+                <td>Helps reduce memory usage in low-RAM systems</td>
+                <td><a href="https://www.henrypp.org/product/memreduct"></a></td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
+      </section>
+    </section>
+
+    <section id="more2">
+      <h1 style="text-align: center;">Proficient Setup</h1>
+      <div class="intro-text">
+        <p>
+          These tweaks will maximize your PC speed and reduce lag.
+        </p>
+      </div>
+
+      <section>
+        <h2 style="text-align: center;">1️⃣ Optimize Startup & Background Services</h2>
+        <ul class="tool-list">
+          <li class="tool-item">
+            <h3 class="tool-name">🔹 Disable Startup Programs</h3>
+            <p class="tool-description">Open Task Manager > Startup and disable everything unnecessary</p>
+          </li>
+          <li class="tool-item">
+            <h3 class="tool-name">🔹 Disable Background Apps</h3>
+            <p class="tool-description">Settings > Privacy > Background Apps > Turn off unneeded apps</p>
+          </li>
+          <li class="tool-item">
+            <h3 class="tool-name">🔹 Disable Unnecessary Services</h3>
+            <p class="tool-description">Open services.msc, disable:</p>
+            <ul class="tool-list">
+              <li class="tool-item"><p class="tool-description">SysMain (Superfetch)</p></li>
+              <li class="tool-item"><p class="tool-description">Windows Search (if not using it)</p></li>
+              <li class="tool-item"><p class="tool-description">Fax</p></li>
+              <li class="tool-item"><p class="tool-description">Remote Registry</p></li>
+              <li class="tool-item"><p class="tool-description">Connected User Experiences and Telemetry</p></li>
+            </ul>
+          </li>
+        </ul>
+      </section>
+
+      <section>
+        <h2 style="text-align: center;">2️⃣ Fix High Disk & CPU Usage</h2>
+        <ul class="tool-list">
+          <li class="tool-item">
+            <h3 class="tool-name">🔹 Set Pagefile (Virtual Memory) Manually</h3>
+            <p class="tool-description">Control Panel > System > Advanced System Settings > Performance > Virtual Memory</p>
+            <p class="tool-description">Set Initial: <code>1024MB</code> | Max: <code>4096MB</code></p>
+          </li>
+          <li class="tool-item">
+            <h3 class="tool-name">🔹 Disable Search Indexing</h3>
+            <p class="tool-description"><code>services.msc</code> > Windows Search > Disable (Only if you don’t use search often)</p>
+          </li>
+          <li class="tool-item">
+            <h3 class="tool-name">🔹 Defragment or Trim Your Drive</h3>
+            <p class="tool-description">Open Defragment and Optimize Drives → Optimize your HDD (for SSD, just trim)</p>
+          </li>
+        </ul>
+      </section>
+
+      <section>
+        <h2 style="text-align: center;">3️⃣ Improve Gaming & High-Performance Mode</h2>
+        <ul class="tool-list">
+          <li class="tool-item">
+            <h3 class="tool-name">🔹 Enable Ultimate Performance Mode</h3>
+            <p class="tool-description">Run this command in PowerShell (Admin):</p>
+            <pre><code>powercfg -duplicatescheme e9a42b02-d5df-448d-aa00-03f14749eb61</code></pre>
+            <p class="tool-description">Select Ultimate Performance from Power Options</p>
+          </li>
+          <li class="tool-item">
+            <h3 class="tool-name">🔹 Turn Off Xbox Game DVR & Background Recording</h3>
+            <p class="tool-description">Settings > Gaming > Captures > Turn Off Background Recording</p>
+          </li>
+          <li class="tool-item">
+            <h3 class="tool-name">🔹 Enable Hardware-Accelerated GPU Scheduling (If Supported)</h3>
+            <p class="tool-description">Settings > System > Display > Graphics Settings > Turn On</p>
+          </li>
+          <li class="tool-item">
+            <h3 class="tool-name">🔹 Use Intelligent Game Boosters</h3>
+            <ul class="tool-list">
+              <li class="tool-item"><p class="tool-description"><a href="https://www.razer.com/cortex">Razer Cortex</a>: Automatically kills background tasks</p></li>
+              <li class="tool-item"><p class="tool-description"><a href="https://www.msi.com/page/afterburner">MSI Afterburner</a>: Helps optimize GPU performance</p></li>
+            </ul>
+          </li>
+        </ul>
+      </section>
+
+      <section>
+        <h2 style="text-align: center;">4️⃣ Reduce Internet Lag & Latency</h2>
+        <ul class="tool-list">
+          <li class="tool-item">
+            <h3 class="tool-name">🔹 Disable Bandwidth-Hogging Services</h3>
+            <p class="tool-description">Open PowerShell (Admin) and run:</p>
+            <pre><code>net stop wuauserv
+net stop bits</code></pre>
+            <p class="tool-description">(This stops Windows Updates temporarily)</p>
+          </li>
+          <li class="tool-item">
+            <h3 class="tool-name">🔹 Use DNS for Faster Browsing</h3>
+            <p class="tool-description">Change to Google DNS (<code>8.8.8.8</code>, <code>8.8.4.4</code>) or Cloudflare DNS (<code>1.1.1.1</code>, <code>1.0.0.1</code>)</p>
+          </li>
+          <li class="tool-item">
+            <h3 class="tool-name">🔹 Disable Windows Auto-Updates for a Lag-Free Experience</h3>
+            <p class="tool-description">Run <a href="https://www.oosoftware.com/en/shutup10">O&O ShutUp10++</a> and disable Windows auto-updates</p>
+          </li>
+        </ul>
+      </section>
+
+      <section>
+        <h2 style="text-align: center;">5️⃣ Deep System Cleaning & Maintenance</h2>
+        <ul class="tool-list">
+          <li class="tool-item">
+            <h3 class="tool-name">🔹 Run Disk Cleanup (Admin Mode)</h3>
+            <p class="tool-description">Run:</p>
+            <pre><code>cleanmgr /sageset:1</code></pre>
+            <p class="tool-description">Select everything, click OK, then run:</p>
+            <pre><code>cleanmgr /sagerun:1</code></pre>
+          </li>
+          <li class="tool-item">
+            <h3 class="tool-name">🔹 Run SFC and DISM to Fix Corrupt Files</h3>
+            <p class="tool-description">Open Command Prompt (Admin) and run:</p>
+            <pre><code>sfc /scannow
+dism /online /cleanup-image /restorehealth</code></pre>
+          </li>
+          <li class="tool-item">
+            <h3 class="tool-name">🔹 Check & Fix Disk Errors</h3>
+            <p class="tool-description">Run:</p>
+            <pre><code>chkdsk /f /r C:</code></pre>
+          </li>
+        </ul>
+      </section>
+    </section>
+
+    <section id="more3">
+      <h1 style="text-align: center;">Elite Setup</h1>
+      <div class="intro-text">
+        <p>
+          If you want the best Windows experience, do this:
+        </p>
+      </div>
+      <ul class="tool-list">
+        <li class="tool-item">
+          <p class="tool-description">✅ Disable Startup Junk (Task Manager > Startup)</p>
+          <p class="tool-description">Navigate to Task Manager by pressing <code>Ctrl + Shift + Esc</code>, go to the Startup tab, and disable any programs that are not necessary to launch at startup. This reduces boot time and background processes</p>
+        </li>
+        <li class="tool-item">
+          <p class="tool-description">✅ Turn Off Background Apps (Settings > Privacy > Background Apps)</p>
+          <p class="tool-description">Navigate to Settings > Privacy > Background Apps. Toggle off the switch for "Let apps run in the background." This prevents unnecessary apps from using system resources when you're not actively using them, reducing memory usage and improving overall performance</p>
+        </li>
+        <li class="tool-item">
+          <p class="tool-description">✅ Use <a href="https://www.oosoftware.com/en/shutup10">O&O ShutUp10++</a> (Disables bloatware & telemetry)</p>
+          <p class="tool-description">Download and run <a href="https://www.oosoftware.com/en/shutup10">O&O ShutUp10++</a> (a free privacy tool). It provides a comprehensive list of privacy settings, including the disabling of unnecessary telemetry, background services, and bloatware apps that send data back to Microsoft. Use this tool to fine-tune your system’s privacy by disabling services that aren’t essential for the user experience</p>
+        </li>
+        <li class="tool-item">
+          <p class="tool-description">✅ Enable Ultimate Performance Mode (<pre><code>powercfg -duplicatescheme e9a42b02-d5df-448d-aa00-03f14749eb61</code></pre>)</p>
+          <p class="tool-description">Open Command Prompt as Administrator. Enter the command: <pre><code>powercfg -duplicatescheme e9a42b02-d5df-448d-aa00-03f14749eb61</code></pre>. This activates the Ultimate Performance Mode, a setting designed for high-end systems to ensure maximum performance by reducing power management throttling. It’s not available by default on most consumer systems, so this command enables it</p>
+        </li>
+        <li class="tool-item">
+          <p class="tool-description">✅ Set Pagefile Manually (Virtual Memory)</p>
+          <p class="tool-description">Go to Control Panel > System > Advanced System Settings > Settings (under Performance) > Advanced > Virtual Memory. Uncheck Automatically manage paging file size for all drives and manually set the initial and maximum sizes for the pagefile based on your system's RAM. A good rule of thumb is setting the pagefile size to 1.5x to 3x of your system's RAM to avoid excessive disk usage during high memory tasks</p>
+        </li>
+        <li class="tool-item">
+          <p class="tool-description">✅ Defrag HDD / Trim SSD (Defragment & Optimize Drives)</p>
+          <p class="tool-description">Open Defragment and Optimize Drives from the Start menu. For HDDs, select the disk and click Optimize to defragment it. For SSDs, click Optimize to run the Trim operation, which helps the SSD clean unused blocks and maintain optimal performance. SSDs don't need traditional defragmentation but should be trimmed periodically to maintain speed</p>
+        </li>
+        <li class="tool-item">
+          <p class="tool-description">✅ Use <a href="https://wiztreefree.com/">WizTree</a> to Find Large Files (Clear disk space)</p>
+          <p class="tool-description">Download and run <a href="https://wiztreefree.com/">WizTree</a> to scan your drives for large files and folders. It visually maps the files on your disk to show you which files are taking up the most space. Use it to identify unnecessary files that can be deleted or moved to free up valuable disk space</p>
+        </li>
+        <li class="tool-item">
+          <p class="tool-description">✅ Optimize Gaming Settings (Disable Game DVR, enable GPU scheduling)</p>
+          <p class="tool-description">Open Settings > Gaming > Captures and turn off Record in the background while I'm playing a game (Game DVR). This prevents the Game DVR feature from using system resources and background processing while gaming. Enable Hardware-Accelerated GPU Scheduling (Settings > System > Display > Graphics Settings) to offload GPU scheduling to the dedicated GPU, improving performance in games</p>
+        </li>
+        <li class="tool-item">
+          <p class="tool-description">✅ Disable Search Indexing & SysMain (Superfetch)</p>
+          <p class="tool-description">Open Services (type <code>services.msc</code> in Start Menu). Find and disable Windows Search (Search Indexing). This can improve performance by stopping unnecessary indexing in the background. Disable SysMain (Superfetch), which can sometimes consume resources unnecessarily when trying to optimize memory usage</p>
+        </li>
+        <li class="tool-item">
+          <p class="tool-description">✅ Run SFC, DISM, and CHKDSK to Fix Corruption</p>
+          <p class="tool-description">Run SFC (System File Checker) to check and repair corrupted system files: Open Command Prompt as Administrator and type: <pre><code>sfc /scannow</code></pre>. Use DISM (Deployment Imaging Service and Management Tool) to fix Windows corruption: Type: <pre><code>DISM /Online /Cleanup-Image /RestoreHealth</code></pre> in Command Prompt. Run CHKDSK to check your disk for errors: Type: <pre><code>chkdsk /f</code></pre> and press Enter. Restart the system if it prompts</p>
+        </li>
+        <li class="tool-item">
+          <p class="tool-description">✅ Use <a href="https://bitsum.com/">Process Lasso</a> to Control CPU Usage</p>
+          <p class="tool-description">Install <a href="https://bitsum.com/">Process Lasso</a> to give you more control over CPU usage. It helps prioritize and limit processes that are consuming too many resources, preventing bottlenecks and ensuring that important applications or games get priority processing time. Use the tool to set CPU affinities and limits, as well as auto-balancing tasks for optimized performance</p>
+        </li>
+        <li class="tool-item">
+          <p class="tool-description">✅ Use <a href="https://www.speedguide.net/downloads.php">TCP Optimizer</a> for Better Internet Speeds</p>
+          <p class="tool-description">Download <a href="https://www.speedguide.net/downloads.php">TCP Optimizer</a> and use it to optimize your internet settings. This tool helps tweak network settings such as MTU, RWIN (TCP Receive Window), and DNS settings, improving overall internet speed and reducing latency. You can select a pre-configured optimal setting or customize the settings based on your connection type and hardware</p>
+        </li>
+      </ul>
+    </section>
+  </main>
+
+  <footer>
+    <p style="text-align: center;"> Windows Tips Center 2025 Valhalla Games</p>
+  </footer>
+
+  <script>
+    // Add copy functionality to code blocks
+    document.querySelectorAll('pre').forEach(block => {
+      const button = document.createElement('button');
+      button.className = 'copy-btn';
+      button.textContent = 'Copy';
+
+      button.addEventListener('click', () => {
+        const code = block.querySelector('code');
+        navigator.clipboard.writeText(code.textContent).then(() => {
+          button.textContent = 'Copied!';
+          setTimeout(() => {
+            button.textContent = 'Copy';
+          }, 2000);
+        });
+      });
+
+      block.style.position = 'relative';
+      block.appendChild(button);
+    });
+  </script>
+  
+</body>
+</html>
