@@ -1,0 +1,318 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Beast AI - Ultimate AI Creativity Platform</title>
+    <style>
+    :root {
+        --primary: #000000;
+        --secondary: #00fff7;
+        --accent: #00fff7;
+        --gradient-1: #bc13fe;
+        --gradient-2: #00fff7;
+        --neon-pink: #ff00ff;
+        --neon-glow: 0 0 10px var(--secondary), 0 0 20px var(--secondary), 0 0 30px var(--secondary);
+        --neon-green: #39ff14;
+    }
+
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        background: var(--primary);
+        color: var(--secondary);
+        font-family: 'Orbitron', sans-serif;
+        line-height: 1.6;
+    }
+
+    .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 1.5rem;
+    }
+
+    .navbar {
+        background: rgba(0, 0, 0, 0.95);
+        padding: 1rem 0;
+        position: fixed;
+        width: 100%;
+        top: 0;
+        z-index: 1000;
+        border-bottom: 2px solid var(--secondary);
+        box-shadow: var(--neon-glow);
+    }
+
+    .logo {
+        font-size: 2.5rem;
+        font-weight: 900;
+        text-decoration: none;
+        color: var(--secondary);
+        text-shadow: var(--neon-glow);
+        letter-spacing: 2px;
+    }
+
+    .gradient-text {
+        background: linear-gradient(45deg, var(--gradient-1), var(--gradient-2), var(--neon-pink));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        text-shadow: 0 0 15px rgba(0,255,136,0.5);
+    }
+
+    .section-link {
+        display: inline-block;
+        margin: 1.5rem auto 0;
+        padding: 0.8rem 2rem;
+        background: rgba(0, 255, 247, 0.1);
+        border: 2px solid var(--neon-pink);
+        border-radius: 25px;
+        color: var(--neon-pink);
+        text-decoration: none;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        text-shadow: 0 0 10px var(--neon-pink);
+        box-shadow: 0 0 15px var(--neon-pink);
+    }
+
+    .section-link:hover {
+        background: rgba(0, 255, 247, 0.2);
+        transform: scale(1.05);
+        box-shadow: 0 0 25px var(--neon-pink), 0 0 15px var(--secondary);
+    }
+
+    .hero {
+        margin-top: 100px;
+        padding: 4rem 0;
+        text-align: center;
+    }
+
+    .hero h1 {
+        font-size: 2rem;
+        line-height: 1.3;
+        max-width: 1200px;
+        margin: 0 auto 2rem;
+        color: var(--secondary);
+        text-shadow: 0 0 10px var(--neon-green), 
+                   0 0 20px var(--neon-green), 
+                   0 0 30px var(--neon-green),
+                   0 0 40px var(--neon-green);
+        letter-spacing: 1.5px;
+    }
+
+    .hero-content {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 2rem;
+    }
+
+    .model-list,
+    .model-pill,
+    .feature-list {
+        display: none;
+    }
+
+    .feature-card {
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 15px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        transition: transform 0.3s ease;
+    }
+
+    .feature-card h3 {
+        font-size: 2rem;
+        margin-bottom: 1.5rem;
+        text-shadow: 0 0 10px rgba(0,255,136,0.5);
+    }
+
+    .feature-card .content p {
+        font-size: 1.1rem;
+        line-height: 1.7;
+        margin: 1.5rem 0;
+        color: rgba(0, 255, 247, 0.85);
+    }
+
+    .btn {
+        display: inline-block;
+        background: linear-gradient(45deg, var(--gradient-1), var(--neon-pink));
+        color: var(--primary);
+        padding: 0.8rem 1.5rem;
+        border-radius: 25px;
+        text-decoration: none;
+        font-weight: 600;
+        transition: transform 0.2s ease;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .btn::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(
+            90deg,
+            transparent,
+            rgba(255,255,255,0.4),
+            transparent
+        );
+        transition: 0.5s;
+    }
+
+    .btn:hover {
+        transform: scale(1.05);
+    }
+
+    .btn:hover::after {
+        left: 100%;
+    }
+
+    .feature-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 0 15px var(--accent);
+    }
+
+    @media (max-width: 768px) {
+        .hero h1 {
+            font-size: 1.5rem;
+        }
+        
+        .feature-card h3 {
+            font-size: 1.5rem;
+        }
+        
+        .feature-card .content p {
+            font-size: 1rem;
+        }
+    }
+    @keyframes neon-pulse {
+        0% { box-shadow: 0 0 5px var(--secondary), 0 0 5px var(--neon-pink); }
+        100% { box-shadow: 0 0 20px var(--secondary), 0 0 30px var(--secondary), 0 0 20px var(--neon-pink); }
+    }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <a href="https://lmarena.ai" class="logo gradient-text">Beast AI</a>
+        </div>
+    </nav>
+
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <h1>🔥 This is the LAST text prompt you’ll ever need! With 89 chat models at your disposal, you have unlimited power to create, innovate, and automate instantly! 🚀 </h1>
+                <a href="https://lmarena.ai" class="btn" target="_blank">Start Chatting Now</a>
+            </div>
+        </div>
+    </section>
+
+    <section class="features">
+        <div class="container">
+            <div class="feature-card">
+                <h3 class="gradient-text">1. Text Prompts for Ebooks & Blogs 📚</h3>
+                <div class="content">
+                    <p>With simple text prompts, you can profitably generate professional content in minutes! 🚀</p>
+                    <p>By leveraging GPT-4, you can create SEO-optimized blogs and market-ready ebooks that will boost your online presence like never before! 🌟</p>
+                    <p>Say goodbye to writer's block—AI helps maintain expert-level quality while making content creation effortless. 🖋️</p>
+                    <p>Whether you're a blogger or an aspiring author, AI gives you the power to scale your writing business and generate passive income. 💸</p>
+                    <p>Now, with just a few well-crafted prompts, you can become a content machine that produces top-tier material in record time! ⏱️</p>
+                    <a href="https://711131719.xyz/ebooks" class="section-link">Generate Ebooks & Blogs →</a>
+                </div>
+            </div>
+
+            <div class="feature-card">
+                <h3 class="gradient-text">2. Social Media Content Creation 📸</h3>
+                <div class="content">
+                    <p>Turn text prompts into viral content instantly with GPT-4! 🔥<br>
+                    Whether you're crafting high-conversion ads or creative posts, AI ensures your social media is always on point. 🌍<br>
+                    Maintain your brand voice effortlessly, while scaling your presence across all platforms—Facebook, Instagram, Twitter, and beyond! 📲<br>
+                    With AI, creating captivating posts is as easy as typing a few words. 💬<br>
+                    Whether it's engaging captions or full-blown campaigns, you’ll stay ahead of the game, growing your audience and boosting sales! 💥</p>
+                    <a href="https://711131719.xyz/dork" class="section-link">Create Social Magic →</a>
+                </div>
+            </div>
+
+            <div class="feature-card">
+                <h3 class="gradient-text">3. Music Lyrics 🎶</h3>
+                <div class="content">
+                    <p>GPT-4 can turn simple text prompts into trending lyrics for any genre you want! 🎤<br>
+                    Whether it’s pop, rock, rap, or country, you can easily create professional-quality musical content perfect for streaming platforms like Spotify or Apple Music. 🎧<br>
+                    The easy creation process means you can produce your next hit song effortlessly and fast—no need to be a lyricist! 🌟<br>
+                    The power of AI is at your fingertips, letting you experiment with new song ideas and create music that resonates with listeners. 🎵<br>
+                    With AI, your creativity has no limits, and you’ll be ready to release your next big track in no time! 🚀</p>
+                    <a href="https://711131719.xyz/aimusic" class="section-link">Compose AI Music →</a>
+                </div>
+            </div>
+
+            <div class="feature-card">
+                <h3 class="gradient-text">4. Web Design 💻</h3>
+                <div class="content">
+                    <p>No coding skills? No problem! 😎<br>
+                    With text prompts, you can generate complete website code through GPT-4, creating polished, professional sites in minutes! 🌍<br>
+                    Need a landing page or a full e-commerce site? AI can bring your ideas to life without the hassle of learning complex coding languages. 🔧<br>
+                    Whether you're a small business owner or a budding entrepreneur, GPT-4 makes web design effortless, letting you focus on what really matters—growing your brand! 🚀<br>
+                    It's the fastest way to have a professional-looking website without the high costs or time-consuming process. 💡</p>
+                    <a href="https://711131719.xyz/websim/home.html" class="section-link">Build Websites Now →</a>
+                </div>
+            </div>
+
+            <div class="feature-card">
+                <h3 class="gradient-text">5. Code Generation 👨‍💻</h3>
+                <div class="content">
+                    <p>Want to create functional code quickly and easily? 💻 With GPT-4, text descriptions are transformed into working code that solves real problems! ⚡ You don’t need to be a tech expert to deliver custom solutions—AI handles the complex coding while you focus on delivering value to clients. 💼 Whether you’re building apps or websites, GPT-4 makes the development process feel effortless. 🚀 This means faster turnaround times, higher productivity, and the ability to take on more projects—ultimately driving more profits. 💸</p>
+                </div>
+            </div>
+
+            <div class="feature-card">
+                <h3 class="gradient-text">6. Idea Generation 💡</h3>
+                <div class="content">
+                    <p>Need innovative business ideas that push the envelope? 🌟 Let GPT-4 spark your next big breakthrough! Whether you're looking for fresh product concepts or new marketing strategies, AI helps you brainstorm in creative and efficient ways. 💬 The brainstorming process is now faster and more fun than ever, allowing you to generate profitable strategies without spending hours thinking! 🧠 With AI, your ideas will be more innovative, refined, and ready to implement, giving you the edge you need to stay ahead of the competition! 🏆</p>
+                </div>
+            </div>
+
+            <div class="feature-card">
+                <h3 class="gradient-text">7. Script Writing for Videos 🎬</h3>
+                <div class="content">
+                    <p>Create engaging video scripts in no time with GPT-4! 🚀 Whether you're making YouTube explainers, TikTok trends, or commercial scripts, AI helps you write professional content in a fraction of the time. ⏱️ No more spending hours writing—GPT-4 generates everything from captivating introductions to punchy conclusions. 💥 This means more time for filming and editing, ensuring your videos go viral! 🌐 Boost your content creation process, scale your video output, and reach new audiences without the stress of scriptwriting. 🎥</p>
+                </div>
+            </div>
+
+            <div class="feature-card">
+                <h3 class="gradient-text">8. Multimodal Content Creation 🎨</h3>
+                <div class="content">
+                    <p>Get ready to supercharge your campaigns with GPT-4’s multimedia magic! 🌟 With text prompts, AI can generate cohesive campaigns that combine text, visuals, and audio for maximum impact. 📸 Whether it's for social media, websites, or marketing materials, the ability to merge multiple types of content instantly saves you time and resources. ⚡ AI creates high-quality videos, images, and copy in one go, allowing you to reach audiences in the most effective way possible. 📲 Your content creation just became effortless—with AI, everything you need for a high-impact campaign is ready to go! 🎯</p>
+                </div>
+            </div>
+
+            <div class="feature-card">
+                <h3 class="gradient-text">9. AI-Powered Store & Product Creation 🛍️</h3>
+                <div class="content">
+                    <p>With the right text prompts, you can launch a profitable online store in minutes! 🚀</p>
+                    <p>AI helps you discover trending products and identify niche markets before anyone else, giving you a competitive edge. 🔥</p>
+                    <p>From creating compelling product descriptions to generating SEO-optimized listings, AI streamlines your e-commerce business effortlessly. 📝</p>
+                    <p>Whether you're into dropshipping, print-on-demand, or handmade goods, AI can suggest winning products and help you scale fast! 📈</p>
+                    <p>Turn simple prompts into high-converting store content, eye-catching ad copy, and viral marketing strategies—all on autopilot! 💸</p>
+                    <a href="https://711131719.xyz/shop" class="section-link">Launch AI Store →</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // Add random neon glow animation to feature cards
+        document.querySelectorAll('.feature-card').forEach(card => {
+            card.style.animation = `neon-pulse ${Math.random()*2 + 3}s infinite alternate`;
+        });
+    });
+    </script>
+</body>
+</html>
