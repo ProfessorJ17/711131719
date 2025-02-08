@@ -1,12 +1,18 @@
 <html lang="en">
+
 <head>
+  
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Websim.ai: Futuristic Professional Web Design</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700&family=Chakra+Petch:wght@300;400;700&family=Iceland&display=swap" rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700&family=Chakra+Petch:wght@300;400;700&family=Iceland&display=swap"
+    rel="stylesheet">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/gsap@3.11.4/dist/gsap.min.js"></script>
+  <link rel="stylesheet" href="/styles.css">
+  <script src="/script.js" type="module"></script>
   <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
   <style>
     :root {
@@ -14,10 +20,8 @@
       --secondary: #009ffd;
       --accent: #ff3c00;
       --text: #f5f5f5;
-      --futuristic-glow: 0 0 20px rgba(0, 159, 253, 0.5);
-      --hover-transition: all 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
     }
-    
+
     * {
       box-sizing: border-box;
       margin: 0;
@@ -96,9 +100,9 @@
       width: 100%;
       height: 100%;
       background: linear-gradient(
-        120deg, 
-        transparent, 
-        rgba(0, 159, 253, 0.2), 
+        120deg,
+        transparent,
+        rgba(0, 159, 253, 0.2),
         transparent
       );
       transition: all 0.5s ease;
@@ -199,7 +203,7 @@
       min-height: 100vh;
       display: flex;
       align-items: center;
-      border-bottom: 2px solid rgba(255,255,255,0.1);
+      border-bottom: 2px solid rgba(255, 255, 255, 0.1);
     }
 
     .scroll-effect {
@@ -224,10 +228,23 @@
     }
 
     @keyframes float {
-      0%, 100% { transform: translate(0, 0) rotate(0deg); }
-      25% { transform: translate(100px, 50px) rotate(90deg); }
-      50% { transform: translate(-50px, 100px) rotate(180deg); }
-      75% { transform: translate(50px, -50px) rotate(270deg); }
+
+      0%,
+      100% {
+        transform: translate(0, 0) rotate(0deg);
+      }
+
+      25% {
+        transform: translate(100px, 50px) rotate(90deg);
+      }
+
+      50% {
+        transform: translate(-50px, 100px) rotate(180deg);
+      }
+
+      75% {
+        transform: translate(50px, -50px) rotate(270deg);
+      }
     }
 
     .glow {
@@ -235,39 +252,51 @@
     }
 
     @keyframes glow {
-      from { filter: drop-shadow(0 0 5px rgba(255,60,0,0.5)); }
-      to { filter: drop-shadow(0 0 20px rgba(255,60,0,0.8)); }
+      from {
+        filter: drop-shadow(0 0 5px rgba(255, 60, 0, 0.5));
+      }
+
+      to {
+        filter: drop-shadow(0 0 20px rgba(255, 60, 0, 0.8));
+      }
     }
+
     .guide-section {
       background: rgba(42, 42, 114, 0.2);
       border-radius: 15px;
       padding: 2rem;
       margin-top: 2rem;
       backdrop-filter: blur(10px);
-      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
     }
+
     .guide-section h2 {
       color: var(--secondary);
       margin-bottom: 1.5rem;
       text-align: center;
     }
+
     .guide-step {
       margin-bottom: 1.5rem;
       padding: 1rem;
-      background: rgba(0,0,0,0.3);
+      background: rgba(0, 0, 0, 0.3);
       border-radius: 10px;
       transition: all 0.3s ease;
     }
+
     .guide-step:hover {
       transform: translateY(-5px);
       box-shadow: 0 5px 15px rgba(0, 159, 253, 0.2);
     }
+
     .guide-step h3 {
       color: var(--secondary);
       margin-bottom: 0.5rem;
     }
 
-    #about, #services, #contact {
+    #about,
+    #services,
+    #contact {
       background: rgba(42, 42, 114, 0.2);
       backdrop-filter: blur(10px);
     }
@@ -286,7 +315,7 @@
     }
 
     .service-card {
-      background: rgba(0,0,0,0.3);
+      background: rgba(0, 0, 0, 0.3);
       padding: 2rem;
       border-radius: 15px;
       transition: transform 0.3s ease;
@@ -300,17 +329,17 @@
     .contact-form {
       max-width: 600px;
       margin: 0 auto;
-      background: rgba(0,0,0,0.3);
+      background: rgba(0, 0, 0, 0.3);
       padding: 2rem;
       border-radius: 15px;
     }
 
-    .contact-form input, 
+    .contact-form input,
     .contact-form textarea {
       width: 100%;
       padding: 0.8rem;
       margin-bottom: 1rem;
-      background: rgba(255,255,255,0.1);
+      background: rgba(255, 255, 255, 0.1);
       border: none;
       border-radius: 8px;
       color: var(--text);
@@ -329,6 +358,7 @@
     .contact-form button:hover {
       transform: scale(1.05);
     }
+
     .professional-insight {
       background: rgba(0, 159, 253, 0.1);
       border-left: 4px solid var(--secondary);
@@ -337,10 +367,12 @@
       font-style: italic;
       transition: all 0.3s ease;
     }
+
     .professional-insight:hover {
       transform: translateX(10px);
       box-shadow: 0 5px 15px rgba(0, 159, 253, 0.2);
     }
+
     #three-scene {
       position: fixed;
       top: 0;
@@ -357,8 +389,8 @@
       width: 100%;
       height: 100%;
       background: radial-gradient(
-        circle at center, 
-        rgba(0, 159, 253, 0.1) 0%, 
+        circle at center,
+        rgba(0, 159, 253, 0.1) 0%,
         rgba(42, 42, 114, 0.3) 100%
       );
       z-index: -1;
@@ -366,7 +398,222 @@
     }
   </style>
 </head>
+
 <body>
+
+  <style>/* Additional futuristic styling */
+:root {
+  --futuristic-glow: 0 0 20px rgba(0, 159, 253, 0.5);
+  --hover-transition: all 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
+}
+
+.site-footer {
+  background: linear-gradient(135deg, var(--primary-color) 0%, var(--background-color) 100%);
+  color: var(--text-color);
+  padding: 4rem 2rem;
+  border-top: 2px solid rgba(0, 159, 253, 0.2);
+}
+
+.footer-container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.footer-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 2rem;
+}
+
+.footer-section {
+  background: rgba(42, 42, 114, 0.2);
+  backdrop-filter: blur(10px);
+  padding: 1.5rem;
+  border-radius: 15px;
+  transition: transform 0.3s ease;
+}
+
+.footer-section:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 15px 30px rgba(0, 159, 253, 0.1);
+}
+
+.footer-title {
+  color: var(--secondary-color);
+  margin-bottom: 1rem;
+  font-size: 1.2rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.footer-nav {
+  list-style: none;
+}
+
+.footer-link {
+  color: var(--text-color);
+  text-decoration: none;
+  transition: color 0.3s ease;
+  display: inline-block;
+  padding: 0.3rem 0;
+}
+
+.footer-link:hover {
+  color: var(--secondary-color);
+  transform: translateX(5px);
+}
+
+.social-links {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.social-icon {
+  color: var(--text-color);
+  transition: color 0.3s ease, transform 0.3s ease;
+}
+
+.social-icon:hover {
+  color: var(--secondary-color);
+  transform: scale(1.2) rotate(360deg);
+}
+
+.newsletter-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.newsletter-form input {
+  padding: 0.8rem;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(0, 159, 253, 0.3);
+  border-radius: 25px;
+  color: var(--text-color);
+}
+
+.footer-prompt-tip {
+  background: rgba(0, 0, 0, 0.2);
+  padding: 1rem;
+  border-radius: 10px;
+  margin-top: 1rem;
+  border-left: 4px solid var(--secondary-color);
+}
+
+.footer-bottom {
+  margin-top: 2rem;
+  text-align: center;
+  padding-top: 2rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.footer-legal-links {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.nav-link::before {
+  content: '';
+  position: absolute;
+  bottom: -5px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: linear-gradient(45deg, var(--secondary-color), var(--primary-color));
+  transition: width 0.3s ease;
+}
+
+.nav-link:hover::before {
+  width: 100%;
+}
+
+.nav-link:hover {
+  text-shadow: var(--futuristic-glow);
+  transform: translateY(-3px);
+}
+
+.service-card {
+  position: relative;
+  overflow: hidden;
+}
+
+.service-card::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(
+    circle at center, 
+    rgba(0, 159, 253, 0.1) 0%, 
+    transparent 70%
+  );
+  transform: rotate(-45deg);
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+
+.service-card:hover::before {
+  opacity: 1;
+}
+
+.professional-insight {
+  position: relative;
+  overflow: hidden;
+}
+
+.professional-insight::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background: linear-gradient(45deg, var(--secondary-color), var(--primary-color));
+  transform: scaleX(0);
+  transform-origin: right;
+  transition: transform 0.5s ease;
+}
+
+.professional-insight:hover::after {
+  transform: scaleX(1);
+  transform-origin: left;
+}
+
+.nav-button-menu {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+}
+
+.nav-button {
+  padding: 0.8rem 1.5rem;
+  font-size: 1rem;
+  background: rgba(0, 159, 253, 0.1);
+  border: 1px solid rgba(0, 159, 253, 0.3);
+  border-radius: 25px;
+  color: var(--text-color);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.nav-button:hover {
+  background: rgba(0, 159, 253, 0.3);
+  transform: translateY(-3px);
+  box-shadow: 0 5px 15px rgba(0, 159, 253, 0.2);
+}
+
+@media (max-width: 768px) {
+  .footer-grid {
+    grid-template-columns: 1fr;
+  }
+}</style>
   <canvas id="three-scene"></canvas>
   <div class="futuristic-overlay"></div>
   <nav class="nav enhanced-nav">
@@ -375,10 +622,6 @@
         <div class="logo glow-effect">WEBSIM</div>
       </div>
       <ul class="nav-links">
-        <li><a href="#home" class="nav-link" data-tooltip="Explore Our Universe">Home</a></li>
-        <li><a href="#about" class="nav-link" data-tooltip="Our Innovative Journey">About</a></li>
-        <li><a href="#services" class="nav-link" data-tooltip="Discover Our Capabilities">Services</a></li>
-        <li><a href="#contact" class="nav-link" data-tooltip="Connect With Us">Contact</a></li>
       </ul>
       <div class="nav-toggle">
         <span></span>
@@ -392,7 +635,18 @@
     <section id="home" class="hero parallax-section">
       <canvas class="particles-canvas"></canvas>
       <div class="hero-content">
+
+        <!-- Navigation Button Menu Section -->
+        <div class="nav-button-menu">
+          <a href="1.html" class="nav-button">About</a>
+          <a href="2.html" class="nav-button">Services</a>
+          <a href="3.html" class="nav-button">Contact</a>
+          <a href="4.html" class="nav-button">Guide</a>
+        </div>
+        <!-- End Navigation Button Menu Section -->
+
         <h1 class="glitch-text">AI-Powered Web Design Mastery</h1>
+
         <p class="professional-insight">
           Transform your digital vision into reality with precision-engineered AI prompting techniques.
         </p>
@@ -405,9 +659,11 @@
         <h2 class="section-title">Professional Web Design Reimagined</h2>
         <div class="about-content">
           <div class="about-text">
-            <p>At Websim.ai, we don't just create websites; we craft digital experiences that align perfectly with your brand's strategic objectives.</p>
-            <p>Our AI-powered platform leverages advanced prompting techniques to translate complex business requirements into intuitive, high-performance web solutions.</p>
-            
+            <p>At Websim.ai, we don't just create websites; we craft digital experiences that align perfectly with your brand's
+              strategic objectives.</p>
+            <p>Our AI-powered platform leverages advanced prompting techniques to translate complex business requirements into
+              intuitive, high-performance web solutions.</p>
+
             <div class="professional-insight">
               Pro Tip: Effective web design is a strategic communication tool, not just a visual medium.
             </div>
@@ -429,10 +685,11 @@
         <h2 class="section-title">Strategic Digital Solutions</h2>
         <div class="services-grid">
           <div class="service-card hover-float">
-            <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="var(--secondary)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M21.21 15.89A10 10 0 1 1 8 2.83"/>
-              <path d="M22 12A10 10 0 0 0 12 2v10z"/>
-              <circle cx="12" cy="12" r="1" fill="var(--secondary)"/>
+            <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none"
+              stroke="var(--secondary)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21.21 15.89A10 10 0 1 1 8 2.83" />
+              <path d="M22 12A10 10 0 0 0 12 2v10z" />
+              <circle cx="12" cy="12" r="1" fill="var(--secondary)" />
             </svg>
             <h3>Enterprise Web Design</h3>
             <p>Comprehensive web solutions tailored to complex organizational needs.</p>
@@ -441,12 +698,13 @@
             </div>
           </div>
           <div class="service-card hover-float">
-            <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="var(--secondary)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-              <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
-              <line x1="3" y1="9" x2="21" y2="9"/>
-              <line x1="9" y1="21" x2="9" y2="9"/>
-              <path d="M17 9h4a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2h-4"/>
-              <path d="M7 9V7a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2v-2"/>
+            <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none"
+              stroke="var(--secondary)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+              <line x1="3" y1="9" x2="21" y2="9" />
+              <line x1="9" y1="21" x2="9" y2="9" />
+              <path d="M17 9h4a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2h-4" />
+              <path d="M7 9V7a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2v-2" />
             </svg>
             <h3>AI-Driven Prototyping</h3>
             <p>Transform conceptual ideas into interactive digital prototypes within minutes.</p>
@@ -455,11 +713,12 @@
             </div>
           </div>
           <div class="service-card hover-float">
-            <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="var(--secondary)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M12 20h9"/>
-              <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>
-              <path d="M9 11l4 4"/>
-              <circle cx="5" cy="19" r="1"/>
+            <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none"
+              stroke="var(--secondary)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 20h9" />
+              <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
+              <path d="M9 11l4 4" />
+              <circle cx="5" cy="19" r="1" />
             </svg>
             <h3>Strategic UX Engineering</h3>
             <p>Design experiences that convert, engage, and delight your target audience.</p>
@@ -503,80 +762,80 @@
           <div class="guide-step">
             <h3>Step 1: Structuring Website Layout</h3>
             <p>Use prompts like:
-              <ul>
-                <li>"Create a website layout with a navigation menu, hero section, content areas, and footer."</li>
-                <li>"Design a structured homepage with a header, main section, and a well-organized footer."</li>
-              </ul>
-              Ensure Websim.ai understands the need for:
-              <ul>
-                <li>A navigation menu (Home, About, Services, Contact)</li>
-                <li>A hero section with a strong call-to-action</li>
-                <li>Content sections for displaying key information</li>
-                <li>A footer with social links and contact details</li>
-              </ul>
+            <ul>
+              <li>"Create a website layout with a navigation menu, hero section, content areas, and footer."</li>
+              <li>"Design a structured homepage with a header, main section, and a well-organized footer."</li>
+            </ul>
+            Ensure Websim.ai understands the need for:
+            <ul>
+              <li>A navigation menu (Home, About, Services, Contact)</li>
+              <li>A hero section with a strong call-to-action</li>
+              <li>Content sections for displaying key information</li>
+              <li>A footer with social links and contact details</li>
+            </ul>
             </p>
           </div>
 
           <div class="guide-step">
             <h3>Step 2: Generating a Navigation Menu</h3>
             <p>Use prompts like:
-              <ul>
-                <li>"Create a simple navigation bar that is fixed at the top and is mobile-responsive."</li>
-                <li>"Ensure the menu is clear and easy to read, with links transitioning smoothly."</li>
-              </ul>
+            <ul>
+              <li>"Create a simple navigation bar that is fixed at the top and is mobile-responsive."</li>
+              <li>"Ensure the menu is clear and easy to read, with links transitioning smoothly."</li>
+            </ul>
             </p>
           </div>
 
           <div class="guide-step">
             <h3>Step 3: Enhancing with Particle Effects</h3>
             <p>For visual appeal, prompt Websim.ai with:
-              <ul>
-                <li>"Add subtle particle effects to the hero section to create a dynamic background."</li>
-                <li>"Use interactive floating elements that respond to user interaction."</li>
-              </ul>
+            <ul>
+              <li>"Add subtle particle effects to the hero section to create a dynamic background."</li>
+              <li>"Use interactive floating elements that respond to user interaction."</li>
+            </ul>
             </p>
           </div>
 
           <div class="guide-step">
             <h3>Step 4: Integrating 3D Elements</h3>
             <p>Enhance the user experience by asking Websim.ai to:
-              <ul>
-                <li>"Implement a rotating 3D logo or shape for a futuristic feel."</li>
-                <li>"Incorporate an interactive mouse movement effect that adjusts elements dynamically."</li>
-                <li>"Create a 3D scrolling experience that reacts to user navigation."</li>
-              </ul>
+            <ul>
+              <li>"Implement a rotating 3D logo or shape for a futuristic feel."</li>
+              <li>"Incorporate an interactive mouse movement effect that adjusts elements dynamically."</li>
+              <li>"Create a 3D scrolling experience that reacts to user navigation."</li>
+            </ul>
             </p>
           </div>
 
           <div class="guide-step">
             <h3>Step 5: Adding Interactive Effects</h3>
             <p>Improve engagement by prompting:
-              <ul>
-                <li>"Ensure buttons and images have smooth hover effects."</li>
-                <li>"Implement seamless scroll effects for a polished user experience."</li>
-                <li>"Introduce background animations that add depth and fluidity to the design."</li>
-              </ul>
+            <ul>
+              <li>"Ensure buttons and images have smooth hover effects."</li>
+              <li>"Implement seamless scroll effects for a polished user experience."</li>
+              <li>"Introduce background animations that add depth and fluidity to the design."</li>
+            </ul>
             </p>
           </div>
 
           <div class="guide-step">
             <h3>Step 6: Styling with Colors and Fonts</h3>
             <p>To make the website visually appealing, ask Websim.ai to:
-              <ul>
-                <li>"Choose a modern color palette that blends well with the design."</li>
-                <li>"Use clean and professional fonts like Poppins, Montserrat, or Roboto."</li>
-                <li>"Ensure proper font hierarchy: Headings (32px+), Subheadings (24px+), and Body Text (16px+)."</li>
-              </ul>
+            <ul>
+              <li>"Choose a modern color palette that blends well with the design."</li>
+              <li>"Use clean and professional fonts like Poppins, Montserrat, or Roboto."</li>
+              <li>"Ensure proper font hierarchy: Headings (32px+), Subheadings (24px+), and Body Text (16px+)."</li>
+            </ul>
             </p>
           </div>
 
           <div class="guide-step">
             <h3>Step 7: Refining Design</h3>
             <p>Add finishing touches by prompting:
-              <ul>
-                <li>"Make buttons and containers have rounded corners for a softer look."</li>
-                <li>"Apply subtle glow effects to key elements to enhance visibility and modern aesthetics."</li>
-              </ul>
+            <ul>
+              <li>"Make buttons and containers have rounded corners for a softer look."</li>
+              <li>"Apply subtle glow effects to key elements to enhance visibility and modern aesthetics."</li>
+            </ul>
             </p>
           </div>
 
@@ -600,13 +859,15 @@
               <li>Test the form by subscribing and checking for confirmation emails</li>
             </ul>
             <div class="professional-insight">
-              Pro Tip: Always test your email integration thoroughly and ensure you're following best practices for user data handling.
+              Pro Tip: Always test your email integration thoroughly and ensure you're following best practices for user data
+              handling.
             </div>
           </div>
 
           <div class="guide-step">
             <h3>Conclusion</h3>
-            <p>By using structured prompts in Websim.ai with DeepSeek, you can generate a sleek, interactive, and professional website effortlessly. Focus on layout, effects, typography, and animations to create a modern user experience.</p>
+            <p>By using structured prompts in Websim.ai with DeepSeek, you can generate a sleek, interactive, and professional
+              website effortlessly. Focus on layout, effects, typography, and animations to create a modern user experience.</p>
           </div>
         </div>
       </div>
@@ -621,7 +882,8 @@
           <p>Transforming web design through AI-powered creativity and intelligent prompting.</p>
           <div class="footer-prompt-tip">
             <h5>Pro Tip: Precision in Prompting</h5>
-            <p>Always be specific in your Websim.ai prompts. The more detailed your instructions, the more accurately the AI can translate your vision.</p>
+            <p>Always be specific in your Websim.ai prompts. The more detailed your instructions, the more accurately the AI can
+              translate your vision.</p>
           </div>
         </div>
 
@@ -638,24 +900,31 @@
         <div class="footer-section contact-details">
           <h4 class="footer-title">Contact Us</h4>
           <div class="contact-info">
-            <p><strong>Email:</strong> <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="b3c0c6c3c3dcc1c7f3c4d6d1c0dade9dd2da">[email&#160;protected]</a></p>
+            <p><strong>Email:</strong> <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="55262025253a272115223037263c387b343c">[email&#160;protected]</a></p>
             <p><strong>Phone:</strong> +1 (555) 123-4567</p>
             <div class="social-links">
               <a href="#" class="social-icon tooltip" data-tooltip="Follow us on Twitter">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"></path>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path
+                    d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z">
+                  </path>
                 </svg>
               </a>
               <a href="#" class="social-icon tooltip" data-tooltip="Connect on LinkedIn">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                   <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path>
                   <rect x="2" y="9" width="4" height="12"></rect>
                   <circle cx="4" cy="4" r="2"></circle>
                 </svg>
               </a>
               <a href="#" class="social-icon tooltip" data-tooltip="Check our GitHub">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path
+                    d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22">
+                  </path>
                 </svg>
               </a>
             </div>
@@ -670,7 +939,8 @@
           </form>
           <div class="footer-prompt-tip">
             <h5>Prompting Insight</h5>
-            <p>Use clear, concise language in your Websim.ai prompts. Break complex requirements into simple, actionable instructions.</p>
+            <p>Use clear, concise language in your Websim.ai prompts. Break complex requirements into simple, actionable
+              instructions.</p>
           </div>
         </div>
       </div>
@@ -692,10 +962,10 @@
       constructor() {
         this.scene = new THREE.Scene();
         this.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-        this.renderer = new THREE.WebGLRenderer({ 
+        this.renderer = new THREE.WebGLRenderer({
           canvas: document.getElementById('three-scene'),
           alpha: true,
-          antialias: true 
+          antialias: true
         });
         this.renderer.setSize(window.innerWidth, window.innerHeight);
         this.setupScene();
@@ -710,7 +980,6 @@
           color: 0x009ffd,
           wireframe: true,
           transparent: true,
-          opacity: 0.3
         });
         this.mesh = new THREE.Mesh(geometry, material);
         this.scene.add(this.mesh);
@@ -742,14 +1011,7 @@
 
     new FuturisticScene();
   </script>
-
   <script>
-    // Initialize EmailJS
-    (function() {
-      emailjs.init("USER_ID_HERE"); // Replace with your actual EmailJS User ID
-    })();
-
-    // Particle System Class
     class ParticleSystem {
       constructor(canvas) {
         this.canvas = canvas;
@@ -814,100 +1076,253 @@
       }
     }
 
-    // Newsletter and Contact Form Handlers
-    document.addEventListener('DOMContentLoaded', function() {
-      // Newsletter Form
-      const newsletterForm = document.querySelector('.newsletter-form');
-      if (newsletterForm) {
-        newsletterForm.addEventListener('submit', function(event) {
-          event.preventDefault();
-          
-          const emailInput = this.querySelector('input[type="email"]');
-          const email = emailInput.value;
+    // Init particle system
+    const canvas = document.querySelector('.particles-canvas');
+    new ParticleSystem(canvas);
 
-          emailjs.send("YOUR_SERVICE_ID", "YOUR_SUBSCRIPTION_TEMPLATE_ID", {
-            email: email
-          }).then(
-            function(response) {
-              alert('Thank you for subscribing to our newsletter!');
-              emailInput.value = ''; // Clear email input
-            },
-            function(error) {
-              console.error('Newsletter subscription failed:', error);
-              alert('Subscription failed. Please try again.');
-            }
-          );
-        });
-      }
+    // Scroll animations
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        entry.target.classList.toggle('active', entry.isIntersecting);
+      });
+    }, { threshold: 0.1 });
 
-      // Contact Form
-      const contactForm = document.querySelector('.contact-form');
-      if (contactForm) {
-        contactForm.addEventListener('submit', function(event) {
-          event.preventDefault();
-          
-          const nameInput = this.querySelector('input[type="text"]');
-          const emailInput = this.querySelector('input[type="email"]');
-          const phoneInput = this.querySelector('input[type="tel"]');
-          const serviceSelect = this.querySelector('select');
-          const messageInput = this.querySelector('textarea');
+    document.querySelectorAll('.scroll-effect').forEach(el => observer.observe(el));
 
-          emailjs.send("YOUR_SERVICE_ID", "YOUR_CONTACT_TEMPLATE_ID", {
-            name: nameInput.value,
-            email: emailInput.value,
-            phone: phoneInput.value,
-            service: serviceSelect.value,
-            message: messageInput.value
-          }).then(
-            function(response) {
-              alert('Thank you! We will get back to you soon.');
-              // Reset form
-              nameInput.value = '';
-              emailInput.value = '';
-              phoneInput.value = '';
-              serviceSelect.selectedIndex = 0;
-              messageInput.value = '';
-            },
-            function(error) {
-              console.error('Contact form submission failed:', error);
-              alert('Submission failed. Please try again.');
-            }
-          );
-        });
-      }
+    // Mouse parallax effect
+    document.addEventListener('mousemove', (e) => {
+      const x = (window.innerWidth - e.pageX * 2) / 90;
+      const y = (window.innerHeight - e.pageY * 2) / 90;
+      document.querySelectorAll('.scroll-effect').forEach(el => {
+        el.style.transform = `translateY(${y}px) translateX(${x}px)`;
+      });
     });
 
-    // Scroll and Interactive Effects
-    document.addEventListener('DOMContentLoaded', () => {
-      // Init particle system
-      const canvas = document.querySelector('.particles-canvas');
-      new ParticleSystem(canvas);
-
-      // Scroll animations
-      const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-          entry.target.classList.toggle('active', entry.isIntersecting);
-        });
-      }, { threshold: 0.1 });
-
-      document.querySelectorAll('.scroll-effect').forEach(el => observer.observe(el));
-
-      // Mouse parallax effect
-      document.addEventListener('mousemove', (e) => {
-        const x = (window.innerWidth - e.pageX * 2) / 90;
-        const y = (window.innerHeight - e.pageY * 2) / 90;
-        document.querySelectorAll('.scroll-effect').forEach(el => {
-          el.style.transform = `translateY(${y}px) translateX(${x}px)`;
-        });
-      });
-
-      // Scroll to guide when "Start Learning" is clicked
-      document.getElementById('start-learning').addEventListener('click', () => {
-        document.getElementById('guide').scrollIntoView({ 
-          behavior: 'smooth' 
-        });
+    // Scroll to guide when "Start Learning" is clicked
+    document.getElementById('start-learning').addEventListener('click', () => {
+      document.getElementById('guide').scrollIntoView({ 
+        behavior: 'smooth' 
       });
     });
   </script>
+  <script>
+    // Enhanced EmailJS Initialization and Form Handling
+document.addEventListener('DOMContentLoaded', function() {
+  // Replace with your actual EmailJS User ID
+  (function() {
+    emailjs.init("USER_ID_HERE"); // You'll need to replace this with your actual EmailJS User ID
+  })();
+
+  // Newsletter Subscription Handler with Name
+  const newsletterForm = document.querySelector('.newsletter-form');
+  if (newsletterForm) {
+    newsletterForm.addEventListener('submit', function(event) {
+      event.preventDefault();
+      
+      const nameInput = this.querySelector('input[name="name"]');
+      const emailInput = this.querySelector('input[name="email"]');
+      
+      const name = nameInput.value;
+      const email = emailInput.value;
+
+      // Send subscription email
+      emailjs.send("YOUR_SERVICE_ID", "YOUR_SUBSCRIPTION_TEMPLATE_ID", {
+        name: name,
+        email: email
+      }).then(
+        function(response) {
+          alert(`Thank you, ${name}! You have successfully subscribed to our newsletter.`);
+          nameInput.value = ''; // Clear name input
+          emailInput.value = ''; // Clear email input
+        },
+        function(error) {
+          console.error('Newsletter subscription failed:', error);
+          alert('Subscription failed. Please try again.');
+        }
+      );
+    });
+  }
+
+  // Contact Form Submission Handler
+  const contactForm = document.querySelector('.contact-form');
+  if (contactForm) {
+    contactForm.addEventListener('submit', function(event) {
+      event.preventDefault();
+      
+      const nameInput = this.querySelector('input[type="text"]');
+      const emailInput = this.querySelector('input[type="email"]');
+      const phoneInput = this.querySelector('input[type="tel"]');
+      const serviceSelect = this.querySelector('select');
+      const messageInput = this.querySelector('textarea');
+
+      emailjs.send("YOUR_SERVICE_ID", "YOUR_CONTACT_TEMPLATE_ID", {
+        name: nameInput.value,
+        email: emailInput.value,
+        phone: phoneInput.value,
+        service: serviceSelect.value,
+        message: messageInput.value
+      }).then(
+        function(response) {
+          alert('Thank you! We will get back to you soon.');
+          // Reset form
+          nameInput.value = '';
+          emailInput.value = '';
+          phoneInput.value = '';
+          serviceSelect.selectedIndex = 0;
+          messageInput.value = '';
+        },
+        function(error) {
+          console.error('Contact form submission failed:', error);
+          alert('Submission failed. Please try again.');
+        }
+      );
+    });
+  }
+});</script>
+  <script>// Enhanced particle system with more complexity
+class AdvancedParticleSystem {
+  constructor(canvas) {
+    this.canvas = canvas;
+    this.ctx = canvas.getContext('2d');
+    this.particles = [];
+    this.mouse = { x: null, y: null };
+    this.particleCount = 300; // More particles
+    this.init();
+  }
+
+  init() {
+    this.resizeCanvas();
+    window.addEventListener('resize', () => this.resizeCanvas());
+    this.canvas.addEventListener('mousemove', e => {
+      this.mouse.x = e.clientX;
+      this.mouse.y = e.clientY;
+    });
+    this.createParticles();
+    this.animate();
+  }
+
+  createParticles() {
+    for(let i = 0; i < this.particleCount; i++) {
+      this.particles.push({
+        x: Math.random() * this.canvas.width,
+        y: Math.random() * this.canvas.height,
+        size: Math.random() * 3,
+        speedX: Math.random() * 2 - 1,
+        speedY: Math.random() * 2 - 1,
+        color: `rgba(0, 159, 253, ${Math.random() * 0.5})`,
+        trail: []
+      });
+    }
+  }
+
+  animate() {
+    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    
+    this.particles.forEach(particle => {
+      // More complex particle movement
+      particle.x += particle.speedX * 1.5;
+      particle.y += particle.speedY * 1.5;
+      
+      // Wrap around screen
+      particle.x = (particle.x + this.canvas.width) % this.canvas.width;
+      particle.y = (particle.y + this.canvas.height) % this.canvas.height;
+
+      // Mouse interaction
+      if(this.mouse.x && this.mouse.y) {
+        const dx = particle.x - this.mouse.x;
+        const dy = particle.y - this.mouse.y;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+        if(distance < 150) {
+          particle.speedX += dx * 0.0005;
+          particle.speedY += dy * 0.0005;
+        }
+      }
+
+      // Render particle
+      this.ctx.beginPath();
+      this.ctx.fillStyle = particle.color;
+      this.ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
+      this.ctx.fill();
+    });
+
+    requestAnimationFrame(() => this.animate());
+  }
+
+  resizeCanvas() {
+    this.canvas.width = window.innerWidth;
+    this.canvas.height = window.innerHeight;
+  }
+}
+
+class WebsimAIExperience {
+  constructor() {
+    this.setupScrollEffects();
+    this.setupNavigation();
+    this.setupInteractions();
+  }
+
+  setupScrollEffects() {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        entry.target.classList.toggle('active', entry.isIntersecting);
+      });
+    }, { threshold: 0.1 });
+
+    document.querySelectorAll('.scroll-reveal').forEach(el => observer.observe(el));
+  }
+
+  setupNavigation() {
+    const startLearningBtn = document.getElementById('start-learning');
+    if (startLearningBtn) {
+      startLearningBtn.addEventListener('click', () => {
+        document.getElementById('guide').scrollIntoView({ behavior: 'smooth' });
+      });
+    }
+
+    // Mobile navigation toggle
+    const navToggle = document.querySelector('.nav-toggle');
+    const navLinks = document.querySelector('.nav-links');
+    
+    navToggle.addEventListener('click', () => {
+      navLinks.classList.toggle('active');
+    });
+  }
+
+  setupInteractions() {
+    // Add tooltips to nav links
+    document.querySelectorAll('.nav-link').forEach(link => {
+      link.addEventListener('mouseenter', (e) => {
+        const tooltip = document.createElement('div');
+        tooltip.classList.add('nav-tooltip');
+        tooltip.textContent = link.dataset.tooltip;
+        document.body.appendChild(tooltip);
+        
+        const rect = link.getBoundingClientRect();
+        tooltip.style.top = `${rect.bottom + 10}px`;
+        tooltip.style.left = `${rect.left + rect.width/2}px`;
+        tooltip.style.transform = 'translateX(-50%)';
+      });
+
+      link.addEventListener('mouseleave', () => {
+        const tooltip = document.querySelector('.nav-tooltip');
+        if (tooltip) tooltip.remove();
+      });
+    });
+  }
+}
+
+// Initialize advanced particle system and other components
+document.addEventListener('DOMContentLoaded', () => {
+  const canvas = document.querySelector('.particles-canvas');
+  new AdvancedParticleSystem(canvas);
+  new WebsimAIExperience();
+});</script>
+  <script>// Clean version without scrollToSection function
+document.addEventListener('DOMContentLoaded', () => {
+  const canvas = document.querySelector('.particles-canvas');
+  new AdvancedParticleSystem(canvas);
+  new WebsimAIExperience();
+});</script>
 </body>
+
 </html>
