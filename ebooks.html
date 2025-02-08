@@ -6,144 +6,186 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <style>/* Base styles */
-body {
-  font-family: 'Segoe UI', system-ui, sans-serif;
-  margin: 0;
-  padding: 0;
-  background: #111;
-  color: #e0e0e0;
-  line-height: 1.8;
-}
+  <style>
+    /* Base styles */
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #111;
+      color: #e0e0e0;
+      line-height: 1.8;
+    }
 
-/* Header & Navigation */
-header {
-  background: rgba(0, 0, 30, 0.95);
-  border-bottom: 1px solid #00f7ff33;
-  box-shadow: 0 0 20px #8a2be266;
-  color: white;
-  padding: 1rem 0;
-  position: sticky;
-  top: 0;
-  z-index: 1000;
-}
+    /* Header & Navigation */
+    header {
+      background: rgba(0, 0, 30, 0.95);
+      border-bottom: 1px solid #00f7ff33;
+      box-shadow: 0 0 20px #8a2be266;
+      color: white;
+      padding: 1rem 0;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
 
-.header-content {
-  display: flex;
-  justify-content: center;
-  padding: 1rem;
-  max-width: 1200px;
-  margin: 0 auto;
-}
+    .header-content {
+      display: flex;
+      justify-content: center;
+      padding: 1rem;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
 
-.site-title {
-  font-size: 2rem;
-  margin: 0;
-  text-align: center;
-}
+    .site-title {
+      font-size: 2rem;
+      margin: 0;
+      text-align: center;
+    }
 
-/* Main content */
-main {
-  max-width: 1200px;
-  margin: 2rem auto;
-  padding: 0 20px;
-}
+    /* Main content */
+    main {
+      max-width: 1200px;
+      margin: 2rem auto;
+      padding: 0 20px;
+    }
 
-section {
-  background: linear-gradient(145deg, #1a1a1a 0%, #101010 100%);
-  padding: 2rem;
-  margin-bottom: 2rem;
-  border-radius: 12px;
-  border: 1px solid #00f7ff33;
-  box-shadow: 0 0 30px #00f7ff1a;
-  transition: transform 0.2s ease;
-}
+    section {
+      background: linear-gradient(145deg, #1a1a1a 0%, #101010 100%);
+      padding: 2rem;
+      margin-bottom: 2rem;
+      border-radius: 12px;
+      border: 1px solid #00f7ff33;
+      box-shadow: 0 0 30px #00f7ff1a;
+      transition: transform 0.2s ease;
+    }
 
-section:hover {
-  box-shadow: 0 0 40px #8a2be233;
-  transform: translateY(-3px);
-}
+    section:hover {
+      box-shadow: 0 0 40px #8a2be233;
+      transform: translateY(-3px);
+    }
 
-h1 {
-  font-size: 2.5rem;
-  margin-bottom: 1.5rem;
-  text-shadow: 0 2px 4px rgba(0,0,0,0.1);
-}
+    h1 {
+      font-size: 2.5rem;
+      margin-bottom: 1.5rem;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      text-align: center;
+      width: 100%;
+    }
 
-h2 {
-  color: #00ffaa;
-  font-size: 1.8rem;
-  margin: 0 0 1.5rem;
-  padding-bottom: 0.75rem;
-  border-bottom: 3px solid #00ffaa;
-  text-shadow: 0 0 10px #00ffaa80;
-  animation: cyan-pulse 3s ease-in-out infinite;
-}
+    h2 {
+      color: #00ffaa;
+      font-size: 1.8rem;
+      margin: 0 auto 1.5rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 3px solid #00ffaa;
+      text-shadow: 0 0 10px #00ffaa80;
+      animation: cyan-pulse 3s ease-in-out infinite;
+      text-align: center;
+      max-width: 800px;
+      position: relative;
+    }
 
-/* Responsive design */
-@media (max-width: 768px) {
-  main {
-    padding: 0 15px;
-  }
+    h2::after {
+      content: '';
+      position: absolute;
+      bottom: -3px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 60px;
+      height: 3px;
+      background: #8a2be2;
+    }
 
-  section {
-    padding: 1.5rem;
-  }
+    section > p:first-of-type {
+      text-align: center;
+      max-width: 800px;
+      margin: 0 auto 2rem;
+      font-size: 1.1rem;
+      color: #ccc;
+    }
 
-  h1 {
-    font-size: 2rem;
-  }
+    .structure-element h3,
+    .story-length h3,
+    .outline-step h3 {
+      text-align: center;
+      margin: 0 auto 1rem;
+      max-width: 600px;
+      position: relative;
+      padding: 0.5rem 1rem;
+      display: inline-block;
+    }
 
-  h2 {
-    font-size: 1.5rem;
-  }
-}
+    .freytag-pyramid {
+      display: block;
+      margin: 2rem auto;
+    }
 
-/* Interactive elements */
-.structure-element, .story-length, .outline-step {
-  padding: 1.5rem;
-  margin-bottom: 1.5rem;
-  border-left: 4px solid #8a2be2;
-  background: #1a1a2e;
-  border-radius: 8px;
-  transition: all 0.3s ease;
-}
+    /* Responsive design */
+    @media (max-width: 768px) {
+      main {
+        padding: 0 15px;
+      }
 
-.structure-element:hover, .story-length:hover, .outline-step:hover {
-  border-left-color: #00ffaa;
-  background: #1a1a2e;
-}
+      section {
+        padding: 1.5rem;
+      }
 
-.freytag-pyramid {
-  max-width: 600px;
-  margin: 2rem auto;
-  opacity: 0.9;
-  transition: opacity 0.3s ease;
-  filter: drop-shadow(0 0 5px #00f7ff);
-}
+      h1 {
+        font-size: 2rem;
+      }
 
-.freytag-pyramid:hover {
-  opacity: 1;
-}
+      h2 {
+        font-size: 1.5rem;
+      }
+    }
 
-footer {
-  text-align: center;
-  padding: 2rem;
-  background: #0a0a1a;
-  color: #00f7ff;
-  border-top: 1px solid #00f7ff33;
-  margin-top: 4rem;
-}
+    /* Interactive elements */
+    .structure-element, .story-length, .outline-step {
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+      border-left: 4px solid #8a2be2;
+      background: #1a1a2e;
+      border-radius: 8px;
+      transition: all 0.3s ease;
+    }
 
-/* Remove all menu-related styles */
-.menu-toggle, .main-nav, .menu-backdrop {
-  display: none !important;
-}
+    .structure-element:hover, .story-length:hover, .outline-step:hover {
+      border-left-color: #00ffaa;
+      background: #1a1a2e;
+    }
 
-@keyframes cyan-pulse {
-  0%, 100% { opacity: 0.7; }
-  50% { opacity: 1; }
-}</style>
+    .freytag-pyramid {
+      max-width: 600px;
+      margin: 2rem auto;
+      opacity: 0.9;
+      transition: opacity 0.3s ease;
+      filter: drop-shadow(0 0 5px #00f7ff);
+    }
+
+    .freytag-pyramid:hover {
+      opacity: 1;
+    }
+
+    footer {
+      text-align: center;
+      padding: 2rem;
+      background: #0a0a1a;
+      color: #00f7ff;
+      border-top: 1px solid #00f7ff33;
+      margin-top: 4rem;
+    }
+
+    /* Remove all menu-related styles */
+    .menu-toggle, .main-nav, .menu-backdrop {
+      display: none !important;
+    }
+
+    @keyframes cyan-pulse {
+      0%, 100% { opacity: 0.7; }
+      50% { opacity: 1; }
+    }
+  </style>
   <header>
     <div class="header-content">
       <button class="menu-toggle" aria-expanded="false" aria-label="Toggle navigation">
