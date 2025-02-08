@@ -1,0 +1,268 @@
+<html>
+<head>
+<base href="https://h4ck.sol">
+<title>How to Set Up a Website Using GitHub Pages with a GoDaddy Domain</title>
+<style>
+  :root {
+    --neon-cyan: #0ff;
+    --neon-pink: #ff00ff;
+    --neon-purple: #bc13fe;
+    --neon-yellow: #fff01f;
+    --neon-orange: #ff6f00;
+    --glow-core: #fff;
+    --hacker-bg: #000a1f;
+    --cyber-border: 12px;
+  }
+  
+  body {
+    font-family: 'Courier New', monospace;
+    background: var(--hacker-bg);
+    color: var(--neon-cyan);
+    margin: 0;
+    padding: 20px;
+    line-height: 1.6;
+    position: relative;
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: repeating-radial-gradient(circle at 50% 50%, 
+      rgba(0, 255, 255, 0.1) 0%, 
+      rgba(16, 0, 32, 0.9) 80%
+    );
+    pointer-events: none;
+    z-index: -1;
+  }
+
+  .container {
+    max-width: 800px;
+    margin: 0 auto;
+    border: 3px solid;
+    border-image: linear-gradient(
+      45deg,
+      var(--neon-cyan),
+      var(--neon-purple),
+      var(--neon-pink),
+      var(--neon-orange)
+    ) 1;
+    border-radius: var(--cyber-border);
+    padding: 30px;
+    background: rgba(0, 0, 30, 0.9);
+    box-shadow: 0 0 50px var(--neon-purple),
+                0 0 30px var(--neon-cyan) inset,
+                0 0 15px var(--neon-pink) inset;
+    position: relative;
+    overflow: hidden;
+  }
+
+  h1, h2, h3 {
+    background: linear-gradient(135deg, 
+      var(--neon-yellow) 20%,
+      var(--neon-pink) 40%,
+      var(--neon-cyan) 80%
+    );
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    filter: drop-shadow(0 0 15px var(--neon-pink)) 
+           drop-shadow(0 0 10px var(--neon-cyan))
+           drop-shadow(0 0 5px var(--neon-purple));
+    animation: none;
+    position: relative;
+  }
+
+  h1 {
+    font-size: 2.2em;
+    text-align: center;
+    margin-bottom: 40px;
+    text-transform: uppercase;
+    letter-spacing: 4px;
+  }
+
+  .warning {
+    color: var(--neon-pink);
+    padding: 20px;
+    border: 3px solid;
+    border-image: linear-gradient(
+      45deg,
+      var(--neon-orange),
+      var(--neon-yellow),
+      var(--neon-pink)
+    ) 1;
+    border-radius: 15px;
+    margin: 30px 0;
+    position: relative;
+    background: rgba(255, 0, 255, 0.05);
+    animation: warning-pulse 3s infinite;
+  }
+
+  @keyframes warning-pulse {
+    0%, 100% { 
+      box-shadow: 0 0 30px var(--neon-orange),
+                  0 0 15px var(--neon-pink) inset; 
+    }
+    50% { 
+      box-shadow: 0 0 50px var(--neon-pink),
+                  0 0 25px var(--neon-orange) inset; 
+    }
+  }
+
+  .code {
+    background: rgba(0, 0, 50, 0.9);
+    padding: 15px;
+    border-radius: 10px;
+    font-family: 'Lucida Console', monospace;
+    border: 2px solid var(--neon-purple);
+    position: relative;
+    transition: transform 0.3s, box-shadow 0.3s;
+    box-shadow: 0 0 25px var(--neon-purple),
+                0 0 10px var(--neon-cyan) inset;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    overflow-x: auto;
+  }
+
+  .code:hover {
+    box-shadow: 0 0 40px var(--neon-purple),
+                0 0 20px var(--neon-cyan) inset,
+                0 0 10px var(--neon-pink) inset;
+  }
+
+  ul {
+    padding-left: 30px;
+  }
+
+  li {
+    margin-bottom: 10px;
+  }
+
+  .glow-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: 
+      radial-gradient(circle at 80% 20%, rgba(255, 0, 255, 0.1) 0%, transparent 30%),
+      radial-gradient(circle at 20% 80%, rgba(0, 255, 255, 0.1) 0%, transparent 30%);
+    pointer-events: none;
+    z-index: -1;
+  }
+</style>
+</head>
+<body>
+<div class="glow-overlay"></div>
+<div class="container">
+  <h1>How to Set Up a Website Using GitHub Pages with a GoDaddy Domain</h1>
+  
+  <div class="warning">
+    WARNING: Always ensure you follow the terms of service for GitHub Pages and GoDaddy.
+  </div>
+  
+  <h2>Step 1: Create a GitHub Repository</h2>
+  <ul>
+    <li>Go to GitHub and log in (or sign up).</li>
+    <li>Click the "+" in the top right and select "New repository".</li>
+    <li>Enter a repository name (e.g., my-website).</li>
+    <li>Set it to Public.</li>
+    <li>Check "Add a README file".</li>
+    <li>Click Create repository.</li>
+  </ul>
+  
+  <h2>Step 2: Upload Your Website Files</h2>
+  <ul>
+    <li>Open your repository on GitHub.</li>
+    <li>Click on "Add file" → "Create new file".</li>
+    <li>Name the file index.html.</li>
+    <li>Add this basic HTML code:</li>
+  </ul>
+  
+  <div class="code">
+&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+    &lt;meta charset="UTF-8"&gt;
+    &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;
+    &lt;title&gt;My Website&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;h1&gt;Welcome to My Website!&lt;/h1&gt;
+    &lt;p&gt;This is hosted on GitHub Pages with a GoDaddy domain.&lt;/p&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+  </div>
+  
+  <p>Scroll down and commit the file by clicking "Commit changes".</p>
+  
+  <h2>Step 3: Enable GitHub Pages</h2>
+  <ul>
+    <li>In your repository, go to Settings → Pages.</li>
+    <li>Under Branch, select main (or master), then click Save.</li>
+    <li>GitHub will generate a URL like:<br>
+    https://yourgithubusername.github.io/my-website/</li>
+    <li>(It may take a few minutes to go live.)</li>
+  </ul>
+  
+  <h2>Step 4: Buy & Set Up a GoDaddy Domain</h2>
+  <p>Purchase a domain from GoDaddy.</p>
+  <p>In your GoDaddy account, go to DNS settings.</p>
+  
+  <p>Add these A records:</p>
+  <div class="code">
+Type    Name    Value
+A       @       185.199.108.153
+A       @       185.199.109.153
+A       @       185.199.110.153
+A       @       185.199.111.153
+  </div>
+  
+  <p>Add a CNAME record:</p>
+  <div class="code">
+Type    Name    Value
+CNAME   www     yourgithubusername.github.io
+  </div>
+  
+  <h2>Step 5: Connect GitHub Pages to GoDaddy</h2>
+  <ul>
+    <li>Go to your GitHub repository → Settings → Pages.</li>
+    <li>Under Custom domain, enter your GoDaddy domain (e.g., mywebsite.com).</li>
+    <li>Click Save.</li>
+    <li>GitHub will issue an SSL certificate automatically.</li>
+  </ul>
+  
+  <div class="warning">
+    🎉 Done! Your website should now be live at https://mywebsite.com. 🚀
+  </div>
+</div>
+
+<script>
+  function createStaticGlow() {
+    const container = document.querySelector('.container');
+    const colors = ['#0ff', '#f0f', '#bc13fe'];
+    
+    for(let i = 0; i < 30; i++) {
+      const glitch = document.createElement('div');
+      glitch.style.position = 'absolute';
+      glitch.style.width = Math.random() * 20 + 'px';
+      glitch.style.height = '3px';
+      glitch.style.background = colors[Math.floor(Math.random() * colors.length)];
+      glitch.style.transform = `rotate(${Math.random() * 360}deg)`;
+      glitch.style.left = Math.random() * 100 + '%';
+      glitch.style.top = Math.random() * 100 + '%';
+      glitch.style.opacity = '0.4';
+      glitch.style.pointerEvents = 'none';
+      glitch.style.filter = 'blur(1px)';
+      container.appendChild(glitch);
+    }
+  }
+
+  window.addEventListener('DOMContentLoaded', createStaticGlow);
+</script>
+</body>
+</html>
