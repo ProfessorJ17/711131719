@@ -1,0 +1,468 @@
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Luxious Labs - Fortunes Online</title>
+  <style>
+    body {
+      margin: 0;
+      overflow-x: hidden;
+      font-family: 'Lora', serif;
+      padding: 0;
+      background-color: #000;
+      color: #f0e68c;
+      line-height: 1.7;
+    }
+
+    #threeCanvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      pointer-events: none;
+    }
+
+    .content-wrapper {
+      position: relative;
+      z-index: 1;
+      background: rgba(0, 0, 0, 0.7);
+    }
+
+    .container {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 30px;
+    }
+
+    header {
+      padding: 25px 0;
+      border-bottom: 3px solid #b8860b;
+      background-color: transparent; 
+    }
+
+    header .container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 2.5em;
+      font-family: 'Playfair Display', serif;
+      color: #ffd700;
+      text-shadow: 2px 2px 4px #000, 0 0 10px #ffd700;
+      animation: shimmer 2s linear infinite alternate;
+    }
+
+    @keyframes shimmer {
+      0% { text-shadow: 2px 2px 4px #000, 0 0 5px #ffd700; }
+      100% { text-shadow: 2px 2px 4px #000, 0 0 15px #ffd700; }
+    }
+
+    nav ul {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      display: flex;
+    }
+
+    nav li {
+      margin-left: 25px;
+    }
+
+    nav a {
+      text-decoration: none;
+      font-family: 'Playfair Display', serif;
+      color: #f0e68c;
+      padding: 8px 15px;
+      border: 2px solid #b8860b;
+      border-radius: 7px;
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    nav a:hover {
+      background-color: #b8860b;
+      color: #222;
+    }
+
+    main {
+      padding: 30px 0;
+    }
+
+    article {
+      padding: 40px;
+      border-radius: 12px;
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.6);
+      border: 2px solid #555;
+      background-color: transparent; 
+    }
+
+    article h2 {
+      font-size: 3em;
+      font-family: 'Playfair Display', serif;
+      color: #ffd700;
+      margin-top: 0;
+      margin-bottom: 30px;
+      text-align: center;
+      text-shadow: 2px 2px 4px #000, 0 0 8px #ffd700;
+      animation: shimmer-subtle 3s linear infinite alternate;
+    }
+
+    @keyframes shimmer-subtle {
+      0% { text-shadow: 2px 2px 4px #000, 0 0 3px #ffd700; }
+      100% { text-shadow: 2px 2px 4px #000, 0 0 6px #ffd700; }
+    }
+
+    article h3 {
+      font-size: 2em;
+      font-family: 'Playfair Display', serif;
+      color: #ffd700;
+      border-bottom: 2px dashed #b8860b;
+      padding-bottom: 12px;
+      margin-top: 40px;
+      text-shadow: 1px 1px 2px #000;
+    }
+
+    article section {
+      margin-bottom: 30px;
+      background-color: transparent;
+      padding: 20px;
+      border-radius: 8px;
+    }
+
+    article p {
+      color: #ddd;
+      font-size: 1.1em;
+    }
+
+    article a {
+      color: #ffd700;
+      text-decoration: none;
+      border-bottom: 2px dotted #ffd700;
+      transition: color 0.3s ease, border-bottom-color 0.3s ease;
+    }
+
+    article a:hover {
+      color: #fff;
+      border-bottom-color: #fff;
+    }
+
+    .conclusion {
+      padding: 30px;
+      border-radius: 10px;
+      margin-top: 40px;
+      border: 2px solid #555;
+      box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.3);
+      background-color: transparent; 
+    }
+
+    footer {
+      background-color: transparent; 
+      color: #aaa;
+      text-align: center;
+      padding: 15px 0;
+      border-top: 3px solid #b8860b;
+    }
+
+    @media (max-width: 768px) {
+      .container {
+        padding: 15px;
+      }
+
+      header {
+        padding: 20px 0;
+      }
+
+      header .container {
+        flex-direction: column;
+        text-align: center;
+      }
+
+      header h1 {
+        margin-bottom: 15px;
+        font-size: 2.2em;
+      }
+
+      nav ul {
+        flex-direction: column;
+        align-items: center;
+      }
+
+      nav li {
+        margin-left: 0;
+        margin-top: 15px;
+      }
+
+      article {
+        padding: 30px;
+      }
+
+      article h2 {
+        font-size: 2.4em;
+      }
+
+      article h3 {
+        font-size: 1.7em;
+      }
+
+      .conclusion {
+        padding: 25px;
+      }
+    }
+
+    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Lora:wght@400;700&display=swap');
+  </style>
+  <script async src="https://unpkg.com/es-module-shims@1.6.3/dist/es-module-shims.js"></script>
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://unpkg.com/three@0.150.1/build/three.module.js",
+        "three/addons/": "https://unpkg.com/three@0.150.1/examples/jsm/"
+      }
+    }
+  </script>
+</head>
+<body>
+  <canvas id="threeCanvas"></canvas>
+  <div class="content-wrapper">
+    <header>
+      <div class="container">
+        <h1>TEAM INFINITY</h1>
+        <nav>
+          <ul>
+            <li><a href="/home" target="_blank">Home</a></li>
+            <li><a href="/guide" target="_blank">Guide</a></li>
+            <li><a href="/emporium" target="_blank">Emporium</a></li>
+            <li><a href="/about" target="_blank">About</a></li>
+            <li><a href="/contact" target="_blank">Contact</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <article class="container">
+        <h2> A Simple Guide to Store Success 💰💲💰🌐</h2>
+        <p>AI-driven merch and custom items are an amazing way to make money without the risk! 🤖💰 With AI tools, you can design unique products like T-shirts, mugs, and hats easily, and then use print-on-demand services to handle production and shipping. From there, it’s all about marketing your creations! The best part? There’s little upfront cost since you only pay for items as they’re sold, so there’s absolutely nothing to lose! 🚀🎨 Plus, you can expand your store with dropshipping or handmade items to keep things fresh and exciting! 💥</p>
+        <p>Ready to create your own online store and start earning money? Here's a step-by-step guide to help you set up a profitable online business that leverages unique products, AI-powered designs, and drop shipping! 💡✨💡✨</p>
+
+        <section>
+          <h3>1. Set Up Payment Options 💳💲💳</h3>
+          <p>You'll need a PayPal account to accept payments 🤑💲🤑 (<a href="https://www.paypal.com" target="_blank">PayPal</a>) , credit card options 💳💲💳, and it’s a good idea to accept Bitcoin too for more flexibility and wider reach! Paypal also allows you to make Buy Now Links.  🚀💲🚀.</p>
+        </section>
+
+        <section>
+          <h3>2. Create Unique, Custom Items 👕🎨👕💲🎨</h3>
+          <p>Start by creating print-on-demand products like shirts, hats, mugs, and hoodies! Design them using AI tools and then refine with software like <a href="https://www.photoshop.com" target="_blank">Photoshop</a> or <a href="https://www.gimp.org/" target="_blank">Gimp</a> 🖥️💲🖥️. Choose high-quality templates from <a href="https://www.printify.com" target="_blank">Printify</a>, <a href="https://www.gelato.com" target="_blank">Gelato</a>, or <a href="https://www.subliminator.com" target="_blank">Subliminator</a> and make sure your designs are in high DPI for a sharp, professional look. To keep your store fresh and exciting, release exclusive products every month! These should be limited-edition items that entice customers to buy before they're gone! </p>
+        </section>
+
+        <section>
+          <h3>3. Setting Profits 📈💲📈</h3>
+          <p>Aim to sell your products with a 40% profit margin. Whether it's custom designs or logos on merch, keep your pricing competitive while still ensuring a decent profit! 🤑💲🤑</p>
+        </section>
+
+        <section>
+          <h3>4. Expand with Drop Shipping 📦💲📦</h3>
+          <p>To diversify your product range, incorporate drop shipping with suppliers like <a href="https://cjwholesale.com" target="_blank">CJ Wholesale</a> or <a href="https://www.temu.com" target="_blank">Temu</a> 🌍💲🌍. Choose fun, trending products that match the vibe of your shop and aim for a 40% profit margin here as well. Items like quirky gadgets, home decor, and accessories can really boost your store's appeal! 🎁💥🎁💲💥</p>
+        </section>
+
+        <section>
+          <h3>5. Go Unique with Handmade Crafts ✨💲✨</h3>
+          <p>For even more profits, consider creating handmade crafts that are one-of-a-kind 🖼️💲🖼️. Think about recycling old materials into art or crafting natural, functional items 🌱💲🌱. The uniqueness of handmade products can make your shop stand out and appeal to customers who value originality and craftsmanship.</p>
+        </section>
+
+        <section>
+          <h3>6. BONUS: Selling Homemade Baked Goods and Tea Blends 💲</h3>
+          <p>Selling homemade baked goods 🍪💲🍪 and dried tea blends 🍵💲🍵 is a great way to make money from home! With unique flavors and fresh ingredients, you can stand out at farmers' markets or online. 🌟💲🌟
+
+Just make sure to check your local cottage food laws 📜💲📜 as each state has different rules on what you can sell and where. Stay compliant to avoid any issues! ✅💲✅</p>
+        </section>
+
+        <section class="conclusion">
+          <h3>Get Ready to Open Your Store! 🛍️💲🛍️</h3>
+          <p>Make an <a href="https://www.etsy.com" target="_blank">Etsy Store</a>, or Create a Website with this guide <a href="https://711131719.xyz/github-pages.html" target="_blank">here</a> and <a href="http://711131719.xyz/websim/home.html" target="_blank">Graphic Design tools</a>.</p>
+          <p>Combine these strategies and you can create a unique, high-quality product line with a 40% profit margin or higher with some additional handmade items, all while standing out in a competitive marketplace.</p>
+          <p>With a little creativity, a solid plan, and some effort, you can build a profitable online store with your own custom designs, drop shipping items, and unique handmade crafts! 💪🎨💪💲🎨</p>
+          <p>Start now, and make your business dreams a reality! 🚀💲🚀</p>
+        </section>
+      </article>
+    </main>
+
+    <footer>
+      <div class="container">
+        <p>&copy; 2025 TEAM INFINITY. All rights reserved.</p>
+      </div>
+    </footer>
+  </div>
+  <script type="module">
+    import * as THREE from 'three';
+    import { FontLoader } from 'three/addons/loaders/FontLoader.js';
+    import { TextGeometry } from 'three/addons/geometries/TextGeometry.js';
+
+    function createInfinityGeometry() {
+      const path = new THREE.Curve();
+      path.getPoint = (t) => {
+        const scale = 5;
+        t = t * Math.PI * 2;
+        return new THREE.Vector3(
+          scale * Math.sin(t),
+          scale * Math.sin(2 * t) / 2,
+          0
+        );
+      };
+
+      return new THREE.TubeGeometry(
+        path,
+        64,
+        0.4,
+        8,
+        false
+      );
+    }
+
+    class InfinityScene {
+      constructor() {
+        this.initScene();
+        this.createLights();
+        this.createInfinitySymbol();
+        this.createMoneyRain(); 
+        this.animate();
+        window.addEventListener('resize', this.onWindowResize.bind(this));
+      }
+
+      initScene() {
+        this.scene = new THREE.Scene();
+        this.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        this.renderer = new THREE.WebGLRenderer({ 
+          canvas: document.querySelector('#threeCanvas'),
+          alpha: true,
+          antialias: true
+        });
+        
+        this.renderer.setPixelRatio(window.devicePixelRatio);
+        this.renderer.setSize(window.innerWidth, window.innerHeight);
+        this.camera.position.z = 15;
+      }
+
+      createLights() {
+        this.lights = [];
+        const colors = [0xffd700, 0xb8860b, 0xffffff];
+        
+        for (let i = 0; i < 3; i++) {
+          const light = new THREE.PointLight(colors[i], 1.5, 20);
+          light.position.set(Math.cos(i * 2) * 8, Math.sin(i * 2) * 8, 0);
+          this.scene.add(light);
+          this.lights.push({
+            obj: light,
+            angle: i * (Math.PI * 2) / 3
+          });
+        }
+
+        const ambient = new THREE.AmbientLight(0x444444);
+        this.scene.add(ambient);
+      }
+
+      createInfinitySymbol() {
+        const geometry = createInfinityGeometry();
+        const material = new THREE.MeshStandardMaterial({
+          color: 0xffd700,
+          metalness: 0.7,
+          roughness: 0.3,
+          emissive: 0xb8860b,
+          emissiveIntensity: 0.3
+        });
+        
+        this.infinity = new THREE.Mesh(geometry, material);
+        this.scene.add(this.infinity);
+      }
+
+      createMoneyRain() {
+        const moneyChars = '$';
+        const count = 15;
+        this.moneyParticles = [];
+
+        const loader = new FontLoader();
+        loader.load('https://cdn.jsdelivr.net/npm/three@0.150.1/examples/fonts/helvetiker_regular.typeface.json', (font) => {
+          const geometry = new TextGeometry(moneyChars, {
+            font: font,
+            size: 0.8,
+            height: 0.1,
+            curveSegments: 8,
+            bevelEnabled: false
+          });
+          
+          const material = new THREE.MeshPhongMaterial({
+            color: 0xffd700,
+            emissive: 0xb8860b,
+            emissiveIntensity: 0.3,
+            specular: 0x888888,
+            shininess: 50
+          });
+
+          const sharedGeometry = geometry;
+          
+          for(let i = 0; i < count; i++) {
+            const mesh = new THREE.Mesh(sharedGeometry, material);
+            mesh.position.set(
+              Math.random() * 40 - 20,
+              Math.random() * 50,
+              Math.random() * -30
+            );
+            mesh.rotation.set(
+              Math.random() * Math.PI * 0.5,
+              Math.random() * Math.PI * 0.5,
+              Math.random() * Math.PI * 0.5
+            );
+            this.scene.add(mesh);
+            this.moneyParticles.push({
+              mesh: mesh,
+              speed: 0.3 + Math.random() * 0.4,
+              spin: Math.random() * 0.01 - 0.005
+            });
+          }
+        });
+      }
+
+      onWindowResize() {
+        this.camera.aspect = window.innerWidth / window.innerHeight;
+        this.camera.updateProjectionMatrix();
+        this.renderer.setSize(window.innerWidth, window.innerHeight);
+      }
+
+      animate() {
+        requestAnimationFrame(this.animate.bind(this));
+        
+        this.infinity.rotation.z += 0.002;
+        this.infinity.rotation.x += 0.001;
+        
+        this.lights.forEach((light, index) => {
+          light.angle += 0.02;
+          light.obj.position.x = Math.cos(light.angle) * 8;
+          light.obj.position.y = Math.sin(light.angle * 1.5) * 5;
+          light.obj.position.z = Math.sin(light.angle) * 2;
+        });
+
+        if(this.moneyParticles) {
+          this.moneyParticles.forEach(particle => {
+            particle.mesh.position.y -= particle.speed;
+            particle.mesh.rotation.z += particle.spin;
+            
+            if(particle.mesh.position.y < -15) {
+              particle.mesh.position.y = 30 + Math.random() * 20;
+              particle.mesh.position.x = Math.random() * 40 - 20;
+              particle.mesh.position.z = Math.random() * -30;
+            }
+          });
+        }
+
+        this.renderer.render(this.scene, this.camera);
+      }
+    }
+
+    new InfinityScene();
+  </script>
+</body>
+</html>
