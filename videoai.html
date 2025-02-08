@@ -1,0 +1,272 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Video ATM Hack</title>
+    <style>
+    :root {
+        --neon-green: #39FF14;
+        --neon-purple: #BC13FE;
+        --bg-gradient: linear-gradient(45deg, #0a0a27 0%, #1a1a3d 100%);
+        --section-bg: rgba(11, 11, 34, 0.9);
+        --font-primary: 'Exo 2', sans-serif;
+        --font-heading: 'Orbitron', sans-serif;
+        --font-subhead: 'Rajdhani', sans-serif;
+    }
+
+    body {
+        background: var(--bg-gradient);
+        color: var(--neon-green);
+        font-family: var(--font-primary);
+        line-height: 1.6;
+        margin: 0;
+        padding: 20px;
+    }
+
+    .neon-container {
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    .site-title {
+        font-family: var(--font-heading);
+        text-align: center;
+        font-size: 4rem;
+        color: var(--neon-purple);
+        text-shadow: 0 0 20px var(--neon-green),
+                     0 0 30px var(--neon-purple),
+                     0 0 40px var(--neon-green);
+        margin: 2rem 0;
+        animation: title-glow 2s ease-in-out infinite alternate;
+    }
+
+    @keyframes title-glow {
+        0% {
+            opacity: 0.8;
+            text-shadow: 0 0 10px var(--neon-green),
+                         0 0 20px var(--neon-purple);
+        }
+        100% {
+            opacity: 1;
+            text-shadow: 0 0 20px var(--neon-purple),
+                         0 0 40px var(--neon-green),
+                         0 0 60px var(--neon-purple);
+        }
+    }
+
+    .neon-header h1 {
+        font-family: var(--font-heading);
+        text-align: center;
+        font-size: 2.5rem;
+        text-shadow: 0 0 10px var(--neon-purple),
+                     0 0 20px var(--neon-purple),
+                     0 0 30px var(--neon-purple);
+        margin: 2rem 0;
+        animation: pulse 1.5s infinite alternate;
+        margin-top: -1rem;
+    }
+
+    .neon-box {
+        background: var(--section-bg);
+        border: 2px solid var(--neon-green);
+        border-radius: 15px;
+        padding: 2rem;
+        margin: 2rem 0;
+        box-shadow: 0 0 15px var(--neon-purple),
+                    inset 0 0 10px rgba(188, 19, 254, 0.3);
+    }
+
+    .neon-subhead {
+        font-family: var(--font-subhead);
+        color: var(--neon-purple);
+        font-size: 2rem;
+        text-shadow: 0 0 8px var(--neon-purple);
+        margin-bottom: 1.5rem;
+    }
+
+    .tool-list, .strategy-grid {
+        display: grid;
+        gap: 1.5rem;
+        padding: 1rem;
+    }
+
+    .tool-item, .strategy-item {
+        background: rgba(57, 255, 20, 0.05);
+        border: 1px solid var(--neon-green);
+        border-radius: 8px;
+        padding: 1.5rem;
+        font-size: 1.1rem;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .tool-item:hover, .strategy-item:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 0 15px var(--neon-purple),
+                    inset 0 0 8px rgba(188, 19, 254, 0.2);
+    }
+
+    .neon-link {
+        color: var(--neon-purple);
+        text-decoration: none;
+        position: relative;
+        padding: 0 3px;
+    }
+
+    .neon-link::after {
+        content: '';
+        position: absolute;
+        bottom: -2px;
+        left: 0;
+        width: 100%;
+        height: 2px;
+        background: var(--neon-purple);
+        transform: scaleX(0);
+        transition: transform 0.3s ease;
+    }
+
+    .neon-link:hover::after {
+        transform: scaleX(1);
+    }
+
+    .strategy-grid {
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    }
+
+    .opportunity-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 1.5rem;
+        padding: 1rem;
+    }
+
+    .disclaimer {
+        font-size: 0.9rem;
+        opacity: 0.7;
+        text-align: center;
+        margin-top: 3rem;
+    }
+
+    .cta-section .neon-box {
+        text-align: center;
+        border-color: var(--neon-purple);
+        animation: border-pulse 1.2s infinite alternate;
+    }
+
+    .cta-highlight {
+        font-size: 1.4rem;
+        margin-top: 2rem;
+        text-shadow: 0 0 10px var(--neon-purple);
+    }
+
+    @keyframes pulse {
+        from {
+            text-shadow: 0 0 10px var(--neon-purple),
+                         0 0 20px var(--neon-purple);
+        }
+        to {
+            text-shadow: 0 0 20px var(--neon-purple),
+                         0 0 30px var(--neon-purple),
+                         0 0 40px var(--neon-purple);
+        }
+    }
+
+    @keyframes border-pulse {
+        from {
+            box-shadow: 0 0 15px var(--neon-purple),
+                       inset 0 0 10px rgba(188, 19, 254, 0.3);
+        }
+        to {
+            box-shadow: 0 0 25px var(--neon-purple),
+                       inset 0 0 15px rgba(188, 19, 254, 0.5);
+        }
+    }
+
+    @media (max-width: 768px) {
+        .neon-header h1 {
+            font-size: 1.8rem;
+        }
+        
+        .strategy-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .cta-highlight {
+            font-size: 1.1rem;
+        }
+    }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Rajdhani:wght@500;700&family=Exo+2:wght@300;500&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="neon-container">
+        <h1 class="site-title">VidAI</h1>
+        
+        <header class="neon-header">
+            <h1 class="neon-pulse">🔥🚀 TURN FREE AI VIDEO GENERATION<br>INTO AN ATM HACK! 🚀🔥</h1>
+        </header>
+
+        <section class="content-section neon-glow">
+            <div class="neon-box">
+                <h2 class="neon-subhead">💰💸 Why Spend Money When AI Gives You Unlimited Video Content for FREE? 💸💰</h2>
+                <p class="neon-text">🤑 AI video generators are changing the game, allowing ANYONE to create high-quality, engaging videos with zero skills, zero effort, and ZERO cost! 🎥💪 Whether you want to go viral on social media, monetize <a href="https://youtube.com" class="neon-link">YouTube</a>, or sell video content, AI does all the heavy lifting for you! 💰🚀</p>
+            </div>
+        </section>
+
+        <section class="tools-section">
+            <div class="neon-box grid-container">
+                <h2 class="neon-subhead">🚀💵 FREE AI VIDEO GENERATORS = FREE CONTENT & CASH! 💵🚀</h2>
+                <div class="tool-list">
+                    <div class="tool-item">🎥💰 Luma - Create hyper-realistic AI videos instantly! 👉 <a href="https://lumalabs.ai/dream-machine" class="neon-link">link here</a></div>
+                    <div class="tool-item">🎥💸 InVideo AI - Generate & edit videos effortlessly! 👉 <a href="https://invideo.io" class="neon-link">link here</a></div>
+                    <div class="tool-item">🎥🤑 Hailuo - AI-powered video editing & generation! 👉 <a href="https://hailuo.com" class="neon-link">link here</a></div>
+                    <div class="tool-item">🎥💎 Runway Gen-2 - Create cinematic AI videos with ease! 👉 <a href="https://runwayml.com" class="neon-link">link here</a></div>
+                    <div class="tool-item">🎥💰 Pika Labs - Turn ideas into engaging AI-generated videos! 👉 <a href="https://pikalabs.com" class="neon-link">link here</a></div>
+                    <div class="tool-item">🎥💵 Fliki - Convert text into videos in seconds! 👉 <a href="https://fliki.ai" class="neon-link">link here</a></div>
+                </div>
+            </div>
+        </section>
+
+        <section class="money-section">
+            <div class="neon-box grid-container">
+                <h2 class="neon-subhead">💥💸 How to Make Money with AI-Generated Videos! 💸💥</h2>
+                <div class="strategy-grid">
+                    <div class="strategy-item">📈💰 Create Viral Shorts & Reels! Post 7 Shorts per week or 52 per year on <a href="https://youtube.com" class="neon-link">YouTube</a>, <a href="https://tiktok.com" class="neon-link">TikTok</a> & <a href="https://instagram.com" class="neon-link">Instagram</a>! More posts = more exposure = more money! 💵🚀</div>
+                    <div class="strategy-item">📝💎 Monetize Long-Form Videos! Edit 1 viral video per week (2-10 min) from trending topics & earn from <a href="https://youtube.com" class="neon-link">YouTube</a> ads & sponsorships! 💸🎥</div>
+                    <div class="strategy-item">💪💰 Repurpose Long Videos! Take 1-hour+ videos & cut them into short viral clips that drive traffic & engagement! 🎬💵</div>
+                    <div class="strategy-item">💳🚀 Use AI for Titles & Descriptions! <a href="https://openai.com/chatgpt" class="neon-link">GPT</a>-powered tools generate SEO-optimized titles & descriptions for maximum reach! 💸📈</div>
+                    <div class="strategy-item">🔍💎 Find Trending Topics! Use <a href="https://www.tubebuddy.com" class="neon-link">TubeBuddy</a>, <a href="https://vidiq.com" class="neon-link">VidIQ</a> & <a href="https://trends.google.com" class="neon-link">Google Trends</a> to discover what's hot & cash in before the trend dies! 💰🔥</div>
+                    <div class="strategy-item">💸📈 Sell AI-Generated Content! Create & sell AI video content for businesses, YouTubers & influencers looking for high-quality visuals! 💎🚀</div>
+                </div>
+            </div>
+        </section>
+
+        <section class="opportunity-section">
+            <div class="neon-box">
+                <h2 class="neon-subhead">💎💰 Why This is a GOLDEN Opportunity RIGHT NOW 💰💎</h2>
+                <div class="opportunity-grid">
+                    <div class="strategy-item">🔄💰 The Video Industry is Exploding! People consume billions of hours of video content daily, and AI lets you tap into this booming market for FREE! 🚀💸</div>
+                    <div class="strategy-item">👁️💎 Shorts & Reels are the Future! <a href="https://youtube.com/shorts" class="neon-link">YouTube Shorts</a>, <a href="https://instagram.com/reels" class="neon-link">Instagram Reels</a>, and <a href="https://tiktok.com" class="neon-link">TikTok</a> are dominating—AI lets you create engaging, viral clips instantly! 📈💵</div>
+                    <div class="strategy-item">💸🤑 Passive Income with ZERO Effort! AI videos can be monetized through YouTube ads, sponsorships, affiliate marketing, and more! 💰🚀</div>
+                    <div class="strategy-item">📊💰 Go Viral & Grow FAST! AI video tools help you generate content at scale, so you can post daily without lifting a finger! 💎🎥</div>
+                </div>
+            </div>
+        </section>
+
+        <section class="cta-section">
+            <div class="neon-box act-fast">
+                <h2 class="neon-subhead">🚀!!️ ACT FAST—THIS OPPORTUNITY WON'T LAST! !!️🚀</h2>
+                <div class="cta-content">
+                    <p>🕒 The best time to start was yesterday. The second-best time is NOW! 📅💸 Don't miss out on one of the most profitable AI opportunities of all time!</p>
+                    <p class="cta-highlight">📢💰 Get started with FREE AI video tools & turn AI into your personal MONEY-MAKING MACHINE! 💰🔥</p>
+                </div>
+            </div>
+        </section>
+
+        <footer class="neon-footer">
+            <div class="neon-box">
+                <p class="disclaimer">⚠️ Disclaimer: Results may vary. Use at your own risk. ⚠️</p>
+            </div>
+        </footer>
+    </div>
+</body>
+</html>
