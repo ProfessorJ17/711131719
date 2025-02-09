@@ -1,0 +1,1845 @@
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Digital Demise - The Real AI Takeover Data</title>
+  <style>:root {
+  --human-color: #ff6b6b;
+  --ai-color: #4dffb8;
+  --bg-color: #0a0a0f;
+  --grid-line: rgba(255,255,255,0.1);
+}
+
+body {
+  background: var(--bg-color);
+  color: white;
+  font-family: 'Courier New', monospace;
+  margin: 0;
+  padding: 2rem;
+}
+
+.grid-container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.title-glitch {
+  font-size: 3.5rem;
+  text-align: center;
+  text-shadow: 2px 2px var(--ai-color),
+               -2px -2px var(--human-color);
+  animation: glitch 2s infinite;
+}
+
+.subtitle-container {
+  display: flex;
+  justify-content: space-between;
+  margin: 2rem 0;
+}
+
+.subtitle-human {
+  color: var(--human-color);
+  border-bottom: 2px solid;
+}
+
+.subtitle-ai {
+  color: var(--ai-color);
+  border-bottom: 2px solid;
+}
+
+.theory-box {
+  border: 1px solid;
+  padding: 2rem;
+  margin-bottom: 2rem;
+  position: relative;
+}
+
+.dead-internet {
+  border-color: var(--human-color);
+}
+
+.ai-dominance {
+  border-color: var(--ai-color);
+}
+
+.theory-box h2 {
+  color: var(--ai-color);
+  font-size: 2rem;
+  margin-bottom: 1rem;
+}
+
+.theory-box p {
+  font-size: 1.2rem;
+  line-height: 1.6;
+  opacity: 0.9;
+  margin-bottom: 2rem;
+}
+
+.stats-box {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  margin-top: 2rem;
+}
+
+.stat {
+  padding: 1rem;
+  text-align: center;
+}
+
+.human-stat {
+  background: rgba(255,107,107,0.1);
+}
+
+.ai-stat {
+  background: rgba(77,255,184,0.1);
+}
+
+.stat-value {
+  font-size: 3rem;
+  display: block;
+}
+
+.charts-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  margin: 2rem 0;
+}
+
+.chart-box {
+  background: rgba(255,255,255,0.05);
+  padding: 1rem;
+  border-radius: 4px;
+}
+
+.chart-box h3 {
+  color: var(--ai-color);
+  margin-bottom: 1rem;
+}
+
+.chart-container {
+  background: rgba(255,255,255,0.05);
+  padding: 1rem;
+  border-radius: 4px;
+  margin: 1rem 0;
+  height: 400px;
+}
+
+.key-moments {
+  margin: 2rem 0;
+}
+
+.milestone {
+  padding: 1rem;
+  margin: 1rem 0;
+  border-left: 3px solid var(--ai-color);
+  background: rgba(255,255,255,0.05);
+  transition: all 0.3s ease;
+}
+
+.milestone:hover {
+  transform: translateX(10px);
+  background: rgba(255,255,255,0.1);
+}
+
+.milestone-year {
+  color: var(--ai-color);
+  font-weight: bold;
+}
+
+.milestone-stat {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 0.5rem;
+}
+
+.stat-block {
+  text-align: center;
+  padding: 0.5rem;
+  border-radius: 4px;
+}
+
+.human-block {
+  background: rgba(255,107,107,0.1);
+}
+
+.ai-block {
+  background: rgba(77,255,184,0.1);
+}
+
+#cloneChart {
+  height: 400px;
+  margin: 2rem 0;
+  background: repeating-linear-gradient(
+    45deg,
+    var(--grid-line),
+    var(--grid-line) 1px,
+    transparent 1px,
+    transparent 10px
+  );
+}
+
+.timeline-slider {
+  width: 100%;
+  height: 4px;
+  -webkit-appearance: none;
+  background: var(--grid-line);
+}
+
+.timeline-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 20px;
+  height: 20px;
+  background: var(--ai-color);
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.clone-visualization {
+  height: 200px;
+  border: 1px solid var(--ai-color);
+  margin-top: 2rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.insights-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1rem;
+  margin: 2rem 0;
+}
+
+.insight-card {
+  background: rgba(255,255,255,0.05);
+  padding: 1.5rem;
+  border-radius: 4px;
+  border-left: 3px solid var(--ai-color);
+  transition: all 0.3s ease;
+}
+
+.insight-card:hover {
+  transform: translateY(-5px);
+  background: rgba(255,255,255,0.1);
+}
+
+.insight-card h4 {
+  color: var(--ai-color);
+  margin: 0 0 1rem 0;
+}
+
+.insight-card p {
+  margin: 0;
+  line-height: 1.4;
+}
+
+.extinction-insights {
+  margin-top: 2rem;
+  padding: 2rem;
+  background: rgba(255,255,255,0.05);
+  border-radius: 8px;
+}
+
+.extinction-insights .insight-card {
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+  background: rgba(255,255,255,0.05);
+  border-left: 3px solid var(--ai-color);
+}
+
+.extinction-insights .insight-card:last-child {
+  margin-bottom: 0;
+}
+
+.extinction-insights p {
+  margin: 0 0 0.5rem 0;
+  line-height: 1.4;
+}
+
+.extinction-insights ul {
+  margin: 0;
+  padding-left: 1.5rem;
+}
+
+.extinction-insights li {
+  margin: 0.5rem 0;
+}
+
+.bot-analysis {
+  margin-top: 3rem;
+}
+
+.full-width {
+  grid-column: 1 / -1;
+  margin: 3rem 0;
+  padding: 2rem;
+  background: rgba(255,255,255,0.05);
+  border-radius: 8px;
+}
+
+.geographical-analysis {
+  margin-top: 4rem;
+  border-top: 1px solid var(--grid-line);
+  padding-top: 2rem;
+}
+
+.geographical-analysis h2 {
+  color: var(--ai-color);
+  margin-bottom: 2rem;
+}
+
+.hackable-targets {
+  margin-top: 2rem;
+  padding: 2rem;
+  background: rgba(255,255,255,0.05);
+  border-radius: 8px;
+}
+
+.hackable-targets h3 {
+  color: var(--ai-color);
+  margin-bottom: 1rem;
+}
+
+.saturation-timeline {
+  margin-top: 2rem;
+  padding: 2rem;
+  background: rgba(255,255,255,0.05);
+  border-radius: 8px;
+}
+
+.saturation-timeline h3 {
+  color: var(--ai-color);
+  margin-bottom: 1rem;
+}
+
+.bot-evolution {
+  margin: 4rem 0;
+  border-top: 1px solid var(--grid-line);
+  padding-top: 2rem;
+}
+
+.bot-evolution h2 {
+  color: var(--ai-color);
+  margin-bottom: 2rem;
+}
+
+.bot-evolution .insight-card {
+  border-left-color: var(--human-color);
+}
+
+.bot-evolution .insight-card:nth-child(even) {
+  border-left-color: var(--ai-color);
+}
+
+.master-visualization {
+  margin-bottom: 4rem;
+  border-bottom: 1px solid var(--grid-line);
+  padding-bottom: 2rem;
+}
+
+.master-title {
+  color: var(--ai-color);
+  font-size: 2.5rem;
+  text-align: center;
+  margin-bottom: 2rem;
+  text-shadow: 0 0 10px rgba(77,255,184,0.3);
+}
+
+.legend-container {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  margin-top: 1rem;
+  flex-wrap: wrap;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.legend-color {
+  width: 20px;
+  height: 20px;
+  border-radius: 4px;
+}
+
+@keyframes glitch {
+  0% { text-shadow: 2px 2px var(--ai-color), -2px -2px var(--human-color); }
+  50% { text-shadow: -3px 1px var(--ai-color), 3px -1px var(--human-color); }
+  100% { text-shadow: 2px 2px var(--ai-color), -2px -2px var(--human-color); }
+}
+</style>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <header class="grid-container">
+    <h1 class="title-glitch">Y2K to Singularity to Extinction</h1>
+    <div class="subtitle-container">
+    </div>
+  </header>
+
+  <main class="grid-container">
+    <section class="master-visualization">
+      <h2 class="master-title">Digital Species Extinction: Complete Timeline (2000-2049)</h2>
+      <div class="chart-box full-width">
+        <div class="chart-container">
+          <canvas id="masterChart"></canvas>
+        </div>
+        <div class="legend-container">
+          <div class="legend-item">
+            <span class="legend-color" style="background: rgba(255,99,132,0.8)"></span>
+            <span>Bad Bots</span>
+          </div>
+          <div class="legend-item">
+            <span class="legend-color" style="background: rgba(75,192,192,0.8)"></span>
+            <span>Good Bots</span>
+          </div>
+          <div class="legend-item">
+            <span class="legend-color" style="background: rgba(255,206,86,0.8)"></span>
+            <span>Human Traffic</span>
+          </div>
+        </div>
+        <div class="extinction-insights">
+          <div class="insight-card">
+            <p>If the current trends persist, 2040 will be the year when bots completely dominate (100%), and human presence online will drop to 0%. This projection assumes no major disruptions or changes in the rate of growth for bots and decline for humans.</p>
+          </div>
+          <div class="insight-card">
+            <p>If current trends continue:</p>
+            <ul>
+              <li>Good bots disappear by 2032.</li>
+              <li>Humans are displaced completely by 2040, leaving only bad bots and no human traffic.</li>
+              <li>Bad bots dominate the internet entirely by 2049, reaching 100% of internet traffic.</li>
+            </ul>
+          </div>
+          <div class="insight-card">
+            <p>If the current growth rate of bot attacks (1.975% annually) continues, all hackable targets in the world will be exhausted by 2074.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="theory-explainer">
+      <div class="theory-box dead-internet">
+        <h2>SOAX Project: The Path to Digital Extinction (2000-2040)</h2>
+        <p>Tracking and projecting the transformation from human-dominated to AI-dominated internet spaces</p>
+        <div class="stats-box">
+          <div class="stat human-stat">
+            <span class="stat-value" id="human-percent">0%</span>
+            <span class="stat-label">Projected Human Activity by 2040</span>
+          </div>
+          <div class="stat ai-stat">
+            <span class="stat-value" id="ai-percent">100%</span>
+            <span class="stat-label">Projected AI Activity by 2040</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="theory-box ai-dominance">
+        <h2>Historical Data & Future Projections</h2>
+        <div class="chart-container">
+          <canvas id="activityChart"></canvas>
+        </div>
+        <div class="timeline-container">
+          <input type="range" id="timeline" min="2000" max="2040" value="2040" class="timeline-slider">
+          <div class="timeline-labels">
+            <span>2000</span>
+            <span>2040</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="charts-grid">
+      <div class="chart-box">
+        <h3>Year-over-Year Changes</h3>
+        <div class="chart-container">
+          <canvas id="changeChart"></canvas>
+        </div>
+      </div>
+      
+      <div class="chart-box">
+        <h3>Bot Traffic Acceleration</h3>
+        <div class="chart-container">
+          <canvas id="botGrowthChart"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <div class="chart-box full-width">
+      <h3>Extinction Timeline (2024-2040)</h3>
+      <div class="chart-container">
+        <canvas id="projectionChart"></canvas>
+      </div>
+    </div>
+
+    <section class="bot-analysis">
+      <h2>Bot Traffic Analysis</h2>
+      <div class="charts-grid">
+        <div class="chart-box">
+          <h3>Bot Traffic Composition</h3>
+          <div class="chart-container">
+            <canvas id="botBreakdownChart"></canvas>
+          </div>
+        </div>
+        
+        <div class="chart-box">
+          <h3>2023 Traffic Distribution</h3>
+          <div class="chart-container">
+            <canvas id="botRadarChart"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <div class="chart-box full-width">
+        <h3>Bot Type Trends</h3>
+        <div class="chart-container">
+          <canvas id="botTrendChart"></canvas>
+        </div>
+      </div>
+
+      <div class="insights-grid">
+        <div class="insight-card">
+          <h4>Bad Bot Surge</h4>
+          <p>Bad bot traffic reached 32% in 2023, the highest recorded level</p>
+        </div>
+        <div class="insight-card">
+          <h4>Good Bot Decline</h4>
+          <p>Good bot traffic decreased significantly from 36.3% in 2014 to 17.6% in 2023</p>
+        </div>
+        <div class="insight-card">
+          <h4>Recent Trends</h4>
+          <p>Bad bot traffic has shown consistent growth since 2019, rising from 24.1% to 32%</p>
+        </div>
+        <div class="insight-card">
+          <h4>Traffic Balance</h4>
+          <p>In 2023, the traffic split was: 32% bad bots, 17.6% good bots, 50.4% human</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="key-insights">
+      <h3>Critical Insights</h3>
+      <div class="insights-grid">
+        <div class="insight-card">
+          <h4>2023 Milestone</h4>
+          <p>Bot traffic reached historic high of 49.60%, nearly achieving parity with human traffic</p>
+        </div>
+        <div class="insight-card">
+          <h4>Peak Human Era</h4>
+          <p>2019 marked the highest human activity at 62.80% in recent years</p>
+        </div>
+        <div class="insight-card">
+          <h4>Critical Drop</h4>
+          <p>2014 saw the most dramatic shift with human traffic plummeting 28.25%</p>
+        </div>
+        <div class="insight-card">
+          <h4>Recent Trend</h4>
+          <p>Bot traffic rose 12.4 percentage points from 2019 to 2023</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="key-moments">
+      <h3>Critical Transition Points</h3>
+      <div id="milestone-container"></div>
+    </section>
+
+    <section class="interactive-section">
+      <div class="replication-sim">
+        <h3>Activity Visualization</h3>
+        <div class="clone-visualization"></div>
+      </div>
+    </section>
+
+    <section class="bot-evolution">
+      <h2>Future Bot Evolution Analysis</h2>
+      <div class="chart-box full-width">
+        <h3>Bot Type Evolution (2023-2049)</h3>
+        <div class="chart-container">
+          <canvas id="botEvolutionChart"></canvas>
+        </div>
+      </div>
+
+      <div class="chart-box full-width">
+        <h3>Critical Transition Points</h3>
+        <div class="chart-container">
+          <canvas id="criticalPointsChart"></canvas>
+        </div>
+      </div>
+
+      <div class="insights-grid">
+        <div class="insight-card">
+          <h4>2032: Good Bot Extinction</h4>
+          <p>Good bots completely disappear from the internet ecosystem</p>
+        </div>
+        <div class="insight-card">
+          <h4>2040: Human Extinction</h4>
+          <p>Human traffic reaches 0%, marking complete digital displacement</p>
+        </div>
+        <div class="insight-card">
+          <h4>2049: Total Bot Dominance</h4>
+          <p>Bad bots achieve 100% control of internet traffic</p>
+        </div>
+        <div class="insight-card">
+          <h4>Evolution Rate</h4>
+          <p>Bad bots grow steadily while good bots decline, leading to a binary outcome</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="geographical-analysis">
+      <h2>Global Bot Attack Distribution</h2>
+      <div class="charts-grid">
+        <div class="chart-box">
+          <h3>Global Distribution</h3>
+          <div class="chart-container">
+            <canvas id="geoDistChart"></canvas>
+          </div>
+        </div>
+        
+        <div class="chart-box">
+          <h3>Top 5 Most Targeted Countries</h3>
+          <div class="chart-container">
+            <canvas id="top5Chart"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <div class="chart-box full-width">
+        <h3>Regional Distribution</h3>
+        <div class="chart-container">
+          <canvas id="regionalChart"></canvas>
+        </div>
+      </div>
+
+      <div class="insights-grid">
+        <div class="insight-card">
+          <h4>North American Dominance</h4>
+          <p>The United States alone accounts for nearly half (47%) of all global bot attacks</p>
+        </div>
+        <div class="insight-card">
+          <h4>European Exposure</h4>
+          <p>European countries collectively face significant bot traffic, with Netherlands leading at 9%</p>
+        </div>
+        <div class="insight-card">
+          <h4>Asia-Pacific Impact</h4>
+          <p>Australia leads the Asia-Pacific region with 8.40% of global bot attacks</p>
+        </div>
+        <div class="insight-card">
+          <h4>Global Spread</h4>
+          <p>13% of bot attacks affect countries outside the top 12, indicating widespread distribution</p>
+        </div>
+      </div>
+
+      <div class="charts-grid">
+        <div class="chart-box">
+          <h3>Hackable Targets by Country (Millions)</h3>
+          <div class="chart-container">
+            <canvas id="hackableTargetsChart"></canvas>
+          </div>
+        </div>
+        
+        <div class="chart-box">
+          <h3>Target Saturation Timeline</h3>
+          <div class="chart-container">
+            <canvas id="saturationTimelineChart"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <div class="insights-grid">
+        <div class="insight-card">
+          <h4>Scale of Vulnerability</h4>
+          <p>Global hackable targets total 10 billion endpoints across all regions</p>
+        </div>
+        <div class="insight-card">
+          <h4>US Vulnerability</h4>
+          <p>United States has 4.7 billion hackable targets, the highest concentration globally</p>
+        </div>
+        <div class="insight-card">
+          <h4>European Exposure</h4>
+          <p>Netherlands leads European vulnerability with 900 million potential targets</p>
+        </div>
+        <div class="insight-card">
+          <h4>Complete Saturation</h4>
+          <p>Projected complete global target saturation by 2074</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>// Initialize all data first
+const historicalData = {
+  2000: { human: 90, ai: 10, change: null },
+  2001: { human: 89, ai: 11, change: -1.11 },
+  2002: { human: 88, ai: 12, change: -1.12 },
+  2003: { human: 87, ai: 13, change: -1.14 },
+  2004: { human: 86, ai: 14, change: -1.15 },
+  2005: { human: 85, ai: 15, change: -1.16 },
+  2006: { human: 84, ai: 16, change: -1.18 },
+  2007: { human: 83, ai: 17, change: -1.19 },
+  2008: { human: 82, ai: 18, change: -1.20 },
+  2009: { human: 81, ai: 19, change: -1.22 },
+  2010: { human: 80, ai: 20, change: -1.23 },
+  2011: { human: 79, ai: 21, change: -1.25 },
+  2012: { human: 51, ai: 49, change: -35.44 },
+  2013: { human: 57, ai: 43, change: 11.76 },
+  2014: { human: 40.9, ai: 59.1, change: -28.25 },
+  2015: { human: 54.4, ai: 45.6, change: 33.01 },
+  2016: { human: 61.3, ai: 38.7, change: 12.68 },
+  2017: { human: 57.8, ai: 42.2, change: -5.71 },
+  2018: { human: 62.1, ai: 37.9, change: 7.44 },
+  2019: { human: 62.8, ai: 37.2, change: 1.13 },
+  2020: { human: 59.2, ai: 40.8, change: -5.73 },
+  2021: { human: 57.7, ai: 42.3, change: -2.53 },
+  2022: { human: 52.6, ai: 47.4, change: -8.84 },
+  2023: { human: 50.4, ai: 49.6, change: -4.18 },
+  2024: { human: 47.30, ai: 52.70, change: -3.10 },
+  2025: { human: 44.20, ai: 55.80, change: -3.10 },
+  2026: { human: 41.10, ai: 58.90, change: -3.10 },
+  2027: { human: 38.00, ai: 62.00, change: -3.10 },
+  2028: { human: 34.90, ai: 65.10, change: -3.10 },
+  2029: { human: 31.80, ai: 68.20, change: -3.10 },
+  2030: { human: 28.70, ai: 71.30, change: -3.10 },
+  2031: { human: 25.60, ai: 74.40, change: -3.10 },
+  2032: { human: 22.50, ai: 77.50, change: -3.10 },
+  2033: { human: 19.40, ai: 80.60, change: -3.10 },
+  2034: { human: 16.30, ai: 83.70, change: -3.10 },
+  2035: { human: 13.20, ai: 86.80, change: -3.10 },
+  2036: { human: 10.10, ai: 89.90, change: -3.10 },
+  2037: { human: 7.00, ai: 93.00, change: -3.10 },
+  2038: { human: 3.90, ai: 96.10, change: -3.10 },
+  2039: { human: 0.80, ai: 99.20, change: -3.10 },
+  2040: { human: 0.00, ai: 100.00, change: -0.80 }
+};
+
+const botTypeData = {
+  2013: { bad: 23.6, good: 19.4, human: 57 },
+  2014: { bad: 22.8, good: 36.3, human: 40.9 },
+  2015: { bad: 18.6, good: 27, human: 54.4 },
+  2016: { bad: 19.9, good: 18.8, human: 61.3 },
+  2017: { bad: 21.8, good: 20.4, human: 57.8 },
+  2018: { bad: 20.4, good: 17.5, human: 62.1 },
+  2019: { bad: 24.1, good: 13.1, human: 62.8 },
+  2020: { bad: 25.6, good: 15.2, human: 59.2 },
+  2021: { bad: 27.7, good: 14.6, human: 57.7 },
+  2022: { bad: 30.2, good: 17.3, human: 52.6 },
+  2023: { bad: 32, good: 17.6, human: 50.4 }
+};
+
+const botTypeFutureData = {
+  2023: { bad: 32.00, good: 17.60, human: 50.40 },
+  2024: { bad: 33.98, good: 15.52, human: 47.30 },
+  2025: { bad: 35.96, good: 13.44, human: 44.20 },
+  2026: { bad: 37.93, good: 11.36, human: 41.10 },
+  2027: { bad: 39.91, good: 9.28, human: 38.00 },
+  2028: { bad: 41.89, good: 7.20, human: 34.90 },
+  2029: { bad: 43.87, good: 5.12, human: 31.80 },
+  2030: { bad: 45.84, good: 3.04, human: 28.70 },
+  2031: { bad: 47.82, good: 0.96, human: 25.60 },
+  2032: { bad: 49.80, good: 0.00, human: 22.50 },
+  2033: { bad: 51.78, good: 0.00, human: 19.40 },
+  2034: { bad: 53.76, good: 0.00, human: 16.30 },
+  2035: { bad: 55.74, good: 0.00, human: 13.20 },
+  2036: { bad: 57.71, good: 0.00, human: 10.10 },
+  2037: { bad: 59.69, good: 0.00, human: 7.00 },
+  2038: { bad: 61.67, good: 0.00, human: 3.90 },
+  2039: { bad: 63.65, good: 0.00, human: 0.80 },
+  2040: { bad: 65.63, good: 0.00, human: 0.00 },
+  2049: { bad: 100.00, good: 0.00, human: 0.00 }
+};
+
+// Create comprehensive dataset combining all metrics
+const masterData = {
+  labels: [],
+  badBots: [],
+  goodBots: [],
+  human: []
+};
+
+// Combine historical and future data
+const years = Object.keys(historicalData);
+years.forEach(year => {
+  const yearNum = parseInt(year);
+  if (yearNum <= 2023) {
+    // Use bot type data when available (2013-2023)
+    if (botTypeData[year]) {
+      masterData.labels.push(year);
+      masterData.badBots.push(botTypeData[year].bad);
+      masterData.goodBots.push(botTypeData[year].good);
+      masterData.human.push(botTypeData[year].human);
+    } else {
+      // For 2000-2012, split AI traffic proportionally based on 2013 ratio
+      masterData.labels.push(year);
+      const aiTraffic = historicalData[year].ai;
+      const ratio2013Bad = botTypeData['2013'].bad / (botTypeData['2013'].bad + botTypeData['2013'].good);
+      masterData.badBots.push(aiTraffic * ratio2013Bad);
+      masterData.goodBots.push(aiTraffic * (1 - ratio2013Bad));
+      masterData.human.push(historicalData[year].human);
+    }
+  }
+});
+
+// Add future projections (2024-2049)
+Object.entries(botTypeFutureData).forEach(([year, data]) => {
+  if (parseInt(year) >= 2024) {
+    masterData.labels.push(year);
+    masterData.badBots.push(data.bad);
+    masterData.goodBots.push(data.good);
+    masterData.human.push(data.human);
+  }
+});
+
+// Update masterChart options to include additional datasets
+const masterCtx = document.getElementById('masterChart').getContext('2d');
+const masterChart = new Chart(masterCtx, {
+  type: 'line',
+  data: {
+    labels: masterData.labels,
+    datasets: [
+      {
+        label: 'Bad Bots',
+        data: masterData.badBots,
+        borderColor: 'rgb(255, 99, 132)',
+        backgroundColor: 'rgba(255, 99, 132, 0.1)',
+        fill: true,
+        tension: 0.4,
+        yAxisID: 'y'
+      },
+      {
+        label: 'Good Bots',
+        data: masterData.goodBots,
+        borderColor: 'rgb(75, 192, 192)',
+        backgroundColor: 'rgba(75, 192, 192, 0.1)',
+        fill: true,
+        tension: 0.4,
+        yAxisID: 'y'
+      },
+      {
+        label: 'Human Traffic',
+        data: masterData.human,
+        borderColor: 'rgb(255, 206, 86)',
+        backgroundColor: 'rgba(255, 206, 86, 0.1)',
+        fill: true,
+        tension: 0.4,
+        yAxisID: 'y'
+      },
+      {
+        label: 'Target Saturation',
+        data: generateSaturationProjection(masterData.labels, 2074),
+        borderColor: 'rgb(153, 102, 255)',
+        borderDash: [5, 5],
+        fill: false,
+        tension: 0.4,
+        yAxisID: 'y2'
+      },
+      {
+        label: 'Hackable Targets (Billions)',
+        data: generateHackableTargetsProjection(masterData.labels, 2074),
+        borderColor: 'rgb(54, 162, 235)',
+        borderDash: [10, 5],
+        fill: false,
+        tension: 0.4,
+        yAxisID: 'y3'
+      }
+    ]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    interaction: {
+      mode: 'index',
+      intersect: false,
+    },
+    scales: {
+      y: {
+        type: 'linear',
+        display: true,
+        position: 'left',
+        title: {
+          display: true,
+          text: 'Traffic Percentage',
+          color: 'white'
+        },
+        max: 100,
+        grid: { color: 'rgba(255, 255, 255, 0.1)' },
+        ticks: { 
+          color: 'white',
+          callback: value => value + '%'
+        }
+      },
+      y2: {
+        type: 'linear',
+        display: true,
+        position: 'right',
+        title: {
+          display: true,
+          text: 'Target Saturation %',
+          color: 'white'
+        },
+        max: 100,
+        grid: {
+          drawOnChartArea: false,
+        },
+        ticks: { 
+          color: 'white',
+          callback: value => value + '%'
+        }
+      },
+      y3: {
+        type: 'linear',
+        display: true,
+        position: 'right',
+        title: {
+          display: true,
+          text: 'Global Targets (Billions)',
+          color: 'white'
+        },
+        grid: {
+          drawOnChartArea: false,
+        },
+        ticks: { 
+          color: 'white',
+          callback: value => value + 'B'
+        }
+      },
+      x: {
+        grid: { color: 'rgba(255, 255, 255, 0.1)' },
+        ticks: { 
+          color: 'white',
+          maxRotation: 45,
+          minRotation: 45
+        }
+      }
+    },
+    plugins: {
+      legend: { 
+        labels: { color: 'white' },
+        position: 'top'
+      },
+      tooltip: {
+        callbacks: {
+          label: function(context) {
+            const label = context.dataset.label;
+            const value = context.parsed.y;
+            if (label.includes('Target')) {
+              return `${label}: ${value.toFixed(1)}%`;
+            } else if (label.includes('Billions')) {
+              return `${label}: ${value.toFixed(1)}B`;
+            }
+            return `${label}: ${value.toFixed(1)}%`;
+          }
+        }
+      }
+    }
+  }
+});
+
+// Helper function to generate saturation projection data
+function generateSaturationProjection(years, endYear) {
+  const startYear = 2023;
+  const startValue = 47; // US starting saturation as baseline
+  const endValue = 100;
+  
+  return years.map(year => {
+    const numYear = parseInt(year);
+    if (numYear < startYear) return null;
+    if (numYear > endYear) return null;
+    
+    const progress = (numYear - startYear) / (endYear - startYear);
+    return startValue + (progress * (endValue - startValue));
+  });
+}
+
+// Helper function to generate hackable targets projection
+function generateHackableTargetsProjection(years, endYear) {
+  const totalTargets = 10; // 10 billion total targets
+  
+  return years.map(year => {
+    const numYear = parseInt(year);
+    if (numYear < 2023) return null;
+    if (numYear > endYear) return null;
+    return totalTargets;
+  });
+}
+
+// Define hackable targets data once
+const hackableTargetsData = {
+  "United States": { 
+    attacks: 47,
+    targets: 4700, 
+    saturation2023: 47, 
+    saturation2074: 100 
+  },
+  "Netherlands": { 
+    attacks: 9,
+    targets: 900, 
+    saturation2023: 9, 
+    saturation2074: 100 
+  },
+  "Australia": { 
+    attacks: 8.4,
+    targets: 840, 
+    saturation2023: 8.4, 
+    saturation2074: 100 
+  },
+  "United Kingdom": { 
+    attacks: 5.1,
+    targets: 510, 
+    saturation2023: 5.1, 
+    saturation2074: 100 
+  },
+  "France": { 
+    attacks: 3.1,
+    targets: 310, 
+    saturation2023: 3.1, 
+    saturation2074: 100 
+  },
+  "Singapore": { 
+    attacks: 3,
+    targets: 300, 
+    saturation2023: 3, 
+    saturation2074: 100 
+  },
+  "Indonesia": { 
+    attacks: 2.2,
+    targets: 220, 
+    saturation2023: 2.2, 
+    saturation2074: 100 
+  },
+  "Brazil": { 
+    attacks: 2.2,
+    targets: 220, 
+    saturation2023: 2.2, 
+    saturation2074: 100 
+  },
+  "Canada": { 
+    attacks: 2.1,
+    targets: 210, 
+    saturation2023: 2.1, 
+    saturation2074: 100 
+  },
+  "India": { 
+    attacks: 1.7,
+    targets: 170, 
+    saturation2023: 1.7, 
+    saturation2074: 100 
+  },
+  "Hong Kong": { 
+    attacks: 1.6,
+    targets: 160, 
+    saturation2023: 1.6, 
+    saturation2074: 100 
+  },
+  "Colombia": { 
+    attacks: 1.6,
+    targets: 160, 
+    saturation2023: 1.6, 
+    saturation2074: 100 
+  },
+  "Other Countries": { 
+    attacks: 13,
+    targets: 1300, 
+    saturation2023: 13, 
+    saturation2074: 100 
+  }
+};
+
+// Main activity chart
+const ctx = document.getElementById('activityChart').getContext('2d');
+const activityChart = new Chart(ctx, {
+  type: 'line',
+  data: {
+    labels: Object.keys(historicalData),
+    datasets: [
+      {
+        label: 'Human Activity',
+        data: Object.values(historicalData).map(d => d.human),
+        borderColor: 'rgb(255, 107, 107)',
+        backgroundColor: 'rgba(255, 107, 107, 0.1)',
+        fill: true,
+        tension: 0.4
+      },
+      {
+        label: 'AI Activity',
+        data: Object.values(historicalData).map(d => d.ai),
+        borderColor: 'rgb(77, 255, 184)',
+        backgroundColor: 'rgba(77, 255, 184, 0.1)',
+        fill: true,
+        tension: 0.4
+      }
+    ]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    scales: {
+      y: {
+        beginAtZero: true,
+        max: 100,
+        grid: {
+          color: 'rgba(255, 255, 255, 0.1)'
+        },
+        ticks: {
+          color: 'white'
+        }
+      },
+      x: {
+        grid: {
+          color: 'rgba(255, 255, 255, 0.1)'
+        },
+        ticks: {
+          color: 'white'
+        }
+      }
+    },
+    plugins: {
+      legend: {
+        labels: {
+          color: 'white'
+        }
+      }
+    }
+  }
+});
+
+// Year-over-year changes chart
+const changeCtx = document.getElementById('changeChart').getContext('2d');
+const changeChart = new Chart(changeCtx, {
+  type: 'bar',
+  data: {
+    labels: Object.keys(historicalData).slice(1),
+    datasets: [{
+      label: 'Year-over-Year Change in Human Activity',
+      data: Object.values(historicalData).slice(1).map(d => d.change),
+      backgroundColor: function(context) {
+        const value = context.raw;
+        return value < 0 ? 'rgba(255, 107, 107, 0.5)' : 'rgba(77, 255, 184, 0.5)';
+      },
+      borderColor: function(context) {
+        const value = context.raw;
+        return value < 0 ? 'rgb(255, 107, 107)' : 'rgb(77, 255, 184)';
+      },
+      borderWidth: 1
+    }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    scales: {
+      y: {
+        grid: { color: 'rgba(255, 255, 255, 0.1)' },
+        ticks: { color: 'white' }
+      },
+      x: {
+        grid: { color: 'rgba(255, 255, 255, 0.1)' },
+        ticks: { color: 'white' }
+      }
+    },
+    plugins: {
+      legend: { labels: { color: 'white' } }
+    }
+  }
+});
+
+// Bot growth acceleration chart
+const botGrowthCtx = document.getElementById('botGrowthChart').getContext('2d');
+const botGrowthChart = new Chart(botGrowthCtx, {
+  type: 'line',
+  data: {
+    labels: Object.keys(historicalData).slice(-5),
+    datasets: [{
+      label: 'Bot Traffic Growth',
+      data: Object.values(historicalData).slice(-5).map(d => d.ai),
+      borderColor: 'rgb(77, 255, 184)',
+      backgroundColor: 'rgba(77, 255, 184, 0.1)',
+      fill: true,
+      tension: 0.4
+    }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    scales: {
+      y: {
+        grid: { color: 'rgba(255, 255, 255, 0.1)' },
+        ticks: { color: 'white' }
+      },
+      x: {
+        grid: { color: 'rgba(255, 255, 255, 0.1)' },
+        ticks: { color: 'white' }
+      }
+    },
+    plugins: {
+      legend: { labels: { color: 'white' } }
+    }
+  }
+});
+
+// Add geographical bot attack data
+const geoData = {
+  "United States": 47,
+  "Netherlands": 9,
+  "Australia": 8.40,
+  "United Kingdom": 5.10,
+  "France": 3.10,
+  "Singapore": 3.00,
+  "Indonesia": 2.20,
+  "Brazil": 2.20,
+  "Canada": 2.10,
+  "India": 1.70,
+  "Hong Kong": 1.60,
+  "Columbia": 1.60,
+  "Other": 13
+};
+
+// Global bot attack distribution pie chart
+const geoDistCtx = document.getElementById('geoDistChart').getContext('2d');
+const geoDistChart = new Chart(geoDistCtx, {
+  type: 'pie',
+  data: {
+    labels: Object.keys(geoData),
+    datasets: [{
+      data: Object.values(geoData),
+      backgroundColor: [
+        'rgba(255, 99, 132, 0.8)',
+        'rgba(54, 162, 235, 0.8)',
+        'rgba(255, 206, 86, 0.8)',
+        'rgba(75, 192, 192, 0.8)',
+        'rgba(153, 102, 255, 0.8)',
+        'rgba(255, 159, 64, 0.8)',
+        'rgba(199, 199, 199, 0.8)',
+        'rgba(83, 102, 255, 0.8)',
+        'rgba(40, 159, 64, 0.8)',
+        'rgba(210, 199, 199, 0.8)',
+        'rgba(78, 52, 199, 0.8)',
+        'rgba(255, 99, 172, 0.8)',
+        'rgba(128, 128, 128, 0.8)'
+      ]
+    }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        position: 'right',
+        labels: { color: 'white' }
+      },
+      title: {
+        display: true,
+        text: 'Global Bot Attack Distribution',
+        color: 'white'
+      }
+    }
+  }
+});
+
+// Top 5 countries bar chart
+const top5Ctx = document.getElementById('top5Chart').getContext('2d');
+const top5Data = Object.entries(geoData)
+  .filter(([country]) => country !== 'Other')
+  .sort(([,a], [,b]) => b - a)
+  .slice(0, 5);
+
+const top5Chart = new Chart(top5Ctx, {
+  type: 'bar',
+  data: {
+    labels: top5Data.map(([country]) => country),
+    datasets: [{
+      label: 'Percentage of Global Bot Attacks',
+      data: top5Data.map(([,value]) => value),
+      backgroundColor: 'rgba(77, 255, 184, 0.4)',
+      borderColor: 'rgb(77, 255, 184)',
+      borderWidth: 1
+    }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    scales: {
+      y: {
+        beginAtZero: true,
+        grid: { color: 'rgba(255, 255, 255, 0.1)' },
+        ticks: { color: 'white' }
+      },
+      x: {
+        grid: { color: 'rgba(255, 255, 255, 0.1)' },
+        ticks: { 
+          color: 'white',
+          maxRotation: 45,
+          minRotation: 45
+        }
+      }
+    },
+    plugins: {
+      legend: { labels: { color: 'white' } }
+    }
+  }
+});
+
+// Regional distribution doughnut chart
+const regionalCtx = document.getElementById('regionalChart').getContext('2d');
+const regions = {
+  'North America': ['United States', 'Canada'],
+  'Europe': ['Netherlands', 'United Kingdom', 'France'],
+  'Asia Pacific': ['Australia', 'Singapore', 'Indonesia', 'India', 'Hong Kong'],
+  'South America': ['Brazil', 'Columbia'],
+  'Other': ['Other']
+};
+
+const regionalData = Object.entries(regions).map(([region, countries]) => ({
+  region,
+  value: countries.reduce((sum, country) => sum + (geoData[country] || 0), 0)
+}));
+
+const regionalChart = new Chart(regionalCtx, {
+  type: 'doughnut',
+  data: {
+    labels: regionalData.map(d => d.region),
+    datasets: [{
+      data: regionalData.map(d => d.value),
+      backgroundColor: [
+        'rgba(255, 99, 132, 0.8)',
+        'rgba(54, 162, 235, 0.8)',
+        'rgba(255, 206, 86, 0.8)',
+        'rgba(75, 192, 192, 0.8)',
+        'rgba(153, 102, 255, 0.8)'
+      ]
+    }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        position: 'right',
+        labels: { color: 'white' }
+      },
+      title: {
+        display: true,
+        text: 'Regional Bot Attack Distribution',
+        color: 'white'
+      }
+    }
+  }
+});
+
+// Projection chart
+const projectionCtx = document.getElementById('projectionChart').getContext('2d');
+const projectionYears = Object.keys(historicalData).filter(year => parseInt(year) >= 2024);
+
+const projectionChart = new Chart(projectionCtx, {
+  type: 'line',
+  data: {
+    labels: projectionYears,
+    datasets: [
+      {
+        label: 'Human Activity',
+        data: projectionYears.map(year => historicalData[year].human),
+        borderColor: 'rgb(255, 107, 107)',
+        backgroundColor: 'rgba(255, 107, 107, 0.1)',
+        fill: true,
+        tension: 0.4
+      },
+      {
+        label: 'AI Activity',
+        data: projectionYears.map(year => historicalData[year].ai),
+        borderColor: 'rgb(77, 255, 184)',
+        backgroundColor: 'rgba(77, 255, 184, 0.1)',
+        fill: true,
+        tension: 0.4
+      }
+    ]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    scales: {
+      y: {
+        beginAtZero: true,
+        max: 100,
+        grid: { color: 'rgba(255, 255, 255, 0.1)' },
+        ticks: { color: 'white' }
+      },
+      x: {
+        grid: { color: 'rgba(255, 255, 255, 0.1)' },
+        ticks: { 
+          color: 'white',
+          maxRotation: 45,
+          minRotation: 45
+        }
+      }
+    },
+    plugins: {
+      legend: { labels: { color: 'white' } },
+      title: {
+        display: true,
+        text: 'Projected Digital Species Extinction',
+        color: 'white',
+        font: {
+          size: 16
+        }
+      }
+    }
+  }
+});
+
+// Bot type evolution chart
+const botEvolutionCtx = document.getElementById('botEvolutionChart').getContext('2d');
+const botEvolutionChart = new Chart(botEvolutionCtx, {
+  type: 'line',
+  data: {
+    labels: Object.keys(botTypeFutureData),
+    datasets: [
+      {
+        label: 'Bad Bots',
+        data: Object.values(botTypeFutureData).map(d => d.bad),
+        borderColor: 'rgb(255, 99, 132)',
+        backgroundColor: 'rgba(255, 99, 132, 0.1)',
+        fill: true,
+        tension: 0.4
+      },
+      {
+        label: 'Good Bots',
+        data: Object.values(botTypeFutureData).map(d => d.good),
+        borderColor: 'rgb(75, 192, 192)',
+        backgroundColor: 'rgba(75, 192, 192, 0.1)',
+        fill: true,
+        tension: 0.4
+      },
+      {
+        label: 'Human Traffic',
+        data: Object.values(botTypeFutureData).map(d => d.human),
+        borderColor: 'rgb(255, 206, 86)',
+        backgroundColor: 'rgba(255, 206, 86, 0.1)',
+        fill: true,
+        tension: 0.4
+      }
+    ]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    scales: {
+      y: {
+        beginAtZero: true,
+        max: 100,
+        grid: { color: 'rgba(255, 255, 255, 0.1)' },
+        ticks: { color: 'white' }
+      },
+      x: {
+        grid: { color: 'rgba(255, 255, 255, 0.1)' },
+        ticks: { color: 'white' }
+      }
+    },
+    plugins: {
+      legend: { 
+        labels: { color: 'white' }
+      },
+      title: {
+        display: true,
+        text: 'Bot Type Evolution (2023-2049)',
+        color: 'white',
+        font: { size: 16 }
+      }
+    }
+  }
+});
+
+// Critical points visualization
+const criticalPointsCtx = document.getElementById('criticalPointsChart').getContext('2d');
+const criticalYears = [2032, 2040, 2049];
+const criticalData = criticalYears.map(year => ({
+  year,
+  badBots: botTypeFutureData[year].bad,
+  goodBots: botTypeFutureData[year].good,
+  human: botTypeFutureData[year].human
+}));
+
+const criticalPointsChart = new Chart(criticalPointsCtx, {
+  type: 'bar',
+  data: {
+    labels: criticalYears,
+    datasets: [
+      {
+        label: 'Bad Bots',
+        data: criticalData.map(d => d.badBots),
+        backgroundColor: 'rgba(255, 99, 132, 0.8)',
+        borderColor: 'rgb(255, 99, 132)',
+        borderWidth: 1
+      },
+      {
+        label: 'Good Bots',
+        data: criticalData.map(d => d.goodBots),
+        backgroundColor: 'rgba(75, 192, 192, 0.8)',
+        borderColor: 'rgb(75, 192, 192)',
+        borderWidth: 1
+      },
+      {
+        label: 'Human Traffic',
+        data: criticalData.map(d => d.human),
+        backgroundColor: 'rgba(255, 206, 86, 0.8)',
+        borderColor: 'rgb(255, 206, 86)',
+        borderWidth: 1
+      }
+    ]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    scales: {
+      y: {
+        beginAtZero: true,
+        max: 100,
+        stacked: true,
+        grid: { color: 'rgba(255, 255, 255, 0.1)' },
+        ticks: { color: 'white' }
+      },
+      x: {
+        stacked: true,
+        grid: { color: 'rgba(255, 255, 255, 0.1)' },
+        ticks: { color: 'white' }
+      }
+    },
+    plugins: {
+      legend: { labels: { color: 'white' } },
+      title: {
+        display: true,
+        text: 'Critical Transition Years',
+        color: 'white',
+        font: { size: 16 }
+      }
+    }
+  }
+});
+
+// Hackable targets bar chart
+const hackableTargetsCtx = document.getElementById('hackableTargetsChart').getContext('2d');
+const hackableTargetsChart = new Chart(hackableTargetsCtx, {
+  type: 'bar',
+  data: {
+    labels: Object.keys(hackableTargetsData),
+    datasets: [{
+      label: 'Hackable Targets (Millions)',
+      data: Object.values(hackableTargetsData).map(d => d.targets),
+      backgroundColor: 'rgba(77, 255, 184, 0.4)',
+      borderColor: 'rgb(77, 255, 184)',
+      borderWidth: 1
+    }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    indexAxis: 'y',
+    scales: {
+      x: {
+        beginAtZero: true,
+        grid: { color: 'rgba(255, 255, 255, 0.1)' },
+        ticks: { color: 'white' }
+      },
+      y: {
+        grid: { color: 'rgba(255, 255, 255, 0.1)' },
+        ticks: { color: 'white' }
+      }
+    },
+    plugins: {
+      legend: { 
+        labels: { color: 'white' }
+      },
+      title: {
+        display: true,
+        text: 'Global Distribution of Hackable Targets',
+        color: 'white',
+        font: { size: 16 }
+      }
+    }
+  }
+});
+
+// Saturation timeline data
+const saturationData = {
+  countries: ['United States', 'Netherlands', 'Australia', 'United Kingdom', 'Other'],
+  years: ['2023', '2074'],
+  data: [
+    [47, 100],
+    [9, 100],
+    [8.4, 100],
+    [5.1, 100],
+    [13, 100]
+  ]
+};
+
+// Saturation timeline chart
+const saturationTimelineCtx = document.getElementById('saturationTimelineChart').getContext('2d');
+const saturationTimelineChart = new Chart(saturationTimelineCtx, {
+  type: 'line',
+  data: {
+    labels: saturationData.years,
+    datasets: saturationData.countries.map((country, index) => ({
+      label: country,
+      data: saturationData.data[index],
+      borderColor: [
+        'rgba(255, 99, 132, 1)',
+        'rgba(54, 162, 235, 1)',
+        'rgba(255, 206, 86, 1)',
+        'rgba(75, 192, 192, 1)',
+        'rgba(153, 102, 255, 1)'
+      ][index],
+      tension: 0.4
+    }))
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    scales: {
+      y: {
+        beginAtZero: true,
+        max: 100,
+        grid: { color: 'rgba(255, 255, 255, 0.1)' },
+        ticks: { 
+          color: 'white',
+          callback: value => value + '%'
+        }
+      },
+      x: {
+        grid: { color: 'rgba(255, 255, 255, 0.1)' },
+        ticks: { color: 'white' }
+      }
+    },
+    plugins: {
+      legend: { 
+        labels: { color: 'white' }
+      },
+      title: {
+        display: true,
+        text: 'Target Saturation Timeline by Country',
+        color: 'white',
+        font: { size: 16 }
+      }
+    }
+  }
+});
+
+// Timeline control
+const timeline = document.getElementById('timeline');
+const humanPercent = document.getElementById('human-percent');
+const aiPercent = document.getElementById('ai-percent');
+
+function updateStats() {
+  const year = timeline.value;
+  const data = historicalData[year];
+  
+  humanPercent.textContent = `${data.human}%`;
+  aiPercent.textContent = `${data.ai}%`;
+  
+  document.documentElement.style.setProperty('--ai-color', 
+    `hsl(160, 100%, ${50 + (data.ai/2)}%)`);
+}
+
+// Generate milestone markers
+const milestoneContainer = document.getElementById('milestone-container');
+const significantYears = [2000, 2012, 2014, 2023];
+
+significantYears.forEach(year => {
+  const milestone = document.createElement('div');
+  milestone.className = 'milestone';
+  const data = historicalData[year];
+  
+  milestone.innerHTML = `
+    <div class="milestone-year">${year}</div>
+    <div class="milestone-stat">
+      <div class="stat-block human-block">
+        Humans: ${data.human}%
+      </div>
+      <div class="stat-block ai-block">
+        AI: ${data.ai}%
+      </div>
+    </div>
+  `;
+  
+  milestoneContainer.appendChild(milestone);
+});
+
+// Initialize visualization
+function updateVisualization() {
+  const year = timeline.value;
+  const data = historicalData[year];
+  const viz = document.querySelector('.clone-visualization');
+  viz.innerHTML = '';
+  
+  const totalDots = 100;
+  const humanDots = Math.round(data.human);
+  const aiDots = totalDots - humanDots;
+  
+  for (let i = 0; i < humanDots; i++) {
+    const dot = document.createElement('div');
+    dot.className = 'ai-node human-node';
+    dot.style.left = `${Math.random() * 100}%`;
+    dot.style.animationDelay = `${Math.random() * 2}s`;
+    viz.appendChild(dot);
+  }
+  
+  for (let i = 0; i < aiDots; i++) {
+    const dot = document.createElement('div');
+    dot.className = 'ai-node';
+    dot.style.left = `${Math.random() * 100}%`;
+    dot.style.animationDelay = `${Math.random() * 2}s`;
+    viz.appendChild(dot);
+  }
+}
+
+timeline.addEventListener('input', () => {
+  updateStats();
+  updateVisualization();
+});
+
+// Initialize
+updateStats();
+updateVisualization();
+
+// Update timeline range
+timeline.max = 2040;
+
+// Bot Traffic Analysis Charts
+const botBreakdownCtx = document.getElementById('botBreakdownChart').getContext('2d');
+const botBreakdownChart = new Chart(botBreakdownCtx, {
+  type: 'doughnut',
+  data: {
+    labels: ['Bad Bots', 'Good Bots', 'Human Traffic'],
+    datasets: [{
+      data: [32, 17.6, 50.4],
+      backgroundColor: [
+        'rgba(255, 99, 132, 0.8)',
+        'rgba(75, 192, 192, 0.8)',
+        'rgba(255, 206, 86, 0.8)'
+      ],
+      borderColor: [
+        'rgb(255, 99, 132)',
+        'rgb(75, 192, 192)',
+        'rgb(255, 206, 86)'
+      ],
+      borderWidth: 1
+    }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        position: 'right',
+        labels: { color: 'white' }
+      },
+      title: {
+        display: true,
+        text: '2023 Traffic Distribution',
+        color: 'white'
+      }
+    }
+  }
+});
+
+const botRadarCtx = document.getElementById('botRadarChart').getContext('2d');
+const botRadarChart = new Chart(botRadarCtx, {
+  type: 'radar',
+  data: {
+    labels: ['Bad Bots', 'Good Bots', 'Human Traffic'],
+    datasets: [{
+      label: '2023',
+      data: [32, 17.6, 50.4],
+      backgroundColor: 'rgba(77, 255, 184, 0.2)',
+      borderColor: 'rgb(77, 255, 184)',
+      borderWidth: 2,
+      pointBackgroundColor: 'rgb(77, 255, 184)'
+    }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    scales: {
+      r: {
+        angleLines: {
+          color: 'rgba(255, 255, 255, 0.1)'
+        },
+        grid: {
+          color: 'rgba(255, 255, 255, 0.1)'
+        },
+        pointLabels: {
+          color: 'white'
+        },
+        ticks: {
+          color: 'white',
+          backdropColor: 'transparent'
+        }
+      }
+    },
+    plugins: {
+      legend: {
+        labels: { color: 'white' }
+      }
+    }
+  }
+});
+
+const botTrendCtx = document.getElementById('botTrendChart').getContext('2d');
+const botTrendChart = new Chart(botTrendCtx, {
+  type: 'line',
+  data: {
+    labels: ['2013', '2014', '2015', '2016', '2017', '2018', '2019', '2020', '2021', '2022', '2023'],
+    datasets: [
+      {
+        label: 'Bad Bots',
+        data: [23.6, 22.8, 18.6, 19.9, 21.8, 20.4, 24.1, 25.6, 27.7, 30.2, 32],
+        borderColor: 'rgb(255, 99, 132)',
+        backgroundColor: 'rgba(255, 99, 132, 0.1)',
+        fill: true,
+        tension: 0.4
+      },
+      {
+        label: 'Good Bots',
+        data: [19.4, 36.3, 27, 18.8, 20.4, 17.5, 13.1, 15.2, 14.6, 17.3, 17.6],
+        borderColor: 'rgb(75, 192, 192)',
+        backgroundColor: 'rgba(75, 192, 192, 0.1)',
+        fill: true,
+        tension: 0.4
+      },
+      {
+        label: 'Human Traffic',
+        data: [57, 40.9, 54.4, 61.3, 57.8, 62.1, 62.8, 59.2, 57.7, 52.6, 50.4],
+        borderColor: 'rgb(255, 206, 86)',
+        backgroundColor: 'rgba(255, 206, 86, 0.1)',
+        fill: true,
+        tension: 0.4
+      }
+    ]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    scales: {
+      y: {
+        beginAtZero: true,
+        grid: { color: 'rgba(255, 255, 255, 0.1)' },
+        ticks: { 
+          color: 'white',
+          callback: value => value + '%'
+        }
+      },
+      x: {
+        grid: { color: 'rgba(255, 255, 255, 0.1)' },
+        ticks: { color: 'white' }
+      }
+    },
+    plugins: {
+      legend: { 
+        labels: { color: 'white' }
+      }
+    }
+  }
+});
+</script>
+</body>
+</html>
