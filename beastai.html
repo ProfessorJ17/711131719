@@ -45,6 +45,80 @@
         box-shadow: var(--neon-glow);
     }
 
+    .nav-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 1.5rem;
+    }
+
+    .menu-items {
+        display: flex;
+        gap: 1.5rem;
+        list-style: none;
+        flex-wrap: wrap;
+    }
+
+    .menu-items li a {
+        color: var(--secondary);
+        text-decoration: none;
+        font-size: 1rem;
+        padding: 0.5rem 1rem;
+        border-radius: 15px;
+        transition: all 0.3s ease;
+        text-shadow: 0 0 5px var(--secondary);
+    }
+
+    .menu-items li a:hover {
+        background: rgba(0, 255, 247, 0.1);
+        box-shadow: 0 0 15px var(--secondary);
+    }
+
+    .hamburger {
+        display: none;
+        cursor: pointer;
+        background: rgba(0, 255, 247, 0.1);
+        border: 2px solid var(--secondary);
+        border-radius: 10px;
+        padding: 0.5rem;
+        box-shadow: var(--neon-glow);
+    }
+
+    .hamburger div {
+        width: 25px;
+        height: 3px;
+        background: var(--secondary);
+        margin: 5px 0;
+        transition: all 0.3s ease;
+        box-shadow: 0 0 5px var(--secondary);
+    }
+
+    @media (max-width: 1024px) {
+        .menu-items {
+            display: none;
+            position: fixed;
+            top: 80px;
+            left: 0;
+            width: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            padding: 2rem;
+            flex-direction: column;
+            align-items: center;
+            border-bottom: 2px solid var(--secondary);
+            box-shadow: var(--neon-glow);
+        }
+
+        .menu-items.active {
+            display: flex;
+        }
+
+        .hamburger {
+            display: block;
+        }
+    }
+
     .logo {
         font-size: 2.5rem;
         font-weight: 900;
@@ -83,7 +157,7 @@
     }
 
     .hero {
-        margin-top: 100px;
+        margin-top: 230px; 
         padding: 4rem 0;
         text-align: center;
     }
@@ -94,8 +168,8 @@
         max-width: 1200px;
         margin: 0 auto 2rem;
         color: var(--secondary);
-        text-shadow: 0 0 10px var(--neon-green), 
-                   0 0 20px var(--neon-green), 
+        text-shadow: 0 0 10px var(--neon-green),
+                   0 0 20px var(--neon-green),
                    0 0 30px var(--neon-green),
                    0 0 40px var(--neon-green);
         letter-spacing: 1.5px;
@@ -105,7 +179,7 @@
         display: flex;
         flex-direction: column;
         align-items: center;
-        gap: 2rem;
+        gap: 3rem; 
     }
 
     .model-list,
@@ -181,11 +255,11 @@
         .hero h1 {
             font-size: 1.5rem;
         }
-        
+
         .feature-card h3 {
             font-size: 1.5rem;
         }
-        
+
         .feature-card .content p {
             font-size: 1rem;
         }
@@ -200,8 +274,25 @@
 </head>
 <body>
     <nav class="navbar">
-        <div class="container">
+        <div class="nav-container">
             <a href="https://lmarena.ai" class="logo gradient-text">Beast AI</a>
+            <ul class="menu-items">
+                <li><a href="https://711131719.xyz/beastai">AI Text</a></li>
+                <li><a href="https://711131719.xyz/image">AI Image</a></li>
+                <li><a href="https://711131719.xyz/videoai">AI Video</a></li>
+                <li><a href="https://www.711131719.xyz/aimusic">AI Music</a></li>
+                <li><a href="https://711131719.xyz/ebooks">AI eBooks</a></li>
+                <li><a href="https://www.711131719.xyz/shop">AI Shop</a></li>
+                <li><a href="https://711131719.xyz/websim/home">AI Web Design</a></li>
+                <li><a href="https://711131719.xyz/aiclone">AI-Clone</a></li>
+                <li><a href="https://711131719.xyz/dork">Dorking</a></li>
+                <li><a href="https://711131719.xyz/github-pages">Domain</a></li>
+            </ul>
+            <div class="hamburger">
+                <div></div>
+                <div></div>
+                <div></div>
+            </div>
         </div>
     </nav>
 
@@ -311,6 +402,28 @@
         // Add random neon glow animation to feature cards
         document.querySelectorAll('.feature-card').forEach(card => {
             card.style.animation = `neon-pulse ${Math.random()*2 + 3}s infinite alternate`;
+        });
+
+        // Menu toggle functionality
+        const hamburger = document.querySelector('.hamburger');
+        const menuItems = document.querySelector('.menu-items');
+
+        hamburger.addEventListener('click', () => {
+            menuItems.classList.toggle('active');
+        });
+
+        // Close menu when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!hamburger.contains(e.target) && !menuItems.contains(e.target)) {
+                menuItems.classList.remove('active');
+            }
+        });
+
+        // Close menu when window is resized above mobile breakpoint
+        window.addEventListener('resize', () => {
+            if (window.innerWidth > 1024) {
+                menuItems.classList.remove('active');
+            }
         });
     });
     </script>
