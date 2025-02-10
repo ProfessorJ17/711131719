@@ -1,0 +1,209 @@
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Media Factory 🚀⚡</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #4f46e5;
+      --secondary: #10b981;
+      --accent: #f59e0b;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(45deg, #1a1a1a, #2d2d2d);
+      color: #fff;
+      line-height: 1.6;
+      margin: 0;
+      padding: 0;
+    }
+
+    .nav-menu {
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      width: 100%;
+      background: rgba(26, 26, 26, 0.7);
+      backdrop-filter: blur(10px);
+      padding: 0.7rem 0;
+      margin: 0;
+    }
+
+    .nav-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 0.4rem;
+      padding: 0 0.8rem;
+    }
+
+    .nav-button {
+      background: linear-gradient(45deg, rgba(79, 70, 229, 0.2), rgba(16, 185, 129, 0.2));
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      color: white;
+      padding: 0.4rem 0.8rem;
+      border-radius: 20px;
+      text-decoration: none;
+      font-size: 0.8rem;
+      transition: all 0.3s ease;
+      text-align: center;
+      min-width: 80px;
+      animation: glowPulse 2s infinite;
+      position: relative;
+    }
+
+    .nav-button:hover {
+      background: linear-gradient(45deg, rgba(79, 70, 229, 0.4), rgba(16, 185, 129, 0.4));
+      transform: translateY(-2px);
+      box-shadow: 0 0 12px rgba(16, 185, 129, 0.5);
+    }
+
+    .nav-button .dropdown-menu {
+      display: none;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      width: auto;
+      padding: 0.4rem 0;
+      background: rgba(26, 26, 26, 0.8);
+      border-radius: 0 0 20px 20px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+      white-space: nowrap;
+    }
+
+    .nav-button:hover .dropdown-menu {
+      display: block;
+    }
+
+    .dropdown-menu a {
+      display: block;
+      padding: 0.4rem 0.8rem;
+      text-align: center;
+      color: white;
+      text-decoration: none;
+      font-size: 0.7rem;
+      transition: background 0.3s ease;
+    }
+
+    .dropdown-menu a:hover {
+      background: rgba(79, 70, 229, 0.2);
+    }
+
+    @keyframes pop {
+      0% {
+        transform: scale(0.8);
+        opacity: 0;
+      }
+
+      80% {
+        transform: scale(1.1);
+      }
+
+      100% {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
+
+    @keyframes rotate {
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+
+    @keyframes glow {
+      from {
+        text-shadow: 0 0 15px rgba(16, 185, 129, 0.5);
+      }
+
+      to {
+        text-shadow: 0 0 25px rgba(16, 185, 129, 0.8),
+          0 0 35px rgba(79, 70, 229, 0.6);
+      }
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(-15px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes glowPulse {
+      0% {
+        box-shadow: 0 0 4px rgba(16, 185, 129, 0.2);
+      }
+
+      50% {
+        box-shadow: 0 0 12px rgba(16, 185, 129, 0.4);
+      }
+
+      100% {
+        box-shadow: 0 0 4px rgba(16, 185, 129, 0.2);
+      }
+    }
+
+    @media (max-width: 768px) {
+      .nav-container {
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .nav-button {
+        width: 100%;
+        max-width: 250px;
+        margin-bottom: 0.4rem;
+      }
+
+      .dropdown-menu {
+        position: static;
+        display: none;
+        width: 100%;
+        box-shadow: none;
+        border-radius: 0;
+      }
+
+      .nav-button:hover .dropdown-menu {
+        display: block;
+      }
+
+      .dropdown-menu a {
+        padding: 0.4rem;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <nav class="nav-menu">
+    <div class="nav-container">
+      <a href="https://711131719.xyz/beastai" class="nav-button">✍️ AI Text</a>
+      <a href="https://711131719.xyz/beastai" class="nav-button">🖼️ AI Image</a>
+      <a href="https://711131719.xyz/videoai" class="nav-button">🎬 AI Video</a>
+      <a href="https://www.711131719.xyz/aimusic" class="nav-button">🎵 AI Music</a>
+      <a href="https://711131719.xyz/ebooks" class="nav-button">📖 AI eBooks</a>
+      <a href="https://www.711131719.xyz/shop" class="nav-button">🛒 AI Shop</a>
+      <a href="https://711131719.xyz/affiliate" class="nav-button">🤝 AI Affiliates</a>
+      <div class="nav-button">
+        <a href="https://711131719.xyz/websim/home"
+          style="display:block; color: white; text-decoration: none;">💻 AI Web Design + More</a>
+        <div class="dropdown-menu">
+          <a href="https://711131719.xyz/dork">🕵️‍♂️ Email Dorking</a>
+          <a href="https://711131719.xyz/github-pages">🌐 Domain + Host</a>
+        </div>
+      </div>
+    </div>
+  </nav>
+</body>
+
+</html>
