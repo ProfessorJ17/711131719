@@ -1,0 +1,577 @@
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Media Factory 🚀⚡</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #4f46e5;
+      --secondary: #10b981;
+      --accent: #f59e0b;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(45deg, #1a1a1a, #2d2d2d);
+      color: #fff;
+      line-height: 1.6;
+      margin: 0;
+      padding: 0;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 2rem;
+      position: relative;
+    }
+
+    .title {
+      font-size: 2.5rem;
+      margin: 1rem 0;
+      background: linear-gradient(45deg, var(--secondary), var(--primary), #ff6b6b);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-shadow: 0 0 20px rgba(16, 185, 129, 0.5);
+      animation: glow 2s ease-in-out infinite alternate;
+      letter-spacing: 1px;
+      font-weight: 700;
+    }
+
+    .subtitle {
+      font-size: 1rem;
+      color: var(--secondary);
+      margin-bottom: 1.5rem;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      animation: fadeIn 1s ease-in;
+      text-shadow: 0 0 8px rgba(16, 185, 129, 0.3);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+      padding: 0.5rem;
+    }
+
+    .card {
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 12px;
+      padding: 1.5rem;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+    }
+
+    .emoji {
+      font-size: 2rem;
+      margin-bottom: 0.8rem;
+      display: inline-block;
+      animation: pop 0.5s ease;
+    }
+
+    .link {
+      display: inline-block;
+      padding: 0.4rem 1.2rem;
+      background: linear-gradient(45deg, var(--primary), var(--secondary));
+      color: white;
+      text-decoration: none;
+      border-radius: 40px;
+      transition: filter 0.3s ease;
+    }
+
+    .card .link {
+      margin-top: 0.8rem;
+      margin-right: 0.5rem;
+    }
+
+    .link:hover {
+      filter: brightness(1.1);
+    }
+
+    .burst {
+      position: absolute;
+      top: -40px;
+      left: 50%;
+      transform: translateX(-50%);
+      opacity: 0.1;
+    }
+
+    .highlight-paragraph {
+      text-align: center;
+      font-size: 1rem;
+      line-height: 1.5;
+      margin: 0.8rem 0;
+      background: linear-gradient(45deg, var(--secondary), var(--primary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .tool-tip {
+      font-size: 0.8rem;
+      color: var(--secondary);
+      margin: 0.4rem 0;
+    }
+
+    .nav-menu {
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      width: 100%;
+      background: rgba(26, 26, 26, 0.7);
+      backdrop-filter: blur(10px);
+      padding: 0.7rem 0;
+      margin: 0;
+    }
+
+    .nav-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 0.4rem;
+      padding: 0 0.8rem;
+    }
+
+    .nav-button {
+      background: linear-gradient(45deg, rgba(79, 70, 229, 0.2), rgba(16, 185, 129, 0.2));
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      color: white;
+      padding: 0.4rem 0.8rem;
+      border-radius: 20px;
+      text-decoration: none;
+      font-size: 0.8rem;
+      transition: all 0.3s ease;
+      text-align: center;
+      min-width: 80px;
+      animation: glowPulse 2s infinite;
+      position: relative;
+    }
+
+    .nav-button:hover {
+      background: linear-gradient(45deg, rgba(79, 70, 229, 0.4), rgba(16, 185, 129, 0.4));
+      transform: translateY(-2px);
+      box-shadow: 0 0 12px rgba(16, 185, 129, 0.5);
+    }
+
+    .nav-button .dropdown-menu {
+      display: none;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      width: auto;
+      padding: 0.4rem 0;
+      background: rgba(26, 26, 26, 0.8);
+      border-radius: 0 0 20px 20px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+      white-space: nowrap;
+    }
+
+    .nav-button:hover .dropdown-menu {
+      display: block;
+    }
+
+    .dropdown-menu a {
+      display: block;
+      padding: 0.4rem 0.8rem;
+      text-align: center;
+      color: white;
+      text-decoration: none;
+      font-size: 0.7rem;
+      transition: background 0.3s ease;
+    }
+
+    .dropdown-menu a:hover {
+      background: rgba(79, 70, 229, 0.2);
+    }
+
+    @keyframes pop {
+      0% {
+        transform: scale(0.8);
+        opacity: 0;
+      }
+
+      80% {
+        transform: scale(1.1);
+      }
+
+      100% {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
+
+    @keyframes rotate {
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+
+    @keyframes glow {
+      from {
+        text-shadow: 0 0 15px rgba(16, 185, 129, 0.5);
+      }
+
+      to {
+        text-shadow: 0 0 25px rgba(16, 185, 129, 0.8),
+          0 0 35px rgba(79, 70, 229, 0.6);
+      }
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(-15px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes glowPulse {
+      0% {
+        box-shadow: 0 0 4px rgba(16, 185, 129, 0.2);
+      }
+
+      50% {
+        box-shadow: 0 0 12px rgba(16, 185, 129, 0.4);
+      }
+
+      100% {
+        box-shadow: 0 0 4px rgba(16, 185, 129, 0.2);
+      }
+    }
+
+    @media (max-width: 768px) {
+      .nav-container {
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .nav-button {
+        width: 100%;
+        max-width: 250px;
+        margin-bottom: 0.4rem;
+      }
+
+      .dropdown-menu {
+        position: static;
+        display: none;
+        width: 100%;
+        box-shadow: none;
+        border-radius: 0;
+      }
+
+      .nav-button:hover .dropdown-menu {
+        display: block;
+      }
+
+      .dropdown-menu a {
+        padding: 0.4rem;
+      }
+
+      .container {
+        padding: 1.5rem;
+      }
+
+      .title {
+        font-size: 2rem;
+      }
+
+      .subtitle {
+        font-size: 0.9rem;
+      }
+
+      .grid {
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1.2rem;
+      }
+
+      .card {
+        padding: 1.2rem;
+      }
+
+      .emoji {
+        font-size: 1.8rem;
+        margin-bottom: 0.6rem;
+      }
+
+      .link {
+        padding: 0.3rem 1rem;
+        font-size: 0.75rem;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <nav class="nav-menu">
+    <div class="nav-container">
+      <a href="https://711131719.xyz/beastai" class="nav-button">✍️ AI Text</a>
+      <a href="https://711131719.xyz/beastai" class="nav-button">🖼️ AI Image</a>
+      <a href="https://711131719.xyz/videoai" class="nav-button">🎬 AI Video</a>
+      <a href="https://www.711131719.xyz/aimusic" class="nav-button">🎵 AI Music</a>
+      <a href="https://711131719.xyz/ebooks" class="nav-button">📖 AI eBooks</a>
+      <a href="https://www.711131719.xyz/shop" class="nav-button">🛒 AI Shop</a>
+      <a href="https://711131719.xyz/aiclone" class="nav-button">🤖 AI-Clone</a>
+      <a href="https://711131719.xyz/affiliate" class="nav-button">🤝 AI Affiliates</a>
+      <div class="nav-button">
+        <a href="https://711131719.xyz/websim/home"
+          style="display:block; color: white; text-decoration: none;">💻 AI Web Design + More</a>
+        <div class="dropdown-menu">
+          <a href="https://711131719.xyz/dork">🕵️‍♂️ Email Dorking</a>
+          <a href="https://711131719.xyz/github-pages">🌐 Domain + Host</a>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container">
+    <div class="header">
+      <svg class="burst" width="80" height="80" viewBox="0 0 100 100" style="animation: rotate 20s linear infinite;">
+        <line x1="50" y1="0" x2="50" y2="30" stroke="var(--secondary)" stroke-width="2" />
+        <line x1="50" y1="70" x2="50" y2="100" stroke="var(--secondary)" stroke-width="2" />
+        <line x1="0" y1="50" x2="30" y2="50" stroke="var(--secondary)" stroke-width="2" />
+        <line x1="70" y1="50" x2="100" y2="50" stroke="var(--secondary)" stroke-width="2" />
+        <line x1="15" y1="15" x2="35" y2="35" stroke="var(--secondary)" stroke-width="2" />
+        <line x1="65" y1="65" x2="85" y2="85" stroke="var(--secondary)" stroke-width="2" />
+        <line x1="15" y1="85" x2="35" y2="65" stroke="var(--secondary)" stroke-width="2" />
+        <line x1="65" y1="35" x2="85" y2="15" stroke="var(--secondary)" stroke-width="2" />
+      </svg>
+      <h1 class="title">🚀AI-Clone Social Media Factory⚡</h1>
+      <div class="subtitle">The Ultimate AI Content Creation & Automation Suite</div>
+    </div>
+
+    <div class="grid">
+      <article class="card">
+        <div class="emoji">🤳</div>
+        <h2>Face Swap Online Free</h2>
+        <p>Transform your face in seconds and make your content super personal! It’s all about relatability and engagement!</p>
+        <a href="https://faceswapper.ai/" class="link" target="_blank">FaceSwapper</a>
+      </article>
+
+      <article class="card">
+        <div class="emoji">👀</div>
+        <h2>Replicate</h2>
+        <p>Generate mind-blowing images with you in them, creating visuals that grab attention!</p>
+        <a href="https://replicate.com/" class="link" target="_blank">Replicate</a>
+      </article>
+
+      <article class="card">
+        <div class="emoji">🎥</div>
+        <h2>Studio.d-id</h2>
+        <p>Create AI-generated videos with ANY face, increasing engagement and keeping your audience hooked!</p>
+        <a href="https://studio.d-id.com/" class="link" target="_blank">Studio.d-id</a>
+      </article>
+
+      <article class="card">
+        <div class="emoji">🎤</div>
+        <h2>Elevenlabs</h2>
+        <p>Clone your voice or anyone else’s to create perfect audio content and make your videos more dynamic!</p>
+        <a href="https://elevenlabs.io/" class="link" target="_blank">Elevenlabs</a>
+      </article>
+
+      <article class="card">
+        <div class="emoji">✍️</div>
+        <h2>CapCut for Video from Scripts</h2>
+
+        <div class="tool-tip">Use CapCut for editing for anything and layering video</div>
+        <a href="https://www.capcut.com/" class="link" target="_blank">CapCut</a>
+      </article>
+
+      <article class="card">
+        <div class="emoji">🎥</div>
+        <h2>Pexels</h2>
+        <p>Use free stock videos to enhance your content—layer in extra footage to make your videos stand out!</p>
+        <a href="https://www.pexels.com/" class="link" target="_blank">Pexels</a>
+      </article>
+
+      <article class="card">
+        <div class="emoji">🔥</div>
+        <h2>Canva Magic Design</h2>
+        <p>Instantly create eye-catching thumbnails, posts, and social media graphics useful for anything!</p>
+        <a href="https://www.canva.com/" class="link" target="_blank">Canva</a>
+      </article>
+
+      <article class="card">
+        <div class="emoji">🎬</div>
+        <h2>Sora + Luma</h2>
+        <p>Generate high-quality videos and B-roll to create that professional edge!</p>
+        <a href="https://www.sora.co" class="link" target="_blank">Sora</a>
+        <a href="https://www.luma.ai" class="link" target="_blank">Luma</a>
+      </article>
+
+      <article class="card">
+        <div class="emoji">🤖</div>
+        <h2>Synthesia</h2>
+        <p>Create stunning videos with AI avatars that will make you stand out from the crowd!</p>
+        <a href="https://www.synthesia.io/" class="link" target="_blank">Synthesia</a>
+      </article>
+
+      <article class="card">
+        <div class="emoji">🎭</div>
+        <h2>Character.AI</h2>
+        <p>Create unique voices with advanced character profiles for engaging content!</p>
+        <a href="https://beta.character.ai/" class="link" target="_blank">C.ai</a>
+      </article>
+
+      <article class="card">
+        <div class="emoji">⚡</div>
+        <h2>Heygen</h2>
+        <p>Turn text into video in seconds—perfect for viral content creation!</p>
+        <a href="https://www.heygen.com/" class="link" target="_blank">Heygen</a>
+      </article>
+
+      <article class="card">
+        <div class="emoji">🎶</div>
+        <h2>Suno + Riffusion</h2>
+        <p>Generate background music that makes your videos memorable!</p>
+        <a href="https://www.suno.ai" class="link" target="_blank">Suno</a>
+        <a href="https://www.riffusion.com/" class="link" target="_blank">Riffusion</a>
+      </article>
+
+      <article class="card">
+        <div class="emoji">✂️</div>
+        <h2>InVideo</h2>
+        <p>Type your idea, add the specifics—like length, platform, voiceover accent and get AI generated videos that put your
+          ideas into focus.</p>
+        <a href="https://invideo.io/" class="link" target="_blank">InVideo</a>
+      </article>
+
+      <article class="card">
+        <div class="emoji">✍️</div>
+        <h2>ChatGPT for Scripts</h2>
+        <p>Let ChatGPT write your scripts - Pick your niche with Google trends, get a voiceover, then you edit the video make
+          thumbnails. Thats how you create videos that keep your audience glued to the screen!</p>
+        <a href="https://trends.google.com/trends/" class="link" target="_blank">Google Trends</a>
+        <a href="https://chat.openai.com/" class="link" target="_blank">ChatGPT</a>
+      </article>
+
+      <article class="card">
+        <div class="emoji">📅</div>
+        <h2>RADARR</h2>
+        <p>Schedule posts up to 1 year ahead - set it and forget it!</p>
+        <a href="https://radarr.io/" class="link" target="_blank">RADARR</a>
+      </article>
+
+      <article class="card">
+        <div class="emoji">🚀</div>
+        <h2>Buffer + Hootsuite</h2>
+        <p>Schedule 1 year of social posts in 10 minutes flat!</p>
+        <a href="https://buffer.com" class="link" target="_blank">Buffer</a>
+        <a href="https://hootsuite.com" class="link" target="_blank">Hootsuite</a>
+      </article>
+
+      <article class="card">
+        <div class="emoji">📸</div>
+        <h2>Bulk Content System</h2>
+        <p>7-rule system: 7 to 49 weekly pieces across 7 networks!</p>
+        <div class="tool-tip">Automate social media posts, fb, x, youtube and descriptions with ChatGPT and automate images
+          with these image generators (here) Coming soon</div>
+      </article>
+
+      <article class="card">
+        <div class="emoji">💬</div>
+        <h2>ManyChat</h2>
+        <p>Automate customer interactions with AI chatbots!</p>
+        <a href="https://manychat.com/" class="link" target="_blank">ManyChat</a>
+      </article>
+
+      <article class="card">
+        <div class="emoji">🤖</div>
+        <h2>CustomersAI</h2>
+        <p>Ramp up automation for personalized experiences!</p>
+        <a href="https://customers.ai/" class="link" target="_blank">CustomersAI</a>
+      </article>
+
+      <article class="card">
+        <div class="emoji">🤳</div>
+        <h2>Example #1</h2>
+        <p>Start by using Face Swap Online Free to transform your face or someone else’s to make the video more personal and
+          relatable 🤳. Combine this with Replicate to generate AI images of yourself, creating engaging visuals 💥. Then,
+          use Studio.d-id to generate an AI video with your face 🎥, adding custom scripting from ChatGPT ✍️ to create a
+          captivating narrative. Lastly, add background music with Suno 🎶 to enhance the atmosphere and use CapCut to edit
+          the video for a polished result.
+
+        </p>
+        <a href="https://faceswapper.ai/" class="link" target="_blank">Face Swapper</a>
+        <a href="https://replicate.com/" class="link" target="_blank">Replicate AI</a>
+        <a href="https://studio.d-id.com/" class="link" target="_blank">Studio D-ID</a>
+        <a href="https://suno.ai/" class="link" target="_blank">Suno Music</a>
+      </article>
+
+      <article class="card">
+        <div class="emoji">🎤</div>
+        <h2>Example #2</h2>
+        <p>Use Elevenlabs to clone your voice or any voice you like 🎤, then write the perfect script with ChatGPT ✍️. You
+          can pair this voice-over with an AI-generated video from Studio.d-id 🎥 featuring your face or another character’s.
+          Enhance the visuals using stock footage from Pexels 🎬, and add some custom music with Suno for extra flair 🎶.
+          Finally, use CapCut to edit and bring everything together seamlessly.</p>
+        <a href="https://elevenlabs.io/" class="link" target="_blank">ElevenLabs Voice</a>
+        <a href="https://studio.d-id.com/" class="link" target="_blank">Studio D-ID Videos</a>
+        <a href="https://pexels.com/" class="link" target="_blank">Pexels Footage</a>
+        <a href="https://suno.ai/" class="link" target="_blank">Suno Music</a>
+      </article>
+
+      <article class="card">
+        <div class="emoji">🎭</div>
+        <h2>Example #3</h2>
+        <p>For a truly professional touch, create an AI avatar video with Synthesia 🎭, and write a script using ChatGPT ✍️.
+          Add high-quality B-roll from Sora and Luma 🎬 to ensure your video looks polished. Make the content dynamic by
+          adding a custom voice with Character.AI 🗣. This type of video is perfect for YouTube, Instagram, or TikTok, and
+          don’t forget to add catchy background music with Suno 🎶.</p>
+        <a href="https://www.synthesia.io/" class="link" target="_blank">Synthesia Avatars</a>
+        <a href="https://sora.co/" class="link" target="_blank">Sora Videos</a>
+        <a href="https://www.luma.ai/" class="link" target="_blank">Luma B-roll</a>
+        <a href="https://beta.character.ai/" class="link" target="_blank">Character.AI</a>
+      </article>
+
+      <article class="card">
+        <div class="emoji">📱</div>
+        <h2>Example #4 </h2>
+        <p>Use Heygen to turn your text into a short, engaging video 📱. Add AI-generated visuals from Replicate 🌟 to make it
+          visually stunning, and use Pexels for additional footage 🎥. Enhance the sound by adding a dynamic soundtrack with
+          Suno 🎶. Edit the final video in CapCut ✂️ and post it across your social media platforms, including Facebook
+          groups and trending niches for maximum exposure 🔥.</p>
+        <a href="https://www.heygen.com/" class="link" target="_blank">Heygen Videos</a>
+        <a href="https://replicate.com/" class="link" target="_blank">Replicate AI</a>
+        <a href="https://www.pexels.com/" class="link" target="_blank">Pexels Footage</a>
+        <a href="https://suno.ai/" class="link" target="_blank">Suno Music</a>
+        <a href="https://www.capcut.com/" class="link" target="_blank">CapCut Editing</a>
+      </article>
+
+      <article class="card">
+        <div class="emoji">🚀</div>
+        <h2>Example #5 </h2>
+        <p>Clone your face or voice with Face Swap Online Free 🤳 and Elevenlabs 🎤, and generate stunning visuals with
+          Replicate 🌟. Write a script using ChatGPT ✍️ and create an AI-generated video with Studio.d-id 🎥. For
+          additional impact, layer in footage from Pexels 🎬, then edit and polish your content with CapCut ✂️. This content
+          can be shared across your social media platforms, including Facebook groups and other niche communities, ensuring
+          your brand stands out and attracts a loyal following 🚀.</p>
+        <a href="https://faceswapper.ai/" class="link" target="_blank">Face Swapper</a>
+        <a href="https://elevenlabs.io/" class="link" target="_blank">ElevenLabs Voice</a>
+        <a href="https://replicate.com/" class="link" target="_blank">Replicate AI</a>
+        <a href="https://studio.d-id.com/" class="link" target="_blank">Studio D-ID</a>
+        <a href="https://www.pexels.com/" class="link" target="_blank">Pexels Footage</a>
+        <a href="https://www.capcut.com/" class="link" target="_blank">CapCut Editing</a>
+      </article>
+    </div>
+  </div>
+</body>
+
+</html>
