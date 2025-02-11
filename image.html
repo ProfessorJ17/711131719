@@ -139,7 +139,6 @@
     .cta-highlight {
         color: #00ffff;
         text-shadow: 0 0 20px rgba(0, 255, 255, 0.9);
-        animation: pulse 1s infinite;
     }
     @keyframes pulse {
         from {
@@ -149,12 +148,139 @@
             transform: scale(1.1);
         }
     }
+
+    .hamburger-button {
+        position: fixed;
+        top: 20px;
+        left: 20px;
+        background: rgba(255, 255, 255, 0.1);
+        border: 2px solid #fff;
+        cursor: pointer;
+        padding: 10px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-around;
+        width: 40px;
+        height: 40px;
+        z-index: 1000;
+        border-radius: 5px;
+        transition: background-color 0.3s ease;
+    }
+
+    .hamburger-button:hover {
+        background-color: rgba(255, 255, 255, 0.2);
+    }
+
+    .bar {
+        height: 4px;
+        width: 100%;
+        background-color: #fff;
+        border-radius: 5px;
+        transition: 0.4s;
+    }
+
+    .hamburger-button.open .bar1 {
+        transform: rotate(-45deg) translate(-8px, 8px);
+    }
+
+    .hamburger-button.open .bar2 {
+        opacity: 0;
+    }
+
+    .hamburger-button.open .bar3 {
+        transform: rotate(45deg) translate(-8px, -8px);
+    }
+
+    .nav-menu {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 250px;
+        height: 100%;
+        background-color: rgba(20, 33, 62, 0.95);
+        backdrop-filter: blur(10px);
+        z-index: 999;
+        transform: translateX(-100%);
+        transition: transform 0.5s ease-in-out;
+        padding-top: 60px;
+    }
+
+    .nav-menu.open {
+        transform: translateX(0);
+    }
+
+    .nav-menu ul {
+        list-style: none;
+        padding: 0;
+        margin-top: 20px;
+    }
+
+    .nav-menu li {
+        padding: 15px 20px;
+        text-align: left;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .nav-menu li:last-child {
+        border-bottom: none;
+    }
+
+    .nav-menu a {
+        color: #fff;
+        text-decoration: none;
+        display: block;
+        transition: color 0.3s ease;
+    }
+
+    .nav-menu a:hover {
+        color: #00ffff;
+    }
+
+    .close-button {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background: rgba(255, 255, 255, 0.1);
+        border: none;
+        color: #fff;
+        font-size: 1.8em;
+        cursor: pointer;
+        border-radius: 5px;
+        padding: 5px 10px;
+        transition: background-color 0.3s ease;
+    }
+
+    .close-button:hover {
+        background-color: rgba(255, 255, 255, 0.2);
+    }
     </style>
 </head>
 <body>
+    <button class="hamburger-button">
+        <span class="bar bar1"></span>
+        <span class="bar bar2"></span>
+        <span class="bar bar3"></span>
+    </button>
+
+    <nav class="nav-menu">
+        <button class="close-button">&times;</button>
+        <ul>
+            <li><a href="https://711131719.xyz/beastai">AI Text</a></li>
+            <li><a href="https://711131719.xyz/image">AI Image</a></li>
+            <li><a href="https://711131719.xyz/videoai">AI Video</a></li>
+            <li><a href="https://www.711131719.xyz/aimusic">AI Music</a></li>
+            <li><a href="https://711131719.xyz/ebooks">AI eBooks</a></li>
+            <li><a href="https://www.711131719.xyz/shop">AI Shop</a></li>
+            <li><a href="https://711131719.xyz/websim/home">AI Web Design</a></li>
+            <li><a href="https://711131719.xyz/aiclone">AI-Clone</a></li>
+            <li><a href="https://711131719.xyz/dork">Dorking</a></li>
+            <li><a href="https://711131719.xyz/github-pages">Domain</a></li>
+        </ul>
+    </nav>
+
     <div class="container">
         <h1 class="title">🔥🚀 FREE AI IMAGE CREATORS = FREE MONEY-MAKING MACHINE! 🚀🔥</h1>
-        
+
         <div class="section urgency-box">
             💰 Why pay for content when AI can create it for FREE? 💰 With these powerful AI tools, you can generate stunning images and turn them into cash-making content instantly! 🎨💸
         </div>
@@ -165,7 +291,7 @@
 
         <div class="ai-list">
             <h2 class="subtitle">👇 TOP FREE AI IMAGE CREATORS (NO COST, ALL PROFIT) 👇</h2>
-            
+
             <div class="tool-card">
                 <span class="emoji">🖼️</span>
                 <a href="https://huggingface.co/black-forest-labs/FLUX.1-dev" target="_blank">Flux - Perfect for unique, AI-driven visuals!</a>
@@ -240,12 +366,30 @@
         </div>
 
         <div class="section cta-box">
-            <div class="cta-highlight">🚀 THIS IS THE EARLY GOLD RUSH—DON’T MISS OUT! 🚀</div>
+            <div>🚀 THIS IS THE EARLY GOLD RUSH—DON’T MISS OUT! 🚀</div>
             <div>The best time to start was yesterday, but the second-best time is RIGHT NOW! ⏳💰</div>
-            <div class="cta-highlight">📢 START NOW, DON’T WAIT! 🚀💥</div>
+            <div>📢 START NOW, DON’T WAIT! 🚀💥</div>
             <div>Grab your FREE AI tools and turn AI into your personal ATM! 💰🔥</div>
             <div style="margin-top:20px; font-size:1.3em">#AIArt #MakeMoneyOnline #PassiveIncome #SideHustle</div>
         </div>
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const hamburgerButton = document.querySelector('.hamburger-button');
+            const navMenu = document.querySelector('.nav-menu');
+            const closeButton = document.querySelector('.close-button');
+
+            hamburgerButton.addEventListener('click', () => {
+                navMenu.classList.toggle('open');
+                hamburgerButton.classList.toggle('open');
+            });
+
+            closeButton.addEventListener('click', () => {
+                navMenu.classList.remove('open');
+                hamburgerButton.classList.remove('open');
+            });
+        });
+    </script>
 </body>
 </html>
