@@ -12,8 +12,9 @@
     --glow-core: #fff;
     --hacker-bg: #000a1f;
     --cyber-border: 12px;
+    --menu-width: 250px;
   }
-  
+
   body {
     font-family: 'Courier New', monospace;
     background: var(--hacker-bg);
@@ -154,17 +155,100 @@
     pointer-events: none;
     z-index: -1;
   }
+
+  /* Hamburger Menu Styles */
+  .hamburger-menu {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    z-index: 100;
+    cursor: pointer;
+  }
+
+  .bar {
+    width: 30px;
+    height: 3px;
+    background-color: var(--neon-cyan);
+    margin: 6px 0;
+    transition: 0.4s;
+  }
+
+  .sidebar {
+    height: 100%;
+    width: var(--menu-width);
+    position: fixed;
+    z-index: 99;
+    top: 0;
+    left: 0;
+    background-color: rgba(0, 0, 0, 0.9);
+    overflow-x: hidden;
+    transition: 0.5s;
+    padding-top: 60px;
+    transform: translateX(-100%);
+  }
+
+  .sidebar.open {
+    transform: translateX(0);
+  }
+
+  .sidebar a {
+    padding: 15px 20px;
+    text-decoration: none;
+    font-size: 1.1em;
+    color: var(--neon-cyan);
+    display: block;
+    transition: 0.3s;
+  }
+
+  .sidebar a:hover {
+    color: var(--neon-pink);
+  }
+
+  .sidebar .closebtn {
+    position: absolute;
+    top: 0;
+    right: 25px;
+    font-size: 36px;
+    margin-left: 50px;
+    color: var(--neon-cyan);
+    cursor: pointer;
+  }
+
+  .sidebar .closebtn:hover {
+    color: var(--neon-pink);
+  }
 </style>
 </head>
 <body>
 <div class="glow-overlay"></div>
+
+<div class="hamburger-menu" onclick="toggleNav()">
+  <div class="bar"></div>
+  <div class="bar"></div>
+  <div class="bar"></div>
+</div>
+
+<div id="mySidebar" class="sidebar">
+  <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">×</a>
+  <a href="https://711131719.xyz/beastai">AI Text</a>
+  <a href="https://711131719.xyz/image">AI Image</a>
+  <a href="https://711131719.xyz/videoai">AI Video</a>
+  <a href="https://www.711131719.xyz/aimusic">AI Music</a>
+  <a href="https://711131719.xyz/ebooks">AI eBooks</a>
+  <a href="https://www.711131719.xyz/shop">AI Shop</a>
+  <a href="https://711131719.xyz/websim/home">AI Web Design</a>
+  <a href="https://711131719.xyz/aiclone">AI-Clone</a>
+  <a href="https://711131719.xyz/dork">Dorking</a>
+  <a href="https://711131719.xyz/github-pages">Domain</a>
+</div>
+
 <div class="container">
   <h1>How to Set Up a Website Using GitHub Pages with a GoDaddy Domain</h1>
-  
+
   <div class="warning">
     WARNING: Always ensure you follow the terms of service for GitHub Pages and GoDaddy.
   </div>
-  
+
   <h2>Step 1: Create a GitHub Repository</h2>
   <ul>
     <li>Go to GitHub and log in (or sign up).</li>
@@ -174,7 +258,7 @@
     <li>Check "Add a README file".</li>
     <li>Click Create repository.</li>
   </ul>
-  
+
   <h2>Step 2: Upload Your Website Files</h2>
   <ul>
     <li>Open your repository on GitHub.</li>
@@ -182,24 +266,24 @@
     <li>Name the file index.html.</li>
     <li>Add this basic HTML code:</li>
   </ul>
-  
+
   <div class="code">
-&lt;!DOCTYPE html&gt;
-&lt;html lang="en"&gt;
-&lt;head&gt;
-    &lt;meta charset="UTF-8"&gt;
-    &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;
-    &lt;title&gt;My Website&lt;/title&gt;
-&lt;/head&gt;
-&lt;body&gt;
-    &lt;h1&gt;Welcome to My Website!&lt;/h1&gt;
-    &lt;p&gt;This is hosted on GitHub Pages with a GoDaddy domain.&lt;/p&gt;
-&lt;/body&gt;
-&lt;/html&gt;
+    &lt;!DOCTYPE html&gt;
+    &lt;html lang="en"&gt;
+    &lt;head&gt;
+      &lt;meta charset="UTF-8"&gt;
+      &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;
+      &lt;title&gt;My Website&lt;/title&gt;
+    &lt;/head&gt;
+    &lt;body&gt;
+      &lt;h1&gt;Welcome to My Website!&lt;/h1&gt;
+      &lt;p&gt;This is hosted on GitHub Pages with a GoDaddy domain.&lt;/p&gt;
+    &lt;/body&gt;
+    &lt;/html&gt;
   </div>
-  
+
   <p>Scroll down and commit the file by clicking "Commit changes".</p>
-  
+
   <h2>Step 3: Enable GitHub Pages</h2>
   <ul>
     <li>In your repository, go to Settings → Pages.</li>
@@ -208,11 +292,11 @@
     https://yourgithubusername.github.io/my-website/</li>
     <li>(It may take a few minutes to go live.)</li>
   </ul>
-  
+
   <h2>Step 4: Buy & Set Up a GoDaddy Domain</h2>
   <p>Purchase a domain from GoDaddy.</p>
   <p>In your GoDaddy account, go to DNS settings.</p>
-  
+
   <p>Add these A records:</p>
   <div class="code">
 Type    Name    Value
@@ -221,13 +305,13 @@ A       @       185.199.109.153
 A       @       185.199.110.153
 A       @       185.199.111.153
   </div>
-  
+
   <p>Add a CNAME record:</p>
   <div class="code">
 Type    Name    Value
 CNAME   www     yourgithubusername.github.io
   </div>
-  
+
   <h2>Step 5: Connect GitHub Pages to GoDaddy</h2>
   <ul>
     <li>Go to your GitHub repository → Settings → Pages.</li>
@@ -235,7 +319,7 @@ CNAME   www     yourgithubusername.github.io
     <li>Click Save.</li>
     <li>GitHub will issue an SSL certificate automatically.</li>
   </ul>
-  
+
   <div class="warning">
     🎉 Done! Your website should now be live at https://mywebsite.com. 🚀
   </div>
@@ -245,7 +329,7 @@ CNAME   www     yourgithubusername.github.io
   function createStaticGlow() {
     const container = document.querySelector('.container');
     const colors = ['#0ff', '#f0f', '#bc13fe'];
-    
+
     for(let i = 0; i < 30; i++) {
       const glitch = document.createElement('div');
       glitch.style.position = 'absolute';
@@ -263,6 +347,14 @@ CNAME   www     yourgithubusername.github.io
   }
 
   window.addEventListener('DOMContentLoaded', createStaticGlow);
+
+  function toggleNav() {
+    document.getElementById("mySidebar").classList.toggle('open');
+  }
+
+  function closeNav() {
+    document.getElementById("mySidebar").classList.remove('open');
+  }
 </script>
 </body>
 </html>
