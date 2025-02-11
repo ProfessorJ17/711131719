@@ -425,6 +425,156 @@
             align-items: center;
             cursor: pointer;
         }
+
+        .ai-tools-buttons {
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            z-index: 1000;
+            width: 150px;
+        }
+
+        .ai-tool-button {
+            padding: 8px 15px;
+            font-size: clamp(0.7em, 1.5vw, 1em);
+            background-color: rgba(10, 10, 15, 0.9);
+            color: #00ff9d;
+            border: 1px solid #00ff9d;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-radius: 15px;
+            text-align: center;
+            text-decoration: none;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            animation: tool-glow 2s infinite alternate;
+        }
+
+        .ai-tool-button:hover {
+            background-color: #00ff9d;
+            color: #0a0a0f;
+            transform: translateY(-2px);
+            box-shadow: 0 0 15px #00ff9d80;
+        }
+
+        @keyframes tool-glow {
+            0% {
+                box-shadow: 0 0 5px #00ff9d40,
+                            0 0 10px #00ff9d20;
+            }
+            100% {
+                box-shadow: 0 0 10px #00ff9d40,
+                            0 0 20px #00ff9d20;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .ai-tools-buttons {
+                top: unset;
+                bottom: 20px;
+                right: 50%;
+                transform: translateX(50%);
+                width: 90%;
+                max-width: 300px;
+                background: rgba(10, 10, 15, 0.95);
+                padding: 10px;
+                border-radius: 15px;
+                border: 1px solid #00ff9d;
+            }
+
+            .ai-tool-button {
+                font-size: 0.9em;
+                padding: 10px;
+            }
+        }
+        /* Styles for the hamburger menu */
+        .hamburger-menu {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 1001; /* Ensure it's above other elements */
+            cursor: pointer;
+        }
+
+        .bar {
+            width: 30px;
+            height: 3px;
+            background-color: #00ff9d;
+            margin: 6px 0;
+            transition: 0.4s;
+            display: block;
+        }
+
+        .hamburger-menu.active .bar:nth-child(1) {
+            transform: translateY(9px) rotate(45deg);
+        }
+
+        .hamburger-menu.active .bar:nth-child(2) {
+            opacity: 0;
+        }
+
+        .hamburger-menu.active .bar:nth-child(3) {
+            transform: translateY(-9px) rotate(-45deg);
+        }
+
+        .menu-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 300px;
+            height: 100%;
+            background-color: rgba(10, 10, 15, 0.95); /* Black background */
+            z-index: 1000;
+            transform: translateX(-100%);
+            transition: transform 0.3s ease-in-out;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start; /* Align items to the start */
+            color: #00ff9d;
+            border-right: 2px solid #00ff9d;
+        }
+
+        .menu-container.active {
+            transform: translateX(0);
+        }
+
+        .menu-container a {
+            color: #00ff9d;
+            text-decoration: none;
+            padding: 10px;
+            display: block;
+            width: 100%; /* Make the links fill the width */
+            text-align: left; /* Align text to the left */
+            transition: color 0.3s ease;
+            border-bottom: 1px solid #00ff9d;
+            margin-bottom: 5px;
+        }
+
+        .menu-container a:last-child {
+            border-bottom: none; /* Remove border from the last item */
+        }
+
+        .menu-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            margin-bottom: 20px;
+        }
+
+        .close-button {
+            font-size: 1.5em;
+            cursor: pointer;
+            color: #00ff9d;
+            background: none;
+            border: none;
+            padding: 0;
+        }
     </style>
 </head>
 <body>
@@ -439,6 +589,30 @@
         <button class="donate-button" id="landingDonateButton">DONATE</button>
 
     </div>
+    <!-- Hamburger Menu -->
+    <div class="hamburger-menu" id="hamburgerMenu">
+        <span class="bar"></span>
+        <span class="bar"></span>
+        <span class="bar"></span>
+    </div>
+
+    <!-- Menu Container -->
+    <div class="menu-container" id="menuContainer">
+        <div class="menu-header">
+            <h3 style="margin: 0; color: #00ff9d;">AI Tools</h3>
+            <button class="close-button" id="closeButton">×</button>
+        </div>
+        <a href="https://711131719.xyz/beastai" target="_blank">AI Text</a>
+        <a href="https://711131719.xyz/image" target="_blank">AI Image</a>
+        <a href="https://711131719.xyz/videoai" target="_blank">AI Video</a>
+        <a href="https://www.711131719.xyz/aimusic" target="_blank">AI Music</a>
+        <a href="https://711131719.xyz/ebooks" target="_blank">AI eBooks</a>
+        <a href="https://www.711131719.xyz/shop" target="_blank">AI Shop</a>
+        <a href="https://711131719.xyz/websim/home" target="_blank">AI Web Design</a>
+        <a href="https://711131719.xyz/aiclone" target="_blank">AI-Clone</a>
+        <a href="https://711131719.xyz/dork" target="_blank">Dorking</a>
+        <a href="https://711131719.xyz/github-pages" target="_blank">Domain</a>
+    </div>
 </div>
 
 <div class="app-container" id="appContainer" style="display: none;">
@@ -446,6 +620,7 @@
         <button class="donate-button" id="appDonateButton">DONATE </button>
 
     </div>
+    
     <div class="container">
         <div class="chat-container" id="chatContainer">
             <!-- Initial bot message will be added dynamically after entering mainframe -->
@@ -478,59 +653,59 @@
 <option value="Armenia">Armenia</Armenia>
 <option value="Australia">Australia</option>
 <option value="Austria">Austria</option>
-<option value="Azerbaijan">Azerbaijan</option>
-<option value="Bahamas">Bahamas</option>
+<option value="Azerbaijan">Azerbaijan</Azerbaijan>
+<option value="Bahamas">Bahamas</Bahamas>
 <option value="Bahrain">Bahrain</Bahrain>
-<option value="Bangladesh">Bangladesh</option>
-<option value="Barbados">Barbados</option>
-<option value="Belarus">Belarus</option>
-<option value="Belgium">Belgium</option>
-<option value="Belize">Belize</option>
+<option value="Bangladesh">Bangladesh</Bangladesh>
+<option value="Barbados">Barbados</Barbados>
+<option value="Belarus">Belarus</Belarus>
+<option value="Belgium">Belgium</Belgium>
+<option value="Belize">Belize</Belize>
 <option value="Benin">Benin</Benin>
-<option value="Bhutan">Bhutan</option>
-<option value="Bolivia">Bolivia</option>
+<option value="Bhutan">Bhutan</Bhutan>
+<option value="Bolivia">Bolivia</Bolivia>
 <option value="Bosnia and Herzegovina">Bosnia and Herzegovina</option>
-<option value="Botswana">Botswana</option>
-<option value="Brazil">Brazil</option>
+<option value="Botswana">Botswana</Botswana>
+<option value="Brazil">Brazil</Brazil>
 <option value="Brunei">Brunei</Brunei>
-<option value="Bulgaria">Bulgaria</option>
-<option value="Burkina Faso">Burkina Faso</option>
+<option value="Bulgaria">Bulgaria</Bulgaria>
+<option value="Burkina Faso">Burkina Faso</Burkina Faso>
 <option value="Burundi">Burundi</Burundi>
 <option value="Cabo Verde">Cabo Verde</option>
-<option value="Cambodia">Cambodia</option>
+<option value="Cambodia">Cambodia</Cambodia>
 <option value="Cameroon">Cameroon</Cameroon>
-<option value="Canada">Canada</option>
+<option value="Canada">Canada</Canada>
 <option value="Central African Republic">Central African Republic</option>
 <option value="Chad">Chad</Chad>
-<option value="Chile">Chile</option>
-<option value="China">China</option>
-<option value="Colombia">Colombia</option>
-<option value="Comoros">Comoros</option>
-<option value="Costa Rica">Costa Rica</option>
+<option value="Chile">Chile</Chile>
+<option value="China">China</China>
+<option value="Colombia">Colombia</Colombia>
+<option value="Comoros">Comoros</Comoros>
+<option value="Costa Rica">Costa Rica</Costa Rica>
 <option value="Croatia">Croatia</Croatia>
-<option value="Cuba">Cuba</option>
-<option value="Cyprus">Cyprus</option>
+<option value="Cuba">Cuba</Cuba>
+<option value="Cyprus">Cyprus</Cyprus>
 <option value="Czech Republic">Czech Republic</option>
 <option value="Democratic Republic of the Congo">Democratic Republic of the Congo</option>
-<option value="Denmark">Denmark</option>
-<option value="Djibouti">Djibouti</option>
-<option value="Dominica">Dominica</option>
-<option value="Dominican Republic">Dominican Republic</option>
+<option value="Denmark">Denmark</Denmark>
+<option value="Djibouti">Djibouti</Djibouti>
+<option value="Dominica">Dominica</Dominica>
+<option value="Dominican Republic">Dominican Republic</Dominican Republic>
 <option value="East Timor">East Timor</option>
 <option value="Ecuador">Ecuador</Ecuador>
-<option value="Egypt">Egypt</option>
-<option value="El Salvador">El Salvador</option>
+<option value="Egypt">Egypt</Egypt>
+<option value="El Salvador">El Salvador</El Salvador>
 <option value="Equatorial Guinea">Equatorial Guinea</option>
-<option value="Eritrea">Eritrea</option>
-<option value="Estonia">Estonia</option>
-<option value="Eswatini">Eswatini</option>
-<option value="Ethiopia">Ethiopia</option>
+<option value="Eritrea">Eritrea</Eritrea>
+<option value="Estonia">Estonia</Estonia>
+<option value="Eswatini">Eswatini</Eswatini>
+<option value="Ethiopia">Ethiopia</Ethiopia>
 <option value="Fiji">Fiji</Fiji>
-<option value="Finland">Finland</option>
-<option value="France">France</option>
+<option value="Finland">Finland</Finland>
+<option value="France">France</France>
 <option value="Gabon">Gabon</Gabon>
 <option value="Gambia">Gambia</Gambia>
-<option value="Georgia">Georgia</option>
+<option value="Georgia">Georgia</Georgia>
 <option value="Germany">Germany</Germany>
 <option value="Ghana">Ghana</Ghana>
 <option value="Greece">Greece</Greece>
@@ -544,7 +719,7 @@
 <option value="Hungary">Hungary</Hungary>
 <option value="Iceland">Iceland</Iceland>
 <option value="India">India</India>
-<option value="Indonesia">Indonesia</option>
+<option value="Indonesia">Indonesia</Indonesia>
 <option value="Iran">Iran</Iran>
 <option value="Iraq">Iraq</Iraq>
 <option value="Ireland">Ireland</Ireland>
@@ -591,24 +766,24 @@
 <option value="Namibia">Namibia</Namibia>
 <option value="Nauru">Nauru</Nauru>
 <option value="Nepal">Nepal</Nepal>
-<option value="Netherlands">Netherlands</option>
-<option value="New Zealand">New Zealand</option>
+<option value="Netherlands">Netherlands</Netherlands>
+<option value="New Zealand">New Zealand</New Zealand>
 <option value="Nicaragua">Nicaragua</Nicaragua>
 <option value="Niger">Niger</Niger>
 <option value="Nigeria">Nigeria</Nigeria>
-<option value="North Macedonia">North Macedonia</option>
+<option value="North Macedonia">North Macedonia</North Macedonia>
 <option value="Norway">Norway</Norway>
 <option value="Oman">Oman</Oman>
 <option value="Pakistan">Pakistan</Pakistan>
 <option value="Palau">Palau</Palau>
 <option value="Panama">Panama</Panama>
-<option value="Papua New Guinea">Papua New Guinea</option>
+<option value="Papua New Guinea">Papua New Guinea</Papua New Guinea>
 <option value="Paraguay">Paraguay</Paraguay>
 <option value="Peru">Peru</Peru>
 <option value="Philippines">Philippines</Philippines>
 <option value="Poland">Poland</Poland>
 <option value="Portugal">Portugal</Portugal>
-<option value="Qatar">Qatar</Qatar>
+<option value="Qatar">Qatar</option>
 <option value="Romania">Romania</Romania>
 <option value="Russia">Russia</Russia>
 <option value="Rwanda">Rwanda</Rwanda>
@@ -1375,7 +1550,7 @@
             if (country) locationComponents.push(`"${country}"`);
             if (state) locationComponents.push(`"${state}"`);
             if (city) locationComponents.push(`"${city}"`);
-            if (zipCode) locationComponents.push(`"${zipCode}"`);
+            if (zipCode) locationComponents.push(`"${zipCode}"`); 
             
             let locationComponent = locationComponents.join(' ');
             let finalOccupation = customOccupation || occupation;
@@ -1613,6 +1788,28 @@
         } else {
             content.style.display = 'none';
             header.textContent = 'URL Search Types ▼';
+        }
+    });
+    
+    const hamburgerMenu = document.getElementById('hamburgerMenu');
+    const menuContainer = document.getElementById('menuContainer');
+    const closeButton = document.getElementById('closeButton');
+
+    hamburgerMenu.addEventListener('click', () => {
+        hamburgerMenu.classList.toggle('active');
+        menuContainer.classList.toggle('active');
+    });
+
+    closeButton.addEventListener('click', () => {
+        hamburgerMenu.classList.remove('active');
+        menuContainer.classList.remove('active');
+    });
+
+    // Close menu when clicking outside
+    document.addEventListener('click', (event) => {
+        if (!menuContainer.contains(event.target) && !hamburgerMenu.contains(event.target)) {
+            hamburgerMenu.classList.remove('active');
+            menuContainer.classList.remove('active');
         }
     });
 </script>
