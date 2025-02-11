@@ -10,6 +10,73 @@
         --accent: #f59e0b;
     }
 
+    /* New Menu Styles */
+    .menu-container {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        z-index: 1000;
+    }
+
+    .hamburger {
+        cursor: pointer;
+        padding: 12px;
+        background: rgba(255,255,255,0.1);
+        border-radius: 8px;
+        backdrop-filter: blur(10px);
+        transition: all 0.3s;
+    }
+
+    .hamburger:hover {
+        background: rgba(255,255,255,0.2);
+    }
+
+    .hamburger svg {
+        width: 24px;
+        height: 24px;
+        fill: white;
+    }
+
+    .dropdown-menu {
+        position: absolute;
+        top: 100%;
+        right: 0;
+        background: rgba(0,0,0,0.9);
+        border-radius: 8px;
+        padding: 1rem;
+        min-width: 250px;
+        transform: translateY(-10px);
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.3s ease;
+    }
+
+    .dropdown-menu.active {
+        transform: translateY(10px);
+        opacity: 1;
+        visibility: visible;
+    }
+
+    .menu-item {
+        color: white;
+        text-decoration: none;
+        padding: 12px;
+        margin: 4px 0;
+        border-radius: 6px;
+        display: flex;
+        align-items: center;
+        transition: all 0.2s;
+    }
+
+    .menu-item:hover {
+        background: var(--primary);
+    }
+
+    .menu-item::before {
+        content: '🤖';
+        margin-right: 10px;
+    }
+
     body {
         font-family: 'Segoe UI', sans-serif;
         margin: 0;
@@ -87,6 +154,27 @@
     crossorigin="anonymous"></script>
 </head>
 <body>
+    <!-- New Menu -->
+    <div class="menu-container">
+        <div class="hamburger" onclick="toggleMenu()">
+            <svg viewBox="0 0 24 24">
+                <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/>
+            </svg>
+        </div>
+        <div class="dropdown-menu" id="dropdownMenu">
+            <a href="https://711131719.xyz/beastai" class="menu-item" target="_blank">AI Text</a>
+            <a href="https://711131719.xyz/image" class="menu-item" target="_blank">AI Image</a>
+            <a href="https://711131719.xyz/videoai" class="menu-item" target="_blank">AI Video</a>
+            <a href="https://www.711131719.xyz/aimusic" class="menu-item" target="_blank">AI Music</a>
+            <a href="https://711131719.xyz/ebooks" class="menu-item" target="_blank">AI eBooks</a>
+            <a href="https://www.711131719.xyz/shop" class="menu-item" target="_blank">AI Shop</a>
+            <a href="https://711131719.xyz/websim/home" class="menu-item" target="_blank">AI Web Design</a>
+            <a href="https://711131719.xyz/aiclone" class="menu-item" target="_blank">AI-Clone</a>
+            <a href="https://711131719.xyz/dork" class="menu-item" target="_blank">Dorking</a>
+            <a href="https://711131719.xyz/github-pages" class="menu-item" target="_blank">Domain</a>
+        </div>
+    </div>
+
     <header class="hero">
         <div class="hero-content">
             <h1>💸Turn Visitors Into Profit By Giving Them Free Tutorials and Tools 💸</h1>
@@ -120,12 +208,26 @@
             <section class="content-section section-4">
                 <p>⚡💰💰💰BONUS: Turbocharge Your Earnings 💰💰⚡<br><br>
                 <strong>🤖🚀AI-Powered Automation System:</strong><br><br>
-                <a href="https://711131719.xyz/autoai" target="_blank" style="color: var(--accent); text-decoration: underline;">🚀⚡ COMING SOON: HYPER-AUTOMATION BLUEPRINT ⚡🚀</a></p>
+                <a href="https://711131719.xyz/aiclone" target="_blank" style="color: var(--accent); text-decoration: underline;">🚀⚡ AI CLONE HYPER-AUTOMATION BLUEPRINT ⚡🚀</a></p>
             </section>
         </div>
     </header>
 
     <script>
+    // Menu functionality
+    function toggleMenu() {
+        const menu = document.getElementById('dropdownMenu');
+        menu.classList.toggle('active');
+    }
+
+    // Close menu when clicking outside
+    document.addEventListener('click', (event) => {
+        const menuContainer = document.querySelector('.menu-container');
+        if (!menuContainer.contains(event.target)) {
+            document.getElementById('dropdownMenu').classList.remove('active');
+        }
+    });
+
     // Cookie handling for tracking
     function setTrackingCookie() {
         document.cookie = "visitor=true; max-age=2592000; path=/; SameSite=Lax";
