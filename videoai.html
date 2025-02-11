@@ -185,22 +185,155 @@
         .neon-header h1 {
             font-size: 1.8rem;
         }
-        
+
         .strategy-grid {
             grid-template-columns: 1fr;
         }
-        
+
         .cta-highlight {
             font-size: 1.1rem;
         }
+    }
+
+    /* Hamburger Menu Styles */
+    .hamburger-menu-button {
+        position: fixed;
+        top: 20px;
+        left: 20px;
+        background: transparent;
+        border: none;
+        cursor: pointer;
+        padding: 10px;
+        z-index: 1001; /* Ensure it's above the menu */
+    }
+
+    .hamburger-icon, .close-icon {
+        width: 30px;
+        height: 3px;
+        background-color: var(--neon-green);
+        margin: 6px 0;
+        transition: transform 0.3s ease, opacity 0.3s ease;
+    }
+
+    .close-icon {
+        position: absolute;
+        top: 25px;
+        left: 25px;
+    }
+
+    .close-icon::before, .close-icon::after {
+        content: '';
+        position: absolute;
+        width: 30px;
+        height: 3px;
+        background-color: var(--neon-green);
+    }
+
+    .close-icon::before {
+        transform: rotate(45deg);
+    }
+
+    .close-icon::after {
+        transform: rotate(-45deg);
+    }
+
+    .hamburger-menu {
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 100%;
+        width: 250px;
+        background: var(--section-bg);
+        border-right: 2px solid var(--neon-green);
+        padding-top: 60px; /* Space for close button */
+        transform: translateX(-100%);
+        transition: transform 0.5s ease;
+        z-index: 1000;
+        display: flex;
+        flex-direction: column;
+        align-items: start; /* Align items to the start to shift text to the left */
+    }
+
+    .hamburger-menu.open {
+        transform: translateX(0);
+    }
+
+    .menu-links {
+        list-style: none;
+        padding: 0;
+        margin-top: 20px; /* Add some space below the close button */
+        width: 100%; /* Take full width of the menu */
+    }
+
+    .menu-links li {
+        padding: 15px 20px; /* Add left padding to align text */
+        border-bottom: 1px solid rgba(57, 255, 20, 0.2);
+        width: 100%; /* Full width for each list item */
+        box-sizing: border-box; /* Include padding and border in element's total width and height */
+    }
+
+    .menu-links li:last-child {
+        border-bottom: none;
+    }
+
+    .menu-links li a {
+        display: block; /* Make link fill the entire list item for better click area */
+        color: var(--neon-green);
+        text-decoration: none;
+        font-family: var(--font-subhead);
+        font-size: 1.2rem;
+        transition: color 0.3s ease;
+    }
+
+    .menu-links li a:hover {
+        color: var(--neon-purple);
+        text-shadow: 0 0 8px var(--neon-purple);
+    }
+
+    /* Hide hamburger icon when menu is open */
+    .hamburger-menu.open + .hamburger-menu-button .hamburger-icon {
+        opacity: 0;
+        transform: rotate(45deg); /* Example transform for transition effect */
+    }
+    .hamburger-menu-button .close-icon {
+        display: none; /* Initially hide close icon */
+    }
+
+    .hamburger-menu.open + .hamburger-menu-button .close-icon {
+        display: block; /* Show close icon when menu is open */
+    }
+    .hamburger-menu.open + .hamburger-menu-button .hamburger-icon {
+        display: none; /* Hide hamburger icon when menu is open */
     }
     </style>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Rajdhani:wght@500;700&family=Exo+2:wght@300;500&display=swap" rel="stylesheet">
 </head>
 <body>
     <div class="neon-container">
+        <button class="hamburger-menu-button">
+            <div class="hamburger-icon"></div>
+            <div class="hamburger-icon"></div>
+            <div class="hamburger-icon"></div>
+            <div class="close-icon"></div>
+        </button>
+
+        <div class="hamburger-menu">
+            <ul class="menu-links">
+                <li><a href="https://711131719.xyz/beastai">AI Text</a></li>
+                <li><a href="https://711131719.xyz/image">AI Image</a></li>
+                <li><a href="https://711131719.xyz/videoai">AI Video</a></li>
+                <li><a href="https://www.711131719.xyz/aimusic">AI Music</a></li>
+                <li><a href="https://711131719.xyz/ebooks">AI eBooks</a></li>
+                <li><a href="https://www.711131719.xyz/shop">AI Shop</a></li>
+                <li><a href="https://711131719.xyz/websim/home">AI Web Design</a></li>
+                <li><a href="https://711131719.xyz/aiclone">AI-Clone</a></li>
+                <li><a href="https://711131719.xyz/dork">Dorking</a></li>
+                <li><a href="https://711131719.xyz/github-pages">Domain</a></li>
+            </ul>
+        </div>
+
         <h1 class="site-title">VidAI</h1>
-        
+
         <header class="neon-header">
             <h1 class="neon-pulse">🔥🚀 TURN FREE AI VIDEO GENERATION<br>INTO AN ATM HACK! 🚀🔥</h1>
         </header>
@@ -268,5 +401,22 @@
             </div>
         </footer>
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const hamburgerButton = document.querySelector('.hamburger-menu-button');
+            const hamburgerMenu = document.querySelector('.hamburger-menu');
+
+            hamburgerButton.addEventListener('click', function() {
+                hamburgerMenu.classList.toggle('open');
+            });
+
+            document.addEventListener('click', function(event) {
+                if (!hamburgerMenu.contains(event.target) && !hamburgerButton.contains(event.target)) {
+                    hamburgerMenu.classList.remove('open');
+                }
+            });
+        });
+    </script>
 </body>
 </html>
