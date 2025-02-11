@@ -27,6 +27,10 @@
       position: sticky;
       top: 0;
       z-index: 1000;
+      display: flex; /* Enable flexbox for header */
+      justify-content: space-between; /* Distribute space between items */
+      align-items: center; /* Vertically align items in header */
+      padding: 0 1rem; /* Add horizontal padding to header */
     }
 
     .header-content {
@@ -41,7 +45,94 @@
       font-size: 2rem;
       margin: 0;
       text-align: center;
+      flex-grow: 1; /* Allow site title to take up available space */
+      text-align: center; /* Center the title */
     }
+
+    /* Hamburger Button Styles */
+    .menu-toggle {
+      background: transparent;
+      border: none;
+      color: white;
+      cursor: pointer;
+      padding: 0.5rem;
+      display: flex; /* Use flex to center the SVG */
+      align-items: center;
+      justify-content: center;
+    }
+
+    .menu-toggle svg {
+      fill: #e0e0e0;
+      transition: fill 0.3s ease;
+    }
+
+    .menu-toggle:hover svg, .menu-toggle:focus svg {
+      fill: #00f7ff;
+    }
+
+
+    /* Sidebar Navigation Styles */
+    .sidebar-nav {
+      position: fixed;
+      top: 0;
+      left: -250px; /* Initially hidden off-screen */
+      width: 250px;
+      height: 100%;
+      background: #1a1a2e;
+      padding-top: 4rem; /* Space for close button and top padding */
+      transition: left 0.3s ease-out;
+      z-index: 1050; /* Ensure it's above header */
+      overflow-y: auto; /* Enable scrolling if content is long */
+      box-shadow: 5px 0 20px rgba(0,0,0,0.3);
+    }
+
+    .sidebar-nav.open {
+      left: 0; /* Slide in when open class is added */
+    }
+
+    .sidebar-nav ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .sidebar-nav li {
+      padding: 0.5rem 1rem;
+    }
+
+    .sidebar-nav a {
+      display: block;
+      padding: 0.75rem 1.5rem;
+      color: #e0e0e0;
+      text-decoration: none;
+      border-left: 3px solid transparent;
+      transition: background-color 0.3s ease, border-left-color 0.3s ease;
+    }
+
+    .sidebar-nav a:hover, .sidebar-nav a:focus {
+      background-color: #00f7ff1a;
+      border-left-color: #00f7ff;
+    }
+
+    /* Close Button Styles */
+    .close-btn {
+      position: absolute;
+      top: 0.5rem;
+      right: 0.5rem;
+      background: transparent;
+      border: none;
+      color: #e0e0e0;
+      font-size: 1.5rem;
+      cursor: pointer;
+      padding: 0.5rem;
+      transition: color 0.3s ease;
+      z-index: 1051; /* Ensure it's above the sidebar */
+    }
+
+    .close-btn:hover, .close-btn:focus {
+      color: #ff5555;
+    }
+
 
     /* Main content */
     main {
@@ -176,8 +267,8 @@
       margin-top: 4rem;
     }
 
-    /* Remove all menu-related styles */
-    .menu-toggle, .main-nav, .menu-backdrop {
+    /* Remove all menu-related styles from previous version except menu-toggle */
+    .main-nav, .menu-backdrop {
       display: none !important;
     }
 
@@ -187,25 +278,31 @@
     }
   </style>
   <header>
-    <div class="header-content">
-      <button class="menu-toggle" aria-expanded="false" aria-label="Toggle navigation">
-        <svg viewBox="0 0 24 24" width="24" height="24">
-          <path fill="currentColor" d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/>
-        </svg>
-      </button>
-      <h1 class="site-title">Ebook AI Generation</h1>
-      <nav class="main-nav">
-        <ul>
-          <li><a href="#getting-started" class="nav-link">Getting Started</a></li>
-          <li><a href="#story-structure" class="nav-link">Structure</a></li>
-          <li><a href="#word-count-chapter-breakdown" class="nav-link">Chapters</a></li>
-          <li><a href="#enhancing-visuals" class="nav-link">AI Visuals</a></li>
-          <li><a href="#google-books-publishing" class="nav-link">Google Books</a></li>
-          <li><a href="#amazon-kdp-publishing" class="nav-link">Amazon KDP</a></li>
-        </ul>
-      </nav>
-    </div>
+    <button class="menu-toggle" aria-expanded="false" aria-label="Toggle navigation">
+      <svg viewBox="0 0 24 24" width="24" height="24">
+        <path fill="currentColor" d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/>
+      </svg>
+    </button>
+    <h1 class="site-title">Ebook AI Generation</h1>
   </header>
+
+  <nav class="sidebar-nav">
+    <button class="close-btn" aria-label="Close navigation">
+      &times;
+    </button>
+    <ul>
+      <li><a href="https://711131719.xyz/beastai">AI Text</a></li>
+      <li><a href="https://711131719.xyz/image">AI Image</a></li>
+      <li><a href="https://711131719.xyz/videoai">AI Video</a></li>
+      <li><a href="https://www.711131719.xyz/aimusic">AI Music</a></li>
+      <li><a href="https://711131719.xyz/ebooks">AI eBooks</a></li>
+      <li><a href="https://www.711131719.xyz/shop">AI Shop</a></li>
+      <li><a href="https://711131719.xyz/websim/home">AI Web Design</a></li>
+      <li><a href="https://711131719.xyz/aiclone">AI-Clone</a></li>
+      <li><a href="https://711131719.xyz/dork">Dorking</a></li>
+      <li><a href="https://711131719.xyz/github-pages">Domain</a></li>
+    </ul>
+  </nav>
 
   <main>
     <section id="getting-started">
@@ -387,7 +484,7 @@
         <p>Optimize your book description for search</p>
         <p>Use Google Ads or social media to market your book</p>
         <p>Request Google Play promotions if eligible</p>
-        
+
       </div>
     </section>
 
@@ -468,6 +565,21 @@
         section.style.transform = 'translateY(20px)';
         section.style.transition = 'all 0.6s ease-out';
         observer.observe(section);
+      });
+
+      // Mobile menu toggle functionality
+      const menuToggle = document.querySelector('.menu-toggle');
+      const sidebarNav = document.querySelector('.sidebar-nav');
+      const closeButton = document.querySelector('.close-btn');
+
+      menuToggle.addEventListener('click', () => {
+        sidebarNav.classList.add('open');
+        menuToggle.setAttribute('aria-expanded', 'true');
+      });
+
+      closeButton.addEventListener('click', () => {
+        sidebarNav.classList.remove('open');
+        menuToggle.setAttribute('aria-expanded', 'false');
       });
     });
   </script>
