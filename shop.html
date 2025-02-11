@@ -39,7 +39,10 @@
     header {
       padding: 25px 0;
       border-bottom: 3px solid #b8860b;
-      background-color: transparent; 
+      background-color: transparent;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
     }
 
     header .container {
@@ -62,24 +65,98 @@
       100% { text-shadow: 2px 2px 4px #000, 0 0 15px #ffd700; }
     }
 
+    .nav-container {
+      position: relative;
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+    }
+
+    .nav-button {
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-around;
+      width: 30px;
+      height: 24px;
+    }
+
+    .nav-button .bar {
+      height: 4px;
+      background-color: #f0e68c;
+      border-radius: 4px;
+      transition: transform 0.3s ease, opacity 0.3s ease;
+    }
+
+    .nav-button .bar1 {
+      width: 100%;
+    }
+
+    .nav-button .bar2 {
+      width: 100%;
+    }
+
+    .nav-button .bar3 {
+      width: 100%;
+    }
+
+    .nav-button.open .bar1 {
+      transform: rotate(-45deg) translate(-6px, 6px);
+    }
+
+    .nav-button.open .bar2 {
+      opacity: 0;
+    }
+
+    .nav-button.open .bar3 {
+      transform: rotate(45deg) translate(-6px, -6px);
+    }
+
+    nav {
+      position: absolute;
+      top: 100%;
+      right: 0;
+      background-color: rgba(0, 0, 0, 0.9);
+      border: 2px solid #b8860b;
+      border-top: none;
+      border-radius: 0 0 7px 7px;
+      overflow: hidden;
+      width: 200px;
+      transform-origin: top right;
+      transform: scaleY(0);
+      transition: transform 0.3s ease;
+      z-index: 10;
+    }
+
+    nav.open {
+      transform: scaleY(1);
+    }
+
     nav ul {
       margin: 0;
       padding: 0;
       list-style: none;
       display: flex;
+      flex-direction: column;
     }
 
     nav li {
-      margin-left: 25px;
+      margin: 0;
+    }
+
+    nav li:not(:last-child) {
+      border-bottom: 1px dashed #b8860b;
     }
 
     nav a {
+      display: block;
       text-decoration: none;
       font-family: 'Playfair Display', serif;
       color: #f0e68c;
-      padding: 8px 15px;
-      border: 2px solid #b8860b;
-      border-radius: 7px;
+      padding: 12px 20px;
       transition: background-color 0.3s ease, color 0.3s ease;
     }
 
@@ -87,6 +164,7 @@
       background-color: #b8860b;
       color: #222;
     }
+
 
     main {
       padding: 30px 0;
@@ -97,7 +175,7 @@
       border-radius: 12px;
       box-shadow: 0 0 15px rgba(0, 0, 0, 0.6);
       border: 2px solid #555;
-      background-color: transparent; 
+      background-color: transparent;
     }
 
     article h2 {
@@ -156,11 +234,11 @@
       margin-top: 40px;
       border: 2px solid #555;
       box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.3);
-      background-color: transparent; 
+      background-color: transparent;
     }
 
     footer {
-      background-color: transparent; 
+      background-color: transparent;
       color: #aaa;
       text-align: center;
       padding: 15px 0;
@@ -231,15 +309,27 @@
     <header>
       <div class="container">
         <h1>TEAM INFINITY</h1>
-        <nav>
-          <ul>
-            <li><a href="/home" target="_blank">Home</a></li>
-            <li><a href="/guide" target="_blank">Guide</a></li>
-            <li><a href="/emporium" target="_blank">Emporium</a></li>
-            <li><a href="/about" target="_blank">About</a></li>
-            <li><a href="/contact" target="_blank">Contact</a></li>
-          </ul>
-        </nav>
+        <div class="nav-container">
+          <button class="nav-button">
+            <span class="bar bar1"></span>
+            <span class="bar bar2"></span>
+            <span class="bar bar3"></span>
+          </button>
+          <nav>
+            <ul>
+              <li><a href="https://711131719.xyz/beastai" target="_blank">AI Text</a></li>
+              <li><a href="https://711131719.xyz/image" target="_blank">AI Image</a></li>
+              <li><a href="https://711131719.xyz/videoai" target="_blank">AI Video</a></li>
+              <li><a href="https://www.711131719.xyz/aimusic" target="_blank">AI Music</a></li>
+              <li><a href="https://711131719.xyz/ebooks" target="_blank">AI eBooks</a></li>
+              <li><a href="https://www.711131719.xyz/shop" target="_blank">AI Shop</a></li>
+              <li><a href="https://711131719.xyz/websim/home" target="_blank">AI Web Design</a></li>
+              <li><a href="https://711131719.xyz/aiclone" target="_blank">AI-Clone</a></li>
+              <li><a href="https://711131719.xyz/dork" target="_blank">Dorking</a></li>
+              <li><a href="https://711131719.xyz/github-pages" target="_blank">Domain</a></li>
+            </ul>
+          </nav>
+        </div>
       </div>
     </header>
 
@@ -328,7 +418,7 @@ Just make sure to check your local cottage food laws 📜💲📜 as each state 
         this.initScene();
         this.createLights();
         this.createInfinitySymbol();
-        this.createMoneyRain(); 
+        this.createMoneyRain();
         this.animate();
         window.addEventListener('resize', this.onWindowResize.bind(this));
       }
@@ -336,12 +426,12 @@ Just make sure to check your local cottage food laws 📜💲📜 as each state 
       initScene() {
         this.scene = new THREE.Scene();
         this.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-        this.renderer = new THREE.WebGLRenderer({ 
+        this.renderer = new THREE.WebGLRenderer({
           canvas: document.querySelector('#threeCanvas'),
           alpha: true,
           antialias: true
         });
-        
+
         this.renderer.setPixelRatio(window.devicePixelRatio);
         this.renderer.setSize(window.innerWidth, window.innerHeight);
         this.camera.position.z = 15;
@@ -350,7 +440,7 @@ Just make sure to check your local cottage food laws 📜💲📜 as each state 
       createLights() {
         this.lights = [];
         const colors = [0xffd700, 0xb8860b, 0xffffff];
-        
+
         for (let i = 0; i < 3; i++) {
           const light = new THREE.PointLight(colors[i], 1.5, 20);
           light.position.set(Math.cos(i * 2) * 8, Math.sin(i * 2) * 8, 0);
@@ -374,7 +464,7 @@ Just make sure to check your local cottage food laws 📜💲📜 as each state 
           emissive: 0xb8860b,
           emissiveIntensity: 0.3
         });
-        
+
         this.infinity = new THREE.Mesh(geometry, material);
         this.scene.add(this.infinity);
       }
@@ -393,7 +483,7 @@ Just make sure to check your local cottage food laws 📜💲📜 as each state 
             curveSegments: 8,
             bevelEnabled: false
           });
-          
+
           const material = new THREE.MeshPhongMaterial({
             color: 0xffd700,
             emissive: 0xb8860b,
@@ -403,8 +493,8 @@ Just make sure to check your local cottage food laws 📜💲📜 as each state 
           });
 
           const sharedGeometry = geometry;
-          
-          for(let i = 0; i < count; i++) {
+
+          for (let i = 0; i < count; i++) {
             const mesh = new THREE.Mesh(sharedGeometry, material);
             mesh.position.set(
               Math.random() * 40 - 20,
@@ -434,10 +524,10 @@ Just make sure to check your local cottage food laws 📜💲📜 as each state 
 
       animate() {
         requestAnimationFrame(this.animate.bind(this));
-        
+
         this.infinity.rotation.z += 0.002;
         this.infinity.rotation.x += 0.001;
-        
+
         this.lights.forEach((light, index) => {
           light.angle += 0.02;
           light.obj.position.x = Math.cos(light.angle) * 8;
@@ -445,12 +535,12 @@ Just make sure to check your local cottage food laws 📜💲📜 as each state 
           light.obj.position.z = Math.sin(light.angle) * 2;
         });
 
-        if(this.moneyParticles) {
+        if (this.moneyParticles) {
           this.moneyParticles.forEach(particle => {
             particle.mesh.position.y -= particle.speed;
             particle.mesh.rotation.z += particle.spin;
-            
-            if(particle.mesh.position.y < -15) {
+
+            if (particle.mesh.position.y < -15) {
               particle.mesh.position.y = 30 + Math.random() * 20;
               particle.mesh.position.x = Math.random() * 40 - 20;
               particle.mesh.position.z = Math.random() * -30;
@@ -463,6 +553,16 @@ Just make sure to check your local cottage food laws 📜💲📜 as each state 
     }
 
     new InfinityScene();
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const navButton = document.querySelector('.nav-button');
+      const navMenu = document.querySelector('nav');
+
+      navButton.addEventListener('click', () => {
+        navButton.classList.toggle('open');
+        navMenu.classList.toggle('open');
+      });
+    });
   </script>
 </body>
 </html>
