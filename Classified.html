@@ -1,0 +1,424 @@
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Silph Co. Research Document</title>
+  <style>
+    :root {
+      --cyber-neon-blue: #6fffff;
+      --cyber-neon-pink: #ff77ff;
+      --cyber-neon-green: #7fff7f;
+      --cyber-bg-dark: #0a0a0a;
+      --cyber-fg-light: #eee;
+      --cyber-accent-orange: #ffa500;
+      --cyber-dark-green: #004d00;
+      --cyber-neon-dark-purple: #aa00aa;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      background: var(--cyber-bg-dark);
+      font-family: monospace;
+      color: #d4d4d4;
+      width: 100vw;
+      height: auto;
+      overflow-x: hidden;
+      line-height: 1.4;
+      padding: 0;
+      background-color: #000;
+      animation: fadeIn 1s ease-in-out forwards;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+
+      to {
+        opacity: 1;
+      }
+    }
+
+    body::before {
+      content: "/>";
+      position: fixed;
+      top: 10px;
+      left: 10px;
+      color: #6a9955;
+      font-size: 1.2em;
+    }
+
+    .container {
+      width: 90%;
+      max-width: 1200px;
+      margin: auto;
+      overflow: hidden;
+      padding: 30px;
+      box-sizing: border-box;
+    }
+
+    header {
+      background: #111;
+      color: #9cdcfe;
+      padding-top: 20px;
+      min-height: 60px;
+      border-bottom: 2px solid #ff4500;
+      margin-bottom: 30px;
+      text-align: left;
+      padding-left: 20px;
+      position: relative;
+    }
+
+    header h1 {
+      font-size: 1.7em;
+      margin-bottom: 5px;
+    }
+
+    header p {
+      margin: 5px 0;
+      font-size: 0.9em;
+    }
+
+    .warning-sign {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      width: 40px;
+      height: 40px;
+      background-color: #ff4500;
+      clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+      color: black;
+      font-size: 0.8em;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      animation: blink 1s infinite;
+    }
+
+    @keyframes blink {
+      50% {
+        opacity: 0.3;
+      }
+    }
+
+    .top-secret {
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: rgba(255, 69, 0, 0.8);
+      color: black;
+      padding: 5px 10px;
+      font-size: 0.8em;
+      font-weight: bold;
+      letter-spacing: 1px;
+      border-radius: 0 0 5px 5px;
+    }
+
+    section {
+      margin-bottom: 30px;
+      padding: 20px;
+      background: #111;
+      border: 1px solid #333;
+      border-radius: 5px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+      transition: transform 0.3s ease;
+    }
+
+    section:hover {
+      transform: translateY(-3px);
+    }
+
+    section h2 {
+      color: #ff4500;
+      margin-bottom: 15px;
+      font-size: 1.4em;
+      border-bottom: 1px solid #333;
+      padding-bottom: 5px;
+    }
+
+    section p {
+      margin-bottom: 10px;
+      font-size: 1em;
+    }
+
+    section strong {
+      color: #dcdcaa;
+    }
+
+    footer {
+      text-align: center;
+      padding: 20px;
+      background: #111;
+      color: #9cdcfe;
+      margin-top: 30px;
+      border-top: 2px solid #ff4500;
+      font-size: 0.8em;
+    }
+
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: #333;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: #666;
+      border-radius: 4px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: #888;
+    }
+
+    .confidential-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 1000;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='400'%3E%3Cdefs%3E%3Cpattern id='watermark' width='300' height='200' patternUnits='userSpaceOnUse'%3E%3Ctext x='150' y='100' dominant-baseline='middle' text-anchor='middle' font-size='30' fill='rgba(255,69,0,0.1)' transform='rotate(-30 150 100)'%3ECONTFIDENTIAL%3C/text%3E%3C/pattern%3E%3C/defs%3E%3Crect width='100%25' height='100%25' fill='url(%23watermark)'/%3E%3C/svg%3E");
+    }
+
+    .stamp {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) rotate(-20deg);
+      font-size: 4em;
+      font-weight: bold;
+      color: rgba(255, 69, 0, 0.5);
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+      z-index: 10;
+      pointer-events: none;
+      user-select: none;
+    }
+
+    .header-icons {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      display: flex;
+      gap: 10px;
+    }
+
+    .header-icons img {
+      width: 30px;
+      height: 30px;
+    }
+
+    .scanlines {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 999;
+      background: repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.1) 1px, transparent 1px, transparent 2px);
+    }
+
+    .digital-clock {
+      position: absolute;
+      top: 10px;
+      right: 60px;
+      color: #6a9955;
+      font-size: 1em;
+      font-family: monospace;
+    }
+
+    .cyber-menu {
+      width: 100%;
+      max-width: 1200px;
+      margin: 0 auto;
+      background: transparent;
+      padding: 15px 0;
+      border-bottom: 2px solid var(--cyber-neon-dark-purple);
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+      display: flex;
+      justify-content: center;
+    }
+
+    .menu-links {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: flex;
+      gap: 10px;
+    }
+
+    .menu-links li {}
+
+    .menu-button {
+      background-image: linear-gradient(to bottom, var(--cyber-neon-green), var(--cyber-dark-green));
+      color: black;
+      font-weight: bold;
+      font-size: 1em;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      padding: 6px 12px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      box-shadow: 0 0 10px var(--cyber-neon-green);
+      transition: box-shadow 0.3s ease, transform 0.2s ease;
+    }
+
+    .menu-button:hover {
+      box-shadow: 0 0 20px var(--cyber-neon-green);
+      transform: scale(1.05);
+    }
+
+    .menu-button:active {
+      transform: scale(1.0);
+      box-shadow: 0 0 5px var(--cyber-neon-green);
+    }
+
+    @media (max-width: 768px) {
+      .menu-links {
+        gap: 5px;
+        flex-direction: column;
+        text-align: center;
+      }
+
+      .menu-button {
+        width: 100%;
+        margin-bottom: 10px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .menu-button {
+        font-size: 0.9em;
+        padding: 5px 10px;
+      }
+
+      .menu-links {
+        gap: 4px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <nav class="cyber-menu">
+    <ul class="menu-links">
+      <li><button class="menu-button" onclick="window.open('http://711131719.xyz/ProfessorJitsu/Espionage.html', '_blank')">Espionage</button>
+      </li>
+      <li><button class="menu-button" onclick="window.open('http://711131719.xyz/ProfessorJitsu/Conspiracy.html', '_blank')">Conspiracy</button>
+      </li>
+      <li><button class="menu-button" onclick="window.open('http://711131719.xyz/ProfessorJitsu/Research.html', '_blank')">Research</button>
+      </li>
+      <li><button class="menu-button" onclick="window.open('http://711131719.xyz/ProfessorJitsu/Classified.html', '_blank')">Classified</button>
+      </li>
+      <li><button class="menu-button" onclick="window.open('http://711131719.xyz/ProfessorJitsu/Evolution.html', '_blank')">Evolution</button>
+      </li>
+      <li><button class="menu-button" onclick="window.open('http://711131719.xyz/ProfessorJitsu/MEWCUBE.html', '_blank')">MEWCUBE</button>
+      </li>
+    </ul>
+  </nav>
+  <div class="scanlines"></div>
+  <div class="confidential-overlay"></div>
+  <div class="container">
+    <header>
+      <div class="header-icons">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="30" height="30" fill="#FF4500">
+          <path
+            d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm5-8c0 .55-.45 1-1 1h-2v2c0 .55-.45 1-1 1s-1-.45-1-1v-2h-2c-.55 0-1-.45-1-1s.45-1 1-1h2v-2c0-.55.45-1 1-1s1 .45 1 1v2h2c.55 0 1 .45 1 1z" />
+        </svg>
+      </div>
+      <div class="warning-sign">!</div>
+      <div class="top-secret">TOP SECRET - CONFIDENTIAL FEOY</div>
+      <h1>Confidential: Silph Co. Research Document - Classified Project Mew³</h1>
+      <p>Date: 2001</p>
+      <p>Document Number: SC-001-M3</p>
+      <p>Author: Dr. J. (Lead Researcher, Genetic Engineering Division)</p>
+      <div class="stamp">DRAFT</div>
+      <div class="digital-clock" id="digitalClock"></div>
+    </header>
+    <section id="project-overview">
+      <h2>Project Overview: Mew³ Hybridization & Genetic Evolution</h2>
+      <p><strong>Subject:</strong></p>
+      <p>The hybridization and continued genetic manipulation of Mew's DNA to evolve a more powerful, yet controllable, version.</p>
+      <p>Specifically, the ongoing experimentation to create Mew³ (Mewthree) as an evolution of Mewtwo, transcending the limits of Mew and
+        Mewtwo's genetic boundaries. This document outlines the genetic processes, historical implications, and theoretical frameworks
+        surrounding Mew³.</p>
+    </section>
+    <section id="mews-ancestors">
+      <h2>Mew’s Ancestors: The Lost Legacy</h2>
+      <p>While Mew is regarded as the origin of all Pokémon life and genetic diversity, it is theorized that prior to its current form, there may
+        have existed ancient or extinct ancestors. These precursors to Mew, lost to history, may hold the key to unlocking hidden evolutionary
+        pathways in both Mew and Mewtwo. The complete eradication of these precursors, either by natural extinction or scientific interference,
+        makes it difficult to trace the exact origin and natural evolutionary progression leading to Mew. However, Mew³ represents a potential
+        step forward—a new form of genetic manipulation that could reintroduce traits from these lost ancestors.</p>
+    </section>
+    <section id="project-mew3">
+      <h2>Project Mew³ and Genetic Evolution</h2>
+      <p>Mew³ is the speculative next stage in the genetic manipulation of Mewtwo. Project Mew³ is a continuation of the previous efforts to
+        enhance and refine the power of Mewtwo—the first truly engineered Pokémon. By combining Mew’s DNA with Mewtwo’s enhanced genome, we aim
+        to evolve Mewtwo into an entirely new creature that exceeds the limitations of both.</p>
+      <p>This new being, Mew³, would inherit the immense psychic potential of Mewtwo, but possess new abilities and enhanced genetic features
+        derived from the original Mew. This could result in an organism with even greater psychic power, advanced regenerative abilities, and the
+        potential to manipulate genetics in ways never before conceived. The evolutionary path of Mew³ would be an unprecedented combination of
+        psychic mastery, genetic modification, and evolutionary progression.</p>
+    </section>
+    <section id="unseen-clones">
+      <h2>Unseen Clones and Variants: Experimental Successes and Failures</h2>
+      <p>As part of the continued experimentation into genetic manipulation, multiple clones have been created from Mew’s DNA. These clones have
+        exhibited a range of abilities, personalities, and behaviors—each differing from one another in subtle and not-so-subtle ways. While
+        these clones may serve as intermediaries between Mew and Mewtwo, the inherent instability of the clones’ genetic structures has led to
+        unpredictable results.</p>
+      <p>Some clones have deteriorated or failed to survive the genetic enhancements, while others have exhibited incredible strength or unusual
+        abilities, marking them as potential candidates for further development. These clones could form the basis for Mew³’s creation, acting as
+        both experimental stepping stones and test subjects. However, the ethical implications of using these artificial lifeforms for further
+        experimentation cannot be ignored, and their fate remains uncertain.</p>
+    </section>
+    <section id="mew3-beyond">
+      <h2>Mew³: Beyond the Genetic Horizon</h2>
+      <p>Mew³ will represent the ultimate culmination of genetic experimentation, a new breed of Pokémon capable of far more than Mewtwo could ever
+        achieve. The Mewtwo project has led to profound questions about the limits of genetic engineering, and Mew³ represents an answer to those
+        questions: the next evolutionary step for artificially manipulated beings.</p>
+      <p>Through the hybridization of Mew’s original DNA and Mewtwo’s genetic alterations, we aim to transcend the inherent flaws of both
+        creatures, creating a Pokémon that is not only intellectually superior but also able to manipulate genetic codes on a scale previously
+        thought to be impossible. Mew³ will be a true evolutionary marvel, a symbol of human achievement in genetic engineering.</p>
+    </section>
+    <footer>
+      <p>End of Report</p>
+      <p>Confidential: Authorized Personnel Only</p>
+      <p>For Internal Use Only</p>
+    </footer>
+  </div>
+  <script>
+    // No JavaScript needed for this basic menu yet.
+    function updateClock() {
+      const now = new Date();
+      let hours = now.getHours();
+      let minutes = now.getMinutes();
+      let seconds = now.getSeconds();
+      const ampm = hours >= 12 ? 'PM' : 'AM';
+
+      hours = hours % 12;
+      hours = hours ? hours : 12;
+
+      minutes = minutes < 10 ? '0' + minutes : minutes;
+      seconds = seconds < 10 ? '0' + seconds : seconds;
+
+      const time = hours + ':' + minutes + ':' + seconds + ' ' + ampm;
+      document.getElementById('digitalClock').textContent = time;
+      setTimeout(updateClock, 1000);
+    }
+
+    updateClock();
+  </script>
+</body>
+
+</html>
