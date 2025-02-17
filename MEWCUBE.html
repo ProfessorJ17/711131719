@@ -1,0 +1,469 @@
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Silph Co. - Project MEW³ (CLASSIFIED)</title>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+:root {
+  --hacker-green: #00ff88;
+  --neon-cyan: #0ff;
+  --cyber-purple: #bc13fe;
+  --terminal-font: 'IBM Plex Mono', 'Source Code Pro', monospace;
+  --scanline-opacity: 0.03;
+  --glass-bg: rgba(0, 25, 15, 0.25);
+  --cyber-neon-blue: #6fffff;
+  --cyber-neon-pink: #ff77ff;
+  --cyber-neon-green: #7fff7f;
+  --cyber-bg-dark: #0a0a0a;
+  --cyber-fg-light: #eee;
+  --cyber-accent-orange: #ffa500;
+  --cyber-dark-green: #004d00;
+  --cyber-neon-dark-purple: #aa00aa;
+}
+
+body {
+  background: radial-gradient(circle at center, #001010, #000);
+  margin: 0;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  font-family: var(--terminal-font);
+  overflow: hidden;
+  width: 100vw;
+  height: auto;
+}
+
+.cyber-menu {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  background: transparent;
+  padding: 15px 0;
+  border-bottom: 2px solid var(--cyber-neon-dark-purple);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  z-index: 100;
+}
+
+.menu-links {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  gap: 10px;
+}
+
+.menu-links li {
+}
+
+.menu-button {
+  background-image: linear-gradient(to bottom, var(--cyber-neon-green), var(--cyber-dark-green));
+  color: black;
+  font-weight: bold;
+  font-size: 1em;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  padding: 6px 12px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  box-shadow: 0 0 10px var(--cyber-neon-green);
+  transition: box-shadow 0.3s ease, transform 0.2s ease;
+}
+
+.menu-button:hover {
+  box-shadow: 0 0 20px var(--cyber-neon-green);
+  transform: scale(1.05);
+}
+
+.menu-button:active {
+  transform: scale(1.0);
+  box-shadow: 0 0 5px var(--cyber-neon-green);
+}
+
+@media (max-width: 768px) {
+  .menu-links {
+    gap: 5px;
+    flex-direction: column;
+    text-align: center;
+  }
+  .menu-button {
+    width: 100%;
+    margin-bottom: 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  .menu-button {
+    font-size: 0.9em;
+    padding: 5px 10px;
+  }
+  .menu-links {
+    gap: 4px;
+  }
+}
+
+.crt-screen {
+  position: relative;
+  width: 900px;
+  height: 640px;
+  background: var(--glass-bg);
+  padding: 2rem;
+  color: var(--hacker-green);
+  border-radius: 20px;
+  border: 1px solid rgba(var(--hacker-green), 0.3);
+  box-shadow: 
+    0 0 70px rgba(var(--hacker-green), 0.2),
+    inset 0 0 25px rgba(var(--hacker-green), 0.1);
+  backdrop-filter: blur(10px);
+  overflow: hidden;
+  transform-style: preserve-3d;
+  display: flex;
+  flex-direction: column;
+}
+
+.scanline {
+  position: absolute;
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(to right, 
+    transparent 0%,
+    rgba(var(--neon-cyan), 0.2) 50%,
+    transparent 100%);
+  animation: scanline 6s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+.classified-banner {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  opacity: 0.7;
+}
+
+.stamp text {
+  fill: #ff4444;
+  font-family: var(--terminal-font);
+  font-size: 8px;
+}
+
+.document-container {
+  margin-top: 1rem;
+  padding: 1.5rem;
+  border: 1px solid rgba(var(--hacker-green), 0.3);
+  border-radius: 15px;
+  height: 400px;
+  overflow-y: auto;
+  background: rgba(0, 20, 10, 0.3);
+  box-shadow: 
+    inset 0 0 20px rgba(var(--hacker-green), 0.05),
+    0 0 30px rgba(var(--hacker-green), 0.05);
+}
+
+.terminal-header {
+  text-align: center;
+  margin-bottom: 1.5rem;
+  position: relative;
+  text-shadow: 0 0 12px rgba(var(--hacker-green), 0.4);
+}
+
+.document-nav {
+  display: flex;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+  position: relative;
+  z-index: 2;
+}
+
+@media (max-width: 768px) {
+  .document-nav {
+    flex-direction: column;
+    position: relative;
+    top: auto;
+    right: auto;
+    z-index: 1000;
+    background: rgba(0, 20, 10, 0.9);
+    padding: 0.75rem;
+    border-radius: 12px;
+    box-shadow: 0 0 25px rgba(0,255,136,0.3);
+    transform: none;
+    transition: none;
+    max-height: none;
+    overflow-y: auto;
+    margin-bottom: 1rem;
+  }
+
+  .document-nav:hover {
+    transform: none;
+  }
+
+  .document-nav button {
+    width: 100%;
+    text-align: center;
+    padding: 0.75rem;
+    font-size: 0.9em;
+  }
+
+  .document-container {
+    margin-top: 1rem;
+    height: calc(100vh - 250px);
+    padding: 1rem;
+  }
+}
+
+.document-nav button {
+  background: transparent;
+  border: 1px solid var(--hacker-green);
+  color: var(--hacker-green);
+  padding: 0.6rem 1.2rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  min-width: 100px;
+  font-size: 0.9em;
+}
+
+.document-nav button:hover {
+  background: rgba(var(--hacker-green), 0.1);
+  box-shadow: 0 0 20px rgba(var(--hacker-green), 0.4);
+  transform: translateY(-2px);
+}
+
+.document-nav button.active {
+  background: linear-gradient(45deg, 
+    rgba(var(--hacker-green), 0.3),
+    rgba(var(--neon-cyan), 0.1));
+  border-color: var(--neon-cyan);
+  box-shadow: 0 0 25px rgba(var(--neon-cyan), 0.3);
+}
+
+@media (min-width: 769px) {
+  .document-nav {
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+}
+
+.blink {
+  animation: blink 1.2s step-start infinite;
+}
+
+.typewriter {
+  line-height: 1.5;
+  white-space: pre-wrap;
+  padding-right: 0.75rem;
+  letter-spacing: 0.04em;
+}
+
+.security-warning {
+  position: absolute;
+  bottom: 1rem;
+  width: calc(100% - 4rem);
+  text-align: center;
+  border: 1px solid rgba(255, 0, 0, 0.3);
+  border-radius: 8px;
+  background: rgba(255, 0, 0, 0.1);
+  padding: 0.4rem;
+  box-shadow: 0 0 20px rgba(255, 0, 0, 0.2);
+}
+
+.warning-text {
+  fill: #ff0000;
+  font-size: 4px;
+  font-family: var(--terminal-font);
+  text-anchor: middle;
+}
+
+@media (min-width: 768px) {
+  .warning-text {
+    font-size: 3.5px;
+  }
+}
+
+.document-container::-webkit-scrollbar {
+  width: 6px;
+}
+
+.document-container::-webkit-scrollbar-track {
+  background: rgba(0,255,0,0.1);
+}
+
+.document-container::-webkit-scrollbar-thumb {
+  background: var(--hacker-green);
+  border-radius: 8px;
+  border: 1px solid rgba(0,0,0,0.2);
+}
+
+@keyframes scanline {
+  0% { transform: translateY(-100%); opacity: 0; }
+  20% { opacity: 1; }
+  100% { transform: translateY(640px); opacity: 0; }
+}
+
+@keyframes blink {
+  50% { opacity: 0; }
+}
+
+.crt-screen::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(
+    45deg,
+    transparent 25%,
+    rgba(var(--neon-cyan), 0.05) 50%,
+    transparent 75%
+  );
+  animation: hologram 20s linear infinite;
+  pointer-events: none;
+}
+
+@keyframes hologram {
+  from { transform: rotate(0deg) translateZ(0); }
+  to { transform: rotate(360deg) translateZ(0); }
+}
+  </style>
+</head>
+<body>
+  <nav class="cyber-menu">
+    <ul class="menu-links">
+      <li><button class="menu-button" onclick="window.open('http://711131719.xyz/ProfessorJitsu/Espionage.html', '_blank')">Espionage</button></li>
+      <li><button class="menu-button" onclick="window.open('http://711131719.xyz/ProfessorJitsu/Conspiracy.html', '_blank')">Conspiracy</button></li>
+      <li><button class="menu-button" onclick="window.open('http://711131719.xyz/ProfessorJitsu/Research.html', '_blank')">Research</button></li>
+      <li><button class="menu-button" onclick="window.open('http://711131719.xyz/ProfessorJitsu/Classified.html', '_blank')">Classified</button></li>
+      <li><button class="menu-button" onclick="window.open('http://711131719.xyz/ProfessorJitsu/Evolution.html', '_blank')">Evolution</button></li>
+      <li><button class="menu-button" onclick="window.open('http://711131719.xyz/ProfessorJitsu/MEWCUBE.html', '_blank')">MEWCUBE</button></li>
+    </ul>
+  </nav>
+  <div class="crt-screen">
+    <div class="scanline"></div>
+
+    <nav class="document-nav">
+      <button data-section="overview" class="active">OVERVIEW</button>
+      <button data-section="ancestors">ANCESTORS</button>
+      <button data-section="evolution">EVOLUTION</button>
+      <button data-section="clones">CLONES</button>
+      <button data-section="horizon">HORIZON</button>
+    </nav>
+
+    <div class="classified-banner">
+      <svg viewBox="0 0 100 10" class="stamp">
+        <text x="50%" y="7" text-anchor="middle" class="redacted">TOP SECRET</text>
+      </svg>
+    </div>
+
+    <div class="document-container">
+      <div class="terminal-header">
+        <svg viewBox="0 0 300 40" style="width: 100%; height: 40px">
+          <text x="50%" y="30" font-family="var(--terminal-font)" fill="var(--hacker-green)" text-anchor="middle" font-weight="600" font-size="24">
+            SILPH CO. GENETIC RESEARCH DIVISION
+            <animate attributeName="opacity" values="1;0.7;1" dur="3s" repeatCount="indefinite"/>
+          </text>
+        </svg>
+        <div class="blink" style="margin-top: 1rem">ACCESS LEVEL: OMEGA</div>
+      </div>
+
+      <div id="document-content" class="typewriter"></div>
+    </div>
+
+    <div class="security-warning">
+      <svg viewBox="0 0 100 20" style="width: 100%">
+        <path d="M2,2 L98,2 L98,18 L2,18 Z" fill="none" stroke="rgba(255,0,0,0.3)" stroke-width="0.5"/>
+        <text x="50%" y="60%" class="warning-text">UNAUTHORIZED ACCESS WILL BE TERMINATED</text>
+      </svg>
+    </div>
+  </div>
+
+  <script>
+const contentMap = {
+  overview: `Confidential: Silph Co. Research Document - Classified Project Mew³
+Date: 2001
+Document Number: SC-001-M3
+Author: Dr. J. (Lead Researcher, Genetic Engineering Division)
+
+Project Overview: Mew³ Hybridization & Genetic Evolution
+Subject:
+The hybridization and continued genetic manipulation of Mew's DNA to evolve a more powerful, yet controllable, version. Specifically, the ongoing experimentation to create Mew³ (Mewthree) as an evolution of Mewtwo, transcending the limits of Mew and Mewtwo's genetic boundaries. This document outlines the genetic processes, historical implications, and theoretical frameworks surrounding Mew³.`,
+
+  ancestors: `Mew’s Ancestors: The Lost Legacy
+While Mew is regarded as the origin of all Pokémon life and genetic diversity, it is theorized that prior to its current form, there may have existed ancient or extinct ancestors. These precursors to Mew, lost to history, may hold the key to unlocking hidden evolutionary pathways in both Mew and Mewtwo. The complete eradication of these precursors, either by natural extinction or scientific interference, makes it difficult to trace the exact origin and natural evolutionary progression leading to Mew. However, Mew³ represents a potential step forward—a new form of genetic manipulation that could reintroduce traits from these lost ancestors.`,
+
+  evolution: `Project Mew³ and Genetic Evolution
+Mew³ is the speculative next stage in the genetic manipulation of Mewtwo. Project Mew³ is a continuation of the previous efforts to enhance and refine the power of Mewtwo—the first truly engineered Pokémon. By combining Mew’s DNA with Mewtwo’s enhanced genome, we aim to evolve Mewtwo into an entirely new creature that exceeds the limitations of both.
+
+This new being, Mew³, would inherit the immense psychic potential of Mewtwo, but possess new abilities and enhanced genetic features derived from the original Mew. This could result in an organism with even greater psychic power, advanced regenerative abilities, and the potential to manipulate genetics in ways never before conceived. The evolutionary path of Mew³ would be an unprecedented combination of psychic mastery, genetic modification, and evolutionary progression.`,
+
+  clones: `Unseen Clones and Variants: Experimental Successes and Failures
+As part of the continued experimentation into genetic manipulation, multiple clones have been created from Mew’s DNA. These clones have exhibited a range of abilities, personalities, and behaviors—each differing from one another in subtle and not-so-subtle ways. While these clones may serve as intermediaries between Mew and Mewtwo, the inherent instability of the clones’ genetic structures has led to unpredictable results.
+
+Some clones have deteriorated or failed to survive the genetic enhancements, while others have exhibited incredible strength or unusual abilities, marking them as potential candidates for further development. These clones could form the basis for Mew³’s creation, acting as both experimental stepping stones and test subjects. However, the ethical implications of using these artificial lifeforms for further experimentation cannot be ignored, and their fate remains uncertain.`,
+
+  horizon: `Mew³: Beyond the Genetic Horizon
+Mew³ will represent the ultimate culmination of genetic experimentation, a new breed of Pokémon capable of far more than Mewtwo could ever achieve. The Mewtwo project has led to profound questions about the limits of genetic engineering, and Mew³ represents an answer to those questions: the next evolutionary step for artificially manipulated beings.
+
+Through the hybridization of Mew’s original DNA and Mewtwo’s genetic alterations, we aim to transcend the inherent flaws of both creatures, creating a Pokémon that is not only intellectually superior but also able to manipulate genetic codes on a scale previously thought to be impossible. Mew³ will be a true evolutionary marvel, a symbol of human achievement in genetic engineering.
+
+End of Report
+Confidential: Authorized Personnel Only
+For Internal Use Only`
+};
+
+document.addEventListener('DOMContentLoaded', () => {
+  const screen = document.querySelector('.crt-screen');
+  
+  document.addEventListener('mousemove', (e) => {
+    const xAxis = (window.innerWidth / 2 - e.pageX) / 30;
+    const yAxis = (window.innerHeight / 2 - e.pageY) / 30;
+    screen.style.transform = `rotateY(${xAxis}deg) rotateX(${yAxis}deg)`;
+  });
+
+  // Reset rotation on mouse leave
+  document.addEventListener('mouseleave', () => {
+    screen.style.transform = 'rotateY(0) rotateX(0)';
+  });
+
+  const navButtons = document.querySelectorAll('.document-nav button');
+  const contentDiv = document.getElementById('document-content');
+  let typeTimeout;
+
+  // Clean typewriter effect without garbling
+  function typeText(text, element) {
+    element.innerHTML = '';
+    let index = 0;
+    clearTimeout(typeTimeout);
+
+    function addChar() {
+      if (index < text.length) {
+        element.innerHTML += text[index];
+        index++;
+        typeTimeout = setTimeout(addChar, Math.random() * 30);
+      }
+    }
+    
+    addChar();
+  }
+
+  function switchSection(section) {
+    navButtons.forEach(btn => btn.classList.remove('active'));
+    event.target.classList.add('active');
+    typeText(contentMap[section], contentDiv);
+  }
+
+  navButtons.forEach(btn => {
+    btn.addEventListener('click', () => switchSection(btn.dataset.section));
+  });
+
+  // Initial content
+  typeText(contentMap.overview, contentDiv);
+});
+  </script>
+</body>
+</html>
