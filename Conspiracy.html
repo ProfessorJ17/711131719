@@ -1,0 +1,606 @@
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cyberpunk Menu</title>
+  <style>
+    :root {
+      --cyber-neon-blue: #6fffff;
+      --cyber-neon-pink: #ff77ff;
+      --cyber-neon-green: #7fff7f;
+      --cyber-bg-dark: #0a0a0a;
+      --cyber-fg-light: #eee;
+      --cyber-accent-orange: #ffa500;
+      --cyber-dark-green: #004d00;
+      --cyber-neon-dark-purple: #aa00aa;
+    }
+
+    body {
+      font-family: 'Cyberway Riders', monospace;
+      background: #000000;
+      color: #00f3ff;
+      margin: 0;
+      padding: 0;
+      line-height: 1.4;
+      overflow-x: hidden;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100vw;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    header {
+      background: rgba(0, 40, 50, 0.9);
+      padding: 20px;
+      margin-bottom: 30px;
+      border: 2px solid #00f3ff;
+      border-radius: 8px;
+      box-shadow: 0 0 20px rgba(0, 243, 255, 0.2);
+      position: relative;
+    }
+
+    .hud {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .hud-clock {
+      font-size: 1.2rem;
+      color: #00f3ff;
+      text-shadow: 0 0 10px #00f3ff;
+    }
+
+    h1 {
+      font-family: 'Cyberway Riders', sans-serif;
+      font-size: 2rem;
+      text-align: center;
+      margin: 0;
+      letter-spacing: 2px;
+      text-shadow: 0 0 15px #00f3ff;
+    }
+
+    .access-level {
+      text-align: right;
+      color: #ff003c;
+      font-size: 0.9rem;
+      margin-top: 10px;
+    }
+
+    .database-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 30px;
+      perspective: 1000px;
+    }
+
+    .folder {
+      background: rgba(0, 50, 60, 0.8);
+      border: 2px solid #00f3ff;
+      border-radius: 10px;
+      padding: 20px;
+      min-height: 200px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      position: relative;
+      transform-style: preserve-3d;
+    }
+
+    .folder:hover {
+      transform: translateY(-5px) rotateX(10deg);
+      box-shadow: 0 10px 30px rgba(0, 243, 255, 0.3);
+    }
+
+    .folder-front {
+      backface-visibility: hidden;
+      position: absolute;
+      z-index: 2;
+      width: 100%;
+      height: 100%;
+    }
+
+    .folder-back {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      transform: rotateX(180deg);
+      backface-visibility: hidden;
+      color: #ff003c;
+      padding: 20px;
+      width: 100%;
+      height: 100%;
+    }
+
+    .folder-icon {
+      font-size: 3rem;
+      text-align: center;
+      margin: 10px 0;
+      color: #00f3ff;
+    }
+
+    .folder-icon-red {
+      font-size: 3rem;
+      text-align: center;
+      margin: 10px 0;
+      color: #ff003c;
+    }
+
+    .file-count {
+      text-align: center;
+      font-size: 0.9rem;
+      color: #00b3c2;
+      margin-top: 15px;
+    }
+
+    .file-count-red {
+      text-align: center;
+      font-size: 0.9rem;
+      color: #ff003c;
+      margin-top: 15px;
+    }
+
+    .cyber-input {
+      background: transparent;
+      border: 1px solid #00f3ff;
+      color: #00f3ff;
+      padding: 8px;
+      font-family: 'VT323', monospace;
+      width: 200px;
+    }
+
+    .cyber-input::placeholder {
+      color: #0077ff;
+    }
+
+    #files {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 20px;
+      margin-top: 30px;
+    }
+
+    .file {
+      background: rgba(0, 30, 40, 0.9);
+      border: 1px solid #00f3ff;
+      border-radius: 5px;
+      padding: 15px;
+      position: relative;
+      transition: all 0.3s ease;
+    }
+
+    .file::before {
+      content: '';
+      position: absolute;
+      top: -2px;
+      left: -2px;
+      right: -2px;
+      bottom: -2px;
+      border-radius: 5px;
+      background: linear-gradient(45deg, #00f3ff, transparent);
+      z-index: -1;
+    }
+
+    .file:hover {
+      transform: scale(1.02);
+      box-shadow: 0 0 20px rgba(0, 243, 255, 0.3);
+    }
+
+    .file h2 {
+      font-size: 1.2rem;
+      color: #ff003c;
+      margin-bottom: 10px;
+    }
+
+    .file .date {
+      color: #00b3c2;
+      font-size: 0.8rem;
+      display: block;
+      margin-bottom: 10px;
+    }
+
+    .file p {
+      font-size: 0.9rem;
+      color: #7df9ff;
+    }
+
+    @keyframes flicker {
+      0% { opacity: 1; }
+      50% { opacity: 0.8; }
+      100% { opacity: 1; }
+    }
+
+    footer {
+      border-top: 2px solid #00f3ff;
+      margin-top: 40px;
+      padding: 20px;
+      text-align: center;
+    }
+
+    .terminal-output {
+      color: #00f3ff;
+      font-size: 0.9rem;
+      animation: flicker 0.5s infinite;
+    }
+
+    .blink {
+      animation: blink-cursor 0.8s infinite;
+    }
+
+    @keyframes scanline {
+      from { transform: translateY(-100%); }
+      to { transform: translateY(100%); }
+    }
+
+    body::after {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(0deg, transparent 50%, rgba(0, 243, 255, 0.05) 51%);
+      pointer-events: none;
+      animation: scanline 6s linear infinite;
+      z-index: 100;
+    }
+
+    .cyber-menu {
+      width: 100%;
+      max-width: 1200px;
+      margin: 0 auto;
+      background: transparent;
+      padding: 15px 0;
+      border-bottom: 2px solid var(--cyber-neon-dark-purple);
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+      display: flex;
+      justify-content: center;
+    }
+
+    .menu-links {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: flex;
+      gap: 10px;
+    }
+
+    .menu-button {
+      background-image: linear-gradient(to bottom, var(--cyber-neon-green), var(--cyber-dark-green));
+      color: black;
+      font-weight: bold;
+      font-size: 1em;
+      text-transform: uppercase;
+    }
+  </style>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cyberway+Riders&display=swap" rel="stylesheet">
+</head>
+<body>
+  <nav class="cyber-menu">
+    <ul class="menu-links">
+      <li><button class="menu-button" onclick="window.open('http://711131719.xyz/ProfessorJitsu/Espionage.html', '_blank')">Espionage</button></li>
+      <li><button class="menu-button" onclick="window.open('http://711131719.xyz/ProfessorJitsu/Conspiracy.html', '_blank')">Conspiracy</button></li>
+      <li><button class="menu-button" onclick="window.open('http://711131719.xyz/ProfessorJitsu/Research.html', '_blank')">Research</button></li>
+      <li><button class="menu-button" onclick="window.open('http://711131719.xyz/ProfessorJitsu/Classified.html', '_blank')">Classified</button></li>
+      <li><button class="menu-button" onclick="window.open('http://711131719.xyz/ProfessorJitsu/Evolution.html', '_blank')">Evolution</button></li>
+      <li><button class="menu-button" onclick="window.open('http://711131719.xyz/ProfessorJitsu/MEWCUBE.html', '_blank')">MEWCUBE</button></li>
+    </ul>
+  </nav>
+
+  <div class="container">
+    <header>
+      <div class="hud">
+        <div class="hud-clock">23:59:87</div>
+        <h1>⊛ SILPH CO. RESEARCH DATABASE ⊛</h1>
+        <div class="hud-search">
+          <input type="text" placeholder="SEARCH PROTOTYPES..." class="cyber-input">
+        </div>
+      </div>
+      <p class="access-level">ACCESS TIER: BLACK</p>
+    </header>
+
+    <main>
+      <div class="database-grid">
+        <div class="folder" data-category="genetic">
+          <div class="folder-front">
+            <div class="folder-icon">⎔</div>
+            <h2>GENETIC EXPERIMENTS</h2>
+            <div class="file-count">12 FILES</div>
+          </div>
+          <div class="folder-back">
+            <div class="folder-icon-red">⎔</div>
+            <h2>GENETIC EXPERIMENTS</h2>
+            <div class="file-count-red">12 FILES</div>
+          </div>
+        </div>
+
+        <div class="folder" data-category="temporal">
+          <div class="folder-front">
+            <div class="folder-icon">⌾</div>
+            <h2>TIME RESEARCH</h2>
+            <div class="file-count">8 FILES</div>
+          </div>
+          <div class="folder-back">
+            <div class="folder-icon-red">⌾</div>
+            <h2>TIME RESEARCH</h2>
+            <div class="file-count-red">8 FILES</div>
+          </div>
+        </div>
+
+        <div class="folder" data-category="prototypes">
+          <div class="folder-front">
+            <div class="folder-icon">◈</div>
+            <h2>SCRAPPED PROTOTYPES</h2>
+            <div class="file-count">23 FILES</div>
+          </div>
+          <div class="folder-back">
+            <div class="folder-icon-red">◈</div>
+            <h2>SCRAPPED PROTOTYPES</h2>
+            <div class="file-count-red">23 FILES</div>
+          </div>
+        </div>
+
+        <div class="folder" data-category="classified">
+          <div class="folder-front">
+            <div class="folder-icon">✖</div>
+            <h2>CLASSIFIED</h2>
+            <div class="file-count">47 FILES</div>
+          </div>
+          <div class="folder-back">
+            <div class="folder-icon-red">✖</div>
+            <h2>CLASSIFIED</h2>
+            <div class="file-count-red">47 FILES</div>
+          </div>
+        </div>
+      </div>
+
+      <section id="files" class="hidden">
+        <!-- Files will be populated by JavaScript -->
+      </section>
+    </main>
+
+    <footer>
+      <div class="terminal-output">
+        <span class="blink">▼</span> SYSTEM STATUS: [CONNECTION SECURE] ▲
+      </div>
+    </footer>
+  </div>
+
+  <script>document.addEventListener('DOMContentLoaded', () => {
+  const theoriesData = [
+    {
+      title: "Dungeon Monsters = Early Pokémon Concept",
+      date: "June 22, 1994",
+      content: "Dr. J. began reviewing early creature-collection concepts from Dungeon Monsters, influencing the development of Pokémon. Unbeknownst to the public, Silph Co. was secretly experimenting with artificial lifeforms at the time, influencing later Pokémon designs. These early concepts were hidden within the Pokémon Gen 0 files, officially disregarded. Dr. J. believes these ideas were influential, but it cannot be officially acknowledged due to the proprietary nature of the research. The document is classified under Mew³."
+    },
+    {
+      title: "Mewtwo and the 'Cloning' Theory",
+      date: "October 15, 1995",
+      content: "After observing the increasing rumors surrounding Mewtwo as a clone of Mew, Dr. J. secretly worked on genetic tampering to advance Mewtwo’s DNA in hopes of bypassing the inherent weaknesses seen in Mewtwo’s original genetic code. Project Mew³ was concealed within the public’s growing fascination with Mewtwo’s clone origins. No official connections to Mewtwo’s true origins have ever been established, though certain records were intentionally 'lost' in the Pokémon research archives."
+    },
+    {
+      title: "Mew Under the Truck (SS Anne)",
+      date: "August 5, 1996",
+      content: "While Dr. J. was conducting unauthorized research on Mew’s genetic data, the rumor of Mew under the truck spread like wildfire. Dr. J. noted that such rumors were likely a diversionary tactic to prevent public knowledge of Mew’s true origins and link to the Mewtwo project. He pushed for disinformation to cloud the trail, ensuring that the truth would remain buried in hacker databases and unverified leaks from Team Rocket operatives."
+    },
+    {
+      title: "The MissingNo Glitch",
+      date: "February 12, 1997",
+      content: "The MissingNo glitch uncovered by players provided a golden opportunity for Dr. J. to hide critical research files on Mewtwo and Mew’s DNA. Through clever manipulation, Dr. J. inserted false genetic sequences within the glitch code to keep anyone from discovering the actual workings behind Silph Co.’s work. The Mewtwo Project was intentionally obfuscated by data manipulation, ensuring the glitch remained the most plausible explanation."
+    },
+    {
+      title: "Pre-Pokémon Government Files (Pokémon Gen 0)",
+      date: "November 9, 1998",
+      content: "Government files detailing Pokémon and their potential biological experiments from pre-release stages were rumored to be part of a secret biological research project. These files have been locked away in hidden sections of Silph Co.’s research wing. Dr. J. knew that unveiling this information would cause a significant uproar, leading him to advocate for controlled leaks to keep the truth from reaching the general public. Mewthree’s existence was placed under the highest level of secrecy."
+    },
+    {
+      title: "Pokémon “Gen 0” (Hidden, Scrapped Pokémon)",
+      date: "April 23, 1999",
+      content: "Project files on Pokémon considered part of Gen 0 were intentionally scrapped before the release of Pokémon Red/Blue. Dr. J. personally oversaw the destruction of test samples and files containing information about these lost creatures. These Pokémon were seen as too dangerous or uncontrollable for release and were erased from official records. The Gen 0 data remains hidden in undocumented archives."
+    },
+    {
+      title: "The 'Eevee Evolution' Myth",
+      date: "January 2, 2000",
+      content: "The Eevee Evolution Myth was perpetuated by Silph Co. as a distraction from ongoing research into alternative evolutionary processes, including Mew’s involvement in genetic modifications. Dr. J. believed that hidden evolutionary paths for Pokémon were deliberately engineered to keep the public unaware of the advanced evolutionary projects underway in secret laboratories. Eevee's alternate evolutions were designed to further the idea of genetic manipulation without revealing the true scope of Mewtwo’s creation."
+    },
+    {
+      title: "Pokémon Dead Bodies and Dark Themes",
+      date: "July 13, 2000",
+      content: "Reports of mysterious Pokémon corpses surfaced following the completion of the Mewtwo project, but Silph Co. quickly suppressed the rumors. Dr. J. had to hide compromised data detailing Pokémon experimentation gone awry, as public knowledge of such unethical practices would have led to a massive public outcry. The disposal of failed experiments was concealed under decoy operations in high-security areas, ensuring these dark truths never saw the light of day."
+    },
+    {
+      title: "Celebi & Time Travel Theory",
+      date: "May 17, 2000",
+      content: "The theory surrounding Celebi’s time-travel abilities was closely monitored by Dr. J. as time manipulation research continued behind closed doors. Celebi’s rumored connection to time travel was purposefully nurtured, while Silph Co. conducted secret experiments on genetic manipulation of temporal abilities. These experiments, tied to Mewtwo's DNA, raised ethical questions about the possibility of altering time—something Dr. J. could not risk becoming public knowledge."
+    },
+    {
+      title: "Mewtwo’s Connection to the Creation Trio (Dialga, Palkia, Giratina)",
+      date: "March 8, 2000",
+      content: "It was in 2000 that Dr. J. started speculating about a possible connection between Mewtwo and the Creation Trio. Unbeknownst to the public, genetic research files linking Mewtwo’s powers with Dialga, Palkia, and Giratina were hidden in undocumented archives. This connection, if proven, would have revealed that Mewtwo was not only a creation of science but a key player in the balance of the Pokémon universe. Dr. J. decided to keep these files highly confidential to avoid public panic."
+    },
+    {
+      title: "Celebi & Time Travel Theory",
+      date: "December 2, 2000",
+      content: "The theory that Celebi was a time-traveling Pokémon became widespread as Pokémon Gold/Silver neared its release. Dr. J. noted that Celebi's presence in the Ilex Forest and its connection to time manipulation were not purely coincidental. Dr. J. found evidence in classified Silph Co. time research projects that Celebi was being studied for its potential connection to temporal rifts. A connection was theorized between Celebi and the Mewtwo project, as temporal manipulation could provide vital insights into perfecting the genetic alterations used in Mewtwo’s creation. However, Dr. J. was forced to cover up the extent of this research, fearing it would lead to catastrophic consequences if the public learned of temporal meddling."
+    },
+    {
+      title: "Pokémon Are Actual Animals Theory",
+      date: "May 11, 2001",
+      content: "The controversial theory that Pokémon were genetically altered real-world animals or hidden creatures was part of Silph Co.’s early biological experimentation. Dr. J. could not deny that many of the genetic patterns observed in Pokémon resembled those of ancient species, hidden within the folds of government files. However, Dr. J. quickly dismissed these rumors in the media, suppressing any connections to real-world animal manipulation. He had to redirect attention to fictionalized origins to protect the integrity of Silph Co.’s genetic projects, including the secretive Mewtwo research. Any links between Pokémon and actual animals remained a well-guarded secret."
+    },
+    {
+      title: "Bluchu (Marill)",
+      date: "October 19, 1999",
+      content: "The early fan-named Bluchu, later revealed to be Marill, was speculated to be a Pikachu evolution before the Gen 2 release. Dr. J. monitored fan speculation closely, and while some believed that Marill was an early prototype for a new Pikachu evolution, Dr. J. quickly deemed the Pikachu connection unworthy of attention. Silph Co. had been experimenting with altered evolutionary pathways, with Marill’s creation serving as a diversion to obfuscate the true nature of ongoing genetic research. Marill was presented as an innocent evolutionary experiment, but its origins were entirely unrelated to the true purpose of the Mewtwo project."
+    },
+    {
+      title: "Baby Pokémon (Pre-Gen 2)",
+      date: "December 3, 1998",
+      content: "Before the official reveal of Pichu and other Gen 2 baby Pokémon, rumors circulated about baby Pokémon being hidden away in early game files. Dr. J. was aware that these speculative designs were part of Silph Co.’s more experimental genetic work, but they were discarded when the Mewtwo project took precedence. The concept of baby Pokémon was seen as a distraction from more significant projects, but elements of these experiments found their way into the final version of Pichu. Dr. J. ensured that all early designs of these Pokémon were classified and misinterpreted as 'unfinished' prototypes to avoid suspicion."
+    },
+    {
+      title: "Sneasel (Early Leaks)",
+      date: "April 4, 1999",
+      content: "When fans began speculating about Sneasel, an Ice/Dark-type Pokémon that they believed would be tied to Gen 1, Dr. J. decided to maintain a discreet silence on the matter. He understood that Sneasel’s design was derived from an early prototype of a more sinister, secretive Pokémon, which had been part of Silph Co.’s experimentation on Dark-type genetics. This early leak was spun into wild fan theories, preventing it from being officially acknowledged. Dr. J. couldn’t risk exposure of the Dark-type genetic work, knowing that it was part of more classified genetic manipulation involving Mewtwo and other dangerous experiments."
+    },
+    {
+      title: "Teddiursa and the 'Golden Bear'",
+      date: "June 25, 1999",
+      content: "Speculation surrounding Teddiursa and its supposed connection to a golden bear theme made its rounds before the Gold/Silver release. Dr. J. quickly realized that this speculation could lead to too much public interest in the unreleased evolutionary line of Teddiursa, which had connections to silenced evolutionary research. Though the bear theme was innocent enough, the true origins of Teddiursa’s evolution would not have been easily explained, as it was connected to an altered genetic line, something Dr. J. worked hard to hide within restricted research files. Teddiursa’s true genetic roots were safely buried in Silph Co.’s archives."
+    },
+    {
+      title: "Chikorita’s Evolution Line (Pre-release Speculation)",
+      date: "August 12, 1999",
+      content: "There was a great deal of pre-release speculation about Chikorita’s evolutionary line, including theories that it could evolve into Grass/Dragon or Grass/Fire-types. Dr. J. was keenly aware of the leaked designs circulating among fans. These speculative evolutions were nothing more than misleading concepts created to cover up the real evolutionary pathway being tested within Silph Co. labs. Dr. J. immediately discarded any official acknowledgment of these fan theories and chose to redirect focus to official evolutionary chains, ensuring the mysteries of Chikorita’s hidden origins remained classified."
+    },
+    {
+      title: "Unown and the 'Ruins of Alph' Mystery",
+      date: "September 10, 2000",
+      content: "The discovery of Unown and the Ruins of Alph raised questions about ancient texts and unexplained symbols. Dr. J. realized the mystery of Unown’s origins was deeply connected to ancient genetic research that Silph Co. had attempted to hide for decades. Unown had been a key factor in testing interdimensional and time-related experiments, connected to the same projects involving Celebi and Mewtwo. To cover it up, Dr. J. purposefully steered the narrative towards ancient civilization lore, allowing it to be seen as nothing more than cryptic archaeological finds, rather than recognizing its true experimental significance."
+    },
+    {
+      title: "Crystal Onix",
+      date: "November 1, 1999",
+      content: "The Crystal Onix myth was an ideal cover story for some of the more bizarre Pokémon genetic creations. While the fan rumors claimed that a sparkling Crystal Onix was hidden in the games or anime, Dr. J. used this myth to disguise the true nature of several failed genetic experiments. These experiments, thought to involve the crystallization of Onix, were deemed unsuccessful and erased from the records. However, the Crystal Onix myth persisted, ensuring that public attention stayed away from the true genetic manipulation projects being carried out under the radar."
+    },
+    {
+      title: "Gold and Silver Versions: Two Separate Universes",
+      date: "July 17, 2000",
+      content: "The theory that Pokémon Gold and Silver versions were set in parallel universes—with Gold representing the past and Silver representing the future—came into prominence during the development of Generation 2. Dr. J. noted that this speculation aligned closely with Silph Co.’s secretive research on dimensional shifts and temporal manipulation. The underlying hypothesis was that these versions represented two different timelines in the Pokémon world, one where ancient forces shaped the landscape (Gold), and the other where advanced, future Pokémon genetics created a more evolved reality (Silver). Dr. J. found this parallel universe theory to be more than just fan speculation—it resonated with the ongoing experiments involving Celebi’s time manipulation and the creation of temporal anomalies within the Pokémon world. However, due to the potential repercussions of revealing these alternate universe concepts, Dr. J. issued a strong directive to suppress these findings and allow the parallel universes to remain a mysterious fan theory rather than an official story element."
+    },
+    {
+      title: "The Legendary Beast Names (Suicune, Raikou, Entei)",
+      date: "November 5, 2000",
+      content: "The speculation surrounding the legendary beasts—Suicune, Raikou, and Entei—was part of an internal discussion within Silph Co. about the elemental forces within the Pokémon world. Suicune was believed to be tied to Water, Raikou to Electric, and Entei to Fire. However, internal research indicated that their true origins were not simply elemental representations but rather symbols of genetic manipulation and natural disasters. Dr. J. hypothesized that these Pokémon were linked to experimental events where Pokémon genetics were altered by catastrophic forces—namely, a failed attempt at creating a 'perfect creature'. The names themselves were mysterious, derived from ancient silenced records within Silph Co.’s secret archives, though they were intended to veil the deeper connections to the Mewtwo project."
+    },
+    {
+      title: "Gengar and the 'Ghost Evolution'",
+      date: "December 12, 1999",
+      content: "There were rumors that Gengar had an evolutionary line, or was part of a greater Ghost-type family that evolved into even darker and more sinister forms. Dr. J. found these rumors disturbing because they touched on projects involving genetic anomalies. Although Gengar itself was a standalone Pokémon in official records, there were unexplained gaps in the evolutionary data available on the Ghost-type line. Dr. J. secretly investigated these rumors and found that certain Ghost-type Pokémon had been altered and engineered during Silph Co.’s genetic experimentation, with some designs being deliberately erased to avoid confusion. A Ghost-type evolution line may have existed in early Silph Co. files, but due to the dark nature of the research, it was ultimately abandoned and concealed."
+    },
+    {
+      title: "Lost Pokémon from the Beta",
+      date: "January 14, 2000",
+      content: "The discovery of unused or cut Pokémon from the early beta of Pokémon Gold/Silver sparked rumors of a lost generation of Pokémon. Dr. J. reviewed the beta data and found that many of these unused designs were part of early concepts that were discarded due to technical limitations or because they were considered too dangerous or controversial for public release. Some of these Pokémon were related to altered genetic experiments from Silph Co., with designs that connected to forbidden projects, including the Mewtwo project and time-based Pokémon experiments. The cut Pokémon were considered a failure in the eyes of Dr. J., and their existence remained classified as lost history."
+    },
+    {
+      title: "Lugia’s True Role in Gen 2",
+      date: "March 22, 2000",
+      content: "The speculation that Lugia was meant to play a more significant role in the Gen 2 storyline—perhaps with ties to the Legendary Birds—was rooted in a deeper unrevealed narrative. Dr. J. was familiar with the initial scripts and designs that portrayed Lugia as a central figure in ancient creation—its role connected to Articuno, Zapdos, and Moltres through a shared genetic link. However, due to the public reception of the Mewtwo project, Lugia’s narrative was revised to simplify its role and distance it from the legendary bird trio, as well as any potential connections to time manipulation. Lugia’s true significance within Silph Co. records was later buried, and its connection to the Legendary Beasts remained unclear in official documentation."
+    },
+    {
+      title: "Sunkern and Sunflower Myth",
+      date: "February 15, 2000",
+      content: "Early theories about Sunkern evolving into a powerful Pokémon tied to the sun suggested a more legendary role in the Pokémon world. Dr. J. noted that these rumors stemmed from Silph Co.’s early attempts to develop Sun-type Pokémon connected to the power of light and radiation manipulation. While these ideas were shelved in favor of other evolutionary lines, Dr. J. saw a crossover between Sunkern’s design and failed experimentation on solar-based genetic alteration. The sunflower myth grew as a result of mysterious project leaks and a public desire for mythic Pokémon. However, the real purpose of Sunkern’s design was to keep fans occupied while Silph Co. focused on other more classified genetic studies."
+    },
+    {
+      title: "Pichu as a Baby Form of Pikachu (Pre-Gen 2)",
+      date: "April 30, 1999",
+      content: "The theory that Pichu was the baby form of Pikachu was one of the most widely speculated ideas before its official reveal in Generation 2. Dr. J. examined the initial concepts and found that this idea was in fact a well-calculated design choice stemming from the need to explore evolutionary branches and create a natural progression for the Pikachu line. The introduction of Pichu was a response to early feedback that Pikachu could evolve in new ways, leading Silph Co. researchers to investigate how baby Pokémon could fit into existing evolutionary structures. Pichu was ultimately introduced as a pre-evolution to Pikachu, which subtly hinted at Silph Co.'s ongoing experiments involving Pokémon evolution and genetic variability. While this was presented as a fun addition, the true implications pointed to controlled evolutionary pathways linked to the Mewtwo Project."
+    },
+    {
+      title: "Mewtwo's Connection to the Creation Trio (Dialga, Palkia, Giratina)",
+      date: "June 22, 2000",
+      content: "A theory that Mewtwo had a connection to the later Gen 4 creation trio (Dialga, Palkia, and Giratina) emerged as fans speculated that Mewtwo's origins were somehow tied to the creation story of the Pokémon world. Dr. J. reviewed this theory closely, as it resonated with certain Silph Co. documents discussing the genetic manipulation of legendary Pokémon. While no official connection between Mewtwo and the Creation Trio was confirmed, internal Silph Co. research suggested that Mewtwo’s creation involved cosmic elements that were later explored in the Dialga-Palkia-Giratina relationship. There was speculation that Mewtwo's creation involved time (Dialga), space (Palkia), and antimatter (Giratina) as critical components, and that its genetic structure had the potential to affect these fundamental forces. However, research on this link was classified and had to be suppressed due to the potential ramifications."
+    },
+    {
+      title: "Mew and the 'Ancient Mew' Theory",
+      date: "October 3, 2000",
+      content: "The theory that Mew was an ancient, powerful Pokémon connected to the origins of Pokémon itself had been circulating for years, especially after the Ancient Mew card was revealed. Dr. J. found this theory particularly intriguing, as it aligned closely with the findings in Silph Co.'s classified archives regarding the creation of the Pokémon world. According to these files, Mew was not only a powerful and rare Pokémon but also the source of much of the genetic research carried out by Silph Co. Dr. J. found strong evidence suggesting that Mew's genetic makeup was directly linked to the origins of life in the Pokémon world. The Ancient Mew card was thought to be an artifact of immense power, representing hidden knowledge that connected Mew to the genetic origins of all Pokémon. Research on this topic was deeply suppressed by Silph Co., fearing the consequences of such revelations."
+    },
+    {
+      title: "Misty’s Death (Lavender Town Myth)",
+      date: "November 18, 2000",
+      content: "The theory that Misty died after Pokémon Red/Blue and that her spirit haunted Lavender Town is a widely circulated urban legend. According to fan speculation, Misty's disappearance was tied to the eerie atmosphere surrounding Lavender Town. Dr. J. found this theory to be part of the larger pattern of supernatural events linked to Silph Co.'s experiments on ghost-type Pokémon. While there was no direct connection to Misty's disappearance, there were rumors that Silph Co. had been involved in the creation of ghost-like entities in the Pokémon world, with some of these experiments being linked to the Ghost Girl urban legend in Lavender Town. It’s possible that the haunting atmosphere of Lavender Town was a side effect of Silph Co.'s research on ghost-type genetics, which caused disturbances in the environment."
+    },
+    {
+      title: "Kangaskhan’s Baby (Related to Meowth)",
+      date: "January 5, 2001",
+      content: "Speculation that Kangaskhan's baby, which is visible in her pouch, was somehow tied to Meowth in some mysterious way gained traction after fans observed the similarities between the two Pokémon. Dr. J. found that this theory was fueled by the fact that Kangaskhan's baby shared several visual features with Meowth, and some believed that the baby was a secret Pokémon related to the Meowth line. Dr. J. investigated internal Silph Co. documents and found that there was indeed a genetic anomaly involving the Kangaskhan-Meowth connection, as both were part of a genetic research program focused on evolutionary divergences and familial genetic connections. However, these findings were never officially acknowledged, and any ties to Meowth were dismissed as theories rather than established facts."
+    },
+    {
+      title: "The “Ghost Girl” in Lavender Town",
+      date: "February 9, 2000",
+      content: "The legend of a “ghost girl” appearing in Lavender Town, specifically in the cemetery, became a key part of the eerie atmosphere surrounding the area in Pokémon Red/Blue. Dr. J. found that this ghostly figure might be linked to the genetic manipulation of ghost-type Pokémon conducted by Silph Co. While there was no actual ghost girl, the disturbing events in Lavender Town were likely the result of Silph Co.'s experiments on ghost-type genetics, leading to psychological and paranormal phenomena. The ghost girl legend likely emerged from local superstitions and rumors surrounding the eerie events that occurred in Lavender Town, further fueled by the unnatural presence of ghost Pokémon in the area."
+    },
+    {
+      title: "Pokémon’s Connection to Real Mythology",
+      date: "July 15, 2001",
+      content: "Various Pokémon were believed to have been inspired by real-world mythological creatures, such as Gyarados being based on the Chinese dragon myth, or Lugia being connected to sea gods and spirits. Dr. J. found that these connections were more than coincidental. Silph Co. had long been researching the cultural symbolism of mythical creatures, which were then replicated or reinterpreted through Pokémon designs. This was part of a larger cultural and genetic experiment that sought to blend ancient mythological themes with modern genetic manipulation. The mystical aspects of certain Pokémon were intentionally designed to evoke deep-seated human archetypes of power, mystery, and the unknown. These designs were not merely artistic but were part of a larger strategy to shape how Pokémon were perceived in relation to ancient myths."
+    }
+  ];
+
+  const categories = {
+    genetic: [0,1,3,5,6,15,17,20,23,24,28,29],
+    temporal: [4,9,11,18,22,25,26,27],
+    prototypes: [2,7,8,10,12,13,14,16,19,21],
+    classified: [4,5,9,11,16,19,22,24,25,26,27,28,29]
+  };
+
+  const folders = document.querySelectorAll('.folder');
+  const filesSection = document.getElementById('files');
+  
+  function generateFiles(category) {
+    filesSection.innerHTML = '';
+    categories[category].forEach(index => {
+      const theory = theoriesData[index];
+      const file = document.createElement('div');
+      file.className = 'file';
+      
+      file.innerHTML = `
+        <h2>${theory.title}</h2>
+        <span class="date">${theory.date}</span>
+        <p>${theory.content}</p>
+      `;
+      
+      filesSection.appendChild(file);
+    });
+    filesSection.classList.remove('hidden');
+  }
+
+  folders.forEach(folder => {
+    folder.addEventListener('click', () => {
+      const category = folder.dataset.category;
+      document.querySelectorAll('.folder').forEach(f => f.style.transform = '');
+      folder.style.transform = 'rotateX(180deg)';
+      generateFiles(category);
+    });
+  });
+
+  // Update clock
+  function updateClock() {
+    const now = new Date();
+    const time = `${now.getHours().toString().padStart(2,'0')}:` +
+                 `${now.getMinutes().toString().padStart(2,'0')}:` +
+                 `${now.getMilliseconds().toString().padStart(3,'0')}`;
+    document.querySelector('.hud-clock').textContent = time;
+  }
+  setInterval(updateClock, 1);
+
+  // Search functionality
+  document.querySelector('.cyber-input').addEventListener('input', (e) => {
+    const searchTerm = e.target.value.toLowerCase();
+    Array.from(filesSection.children).forEach(file => {
+      const text = file.textContent.toLowerCase();
+      file.style.display = text.includes(searchTerm) ? 'block' : 'none';
+    });
+  });
+
+  // Add random folder transforms
+  document.querySelectorAll('.folder').forEach(folder => {
+    folder.style.transform = `rotateX(${Math.random()*5}deg) rotateY(${Math.random()*5}deg)`;
+  });
+});</script>
+</body>
+</html>
