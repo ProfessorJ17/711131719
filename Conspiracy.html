@@ -288,6 +288,49 @@
 </head>
 <body>
 
+<div id="menu-container"></div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    fetch('https://711131719.xyz/header6.html')
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        return response.text();
+      })
+      .then(html => {
+        document.getElementById('menu-container').innerHTML = html;
+        
+        // Re-attach click handlers after loading menu
+        const menuButtons = document.querySelectorAll('.menu-button');
+        menuButtons.forEach(button => {
+          button.addEventListener('click', function() {
+            const url = this.getAttribute('data-url') || this.getAttribute('onclick')?.match(/'([^']+)'/)?.[1];
+            if (url) {
+              window.open(url, '_blank');
+            }
+          });
+        });
+      })
+      .catch(error => {
+        console.error('Error loading menu:', error);
+        // Fallback menu in case loading fails
+        document.getElementById('menu-container').innerHTML = `
+          <nav class="cyber-menu">
+            <ul class="menu-links">
+              <li><button class="menu-button" onclick="window.open('http://711131719.xyz/ProfessorJitsu/Espionage.html', '_blank')">Espionage</button></li>
+              <li><button class="menu-button" onclick="window.open('http://711131719.xyz/ProfessorJitsu/Conspiracy.html', '_blank')">Conspiracy</button></li>
+              <li><button class="menu-button" onclick="window.open('http://711131719.xyz/ProfessorJitsu/Research.html', '_blank')">Research</button></li>
+              <li><button class="menu-button" onclick="window.open('http://711131719.xyz/ProfessorJitsu/Classified.html', '_blank')">Classified</button></li>
+              <li><button class="menu-button" onclick="window.open('http://711131719.xyz/ProfessorJitsu/Evolution.html', '_blank')">Evolution</button></li>
+              <li><button class="menu-button" onclick="window.open('http://711131719.xyz/ProfessorJitsu/MEWCUBE.html', '_blank')">MEWCUBE</button></li>
+            </ul>
+          </nav>
+        `;
+      });
+  });
+</script>
 
   <div class="container">
     <header>
@@ -368,7 +411,7 @@
     </footer>
   </div>
 
-  <script>document.addEventListener('DOMContentLoaded', () => {
+<script>
   const theoriesData = [
     {
       title: "Dungeon Monsters = Early Pokémon Concept",
@@ -592,6 +635,7 @@
   document.querySelectorAll('.folder').forEach(folder => {
     folder.style.transform = `rotateX(${Math.random()*5}deg) rotateY(${Math.random()*5}deg)`;
   });
-});</script>
+</script>
+
 </body>
 </html>
