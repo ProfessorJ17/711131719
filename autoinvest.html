@@ -1,0 +1,1056 @@
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Million Dollar Charts</title>
+  <style>
+    /* ... existing styling from index.html ... */
+    :root {
+      --gold: #ffd700;
+      --green: #00ff88;
+      --dark: #1a1a1a;
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Arial', sans-serif;
+      background: linear-gradient(45deg, #0f0f0f, #2a2a2a);
+      color: white;
+      overflow-x: hidden;
+    }
+
+    nav {
+      position: fixed;
+      width: 100%;
+      background: rgba(0,0,0,0.9);
+      padding: 15px 0;
+      z-index: 1000;
+      backdrop-filter: blur(10px);
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 80px 20px 20px;
+    }
+
+    h1, h2, h3 {
+      color: var(--gold);
+      text-shadow: 0 0 10px rgba(255,215,0,0.3);
+    }
+
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      text-align: center;
+      background: radial-gradient(circle at center, rgba(255,215,0,0.1) 0%, transparent 30%);
+      position: relative;
+    }
+
+    .floating-coins {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+    }
+
+    .coin {
+      position: absolute;
+      animation: float 4s infinite ease-in-out;
+      filter: drop-shadow(0 0 5px var(--gold));
+    }
+
+    .cta-button {
+      display: inline-block;
+      padding: 20px 50px;
+      font-size: 1.5em;
+      background: linear-gradient(45deg, var(--green), var(--gold));
+      color: var(--dark);
+      border-radius: 50px;
+      text-decoration: none;
+      margin-top: 30px;
+      transition: 0.3s;
+      animation: pulse 2s infinite;
+      font-weight: bold;
+    }
+
+    .selling-points {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 30px;
+      padding: 50px 0;
+    }
+
+    .point-card {
+      background: rgba(255,255,255,0.05);
+      padding: 30px;
+      border-radius: 15px;
+      backdrop-filter: blur(5px);
+      border: 1px solid rgba(255,215,0,0.2);
+      transition: 0.3s;
+    }
+
+    .point-card:hover {
+      transform: translateY(-10px);
+      background: rgba(255,215,0,0.1);
+    }
+
+    /* Additional styles from other pages */
+    .code-block {
+      background: rgba(0,0,0,0.3);
+      padding: 20px;
+      border-radius: 15px;
+      margin: 20px 0;
+      font-family: 'Courier New', monospace;
+      color: var(--green);
+      border: 1px solid rgba(255,215,0,0.2);
+      position: relative; 
+    }
+
+    .code-block .download-button {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background-color: var(--gold);
+      color: var(--dark);
+      border: none;
+      padding: 8px 12px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 0.8em;
+      opacity: 0.7;
+      transition: opacity 0.3s;
+    }
+
+    .code-block .download-button:hover {
+      opacity: 1;
+    }
+
+    .fibonacci-levels, .gann-angles {
+      background: rgba(255,255,255,0.05);
+      padding: 20px;
+      border-radius: 15px;
+      margin: 20px 0;
+      border: 1px solid rgba(255,215,0,0.2);
+    }
+
+    .warning {
+      background: rgba(255,215,0,0.1);
+      border-left: 4px solid var(--gold);
+      padding: 15px;
+      margin: 20px 0;
+    }
+
+    a {
+      color: var(--green);
+      text-decoration: none;
+    }
+
+    nav a {
+      color: white;
+      text-decoration: none;
+      padding: 10px 20px;
+      margin: 0 5px;
+      border-radius: 5px;
+      transition: 0.3s;
+    }
+
+    nav a:hover {
+      background: rgba(255,215,0,0.1);
+      color: var(--gold);
+    }
+
+    .page {
+      display: none;
+      padding-top: 80px;
+    }
+
+    .page.active {
+      display: block;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-20px); }
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+      100% { transform: scale(1); }
+    }
+
+    /* Add any missing styles from other pages */
+    .formula {
+      background: rgba(0, 0, 0, 0.3);
+      padding: 20px;
+      border-radius: 15px;
+      margin: 20px 0;
+      font-family: 'Courier New', monospace;
+      color: var(--green);
+      border: 1px solid rgba(255, 215, 0, 0.2);
+    }
+  </style>
+</head>
+<body>
+  <nav>
+    <div class="container">
+      <a href="#home" class="nav-link" data-page="home" style="color: var(--green); font-weight: bold; font-size: 1.2em;">💰 Million Dollar Charts</a>
+      <a href="#get-started" class="nav-link" data-page="get-started">Get Started</a>
+      <a href="#retracements" class="nav-link" data-page="retracements">Retracements</a>
+      <a href="#trading-secrets" class="nav-link" data-page="trading-secrets">Trading Secrets</a>
+      <a href="#bot-development" class="nav-link" data-page="bot-development">Bot Development</a>
+      <a href="#server-setup" class="nav-link" data-page="server-setup">Server Setup</a>
+    </div>
+  </nav>
+
+  <!-- Home page content -->
+  <div id="home" class="page active">
+    <div class="hero">
+      <div class="floating-coins">
+        <svg class="coin" style="left:20%; top:30%" width="50" height="50" viewBox="0 0 24 24">
+          <circle cx="12" cy="12" r="10" fill="var(--gold)"/>
+          <text x="12" y="14" text-anchor="middle" fill="var(--dark)" style="font-weight: bold; font-size: 10px;">$</text>
+        </svg>
+        <svg class="coin" style="left:40%; top:10%" width="50" height="50" viewBox="0 0 24 24">
+          <circle cx="12" cy="12" r="10" fill="var(--gold)"/>
+          <text x="12" y="14" text-anchor="middle" fill="var(--dark)" style="font-weight: bold; font-size: 10px;">$</text>
+        </svg>
+        <svg class="coin" style="left:60%; top:50%" width="50" height="50" viewBox="0 0 24 24">
+          <circle cx="12" cy="12" r="10" fill="var(--gold)"/>
+          <text x="12" y="14" text-anchor="middle" fill="var(--dark)" style="font-weight: bold; font-size: 10px;">$</text>
+        </svg>
+        <svg class="coin" style="left:80%; top:20%" width="50" height="50" viewBox="0 0 24 24">
+          <circle cx="12" cy="12" r="10" fill="var(--gold)"/>
+          <text x="12" y="14" text-anchor="middle" fill="var(--dark)" style="font-weight: bold; font-size: 10px;">$</text>
+        </svg>
+        <svg class="coin" style="left:10%; top:60%" width="50" height="50" viewBox="0 0 24 24">
+          <circle cx="12" cy="12" r="10" fill="var(--gold)"/>
+          <text x="12" y="14" text-anchor="middle" fill="var(--dark)" style="font-weight: bold; font-size: 10px;">$</text>
+        </svg>
+        <svg class="coin" style="left:50%; top:40%" width="50" height="50" viewBox="0 0 24 24">
+          <circle cx="12" cy="12" r="10" fill="var(--gold)"/>
+          <text x="12" y="14" text-anchor="middle" fill="var(--dark)" style="font-weight: bold; font-size: 10px;">$</text>
+        </svg>
+      </div>
+
+      <div class="container">
+        <h1>💰 Million Dollar Trading Secrets:<br>Turn $100 into $1,000,000! 🚀</h1>
+
+        <div class="selling-points">
+          <div class="point-card">
+            <h2>💎 <a href="https://en.wikipedia.org/wiki/Fibonacci_retracement" target="_blank">Fibonacci Mastery</a></h2>
+            <p>Learn the secret <a href="https://en.wikipedia.org/wiki/Fibonacci_retracement" target="_blank">retracement</a> levels that top <a href="https://en.wikipedia.org/wiki/Institutional_investor" target="_blank">institutional traders</a> use to predict market movements with unbelievable accuracy.</p>
+          </div>
+
+          <div class="point-card">
+            <h2>⏳ <a href="https://en.wikipedia.org/wiki/William_Delbert_Gann" target="_blank">Gann's</a> Time Cycles</h2>
+            <p>Master the art of predicting market turns weeks in advance using powerful mathematical patterns that only the pros know!</p>
+          </div>
+
+          <div class="point-card">
+            <h2>💸 10% Weekly <a href="https://en.wikipedia.org/wiki/Return_on_investment" target="_blank">ROI</a></h2>
+            <p>Our proven, battle-tested system targets consistent gains each week with pinpoint precision in entries and exits. 📈</p>
+          </div>
+        </div>
+
+        <a href="#get-started" class="cta-button" data-page="get-started">Start Your Free Journey TODAY! 🌍</a>
+      </div>
+    </div>
+
+    <div style="padding: 100px 0; text-align: center; background: rgba(0,0,0,0.7);">
+      <div class="container">
+        <h2>🌟 FREE Trading Education For Everyone! 🌟</h2>
+        <p style="font-size: 1.2em; max-width: 800px; margin: 0 auto;">
+          Unlock your full potential with 100% FREE access to our complete trading system, including:
+        </p>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 30px; margin: 50px 0;">
+          <div>
+            <h3>💹 <a href="https://en.wikipedia.org/wiki/Fibonacci_retracement" target="_blank">Fibonacci</a> Calculator</h3>
+            <p>Automatically calculate <a href="https://en.wikipedia.org/wiki/Fibonacci_retracement" target="_blank">retracement</a> levels that help you spot the perfect entry points.</p>
+          </div>
+          <div>
+            <h3>⏰ <a href="https://en.wikipedia.org/wiki/William_Delbert_Gann" target="_blank">Gann</a> Timer</h3>
+            <p>Stay ahead of the market with timing indicators that show you exactly when to make your move.</p>
+          </div>
+          <div>
+            <h3>🔒 <a href="https://en.wikipedia.org/wiki/Risk_management" target="_blank">Risk Manager</a></h3>
+            <p>Take control of your trades with a smart <a href="https://en.wikipedia.org/wiki/Position_sizing" target="_blank">position sizing</a> calculator to ensure you never overextend your risk.</p>
+          </div>
+        </div>
+
+        <div style="max-width: 600px; margin: 0 auto; position: relative;">
+          <div style="position: absolute; width: 100%; height: 100%; background: radial-gradient(rgba(255,215,0,0.2), transparent); filter: blur(50px);"></div>
+          <a href="#get-started" class="cta-button" data-page="get-started" style="font-size: 1.8em; padding: 25px 60px;">Get Started Now →</a>
+        </div>
+        <p style="margin-top: 30px; font-size: 1.2em;">🚨 Don’t wait – start your journey to financial freedom today! 💸💥</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Get Started page content -->
+  <div id="get-started" class="page">
+    <div class="container">
+      <h1>How to Turn $100 into $1 Million in 2 Years</h1>
+
+      <section id="overview">
+        <h2>Overview:</h2>
+        <p>The goal is to grow a starting investment of $100 into $1,000,000 within 2 years by achieving a consistent 10% <a href="https://en.wikipedia.org/wiki/Rate_of_return" target="_blank">return</a> each week. This strategy uses <a href="https://en.wikipedia.org/wiki/Compound_interest" target="_blank">compound growth</a>, where the gains from each week are reinvested, allowing your capital to grow exponentially over time.</p>
+      </section>
+
+      <section id="key-assumptions">
+        <h2>Key Assumptions:</h2>
+        <ul>
+          <li><strong>Weekly Return:</strong> We aim for a 10% return per week, which is considered aggressive but achievable with the right strategy.</li>
+          <li><strong>Compounding:</strong> Each week's profit is reinvested to increase the total capital, which accelerates the growth of your <a href="https://en.wikipedia.org/wiki/Investment_portfolio" target="_blank">portfolio</a>.</li>
+          <li><strong>Timeframe:</strong> The target is 2 years (104 weeks).</li>
+        </ul>
+      </section>
+
+      <section id="compound-growth-formula">
+        <h2>The Formula for <a href="https://en.wikipedia.org/wiki/Compound_interest" target="_blank">Compound Growth</a>:</h2>
+        <p>The formula to calculate compound growth is:</p>
+        <div class="formula">
+          <code>
+            Future Value = Initial Value × (1 + Weekly Return) ^ Number of Weeks
+          </code>
+        </div>
+        <p>Where:</p>
+        <ul>
+          <li><strong>Initial Value:</strong> Your starting capital (in this case, $100).</li>
+          <li><strong>Weekly Return:</strong> The weekly growth rate (10%, or 0.10).</li>
+          <li><strong>Number of Weeks:</strong> The total number of weeks over which the investment grows (104 weeks for 2 years).</li>
+        </ul>
+      </section>
+
+      <section id="calculating-time-to-million">
+        <h2>Calculating the Time to Reach $1 Million:</h2>
+        <p>We want to know how long it will take for $100 to grow into $1,000,000. Using the formula above, we can solve for the number of weeks (n) needed to reach the target.</p>
+        <p>Starting with the formula:</p>
+        <div class="formula">
+          <code>
+            1000000 = 100 × (1 + 0.10) ^ n
+          </code>
+        </div>
+        <p>Solve for n:</p>
+        <div class="formula">
+          <code>
+            n = <a href="https://en.wikipedia.org/wiki/Logarithm" target="_blank">log</a>(1000000 / 100) / log(1.10) <br>
+            n ≈ log(10000) / log(1.10) <br>
+            n ≈ 24.6 weeks
+          </code>
+        </div>
+        <p>It will take about 25 weeks to grow your initial $100 into $1,000.</p>
+        <p>To reach $10,000, $100,000, and eventually $1,000,000, you will continue compounding your capital with 10% returns each week. Here's how the growth will look:</p>
+        <ul>
+          <li>$100 to $1,000: ~25 weeks (approximately 6 months)</li>
+          <li>$1,000 to $10,000: ~25 weeks (another 6 months)</li>
+          <li>$10,000 to $100,000: ~25 weeks (another 6 months)</li>
+          <li>$100,000 to $1,000,000: ~25 weeks (another 6 months)</li>
+        </ul>
+        <p>Thus, total time from $100 to $1,000,000 will be around 2 years.</p>
+      </section>
+
+      <section id="strategy-works">
+        <h2>How the Strategy Works:</h2>
+        <p>To reach these ambitious goals, consistent and disciplined execution is necessary. Here's how the strategy works:</p>
+        <ul>
+          <li><strong>Start with $100:</strong> Begin with a small, manageable amount. This allows you to test the strategy and learn without risking too much capital.</li>
+          <li><strong>Reinvest Profits:</strong> Every time you make a gain, you reinvest it into the next week's trades. By <a href="https://en.wikipedia.org/wiki/Compound_interest" target="_blank">compounding</a> your growth, you increase the size of your profits exponentially over time.</li>
+          <li><strong>Achieve 10% Weekly Growth:</strong> To hit the 10% growth target each week, you need to carefully manage your trades. This requires understanding <a href="https://en.wikipedia.org/wiki/Technical_analysis" target="_blank">technical analysis</a> (like <a href="https://en.wikipedia.org/wiki/Fibonacci_retracement" target="_blank">Fibonacci retracements</a>, <a href="https://en.wikipedia.org/wiki/Moving_average" target="_blank">moving averages</a>, <a href="https://en.wikipedia.org/wiki/William_Delbert_Gann" target="_blank">Gann cycles</a>) and using smart <a href="https://en.wikipedia.org/wiki/Risk_management" target="_blank">risk management</a> (<a href="https://en.wikipedia.org/wiki/Position_sizing" target="_blank">position sizing</a>, <a href="https://en.wikipedia.org/wiki/Stop_order" target="_blank">stop-loss orders</a>).</li>
+          <li><strong>Repeat for 104 Weeks:</strong> With each week’s 10% growth, your portfolio will continue to grow and compound. Over the course of 104 weeks (2 years), your $100 will have grown to $1,000,000.</li>
+        </ul>
+      </section>
+
+      <section id="key-considerations">
+        <h2>Key Considerations:</h2>
+        <ul>
+          <li><strong>Realistic Expectations:</strong> Consistently achieving 10% growth every week is challenging. It requires a disciplined approach to <a href="https://en.wikipedia.org/wiki/Risk_management" target="_blank">risk management</a> and <a href="https://en.wikipedia.org/wiki/Market_analysis" target="_blank">market analysis</a>. It's essential to understand that there will be ups and downs. Market conditions are <a href="https://en.wikipedia.org/wiki/Volatility_(finance)" target="_blank">volatile</a>, so the strategy may not always work as expected.</li>
+          <li><strong>Risk Management:</strong> The higher your weekly return, the more you expose yourself to risk. As your portfolio grows, so does the risk of larger losses. This is why effective <a href="https://en.wikipedia.org/wiki/Risk_management" target="_blank">risk management</a> practices—like setting <a href="https://en.wikipedia.org/wiki/Stop_order" target="_blank">stop-loss orders</a>, diversifying trades, and limiting your risk per trade—are critical for sustaining long-term growth.</li>
+          <li><strong>Compounding Power:</strong> The secret to this strategy is the power of <a href="https://en.wikipedia.org/wiki/Compound_interest" target="_blank">compounding</a>. Small gains add up over time, and the larger your capital becomes, the faster it will grow. For example, turning $100 into $1,000 is a 10x increase. When you reach $10,000, your weekly returns are 10 times higher, which accelerates the growth toward $1,000,000.</li>
+        </ul>
+      </section>
+
+      <section id="realistic-scenario">
+        <h2>Realistic Scenario:</h2>
+        <p>While this strategy assumes 10% growth each week, it’s crucial to manage your expectations. Achieving this kind of consistent growth is not easy and is heavily dependent on the market conditions and trading skills. Losses, <a href="https://en.wikipedia.org/wiki/Volatility_(finance)" target="_blank">volatility</a>, and unforeseen market movements will always be a factor.</p>
+      </section>
+
+      <section id="final-thoughts">
+        <h2>Final Thoughts:</h2>
+        <p>Turning $100 into $1 million in 2 years through consistent 10% weekly returns is ambitious, but possible with the right approach. It requires:</p>
+        <ul>
+          <li>Consistent returns (10% per week).</li>
+          <li>Proper <a href="https://en.wikipedia.org/wiki/Compound_interest" target="_blank">compounding</a> of profits.</li>
+          <li>Effective <a href="https://en.wikipedia.org/wiki/Risk_management" target="_blank">risk management</a> and <a href="https://en.wikipedia.org/wiki/Market_analysis" target="_blank">market analysis</a>.</li>
+        </ul>
+        <p>By sticking to this strategy, you can leverage the power of <a href="https://en.wikipedia.org/wiki/Compound_interest" target="_blank">compound growth</a> to scale your initial investment into a life-changing sum over the course of 2 years.</p>
+      </section>
+      <a href="#retracements" class="cta-button" data-page="retracements">Continue to Retracements →</a>
+    </div>
+  </div>
+
+  <!-- Retracements page content -->
+  <div id="retracements" class="page">
+    <section id="retracements-intro">
+      <h1>🚀 Welcome to Your Million-Dollar Market Prediction Journey! 💸</h1>
+      <p>Unlock the secrets of the <a href="https://en.wikipedia.org/wiki/Stock_market" target="_blank">stock market</a> with <a href="https://en.wikipedia.org/wiki/Fibonacci_retracement" target="_blank">Fibonacci Retracement</a> and <a href="https://en.wikipedia.org/wiki/William_Delbert_Gann" target="_blank">Gann's Square</a>, two of the most powerful techniques for potentially turning small investments into life-changing returns.</p>
+
+      <section id="fibonacci">
+        <h2>1. <a href="https://en.wikipedia.org/wiki/Fibonacci_retracement" target="_blank">Fibonacci Retracement</a>: The Ultimate <a href="https://en.wikipedia.org/wiki/Support_and_resistance" target="_blank">Support/Resistance</a> Secret 🔑</h2>
+        <p><a href="https://en.wikipedia.org/wiki/Fibonacci_retracement" target="_blank">Fibonacci retracement</a> is the go-to tool for traders looking to predict key price levels with astonishing accuracy. Based on the <a href="https://en.wikipedia.org/wiki/Fibonacci_sequence" target="_blank">Fibonacci sequence</a> and the <a href="https://en.wikipedia.org/wiki/Golden_ratio" target="_blank">Golden Ratio</a> (1.618), these retracement levels are widely used by professional traders to identify <a href="https://en.wikipedia.org/wiki/Support_and_resistance" target="_blank">support and resistance zones</a>.</p>
+
+        <h3>Key <a href="https://en.wikipedia.org/wiki/Fibonacci_retracement" target="_blank">Fibonacci</a> Levels</h3>
+        <div class="fibonacci-levels">
+          <ul>
+            <li><strong>0%</strong> – Start of the trend</li>
+            <li><strong>23.6%</strong> – Minor <a href="https://en.wikipedia.org/wiki/Retracement_(finance)" target="_blank">retracement</a> (weak support)</li>
+            <li><strong>38.2%</strong> – Moderate <a href="https://en.wikipedia.org/wiki/Retracement_(finance)" target="_blank">retracement</a> (good support)</li>
+            <li><strong>50%</strong> – Psychological level (critical spot!)</li>
+            <li><strong>61.8%</strong> – The <a href="https://en.wikipedia.org/wiki/Golden_ratio" target="_blank">Golden Ratio</a> (strongest <a href="https://en.wikipedia.org/wiki/Support_and_resistance" target="_blank">support/resistance</a>)</li>
+            <li><strong>78.6%</strong> – Deep <a href="https://en.wikipedia.org/wiki/Retracement_(finance)" target="_blank">retracement</a> (important turning point)</li>
+            <li><strong>100%</strong> – Full reversal (watch closely!)</li>
+          </ul>
+        </div>
+
+        <h3>Formula to Calculate <a href="https://en.wikipedia.org/wiki/Fibonacci_retracement" target="_blank">Fibonacci</a> Levels:</h3>
+        <div class="formula">
+          <code>
+            Fibonacci retracement = High – (Retracement Percentage * (High – Low))
+          </code>
+        </div>
+        <p>For example, in an <a href="https://en.wikipedia.org/wiki/Uptrend_and_downtrend" target="_blank">uptrend</a> from $100 (Low) to $200 (High), the 61.8% <a href="https://en.wikipedia.org/wiki/Fibonacci_retracement" target="_blank">retracement</a> level would be:</p>
+        <code>
+          Retracement Level = 200 - (0.618 * (200 - 100))<br>
+          Retracement Level = 200 - (0.618 * 100)<br>
+          Retracement Level = 200 - 61.8<br>
+          Retracement Level = 138.2
+        </code>
+        <p><strong>$138.2 is a key <a href="https://en.wikipedia.org/wiki/Support_and_resistance" target="_blank">support level</a></strong>, and traders expect it to act as a critical bounce point if the price starts pulling back.</p>
+
+        <h3>How to Use <a href="https://en.wikipedia.org/wiki/Fibonacci_retracement" target="_blank">Fibonacci Retracement</a></h3>
+        <ul>
+          <li><strong>Trend Continuation:</strong> If the price bounces from <a href="https://en.wikipedia.org/wiki/Fibonacci_retracement" target="_blank">Fibonacci</a> levels like 38.2%, 50%, or 61.8%, this suggests the trend will continue.</li>
+          <li><strong>Trend Reversal:</strong> If the price breaks below 61.8%, it may indicate a <a href="https://en.wikipedia.org/wiki/Reversal_(stock_market)" target="_blank">reversal</a>, signaling a potential market shift.</li>
+        </ul>
+      </section>
+
+      <section id="gann-square">
+        <h2>2. <a href="https://en.wikipedia.org/wiki/William_Delbert_Gann" target="_blank">Gann's Square</a>: Unlocking the Power of Time & Price ⏳💡</h2>
+        <p><a href="https://en.wikipedia.org/wiki/William_Delbert_Gann" target="_blank">Gann's Square</a> is a mathematical marvel. It integrates time and price, believing they follow geometric patterns. <a href="https://en.wikipedia.org/wiki/William_Delbert_Gann" target="_blank">W.D. Gann's</a> approach shows us that markets follow predictable cycles and angles that indicate turning points in the market.</p>
+
+        <h3>Key <a href="https://en.wikipedia.org/wiki/William_Delbert_Gann" target="_blank">Gann</a> Angles:</h3>
+        <div class="gann-angles">
+          <ul>
+            <li><strong>1x1 (45° angle)</strong>: Strongest <a href="https://en.wikipedia.org/wiki/Trend_line" target="_blank">trendline</a>, key for <a href="https://en.wikipedia.org/wiki/Uptrend_and_downtrend" target="_blank">bullish trends</a>.</li>
+            <li><strong>1x2 (26.5° angle)</strong>: Suggests moderate <a href="https://en.wikipedia.org/wiki/Market_trend" target="_blank">bullish momentum</a>.</li>
+            <li><strong>2x1 (63.75° angle)</strong>: Indicates a strong <a href="https://en.wikipedia.org/wiki/Uptrend_and_downtrend" target="_blank">uptrend</a>.</li>
+            <li><strong>1x8 (82.5° angle)</strong>: Extreme movement; often unsustainable, signaling potential <a href="https://en.wikipedia.org/wiki/Overbought_and_oversold" target="_blank">overbought</a> conditions.</li>
+          </ul>
+        </div>
+
+        <h3>Formula for <a href="https://en.wikipedia.org/wiki/William_Delbert_Gann" target="_blank">Gann</a> Angles</h3>
+        <div class="formula">
+          <code>
+            Price Target = Initial Price ± (Time Units * Price Increment per Time Unit)
+          </code>
+        </div>
+        <p>For example, if a stock is at $100 with a 1x1 angle ($1 per period), and the price moves for 10 periods:</p>
+        <code>
+          Price Target = 100 + (10 * $1) = 110
+        </code>
+        <p>If price stays above the 1x1 angle, we're in <a href="https://en.wikipedia.org/wiki/Bull_market" target="_blank">bullish territory</a>, but if it breaks below, <a href="https://en.wikipedia.org/wiki/Bear_market" target="_blank">bearish signals</a> emerge.</p>
+      </section>
+
+      <section id="combining-techniques">
+        <h2>3. Combining <a href="https://en.wikipedia.org/wiki/Fibonacci_retracement" target="_blank">Fibonacci</a> & <a href="https://en.wikipedia.org/wiki/William_Delbert_Gann" target="_blank">Gann</a> for Precision Trading 🧠</h2>
+        <p>For a more powerful prediction, blend <a href="https://en.wikipedia.org/wiki/Fibonacci_retracement" target="_blank">Fibonacci retracements</a> with <a href="https://en.wikipedia.org/wiki/William_Delbert_Gann" target="_blank">Gann's Square</a> to create a comprehensive strategy:</p>
+        <h3>Here's How You Combine Them:</h3>
+        <ul>
+          <li><strong><a href="https://en.wikipedia.org/wiki/Fibonacci_retracement" target="_blank">Fibonacci</a> for <a href="https://en.wikipedia.org/wiki/Support_and_resistance" target="_blank">Support/Resistance</a></strong>: Pinpoint levels where prices will likely reverse.</li>
+          <li><strong><a href="https://en.wikipedia.org/wiki/William_Delbert_Gann" target="_blank">Gann</a> for Trend Strength</strong>: Use <a href="https://en.wikipedia.org/wiki/Gann_angles" target="_blank">Gann angles</a> to gauge the strength of the trend and predict potential price movements.</li>
+          <li><strong>Time Cycles & Confluence</strong>: Look for <a href="https://en.wikipedia.org/wiki/Confluence_(technical_analysis)" target="_blank">confluence points</a> when <a href="https://en.wikipedia.org/wiki/Fibonacci_retracement" target="_blank">Fibonacci</a> levels align with <a href="https://en.wikipedia.org/wiki/Gann_angles" target="_blank">Gann's angles</a> and time cycles. This combination creates strong buy/sell signals.</li>
+        </ul>
+      </section>
+
+      <section id="tesla-example">
+        <h2>4. Real-World Example: <a href="https://en.wikipedia.org/wiki/Tesla,_Inc." target="_blank">Tesla</a> (TSLA) – February 20, 2025 💥</h2>
+        <p>Let's apply <a href="https://en.wikipedia.org/wiki/Fibonacci_retracement" target="_blank">Fibonacci retracements</a> and <a href="https://en.wikipedia.org/wiki/William_Delbert_Gann" target="_blank">Gann's Square</a> to <a href="https://en.wikipedia.org/wiki/Tesla,_Inc." target="_blank">Tesla</a> (<a href="https://en.wikipedia.org/wiki/Ticker_symbol" target="_blank">TSLA</a>), as an example of how this method works in real-time trading. 🚗💨</p>
+
+        <section id="fibonacci-tesla">
+          <h3><a href="https://en.wikipedia.org/wiki/Fibonacci_retracement" target="_blank">Fibonacci Retracement</a> Analysis:</h3>
+          <p>52-week Low: $138.80<br>
+          52-week High: $488.54</p>
+          <h3>Key <a href="https://en.wikipedia.org/wiki/Fibonacci_retracement" target="_blank">Fibonacci</a> Levels:</h3>
+          <ul>
+            <li><strong>23.6%</strong> → $405.77</li>
+            <li><strong>38.2%</strong> → $355.16</li>
+            <li><strong>50%</strong> → $313.67</li>
+            <li><strong>61.8%</strong> → $273.18</li>
+          </ul>
+          <p>Currently, TSLA is near $355.16 (38.2% <a href="https://en.wikipedia.org/wiki/Fibonacci_retracement" target="_blank">retracement</a>), suggesting a critical <a href="https://en.wikipedia.org/wiki/Support_and_resistance" target="_blank">support level</a>. A bounce here could signal <a href="https://en.wikipedia.org/wiki/Bullish_and_bearish" target="_blank">bullish momentum</a>, while a break below may suggest further downside to $313.67.</p>
+        </section>
+
+        <section id="gann-tesla">
+          <h3><a href="https://en.wikipedia.org/wiki/William_Delbert_Gann" target="_blank">Gann's Square</a> Analysis:</h3>
+          <p>Starting Price: $138.80<br>
+          1x1 angle projection:</p>
+          <div class="formula">
+            <code>
+              If it moved 100 days ago, price projection = $238.80
+            </code>
+          </div>
+          <p>If TSLA is above $238.80, the market remains <a href="https://en.wikipedia.org/wiki/Bullish_and_bearish" target="_blank">bullish</a>; below signals weakness.</p>
+        </section>
+      </section>
+
+      <section id="entry-exit-tesla">
+        <h2>5. Entry and Exit Strategies for Maximum Profit 💵💡</h2>
+        <ul>
+          <li><strong>Entry</strong>: Buy near <a href="https://en.wikipedia.org/wiki/Fibonacci_retracement" target="_blank">Fibonacci</a> <a href="https://en.wikipedia.org/wiki/Support_and_resistance" target="_blank">support levels</a> like $355.16 with increasing <a href="https://en.wikipedia.org/wiki/Volume_(finance)" target="_blank">volume</a>, signaling potential <a href="https://en.wikipedia.org/wiki/Bullish_and_bearish" target="_blank">bullish reversal</a>.</li>
+          <li><strong>Exit</strong>: Set <a href="https://en.wikipedia.org/wiki/Stop_order" target="_blank">stop-loss</a> just below the 50% <a href="https://en.wikipedia.org/wiki/Fibonacci_retracement" target="_blank">retracement</a> ($313.67) to manage downside <a href="https://en.wikipedia.org/wiki/Risk_aversion" target="_blank">risk</a>.</li>
+          <li><strong>Take Profit</strong>: Use the next <a href="https://en.wikipedia.org/wiki/Fibonacci_retracement" target="_blank">Fibonacci</a> levels and <a href="https://en.wikipedia.org/wiki/William_Delbert_Gann" target="_blank">Gann projections</a> to set profit targets. Take profit near previous highs or projected <a href="https://en.wikipedia.org/wiki/Gann_angles" target="_blank">Gann levels</a>.</li>
+        </ul>
+      </section>
+
+      <section id="additional-considerations-tesla">
+        <h2>6. Additional Tips for Success 🚀</h2>
+        <ul>
+          <li><strong>Volume Analysis</strong>: Ensure strong buying <a href="https://en.wikipedia.org/wiki/Volume_(finance)" target="_blank">volume</a> at <a href="https://en.wikipedia.org/wiki/Fibonacci_retracement" target="_blank">Fibonacci</a> <a href="https://en.wikipedia.org/wiki/Support_and_resistance" target="_blank">support levels</a> and strong breakouts at <a href="https://en.wikipedia.org/wiki/Gann_angles" target="_blank">Gann</a> projections.</li>
+          <li><strong>Market News</strong>: Always stay updated on <a href="https://en.wikipedia.org/wiki/Financial_news" target="_blank">market trends and news</a> affecting the stock.</li>
+          <li><strong>Risk Management</strong>: Never risk more than you can afford to lose! Use <a href="https://en.wikipedia.org/wiki/Stop_order" target="_blank">stop-loss orders</a> and <a href="https://en.wikipedia.org/wiki/Position_sizing" target="_blank">position sizing</a> to manage <a href="https://en.wikipedia.org/wiki/Risk_management" target="_blank">risk</a> effectively.</li>
+        </ul>
+      </section>
+
+      <section id="conclusion">
+        <h2>The Road to Trading Success Starts NOW 💰🔥</h2>
+        <p>Your ability to make big moves and turn small investments into massive returns begins with learning these powerful strategies. Combine <a href="https://en.wikipedia.org/wiki/Fibonacci_retracement" target="_blank">Fibonacci Retracement</a> with <a href="https://en.wikipedia.org/wiki/William_Delbert_Gann" target="_blank">Gann's Square</a>, and you'll be in a prime position to predict and capitalize on market movements like a professional trader! 📈</p>
+        <p>Start your FREE journey today and unlock your potential in the world of <a href="https://en.wikipedia.org/wiki/Stock_market_prediction" target="_blank">stock market prediction</a>! 💡🚀 <a href="#trading-secrets" class="cta-button" data-page="trading-secrets">Continue to Trading Secrets →</a></p>
+      </section>
+    </section>
+  </div>
+
+  <!-- Trading Secrets page content -->
+  <div id="trading-secrets" class="page">
+    <div class="container">
+      <section id="key-factors">
+        <h2>Key Additional Factors to Know</h2>
+        <section id="market-structure">
+          <h3>A. <a href="https://en.wikipedia.org/wiki/Market_structure" target="_blank">Market Structure</a> & Trends</h3>
+          <p><strong>Identify the Trend:</strong></p>
+          <ul>
+            <li><strong><a href="https://en.wikipedia.org/wiki/Bull_market" target="_blank">Bullish Trend</a></strong>: Higher highs & higher lows.</li>
+            <li><strong><a href="https://en.wikipedia.org/wiki/Bear_market" target="_blank">Bearish Trend</a></strong>: Lower highs & lower lows.</li>
+            <li><strong>Consolidation</strong>: Flat highs and lows or tight range-bound movement.</li>
+          </ul>
+          <p><strong>Trend Strength Confirmation:</strong></p>
+          <ul>
+            <li><strong><a href="https://en.wikipedia.org/wiki/Moving_average" target="_blank">Moving Averages</a></strong>: 50-day and 200-day <a href="https://en.wikipedia.org/wiki/Moving_average" target="_blank">moving averages</a> are key to verify trend direction and strength.</li>
+            <li><strong><a href="https://en.wikipedia.org/wiki/Average_directional_movement_index" target="_blank">ADX</a> (<a href="https://en.wikipedia.org/wiki/Average_directional_movement_index" target="_blank">Average Directional Index</a>)</strong>: Use <a href="https://en.wikipedia.org/wiki/Average_directional_movement_index" target="_blank">ADX</a> > 25 to confirm a strong trend; below 20 indicates weak or non-existent trend.</li>
+          </ul>
+          <p><strong>Breakout & Breakdown Signals:</strong></p>
+          <ul>
+            <li><strong>Strong Breakout</strong>: Price closes above <a href="https://en.wikipedia.org/wiki/Support_and_resistance" target="_blank">resistance</a> with high <a href="https://en.wikipedia.org/wiki/Volume_(finance)" target="_blank">volume</a>.</li>
+            <li><strong>Breakdown</strong>: Price closes below <a href="https://en.wikipedia.org/wiki/Support_and_resistance" target="_blank">support</a> with confirmation from <a href="https://en.wikipedia.org/wiki/Momentum_(technical_analysis)" target="_blank">momentum indicators</a> (<a href="https://en.wikipedia.org/wiki/Relative_strength_index" target="_blank">RSI</a>, <a href="https://en.wikipedia.org/wiki/MACD" target="_blank">MACD</a>).</li>
+          </ul>
+          <p><strong>Pattern Recognition:</strong></p>
+          <ul>
+            <li><strong><a href="https://en.wikipedia.org/wiki/Chart_pattern" target="_blank">Chart Patterns</a></strong>: Recognize and leverage patterns like <a href="https://en.wikipedia.org/wiki/Head_and_shoulders_(chart_pattern)" target="_blank">head and shoulders</a>, <a href="https://en.wikipedia.org/wiki/Double_top_and_double_bottom" target="_blank">double tops/bottoms</a>, and <a href="https://en.wikipedia.org/wiki/Triangle_pattern_(chart_analysis)" target="_blank">triangles</a> for trend reversal or continuation signals.</li>
+            <li><strong><a href="https://en.wikipedia.org/wiki/Candlestick_chart" target="_blank">Candlestick Patterns</a></strong>: <a href="https://en.wikipedia.org/wiki/Doji" target="_blank">Doji</a>, <a href="https://en.wikipedia.org/wiki/Engulfing_pattern" target="_blank">engulfing</a>, <a href="https://en.wikipedia.org/wiki/Hammer_(candlestick_pattern)" target="_blank">hammer</a>, and <a href="https://en.wikipedia.org/wiki/Shooting_star_(candlestick_pattern)" target="_blank">shooting star</a> patterns provide additional entry/exit insights.</li>
+          </ul>
+        </section>
+
+        <section id="volume-confirmation">
+          <h3>B. <a href="https://en.wikipedia.org/wiki/Volume_(finance)" target="_blank">Volume Confirmation</a></h3>
+          <p><strong><a href="https://en.wikipedia.org/wiki/Volume_(finance)" target="_blank">Volume</a> as Validation:</strong></p>
+          <ul>
+            <li><strong>High <a href="https://en.wikipedia.org/wiki/Volume_(finance)" target="_blank">Volume</a> on Breakout</strong>: Strong confirmation of trend continuation.</li>
+            <li><strong>Low <a href="https://en.wikipedia.org/wiki/Volume_(finance)" target="_blank">Volume</a> on Breakout</strong>: Indicates potential fakeout. Ensure breakout sustains with follow-through volume.</li>
+          </ul>
+          <p><strong><a href="https://en.wikipedia.org/wiki/Divergence_(technical_analysis)" target="_blank">Volume Divergence</a>:</strong></p>
+          <ul>
+            <li><strong><a href="https://en.wikipedia.org/wiki/Bullish_and_bearish" target="_blank">Bullish Divergence</a></strong>: Rising price, falling volume = potential reversal (weak trend).</li>
+            <li><strong><a href="https://en.wikipedia.org/wiki/Bearish_and_bullish" target="_blank">Bearish Divergence</a></strong>: Falling price, rising volume = continuation of <a href="https://en.wikipedia.org/wiki/Bear_market" target="_blank">bearish momentum</a>.</li>
+          </ul>
+        </section>
+
+        <section id="market-cycles">
+          <h3>C. <a href="https://en.wikipedia.org/wiki/Business_cycle" target="_blank">Market Cycles</a> & Time Analysis</h3>
+          <p><strong><a href="https://en.wikipedia.org/wiki/William_Delbert_Gann" target="_blank">Gann's</a> Time Cycles:</strong></p>
+          <ul>
+            <li>Focus on <a href="https://en.wikipedia.org/wiki/William_Delbert_Gann" target="_blank">Gann’s</a> key cycles (90, 144, 180, 360 days), but also watch for non-standard cycles tied to earnings or news events.</li>
+          </ul>
+          <p><strong><a href="https://en.wikipedia.org/wiki/Elliott_wave_principle" target="_blank">Elliott Wave Theory</a>:</strong></p>
+          <ul>
+            <li>Incorporate <a href="https://en.wikipedia.org/wiki/Elliott_wave_principle" target="_blank">Wave Counts</a> to anticipate where the market might be in the overall cycle.</li>
+            <li>Wave 3 & 5 tend to be the most impulsive and profitable moves.</li>
+            <li>Watch for corrective waves (2 & 4) to adjust <a href="https://en.wikipedia.org/wiki/Risk_exposure" target="_blank">risk exposure</a>.</li>
+          </ul>
+          <p><strong><a href="https://en.wikipedia.org/wiki/Economic_cycle" target="_blank">Economic Cycles</a>:</strong></p>
+          <ul>
+            <li><strong><a href="https://en.wikipedia.org/wiki/Economic_indicator" target="_blank">Economic Indicators</a></strong>: <a href="https://en.wikipedia.org/wiki/Macroeconomics" target="_blank">Macroeconomic</a> data like <a href="https://en.wikipedia.org/wiki/Consumer_Price_Index" target="_blank">CPI</a>, <a href="https://en.wikipedia.org/wiki/Producer_price_index" target="_blank">PPI</a>, <a href="https://en.wikipedia.org/wiki/Gross_domestic_product" target="_blank">GDP</a>, and <a href="https://en.wikipedia.org/wiki/Unemployment_rate" target="_blank">unemployment figures</a> can guide market sentiment.</li>
+            <li><strong><a href="https://en.wikipedia.org/wiki/Interest_rate" target="_blank">Interest Rates</a></strong>: <a href="https://en.wikipedia.org/wiki/Central_bank" target="_blank">Central bank</a> policies (<a href="https://en.wikipedia.org/wiki/Federal_Reserve_System" target="_blank">Fed</a>, <a href="https://en.wikipedia.org/wiki/European_Central_Bank" target="_blank">ECB</a>, etc.) can significantly affect asset prices, especially growth stocks.</li>
+          </ul>
+          <p><strong>Seasonality:</strong></p>
+          <ul>
+            <li>Certain sectors or stocks show predictable seasonal patterns, such as <a href="https://en.wikipedia.org/wiki/Consumer_discretionary" target="_blank">consumer discretionary</a> spending around holidays or tech ramp-ups before product launches.</li>
+          </ul>
+        </section>
+      </section>
+
+      <section id="money-investment">
+        <h2>2. How Much Money to Invest? (<a href="https://en.wikipedia.org/wiki/Risk_management" target="_blank">Risk Management</a>)</h2>
+        <section id="portfolio-allocation">
+          <h3>A. <a href="https://en.wikipedia.org/wiki/Asset_allocation" target="_blank">Portfolio Allocation</a></h3>
+          <p><strong>Risk Per Trade:</strong></p>
+          <ul>
+            <li>Stick to the 1-2% rule for each trade.</li>
+            <li>Diversify between <a href="https://en.wikipedia.org/wiki/Asset_class" target="_blank">asset classes</a> (<a href="https://en.wikipedia.org/wiki/Stock" target="_blank">stocks</a>, <a href="https://en.wikipedia.org/wiki/Option_(finance)" target="_blank">options</a>, <a href="https://en.wikipedia.org/wiki/Cryptocurrency" target="_blank">crypto</a>, <a href="https://en.wikipedia.org/wiki/Commodity_market" target="_blank">commodities</a>) and industries (tech, energy, etc.).</li>
+            <li><a href="https://en.wikipedia.org/wiki/Risk_parity" target="_blank">Risk Parity</a>: Balance risk across different instruments to prevent overexposure in one asset.</li>
+          </ul>
+          <p><strong><a href="https://en.wikipedia.org/wiki/Position_sizing" target="_blank">Position Sizing</a>:</strong></p>
+          <ul>
+            <li><strong>Formula</strong>: Use <a href="https://en.wikipedia.org/wiki/Position_sizing" target="_blank">position sizing</a> formulas to adjust the number of contracts or shares per trade.</li>
+            <li><strong><a href="https://en.wikipedia.org/wiki/Kelly_criterion" target="_blank">Kelly Criterion</a></strong>: A more advanced method for optimizing capital allocation, balancing risk vs. reward.</li>
+          </ul>
+          <div class="formula">
+            <p>📌 <strong>Example <a href="https://en.wikipedia.org/wiki/Position_sizing" target="_blank">Position Sizing</a> Formula:</strong></p>
+            <code>
+              Trade Size = (Account Capital × Risk %) / Stop-Loss Distance<br><br>
+              If Account = $50,000<br>
+              Risk per trade = 1% ($500)<br>
+              Stop-loss distance = $5<br><br>
+              Trade size = $500 / $5 = 100 shares
+            </code>
+          </div>
+        </section>
+      </section>
+    </div>
+  </div>
+
+  <!-- Bot Development page content -->
+  <div id="bot-development" class="page">
+    <div class="container">
+      <h1>Algorithmic Trading Bot Development Guide</h1>
+
+      <section id="strategy-logic">
+        <h2>Step 1: Define the Strategy Logic</h2>
+        <h3>Entry Points:</h3>
+        <ul>
+          <li><strong><a href="https://en.wikipedia.org/wiki/Fibonacci_retracement" target="_blank">Fibonacci Retracement Levels</a>:</strong> Used for spotting price reversals.</li>
+          <li><strong><a href="https://en.wikipedia.org/wiki/William_Delbert_Gann" target="_blank">Gann’s Square of Nine</a>:</strong> Implements time/price cycle predictions.</li>
+          <li><strong><a href="https://en.wikipedia.org/wiki/Momentum_(technical_analysis)" target="_blank">Momentum Indicators</a>:</strong> <a href="https://en.wikipedia.org/wiki/Relative_strength_index" target="_blank">RSI</a>, <a href="https://en.wikipedia.org/wiki/MACD" target="_blank">MACD</a>, <a href="https://en.wikipedia.org/wiki/Stochastic_oscillator" target="_blank">Stochastic</a> to confirm entries.</li>
+          <li><strong><a href="https://en.wikipedia.org/wiki/Volume_(finance)" target="_blank">Volume Confirmation</a>:</strong> Ensure breakout is supported by strong volume.</li>
+        </ul>
+
+        <h3>Risk Management:</h3>
+        <ul>
+          <li><strong><a href="https://en.wikipedia.org/wiki/Leverage_(finance)" target="_blank">Leverage</a> & <a href="https://en.wikipedia.org/wiki/Position_sizing" target="_blank">Position Size</a>:</strong> Auto-calculate position size based on account balance and risk per trade.</li>
+          <li><strong>Dynamic <a href="https://en.wikipedia.org/wiki/Stop_order" target="_blank">Stop-Loss</a> & <a href="https://en.wikipedia.org/wiki/Limit_order" target="_blank">Take-Profit</a>:</strong> Use <a href="https://en.wikipedia.org/wiki/Fibonacci_retracement" target="_blank">Fibonacci levels</a> and <a href="https://en.wikipedia.org/wiki/Gann_angles" target="_blank">Gann angles</a> for setting these levels.</li>
+          <li><strong>Exit Strategy:</strong> Exit at <a href="https://en.wikipedia.org/wiki/Fibonacci_retracement" target="_blank">Fibonacci extension</a> targets or when volume weakens.</li>
+        </ul>
+
+        <h3><a href="https://en.wikipedia.org/wiki/Stop_order" target="_blank">Stop-Loss</a> & <a href="https://en.wikipedia.org/wiki/Limit_order" target="_blank">Take-Profit</a>:</h3>
+        <ul>
+          <li><strong><a href="https://en.wikipedia.org/wiki/Risk/reward_ratio" target="_blank">Risk-to-Reward Ratio</a>:</strong> Set dynamic <a href="https://en.wikipedia.org/wiki/Stop_order" target="_blank">stop-loss</a> levels with a preferred reward-to-risk ratio (e.g., 3:1, 2:1).</li>
+          <li><strong><a href="https://en.wikipedia.org/wiki/Trailing_stop" target="_blank">Trailing Stop</a>:</strong> Use <a href="https://en.wikipedia.org/wiki/Average_true_range" target="_blank">ATR</a> (<a href="https://en.wikipedia.org/wiki/Average_true_range" target="_blank">Average True Range</a>) for dynamic stop adjustment as price moves in your favor.</li>
+        </ul>
+      </section>
+
+      <section id="programming-language">
+        <h2>Step 2: Choose a <a href="https://en.wikipedia.org/wiki/Programming_language" target="_blank">Programming Language</a></h2>
+        <p><a href="https://en.wikipedia.org/wiki/Python_(programming_language)" target="_blank">Python</a> is the ideal choice for building a trading bot due to its simplicity and rich ecosystem. Essential libraries include:</p>
+        <ul>
+          <li><strong><a href="https://en.wikipedia.org/wiki/Pandas_(software)" target="_blank">pandas</a>:</strong> For data manipulation and analysis.</li>
+          <li><strong>TA-Lib:</strong> For <a href="https://en.wikipedia.org/wiki/Technical_analysis" target="_blank">technical analysis</a> indicators (<a href="https://en.wikipedia.org/wiki/Relative_strength_index" target="_blank">RSI</a>, <a href="https://en.wikipedia.org/wiki/MACD" target="_blank">MACD</a>, <a href="https://en.wikipedia.org/wiki/Bollinger_Bands" target="_blank">Bollinger Bands</a>, etc.).</li>
+          <li><strong><a href="https://en.wikipedia.org/wiki/CCXT" target="_blank">ccxt</a>:</strong> For integrating <a href="https://en.wikipedia.org/wiki/Cryptocurrency_exchange" target="_blank">crypto exchange</a> data (supports <a href="https://en.wikipedia.org/wiki/Binance" target="_blank">Binance</a>, <a href="https://en.wikipedia.org/wiki/Coinbase" target="_blank">Coinbase</a>, etc.).</li>
+          <li><strong><a href="https://en.wikipedia.org/wiki/Backtrader" target="_blank">Backtrader</a>:</strong> For <a href="https://en.wikipedia.org/wiki/Backtesting" target="_blank">backtesting</a> strategies.</li>
+          <li><strong>TA-Lib:</strong> To calculate indicators for entry/exit decisions (e.g., <a href="https://en.wikipedia.org/wiki/Moving_average" target="_blank">moving averages</a>, <a href="https://en.wikipedia.org/wiki/Relative_strength_index" target="_blank">RSI</a>, <a href="https://en.wikipedia.org/wiki/MACD" target="_blank">MACD</a>).</li>
+          <li><strong><a href="https://en.wikipedia.org/wiki/NumPy" target="_blank">NumPy</a> and <a href="https://en.wikipedia.org/wiki/SciPy" target="_blank">SciPy</a>:</strong> For advanced mathematical calculations and optimization.</li>
+        </ul>
+      </section>
+
+      <section id="api-access">
+        <h2>Step 3: Setting Up <a href="https://en.wikipedia.org/wiki/Application_programming_interface" target="_blank">API Access</a></h2>
+        <h3>Supported Platforms:</h3>
+        <ul>
+          <li><strong>Stocks:</strong> <a href="https://en.wikipedia.org/wiki/Robinhood_(company)" target="_blank">Robinhood</a>, <a href="https://en.wikipedia.org/wiki/Webull" target="_blank">Webull</a>, <a href="https://alpaca.markets/" target="_blank">Alpaca</a> (<a href="https://en.wikipedia.org/wiki/Application_programming_interface" target="_blank">API</a> access)</li>
+          <li><strong>Crypto:</strong> <a href="https://en.wikipedia.org/wiki/Binance" target="_blank">Binance</a>, <a href="https://en.wikipedia.org/wiki/Coinbase" target="_blank">Coinbase</a>, <a href="https://en.wikipedia.org/wiki/Kraken_(company)" target="_blank">Kraken</a></li>
+        </ul>
+        <div class="warning">
+          <strong>Security Note:</strong> Never expose your <a href="https://en.wikipedia.org/wiki/Application_programming_interface" target="_blank">API</a> keys in the code. Use <a href="https://en.wikipedia.org/wiki/Environment_variable" target="_blank">environment variables</a> or a secure vault (e.g., <a href="https://www.hashicorp.com/products/vault" target="_blank">HashiCorp Vault</a>) to store <a href="https://en.wikipedia.org/wiki/Application_programming_interface" target="_blank">API</a> credentials.
+          Use <a href="https://en.wikipedia.org/wiki/OAuth" target="_blank">OAuth2</a> or <a href="https://en.wikipedia.org/wiki/JSON_Web_Token" target="_blank">JWT Tokens</a> for added security.
+        </div>
+      </section>
+
+      <section id="bot-structure">
+        <h2>Step 4: Core Bot Structure</h2>
+        <pre class="code-block"><code>import ccxt
+import pandas as pd
+import numpy as np
+import talib as ta
+
+# Exchange connection setup
+exchange = ccxt.binance({
+    'apiKey': 'YOUR_API_KEY',
+    'secret': 'YOUR_SECRET'
+})
+
+# Function to calculate Fibonacci levels
+def fibonacci_levels(data):
+    high = data['high'].max()
+    low = data['low'].min()
+    diff = high - low
+    return {
+        '23.6%': high - 0.236 * diff,
+        '38.2%': high - 0.382 * diff,
+        '50%': high - 0.5 * diff,
+        '61.8%': high - 0.618 * diff
+    }
+
+# Calculate RSI and MACD for momentum confirmation
+def calculate_indicators(data):
+    data['RSI'] = ta.RSI(data['close'], timeperiod=14)
+    data['MACD'], data['MACD_signal'], _ = ta.MACD(data['close'])
+    return data
+
+# Define a function for position sizing
+def calculate_position_size(account_balance, risk_percentage, stop_loss_distance):
+    return (account_balance * risk_percentage) / stop_loss_distance
+
+# Function to execute trades based on signals
+def execute_trade(symbol, risk_per_trade, account_balance):
+    data = exchange.fetch_ohlcv(symbol, timeframe='1h', limit=100)
+    df = pd.DataFrame(data, columns=['timestamp', 'open', 'high', 'low', 'close', 'volume'])
+    df = calculate_indicators(df)
+
+    levels = fibonacci_levels(df)
+    current_price = df['close'].iloc[-1]
+    stop_loss_distance = current_price - levels['61.8%']
+    position_size = calculate_position_size(account_balance, risk_per_trade, stop_loss_distance)
+
+    if df['RSI'].iloc[-1] < 30 and df['MACD'].iloc[-1] > df['MACD_signal'].iloc[-1]:
+        print(f"Buying {symbol} at {current_price}, Position Size: {position_size}")
+        exchange.create_market_buy_order(symbol, position_size)
+
+    if current_price >= levels['61.8%']:
+        print(f"Selling {symbol} at {current_price}")
+        exchange.create_market_sell_order(symbol, position_size)</code></pre>
+      </section>
+
+      <section id="backtesting">
+        <h2>Step 5: <a href="https://en.wikipedia.org/wiki/Backtesting" target="_blank">Backtesting</a> & Optimization</h2>
+        <p><strong>Historical Data:</strong></p>
+        <ul>
+          <li>Test across multiple market conditions (<a href="https://en.wikipedia.org/wiki/Bull_market" target="_blank">bullish</a>, <a href="https://en.wikipedia.org/wiki/Bear_market" target="_blank">bearish</a>, sideways).</li>
+          <li>Optimize parameters (<a href="https://en.wikipedia.org/wiki/Stop_order" target="_blank">stop-loss</a>, <a href="https://en.wikipedia.org/wiki/Limit_order" target="_blank">take-profit</a>, risk percentage) for maximum profitability.</li>
+        </ul>
+        <p><strong><a href="https://en.wikipedia.org/wiki/Backtrader" target="_blank">Backtrader</a> Framework:</strong></p>
+        <ul>
+          <li><a href="https://en.wikipedia.org/wiki/Backtesting" target="_blank">Backtest</a> on different timeframes (1H, 4H, daily) to test robustness.</li>
+          <li>Fine-tune <a href="https://en.wikipedia.org/wiki/Risk/reward_ratio" target="_blank">risk/reward ratios</a>, <a href="https://en.wikipedia.org/wiki/Leverage_(finance)" target="_blank">leverage</a>, and <a href="https://en.wikipedia.org/wiki/Position_sizing" target="_blank">position size</a> based on performance.</li>
+        </ul>
+      </section>
+
+      <section id="risk-management">
+        <h2>Step 6: Automated <a href="https://en.wikipedia.org/wiki/Risk_management" target="_blank">Risk Management</a></h2>
+        <p><strong><a href="https://en.wikipedia.org/wiki/Position_sizing" target="_blank">Position Size</a> Calculation:</strong> Dynamically adjusts position size based on account balance, risk percentage, and <a href="https://en.wikipedia.org/wiki/Stop_order" target="_blank">stop-loss</a> distance.</p>
+        <p><strong>Dynamic <a href="https://en.wikipedia.org/wiki/Stop_order" target="_blank">Stop-Loss</a>:</strong> Place <a href="https://en.wikipedia.org/wiki/Stop_order" target="_blank">stop-loss orders</a> below <a href="https://en.wikipedia.org/wiki/Fibonacci_retracement" target="_blank">Fibonacci levels</a> for <a href="https://en.wikipedia.org/wiki/Bullish_and_bearish" target="_blank">bullish</a> trades.</p>
+        <p><strong><a href="https://en.wikipedia.org/wiki/Trailing_stop" target="_blank">Trailing Stop</a>:</strong></p>
+        <pre class="code-block"><code>def apply_trailing_stop(current_price, entry_price, atr, trail_percentage=0.02):
+    trailing_stop = entry_price + atr * trail_percentage
+    if current_price > trailing_stop:
+        print(f"Adjusting trailing stop to {trailing_stop}")
+        # Update stop-loss with new level</code></pre>
+      </section>
+
+      <section id="deployment">
+        <h2>Step 7: Deployment & Monitoring</h2>
+        <ul>
+          <li><strong><a href="https://en.wikipedia.org/wiki/Paper_trading" target="_blank">Paper Trading</a>:</strong> Test with simulated trading first</li>
+          <li><strong>Gradual <a href="https://en.wikipedia.org/wiki/Position_sizing" target="_blank">Position Sizing</a>:</strong> Start small, scale up as the bot proves reliable</li>
+          <li><strong>Performance Metrics:</strong>
+            <ul>
+              <li><strong>Win Rate:</strong> Percentage of successful trades</li>
+              <li><strong><a href="https://en.wikipedia.org/wiki/Risk/reward_ratio" target="_blank">Risk-Reward Ratio</a>:</strong> Profitability vs risk taken</li>
+              <li><strong><a href="https://en.wikipedia.org/wiki/Drawdown_(finance)" target="_blank">Drawdown</a>:</strong> Maximum loss tracking</li>
+            </ul>
+          </li>
+        </ul>
+        <div class="warning">
+          <strong>Educational Notes:</strong> Automation improves consistency but doesn't guarantee success.
+          Always evaluate <a href="https://en.wikipedia.org/wiki/Risk_management" target="_blank">risk</a> and never trade more than you can afford to lose.
+          The bot needs regular evaluation to adapt to changing market conditions.
+        </div>
+      </section>
+
+      <section id="final-enhancements">
+        <h2>Final Enhancements:</h2>
+        <ul>
+          <li>Real-time alerts for trade confirmations or failures</li>
+          <li>Improved trading psychology through pattern recognition</li>
+          <li>Dynamic position sizing based on market <a href="https://en.wikipedia.org/wiki/Volatility_(finance)" target="_blank">volatility</a></li>
+        </ul>
+      </section>
+    </div>
+  </div>
+
+  <!-- Server Setup page content -->
+  <div id="server-setup" class="page">
+    <div class="container">
+      <h1>Server Setup Guide for Trading Bots</h1>
+
+      <section id="server-setup-intro">
+        <h2>Step 1: Set Up the Server</h2>
+        <p>To host your trading bot on a server, you'll need a <a href="https://en.wikipedia.org/wiki/Cloud_computing" target="_blank">cloud provider</a> or a local server setup. For this guide, we'll use a cloud provider like <a href="https://en.wikipedia.org/wiki/Amazon_Web_Services" target="_blank">AWS</a>, <a href="https://en.wikipedia.org/wiki/Google_Cloud_Platform" target="_blank">Google Cloud</a>, or <a href="https://en.wikipedia.org/wiki/DigitalOcean" target="_blank">DigitalOcean</a>.</p>
+
+        <section id="cloud-provider">
+          <h3>A. Choose a <a href="https://en.wikipedia.org/wiki/Cloud_computing" target="_blank">Cloud Provider</a></h3>
+          <p>You can use any cloud provider that supports <a href="https://en.wikipedia.org/wiki/Python_(programming_language)" target="_blank">Python</a> and provides sufficient resources to run your trading bot (e.g., 1 <a href="https://en.wikipedia.org/wiki/Central_processing_unit" target="_blank">vCPU</a>, 1GB of <a href="https://en.wikipedia.org/wiki/Random-access_memory" target="_blank">RAM</a> minimum).</p>
+          <h4>Popular cloud providers:</h4>
+          <ul>
+            <li><strong><a href="https://en.wikipedia.org/wiki/Amazon_Elastic_Compute_Cloud" target="_blank">AWS EC2</a></strong>: <a href="https://en.wikipedia.org/wiki/Amazon_Web_Services" target="_blank">Amazon Web Services</a>' compute instances.</li>
+            <li><strong><a href="https://en.wikipedia.org/wiki/DigitalOcean" target="_blank">DigitalOcean</a></strong>: A simple cloud service with <a href="https://en.wikipedia.org/wiki/Virtual_machine" target="_blank">virtual machines</a> (called Droplets).</li>
+            <li><strong><a href="https://en.wikipedia.org/wiki/Google_Cloud_Platform" target="_blank">Google Cloud</a></strong>: Offers flexible VM setups.</li>
+          </ul>
+          <p>Once you've chosen a provider, set up a new instance and ensure the following:</p>
+          <ul>
+            <li><a href="https://en.wikipedia.org/wiki/Ubuntu" target="_blank">Ubuntu</a> 20.04 or 22.04 as the OS (or any other <a href="https://en.wikipedia.org/wiki/Linux_distribution" target="_blank">Linux distribution</a>).</li>
+            <li><a href="https://en.wikipedia.org/wiki/Python_(programming_language)" target="_blank">Python</a> 3.x installed.</li>
+            <li><a href="https://en.wikipedia.org/wiki/Pip_(package_manager)" target="_blank">pip</a> (<a href="https://en.wikipedia.org/wiki/Pip_(package_manager)" target="_blank">Python package manager</a>) installed.</li>
+            <li><a href="https://en.wikipedia.org/wiki/Secure_Shell" target="_blank">SSH</a> access to the server for remote management.</li>
+          </ul>
+        </section>
+
+        <section id="server-environment">
+          <h3>B. Set Up Server Environment</h3>
+          <p>Once the server is set up and running, connect to it via <a href="https://en.wikipedia.org/wiki/Secure_Shell" target="_blank">SSH</a>:</p>
+          <pre class="code-block"><code>ssh username@server-ip-address</code></pre>
+          <p>Now, on the server, you'll need to:</p>
+          <ol>
+            <li><strong>Update the server:</strong>
+              <pre class="code-block"><code>sudo apt update && sudo apt upgrade -y</code></pre>
+            </li>
+            <li><strong>Install required packages:</strong>
+              <pre class="code-block"><code>sudo apt install python3-pip python3-dev python3-venv git -y</code></pre>
+            </li>
+            <li><strong>Set up a <a href="https://en.wikipedia.org/wiki/Virtual_environment" target="_blank">Python virtual environment</a>:</strong>
+              <pre class="code-block"><code>python3 -m venv trading_bot_env
+source trading_bot_env/bin/activate</code></pre>
+            </li>
+            <li><strong>Install dependencies:</strong>
+              <pre class="code-block"><code>pip install ccxt pandas numpy ta-lib backtrader flask</code></pre>
+            </li>
+          </ol>
+        </section>
+      </section>
+
+      <section id="deploy-bot">
+        <h2>Step 2: Deploy the Trading Bot</h2>
+        <p>Now that the server environment is ready, you can deploy the trading bot to run continuously.</p>
+
+        <section id="transfer-code">
+          <h3>A. Transfer Trading Bot Code</h3>
+          <p>Clone the repository or directly upload your trading bot code to the server using <a href="https://en.wikipedia.org/wiki/Secure_copy" target="_blank">scp</a> (secure copy) or by pushing it to a <a href="https://en.wikipedia.org/wiki/Version_control" target="_blank">version control</a> system like <a href="https://en.wikipedia.org/wiki/GitHub" target="_blank">GitHub</a>.</p>
+          <p>If you're using <a href="https://en.wikipedia.org/wiki/Git" target="_blank">Git</a>:</p>
+          <pre class="code-block"><code>git clone https://github.com/your_username/your_trading_bot.git
+cd your_trading_bot</code></pre>
+        </section>
+
+        <section id="run-bot-server">
+          <h3>B. Run the Bot</h3>
+          <p>You can now run the bot from the server:</p>
+          <pre class="code-block"><code>python bot.py</code></pre>
+          <p>However, this won’t keep the bot running if the <a href="https://en.wikipedia.org/wiki/Secure_Shell" target="_blank">SSH</a> session closes. To ensure the bot runs continuously, you can use <code style="color: var(--gold);">screen</code> or <code style="color: var(--gold);">tmux</code>:</p>
+          <ol>
+            <li><strong>Install screen:</strong>
+              <pre class="code-block"><code>sudo apt install screen</code></pre>
+            </li>
+            <li><strong>Start a new screen session:</strong>
+              <pre class="code-block"><code>screen -S trading_bot</code></pre>
+            </li>
+            <li><strong>Inside the screen, run your bot:</strong>
+              <pre class="code-block"><code>python bot.py</code></pre>
+            </li>
+            <li><strong>Detach the screen session to let the bot continue running in the background:</strong>
+              <p><code>Ctrl + A, then D</code></p>
+            </li>
+          </ol>
+        </section>
+      </section>
+
+      <section id="web-interface">
+        <h2>Step 3: Create a Web Interface for Your Bot</h2>
+        <p>Now, you’ll want to create a simple web interface to interact with the bot. For this, we’ll use <a href="https://en.wikipedia.org/wiki/Flask_(web_framework)" target="_blank">Flask</a>, a lightweight <a href="https://en.wikipedia.org/wiki/Python_(programming_language)" target="_blank">Python</a> <a href="https://en.wikipedia.org/wiki/Web_framework" target="_blank">web framework</a>, to create a dashboard where users can view the bot's status and control it.</p>
+
+        <section id="flask-app">
+          <h3>A. Set Up <a href="https://en.wikipedia.org/wiki/Flask_(web_framework)" target="_blank">Flask</a> Web Application</h3>
+          <p>Create a new <a href="https://en.wikipedia.org/wiki/Flask_(web_framework)" target="_blank">Flask</a> app: In your bot’s project directory, create a file called <code style="color: var(--green);">app.py</code>:</p>
+          <pre class="code-block"><code>from flask import Flask, render_template, request, redirect, url_for
+import subprocess
+import os
+
+app = Flask(__name__)
+
+# Define the command to start the bot
+bot_command = "python /path/to/your/bot.py"
+
+# Home route
+@app.route('/')
+def index():
+    return render_template('index.html')
+
+# Start the bot route
+@app.route('/start', methods=['POST'])
+def start_bot():
+    try:
+        subprocess.Popen(bot_command, shell=True)
+        return redirect(url_for('index'))
+    except Exception as e:
+        return f"Error starting bot: {e}"
+
+# Stop the bot route (Assumes you know how to stop the bot via process management)
+@app.route('/stop', methods=['POST'])
+def stop_bot():
+    os.system("pkill -f bot.py")  # Example to kill the process
+    return redirect(url_for('index'))
+
+if __name__ == "__main__":
+    app.run(debug=True, host='0.0.0.0', port=5000)
+</code></pre>
+          <p>Create the Web Interface (HTML): Create a <code style="color: var(--green);">templates</code> folder in the same directory as <code style="color: var(--green);">app.py</code>, and inside it, create an <code style="color: var(--green);">index.html</code> file:</p>
+          <pre class="code-block" id="html-code-block"><code>&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+    &lt;meta charset="UTF-8"&gt;
+    &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;
+    &lt;title&gt;Trading Bot Dashboard&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;h1&gt;Trading Bot Control Panel&lt;/h1&gt;
+    &lt;form method="post" action="/start"&gt;
+        &lt;button type="submit"&gt;Start Trading Bot&lt;/button&gt;
+    &lt;/form&gt;
+    &lt;form method="post" action="/stop"&gt;
+        &lt;button type="submit"&gt;Stop Trading Bot&lt;/button&gt;
+    &lt;/form&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code><button class="download-button" onclick="downloadCode('html-code-block', 'index.html')">Download index.html</button></pre>
+        </section>
+
+        <section id="run-flask-app">
+          <h3>B. Run <a href="https://en.wikipedia.org/wiki/Flask_(web_framework)" target="_blank">Flask</a> App</h3>
+          <p>To run the <a href="https://en.wikipedia.org/wiki/Flask_(web_framework)" target="_blank">Flask</a> web application, execute the following command:</p>
+          <pre class="code-block"><code>python app.py</code></pre>
+          <p>This will start a web server on <code style="color: var(--gold);">http://0.0.0.0:5000</code> (you can access this through your server's IP).</p>
+        </section>
+      </section>
+
+      <section id="web-server-config">
+        <h2>Step 4: Configure Web Server (Optional)</h2>
+        <p>To make your <a href="https://en.wikipedia.org/wiki/Flask_(web_framework)" target="_blank">Flask</a> app accessible from the web and secure the connection, you can configure a <a href="https://en.wikipedia.org/wiki/Web_server" target="_blank">web server</a> like <a href="https://en.wikipedia.org/wiki/Nginx" target="_blank">Nginx</a> with <a href="https://en.wikipedia.org/wiki/Transport_Layer_Security" target="_blank">SSL</a> (<a href="https://en.wikipedia.org/wiki/HTTPS" target="_blank">HTTPS</a>).</p>
+
+        <section id="install-nginx">
+          <h3>A. Install <a href="https://en.wikipedia.org/wiki/Nginx" target="_blank">Nginx</a></h3>
+          <pre class="code-block"><code>sudo apt install nginx</code></pre>
+        </section>
+
+        <section id="nginx-reverse-proxy">
+          <h3>B. Set Up <a href="https://en.wikipedia.org/wiki/Reverse_proxy" target="_blank">Reverse Proxy</a> for <a href="https://en.wikipedia.org/wiki/Flask_(web_framework)" target="_blank">Flask</a></h3>
+          <p>Edit the <a href="https://en.wikipedia.org/wiki/Nginx" target="_blank">Nginx</a> configuration file for your domain (e.g., <code style="color: var(--green);">/etc/nginx/sites-available/default</code>):</p>
+          <pre class="code-block"><code>server {
+    listen 80;
+    server_name yourdomain.com;
+
+    location / {
+        proxy_pass http://127.0.0.1:5000;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}
+</code></pre>
+          <p>Then restart <a href="https://en.wikipedia.org/wiki/Nginx" target="_blank">Nginx</a>:</p>
+          <pre class="code-block"><code>sudo systemctl restart nginx</code></pre>
+        </section>
+
+        <section id="https-ssl">
+          <h3>C. Secure with <a href="https://en.wikipedia.org/wiki/Transport_Layer_Security" target="_blank">SSL</a> (<a href="https://en.wikipedia.org/wiki/HTTPS" target="_blank">HTTPS</a>)</h3>
+          <p>Use <a href="https://letsencrypt.org/" target="_blank">Let’s Encrypt</a> to secure your web application with <a href="https://en.wikipedia.org/wiki/Transport_Layer_Security" target="_blank">SSL</a>:</p>
+          <ol>
+            <li><strong>Install Certbot:</strong>
+              <pre class="code-block"><code>sudo apt install certbot python3-certbot-nginx</code></pre>
+            </li>
+            <li><strong>Obtain <a href="https://en.wikipedia.org/wiki/Transport_Layer_Security" target="_blank">SSL certificate</a>:</strong>
+              <pre class="code-block"><code>sudo certbot --nginx</code></pre>
+            </li>
+          </ol>
+          <p>This will configure your site to serve over <a href="https://en.wikipedia.org/wiki/HTTPS" target="_blank">HTTPS</a>.</p>
+        </section>
+      </section>
+
+      <section id="monitor-maintain">
+        <h2>Step 5: Monitor & Maintain</h2>
+        <ul>
+          <li><strong>Log Management</strong>: Use tools like <a href="https://en.wikipedia.org/wiki/Logrotate" target="_blank">Logrotate</a> to manage and archive your bot’s logs.</li>
+          <li><strong>Automated Notifications</strong>: Set up email/SMS notifications for critical events (trade executed, error, etc.).</li>
+          <li><strong>Performance Monitoring</strong>: Use tools like <a href="https://grafana.com/" target="_blank">Grafana</a> or <a href="https://prometheus.io/" target="_blank">Prometheus</a> to monitor server performance and bot metrics (<a href="https://en.wikipedia.org/wiki/Central_processing_unit" target="_blank">CPU</a> usage, <a href="https://en.wikipedia.org/wiki/Random-access_memory" target="_blank">memory</a>, etc.).</li>
+        </ul>
+      </section>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('click', (e) => {
+      const link = e.target.closest('a[data-page]');
+      if (link) {
+        e.preventDefault();
+        const pageId = link.getAttribute('data-page');
+
+        // Hide all pages
+        document.querySelectorAll('.page').forEach(page => {
+          page.classList.remove('active');
+        });
+
+        // Show selected page
+        document.getElementById(pageId).classList.add('active');
+
+        // Update URL
+        window.location.hash = pageId;
+
+        // Scroll to top
+        window.scrollTo(0, 0);
+      }
+    });
+
+    // Handle direct navigation via URL hash
+    window.addEventListener('load', () => {
+      const hash = window.location.hash.slice(1) || 'home';
+      document.querySelectorAll('.page').forEach(page => {
+        page.classList.remove('active');
+      });
+      document.getElementById(hash).classList.add('active');
+    });
+
+    function downloadCode(codeBlockId, filename) {
+      const codeBlock = document.getElementById(codeBlockId);
+      let code = codeBlock.textContent;
+
+      // remove download button from code
+      code = code.replace(/<button class="download-button" .*<\/button>$/, '');
+
+      const blob = new Blob([code], { type: 'text/html' });
+      const downloadLink = document.createElement('a');
+      downloadLink.href = URL.createObjectURL(blob);
+      downloadLink.download = filename;
+      document.body.appendChild(downloadLink);
+      downloadLink.click();
+      document.body.removeChild(downloadLink);
+    }
+  </script>
+</body>
+</html>
