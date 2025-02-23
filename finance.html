@@ -1,0 +1,420 @@
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cyber Finance Hub</title>
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
+  <style>
+body {
+  margin: 0;
+  padding: 0;
+  background-color: #111;
+  color: #00FFFF;
+  font-family: 'Share Tech Mono', monospace;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  overflow-x: hidden;
+  background: #111;
+}
+
+.matrix-bg {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  opacity: 0.1;
+  background: 
+    linear-gradient(rgba(0, 255, 255, 0.1) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 255, 255, 0.1) 1px, transparent 1px),
+    url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40"><text x="0" y="20" font-size="20" fill="rgba(0,255,255,0.2)">$</text><text x="20" y="40" font-size="20" fill="rgba(0,255,255,0.2)">₿</text></svg>');
+  background-size: 20px 20px, 20px 20px, 40px 40px;
+  animation: matrix-shift 20s linear infinite;
+}
+
+@keyframes matrix-shift {
+  0% { background-position: 0 0, 0 0, 0 0; }
+  100% { background-position: 40px 40px, 40px 40px, 40px 40px; }
+}
+
+.ai-menu {
+  background: linear-gradient(135deg, rgba(0, 0, 0, 0.9), rgba(0, 40, 40, 0.9));
+  padding: 10px 20px;
+  border-bottom: 2px solid #00FFFF;
+  box-shadow: 0 0 20px rgba(0, 255, 255, 0.2);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  border-radius: 20px;
+  margin-bottom: 10px;
+}
+
+nav ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  justify-content: space-around;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+@media (max-width: 768px) {
+  .ai-menu {
+    padding: 5px 10px;
+  }
+  nav ul {
+    flex-direction: row;
+    align-items: center;
+    gap: 5px;
+  }
+}
+
+.cyber-link {
+  display: flex;
+  align-items: center;
+  padding: 8px 16px;
+  color: #00FFFF;
+  text-decoration: none;
+  border: 1px solid #00FFFF;
+  background: rgba(0, 20, 20, 0.3);
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  text-shadow: 0 0 5px #00FFFF;
+  box-shadow: 0 0 10px rgba(0, 255, 255, 0.2);
+  border-radius: 25px;
+  font-size: 0.9em;
+  white-space: nowrap;
+}
+
+.cyber-link:nth-child(1) {
+  border-color: #FF00FF;
+  color: #FF00FF;
+  background: linear-gradient(135deg, rgba(255, 0, 255, 0.1), rgba(0, 255, 255, 0.1));
+}
+
+.cyber-link:nth-child(2) {
+  border-color: #00FF00;
+  color: #00FF00;
+  background: linear-gradient(135deg, rgba(0, 255, 0, 0.1), rgba(255, 255, 0, 0.1));
+}
+
+.cyber-link:nth-child(3) {
+  border-color: #FFFF00;
+  color: #FFFF00;
+  background: linear-gradient(135deg, rgba(255, 255, 0, 0.1), rgba(255, 128, 0, 0.1));
+}
+
+.cyber-link:nth-child(4) {
+  border-color: #FF8800;
+  color: #FF8800;
+  background: linear-gradient(135deg, rgba(255, 136, 0, 0.1), rgba(255, 0, 0, 0.1));
+}
+
+.cyber-link:nth-child(5) {
+  border-color: #FF0088;
+  color: #FF0088;
+  background: linear-gradient(135deg, rgba(255, 0, 136, 0.1), rgba(136, 0, 255, 0.1));
+}
+
+.link-content {
+  z-index: 1;
+  margin-right: 5px;
+}
+
+.link-icon {
+  font-size: 1em;
+  z-index: 1;
+}
+
+.cyber-link:hover {
+  background: rgba(0, 255, 255, 0.1);
+  box-shadow: 0 0 20px currentColor;
+  transform: translateY(-2px);
+}
+
+.cyber-link::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  width: calc(100% + 4px);
+  height: calc(100% + 4px);
+  background: linear-gradient(45deg, #00FFFF, transparent, #00FFFF);
+  animation: borderRotate 2s linear infinite;
+  z-index: -1;
+  border-radius: 27px;
+}
+
+@keyframes borderRotate {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.link-glitch {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 255, 255, 0.5);
+  mix-blend-mode: overlay;
+  animation: glitch 4s infinite;
+  opacity: 0;
+}
+
+@keyframes glitch {
+  0% { transform: translate(0); opacity: 0; }
+  1% { transform: translate(-2px, 2px); opacity: 0.5; }
+  2% { transform: translate(2px, -2px); opacity: 0.5; }
+  3% { transform: translate(0); opacity: 0; }
+  100% { transform: translate(0); opacity: 0; }
+}
+
+.landing-section {
+  padding: 20px;
+  margin: 10px;
+  border: 1px solid #00FFFF;
+  border-radius: 15px;
+  box-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
+  background: linear-gradient(135deg, rgba(0, 0, 0, 0.7), rgba(0, 40, 40, 0.7));
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  text-align: center;
+}
+
+.landing-section:nth-of-type(1) {
+  background: linear-gradient(135deg, rgba(0, 255, 255, 0.1), rgba(0, 128, 255, 0.1));
+  border-color: #00FFFF;
+}
+
+.landing-section:nth-of-type(2) {
+  background: linear-gradient(135deg, rgba(255, 0, 255, 0.1), rgba(255, 0, 128, 0.1));
+  border-color: #FF00FF;
+}
+
+.landing-section:nth-of-type(3) {
+  background: linear-gradient(135deg, rgba(0, 255, 0, 0.1), rgba(128, 255, 0, 0.1));
+  border-color: #00FF00;
+}
+
+.landing-section:nth-of-type(4) {
+  background: linear-gradient(135deg, rgba(255, 255, 0, 0.1), rgba(255, 128, 0, 0.1));
+  border-color: #FFFF00;
+}
+
+.landing-section:nth-of-type(5) {
+  background: linear-gradient(135deg, rgba(255, 0, 128, 0.1), rgba(128, 0, 255, 0.1));
+  border-color: #FF0080;
+}
+
+.landing-section:nth-of-type(6) {
+  background: linear-gradient(135deg, rgba(128, 0, 255, 0.1), rgba(0, 255, 255, 0.1));
+  border-color: #8000FF;
+}
+
+.landing-section:hover {
+  box-shadow: 0 0 20px currentColor;
+}
+
+.section-title {
+  color: currentColor;
+  text-shadow: 0 0 8px currentColor;
+  font-size: 1.5em;
+  margin-bottom: 15px;
+  text-align: center;
+}
+
+.section-description {
+  line-height: 1.4;
+  margin-bottom: 20px;
+}
+
+.call-to-action {
+  display: inline-block;
+  padding: 10px 20px;
+  color: #000;
+  background-color: #00FFFF;
+  text-decoration: none;
+  border-radius: 20px;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  box-shadow: 0 0 8px rgba(0, 255, 255, 0.5);
+}
+
+.call-to-action:hover {
+  background-color: #000;
+  color: #00FFFF;
+  box-shadow: 0 0 12px rgba(0, 255, 255, 0.7);
+}
+
+ul {
+  padding-left: 20px;
+  text-align: left;
+}
+
+li {
+  margin-bottom: 5px;
+}
+
+.money-image {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  margin: 20px auto; 
+  border-radius: 10px;
+  box-shadow: 0 0 20px rgba(0, 255, 255, 0.3);
+}
+  </style>
+</head>
+<body>
+  <div class="matrix-bg"></div>
+  <div class="ai-menu">
+    <nav>
+      <ul>
+        <li>
+          <a href="http://711131719.xyz/aiclone.html" class="cyber-link" target="_blank">
+            <span class="link-content">AI Clone</span>
+            <div class="link-glitch"></div>
+            <span class="link-icon">🧬</span>
+          </a>
+        </li>
+        <li>
+          <a href="http://711131719.xyz/aipromote.html" class="cyber-link" target="_blank">
+            <span class="link-content">AI Promoting</span>
+            <div class="link-glitch"></div>
+            <span class="link-icon">🤖</span>
+          </a>
+        </li>
+        <li>
+          <a href="http://711131719.xyz/autoinvest.html" class="cyber-link" target="_blank">
+            <span class="link-content">Automatic Investing</span>
+            <div class="link-glitch"></div>
+            <span class="link-icon">📈</span>
+          </a>
+        </li>
+        <li>
+          <a href="http://711131719.xyz/cryptotrader.html" class="cyber-link" target="_blank">
+            <span class="link-content">Crypto Trader Simulator</span>
+            <div class="link-glitch"></div>
+            <span class="link-icon">₿</span>
+          </a>
+        </li>
+        <li>
+          <a href="http://711131719.xyz/keyhacker.html" class="cyber-link" target="_blank">
+            <span class="link-content">Private Key Hacker</span>
+            <div class="link-glitch"></div>
+            <span class="link-icon">🔐</span>
+          </a>
+        </li>
+      </ul>
+    </nav>
+  </div>
+
+  <img src="https://www.711131719.xyz/images/Vx2yubYs78o3ALS5-generated_image.jpg" alt="Money" class="money-image">
+
+  <section class="landing-section">
+    <h2 class="section-title">🔥 Dominate the Digital World! 🔥</h2>
+    <p class="section-description">
+      Enter the Neon Grid! 🌐 In the hyper-connected expanse of tomorrow, your digital footprint echoes through the metaverse. 🌌 It’s not just about being online; it’s about owning the web! 🚀 Command the algorithms, amass digital fortunes 💰💰💰, and erect impenetrable cybersecurity bastions! 🛡️ Discover the AI secrets to viral content, turning clicks into cold, hard CASH! 🤑🤑💰 Witness AI's prowess in automating investments, executing crypto trades with unmatched precision 🎯, and becoming an unbreachable digital fortress! 🛡️ This isn't just an opportunity; it’s a revolution waiting for YOU! 💥 Get ready to plug in! 🔌 This is 100% FREE! The best tutorials and easiest methods are all here. Want to be a millionaire in a few years or even less? Then use all these FREE tools! 💎
+    </p>
+    <ul>
+      <li>🔹 Supercharge social media influence with advanced AI algorithms 🚀</li>
+      <li>🔹 Automate investment strategies for peak profitability 📈💰€</li>
+      <li>🔹 Achieve crypto mastery and fortress-level cybersecurity 🔐₿</li>
+    </ul>
+  </section>
+
+  <section class="landing-section">
+    <h2 class="section-title">💰 Unlock Financial Freedom! 💸</h2>
+    <p class="section-description">
+      Ready to transform your online presence into a money-making machine? 🚀💰 With our FREE tools and tutorials, you'll learn how to create viral content, boost your social media views, and generate MASSIVE income! 🤑🤑 Use that cash to automate your investments, master crypto trading, and protect your digital assets like a pro! 🛡️ This is your chance to build REAL wealth and achieve financial independence FASTER than you ever thought possible! 💯 This is 100% FREE! The best tutorials and easiest methods are all here. Want to be a millionaire in a few years or even less? Then use all these FREE tools! 💎
+    </p>
+  </section>
+
+  <section class="landing-section">
+    <h2 class="section-title">🧬 AI Clone - Replicate Reality with AI 🤯</h2>
+    <p class="section-description">
+      Dive headfirst into the future of content creation with AI Clone! 🌟 Generate videos, images, and text so lifelike, they blur the lines of reality! 🎥 Whether you're crafting mind-blowing digital avatars, cutting-edge marketing materials, or avant-garde art, AI Clone delivers unmatched power and creativity. Unleash your imagination and prepare to be amazed! ✨ This is 100% FREE! The best tutorials and easiest methods are all here. Want to be a millionaire in a few years or even less? Then use all these FREE tools! 💎
+    </p>
+    <ul>
+      <li>🔹 Generate realistic AI videos 🎬</li>
+      <li>🔹 Create custom AI-generated images 🖼️</li>
+      <li>🔹 Automate text content creation ✍️</li>
+    </ul>
+    <a href="http://711131719.xyz/aiclone.html" class="call-to-action" target="_blank">
+      Explore AI Cloning
+    </a>
+  </section>
+
+  <section class="landing-section">
+    <h2 class="section-title">🚀 AI Promoting – Revolutionize Your Digital Presence 💥</h2>
+    <p class="section-description">
+      The future of marketing has arrived, and it's powered by AI! 🤖 AI Promoting unleashes cutting-edge algorithms to amplify your brand, skyrocket engagement, and automate content strategy like never before! 📈 Whether you're an influencer, a business mogul 💼, or a content visionary, our AI-driven systems analyze trends, optimize outreach, and guarantee maximum visibility! Say farewell to guesswork and HELLO to AI-powered success! 🎉 This is 100% FREE! The best tutorials and easiest methods are all here. Want to be a millionaire in a few years or even less? Then use all these FREE tools! 💎
+    </p>
+    <ul>
+      <li>🔹 Automated growth strategies 🚀</li>
+      <li>🔹 AI-generated content & engagement ✍️</li>
+      <li>🔹 Smart audience targeting 🎯</li>
+    </ul>
+    <a href="http://711131719.xyz/aipromote.html" class="call-to-action" target="_blank">🔗 Dominate the digital landscape now!</a>
+  </section>
+
+  <section class="landing-section">
+    <h2 class="section-title">📈 Automatic Investing – Let AI Build Your Wealth 💰</h2>
+    <p class="section-description">
+      Why slave away trading manually when AI can do it with laser-like precision? 🎯 Our Automatic Investing platform is engineered to analyze markets, optimize trades, and MAXIMIZE your returns 24/7! 🌟 Whether you're a seasoned Wall Street titan or a fresh-faced beginner, our intelligent system ensures your money WORKS FOR YOU, effortlessly! 💸 This is 100% FREE! The best tutorials and easiest methods are all here. Want to be a millionaire in a few years or even less? Then use all these FREE tools! 💎
+    </p>
+    <ul>
+      <li>🔹 AI-driven portfolio management 🤖</li>
+      <li>🔹 Real-time data analytics 📊</li>
+      <li>🔹 Smart risk assessment 🧠</li>
+    </ul>
+    <a href="http://711131719.xyz/autoinvest.html" class="call-to-action" target="_blank">💰 Start investing smarter today!</a>
+  </section>
+
+  <section class="landing-section">
+    <h2 class="section-title">₿ Crypto Trader Simulator – Master the Markets Risk-Free 🛡️</h2>
+    <p class="section-description">
+      Ready to trade crypto like a financial ninja 🥷 without risking your hard-earned cash 💰💰💰? The Crypto Trader Simulator is your ULTIMATE training ground! Simulate real-time market conditions, test your boldest strategies, and sharpen your skills to a razor's edge—all without the risk! Perfect for newbies learning the ropes and seasoned pros honing their edge! 🚀 This is 100% FREE! The best tutorials and easiest methods are all here. Want to be a millionaire in a few years or even less? Then use all these FREE tools! 💎
+    </p>
+    <ul>
+      <li>🔹 Live market data & trading scenarios 📊</li>
+      <li>🔹 Realistic risk simulations 🎯</li>
+      <li>🔹 Sharpen your crypto trading strategies 🧠</li>
+    </ul>
+    <a href="http://711131719.xyz/cryptotrader.html" class="call-to-action" target="_blank">📊 Train like a trader—win like a pro!</a>
+  </section>
+
+  <section class="landing-section">
+    <h2 class="section-title">🔐 Private Key Hacker – Unlock the Cyber Realm 🔓</h2>
+    <p class="section-description">
+      Cybersecurity is evolving at warp speed, and so are the challenges! 🚀 The Private Key Hacker tool is built for ethical hacking heroes and security professionals eager to understand encryption, test vulnerabilities, and explore the depths of cryptographic security! 🛡️ Learn how blockchain security works—and how to fortify it against any threat! 💥 This is 100% FREE! The best tutorials and easiest methods are all here. Want to be a millionaire in a few years or even less? Then use all these FREE tools! 💎
+    </p>
+    <ul>
+      <li>🔹 Deep dive into cryptographic principles 🧠</li>
+      <li>🔹 Test security flaws & defenses 🎯</li>
+      <li>🔹 Master ethical hacking techniques 🥷</li>
+    </ul>
+    <a href="http://711131719.xyz/keyhacker.html" class="call-to-action" target="_blank">🛡 The future of cybersecurity starts here.</a>
+  </section>
+
+  <script>
+document.addEventListener('DOMContentLoaded', () => {
+  const hoverSound = new Audio('data:audio/wav;base64,UklGRn4AAABXQVZFZm10IBAAAAABAAEAgD4AAIA+AAABAAgAZGF0YVoAAAAAAQAA//8CAP//AQAAAP//AgD//wEAAAD//wIA//8BAAAAAAABAP//AgD//wEA//8CAP//AQAAAP//AgD//wEA');
+  hoverSound.volume = 0.1;
+
+  document.querySelectorAll('.cyber-link').forEach(link => {
+    link.addEventListener('mouseenter', () => {
+      if (hoverSound.paused) {
+        hoverSound.play().catch(error => {
+          console.log('Auto-play was prevented', error);
+        });
+      }
+    });
+  });
+});
+  </script>
+</body>
+</html>
