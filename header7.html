@@ -1,0 +1,192 @@
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cyber Finance Hub</title>
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
+  <style>
+body {
+  margin: 0;
+  padding: 0;
+  background-color: #000;
+  color: #0f0;
+  font-family: 'Share Tech Mono', monospace;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+.matrix-bg {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  opacity: 0.1;
+  background: linear-gradient(rgba(0, 255, 0, 0.1) 1px, transparent 1px),
+              linear-gradient(90deg, rgba(0, 255, 0, 0.1) 1px, transparent 1px);
+  background-size: 20px 20px;
+  animation: matrix-shift 20s linear infinite;
+}
+
+@keyframes matrix-shift {
+  0% { background-position: 0 0; }
+  100% { background-position: 40px 40px; }
+}
+
+.ai-menu {
+  background: linear-gradient(135deg, rgba(0, 0, 0, 0.9), rgba(0, 40, 40, 0.9));
+  padding: 20px 40px;
+  border-bottom: 2px solid #0f0;
+  box-shadow: 0 0 20px rgba(0, 255, 0, 0.2);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+nav ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+}
+
+@media (max-width: 768px) {
+  .ai-menu {
+    padding: 10px 20px;
+  }
+  nav ul {
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+  }
+}
+
+.cyber-link {
+  display: flex;
+  align-items: center;
+  padding: 12px 25px;
+  color: #0f0;
+  text-decoration: none;
+  border: 1px solid #0f0;
+  background: rgba(0, 20, 20, 0.3);
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  text-shadow: 0 0 5px #0f0;
+  box-shadow: 0 0 10px rgba(0, 255, 0, 0.2);
+  border-radius: 20px;
+}
+
+.link-content {
+  z-index: 1;
+  margin-right: 10px;
+}
+
+.link-icon {
+  font-size: 1.2em;
+  z-index: 1;
+}
+
+.cyber-link:hover {
+  background: rgba(0, 255, 0, 0.1);
+  box-shadow: 0 0 20px rgba(0, 255, 0, 0.4);
+  transform: translateY(-2px);
+}
+
+.cyber-link::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  width: calc(100% + 4px);
+  height: calc(100% + 4px);
+  background: linear-gradient(45deg, #0f0, transparent, #0f0);
+  animation: borderRotate 2s linear infinite;
+  z-index: -1;
+}
+
+@keyframes borderRotate {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.link-glitch {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 255, 0, 0.5);
+  mix-blend-mode: overlay;
+  animation: glitch 4s infinite;
+  opacity: 0;
+}
+
+@keyframes glitch {
+  0% { transform: translate(0); opacity: 0; }
+  1% { transform: translate(-2px, 2px); opacity: 0.5; }
+  2% { transform: translate(2px, -2px); opacity: 0.5; }
+  3% { transform: translate(0); opacity: 0; }
+  100% { transform: translate(0); opacity: 0; }
+}
+  </style>
+</head>
+<body>
+  <div class="matrix-bg"></div>
+  <div class="ai-menu">
+    <nav>
+      <ul>
+        <li>
+          <a href="http://711131719.xyz/aipromote.html" class="cyber-link">
+            <span class="link-content">AI Promoting</span>
+            <div class="link-glitch"></div>
+            <span class="link-icon">🤖</span>
+          </a>
+        </li>
+        <li>
+          <a href="http://711131719.xyz/autoinvest.html" class="cyber-link">
+            <span class="link-content">Automatic Investing</span>
+            <div class="link-glitch"></div>
+            <span class="link-icon">📈</span>
+          </a>
+        </li>
+        <li>
+          <a href="http://711131719.xyz/cryptotrader.html" class="cyber-link">
+            <span class="link-content">Crypto Trader Simulator</span>
+            <div class="link-glitch"></div>
+            <span class="link-icon">₿</span>
+          </a>
+        </li>
+        <li>
+          <a href="http://711131719.xyz/keyhacker.html" class="cyber-link">
+            <span class="link-content">Private Key Hacker</span>
+            <div class="link-glitch"></div>
+            <span class="link-icon">🔐</span>
+          </a>
+        </li>
+      </ul>
+    </nav>
+  </div>
+  <script>
+document.addEventListener('DOMContentLoaded', () => {
+  const hoverSound = new Audio('data:audio/wav;base64,UklGRn4AAABXQVZFZm10IBAAAAABAAEAgD4AAIA+AAABAAgAZGF0YVoAAAAAAQAA//8CAP//AQAAAP//AgD//wEAAAD//wIA//8BAAAAAAABAP//AgD//wEA//8CAP//AQAAAP//AgD//wEA');
+  hoverSound.volume = 0.1;
+
+  document.querySelectorAll('.cyber-link').forEach(link => {
+    link.addEventListener('mouseenter', () => {
+      if (hoverSound.paused) {
+        hoverSound.play().catch(error => {
+          console.log('Auto-play was prevented', error);
+        });
+      }
+    });
+  });
+});
+  </script>
+</body>
+</html>
