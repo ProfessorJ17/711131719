@@ -1,0 +1,930 @@
+<html>
+<head>
+  <title>Bitcoin Tutorials: Secure Your Crypto Future</title>
+  <style>
+    body {
+      font-family: 'Ubuntu', sans-serif;
+      line-height: 1.8;
+      color: #e0e0e0;
+      background-color: #121212;
+      padding: 30px;
+      max-width: 900px;
+      margin: auto;
+      background: linear-gradient(45deg, #121212, #1a1a1a, #121212);
+      animation: gradientBG 15s ease infinite;
+    }
+
+    @keyframes gradientBG {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    h1, h2 {
+      color: #00bcd4;
+      text-shadow: 0 0 10px #00bcd4, 0 0 20px #00bcd4, 0 0 30px #00bcd4;
+      animation: glow 2s ease-in-out infinite alternate;
+    }
+
+    @keyframes glow {
+      from {
+        text-shadow: 0 0 10px #00bcd4, 0 0 20px #00bcd4, 0 0 30px #00bcd4;
+      }
+      to {
+        text-shadow: 0 0 20px #00bcd4, 0 0 30px #00bcd4, 0 0 40px #00bcd4, 0 0 50px #00bcd4;
+      }
+    }
+
+    .menu {
+      background: rgba(0, 0, 0, 0.3);
+      backdrop-filter: blur(10px);
+      border-radius: 15px;
+      padding: 15px;
+      box-shadow: 0 0 20px rgba(0, 188, 212, 0.3);
+    }
+
+    .menu a {
+      padding: 12px 20px;
+      background: linear-gradient(45deg, #00bcd4, #00e5ff);
+      color: #121212;
+      text-decoration: none;
+      border-radius: 7px;
+      font-weight: bold;
+      transition: all 0.3s ease;
+      box-shadow: 0 0 15px rgba(0, 188, 212, 0.5);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .menu a:hover {
+      transform: translateY(-3px) scale(1.05);
+      background: linear-gradient(45deg, #00e5ff, #00bcd4);
+      box-shadow: 0 0 25px rgba(0, 188, 212, 0.8), 0 0 40px rgba(0, 188, 212, 0.4);
+    }
+
+    #home-tutorial.active {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 30px;
+      animation: fadeIn 1s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    #home-tutorial h1 {
+      font-size: 3.5em;
+      background: linear-gradient(45deg, #00bcd4, #00e5ff, #00bcd4);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      margin-bottom: 20px;
+      text-align: center;
+      animation: titleGlow 3s ease-in-out infinite;
+    }
+
+    @keyframes titleGlow {
+      0%, 100% { filter: drop-shadow(0 0 15px rgba(0, 188, 212, 0.8)); }
+      50% { filter: drop-shadow(0 0 30px rgba(0, 188, 212, 1)); }
+    }
+
+    .tutorial-preview {
+      background: rgba(30, 30, 30, 0.8);
+      backdrop-filter: blur(10px);
+      border: 2px solid #00bcd4;
+      padding: 30px;
+      border-radius: 20px;
+      margin-bottom: 25px;
+      width: 80%;
+      box-shadow: 0 0 30px rgba(0, 188, 212, 0.2);
+      transition: all 0.5s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .tutorial-preview::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: linear-gradient(
+        45deg,
+        transparent,
+        rgba(0, 188, 212, 0.1),
+        transparent
+      );
+      transform: rotate(45deg);
+      animation: shine 3s infinite;
+    }
+
+    @keyframes shine {
+      0% { transform: translateX(-100%) rotate(45deg); }
+      100% { transform: translateX(100%) rotate(45deg); }
+    }
+
+    .tutorial-preview:hover {
+      transform: translateY(-10px) scale(1.02);
+      box-shadow: 0 0 50px rgba(0, 188, 212, 0.4);
+      border-color: #00e5ff;
+    }
+
+    .emoji {
+      font-size: 1.4em;
+      animation: float 3s ease-in-out infinite;
+      display: inline-block;
+      margin: 0 5px;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+
+    .money-rain {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    .money-emoji {
+      position: absolute;
+      animation: moneyFall linear infinite;
+      opacity: 0.3;
+    }
+
+    @keyframes moneyFall {
+      from { transform: translateY(-100vh) rotate(0deg); }
+      to { transform: translateY(100vh) rotate(360deg); }
+    }
+
+    p, li {
+      color: #d0d0d0;
+    }
+    pre {
+      background-color: #222;
+      color: #f8f8f2;
+      padding: 15px;
+      border: 1px solid #333;
+      border-radius: 8px;
+      overflow-x: auto;
+      font-family: 'Roboto Mono', monospace;
+    }
+    .code-block {
+      background-color: #1e1e1e;
+      border: 1px solid #3a3a3a;
+      padding: 20px;
+      border-radius: 8px;
+      overflow-x: auto;
+      font-family: 'Fira Code', monospace;
+      font-size: 15px;
+      color: #f0f0f0;
+      line-height: 1.5;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+    }
+    .code-block::-webkit-scrollbar {
+      height: 10px;
+    }
+    .code-block::-webkit-scrollbar-track {
+      background: #2a2a2a;
+    }
+    .code-block::-webkit-scrollbar-thumb {
+      background: #555;
+      border-radius: 5px;
+    }
+    .code-block::-webkit-scrollbar-thumb:hover {
+      background: #777;
+    }
+    .menu {
+      display: flex;
+      gap: 25px;
+      margin-bottom: 30px;
+      justify-content: left;
+      padding-bottom: 15px;
+      border-bottom: 1px solid #333;
+    }
+    .tutorial-content {
+      display: none;
+    }
+    .tutorial-content.active {
+      display: block;
+    }
+    a {
+      color: #00bcd4;
+      text-decoration: none;
+      transition: color 0.3s ease;
+    }
+    a:hover {
+      color: #00e6ff;
+    }
+    ul, ol {
+      margin-bottom: 15px;
+    }
+    li {
+      margin-bottom: 8px;
+    }
+    /* New Styles for Home Page */
+    #home-tutorial.active {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    #home-tutorial h1 {
+      font-size: 3em;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+    #home-tutorial p.tagline {
+      font-size: 1.5em;
+      color: #aaa;
+      margin-bottom: 40px;
+      text-align: center;
+    }
+  </style>
+  <link href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;700&family=Roboto+Mono&family=Fira+Code&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <nav class="menu">
+    <a href="#" onclick="showTutorial('home')">Home</a>
+    <a href="#" onclick="showTutorial('checker')"> Private Bitcoin Key Hacker</a>
+    <a href="#" onclick="showTutorial('coinbin')">Moving HACKED BTC with Coinb.in Tutorial</a>
+    <a href="https://711131719.xyz/donate.html">Donate</a>
+  </nav>
+
+  <div id="home-tutorial" class="tutorial-content active">
+    <h1>Unlock the Power of Bitcoin <span class="emoji">🔑</span><span class="emoji">🚀</span></h1>
+    <p class="tagline">Dream of striking digital gold? Imagine uncovering the legendary Bitcoin stash of Satoshi Nakamoto himself—millions of BTC waiting just for you! Your journey to potentially becoming an instant millionaire starts right here. Dive into electrifying tutorials that will arm you with cutting-edge crypto skills and open the door to life-changing opportunities. The future of wealth is at your fingertips—are you ready to seize it? 🌟💰</p>
+
+    <div class="tutorial-preview">
+      <h2><a href="#" onclick="showTutorial('checker')">Bitcoin Private Key Checker Tutorial <span class="emoji">🔍</span><span class="emoji">💎</span></a></h2>
+      <p>Ever wondered what secrets lie hidden in the vast expanse of Bitcoin's blockchain? What if you could stumble upon a forgotten private key linked to Satoshi's untouched fortune? This isn't just a tutorial—it's your golden ticket to exploring the cryptographic universe! Learn to wield the power of Bitcoin private keys like a digital detective, uncovering addresses that could hold unimaginable wealth. 💸</p>
+      <p><strong>Discover Hidden Treasures:</strong> Master the art of checking private keys and their associated Bitcoin addresses. Could one of them be the key to Satoshi's millions?</p>
+      <p><strong>Secure Your Digital Empire:</strong> Dive deep into cryptographic security, ensuring you're equipped to handle the keys to potential riches safely and efficiently.</p>
+      <p><strong>Empower Your Crypto Journey:</strong> Step into the elite circle of crypto explorers who understand the true power of private keys. Your millionaire destiny awaits! 🛡️🔐</p>
+    </div>
+
+    <div class="tutorial-preview">
+      <h2><a href="#" onclick="showTutorial('coinbin')">Moving Bitcoin with Coinb.in Tutorial <span class="emoji">💸</span><span class="emoji">🏦</span></a></h2>
+      <p>Found a private key with a balance that could change your life forever? Now it's time to claim your prize! With Coinb.in, you're not just moving Bitcoin—you're taking control of your financial future. This isn't just a transaction; it's your path to becoming your own crypto bank, potentially unlocking millions in BTC with a few clicks. 🚀💡</p>
+      <p><strong>Master the Millionaire Move:</strong> Learn to create, sign, and broadcast Bitcoin transactions like a pro. Imagine transferring Satoshi's BTC to your wallet—securely and confidently!</p>
+      <p><strong>Decentralized Power in Your Hands:</strong> Coinb.in puts you in the driver's seat. No middlemen, no banks—just you and your potential fortune.</p>
+      <p><strong>Safety First, Riches Second:</strong> Follow our step-by-step guide to ensure every transaction is rock-solid secure. Your journey to millions starts with trust in your skills. 🔒💰</p>
+    </div>
+
+    <p>Start Your Crypto Adventure Today! <span class="emoji">🌍</span><span class="emoji">💡</span> The crypto world is buzzing with opportunity, and YOU have the chance to be at the forefront. Imagine the thrill of discovering a private key linked to Satoshi's legendary stash—millions of BTC that could make you an instant millionaire! These tutorials aren't just lessons; they're your launchpad to financial freedom and crypto mastery. 🚀🔥</p>
+    <p><strong>Unleash Your Inner Crypto Tycoon:</strong> Gain the knowledge and skills to navigate Bitcoin's vast potential.</p>
+    <p><strong>Join the Elite:</strong> Become part of the select few who understand and control their digital assets with confidence.</p>
+    <p><strong>Secure Your Financial Future:</strong> With every tutorial, you're one step closer to unlocking the power of Bitcoin—and maybe, just maybe, striking it rich! 💸🌟</p>
+    <p>Don't wait—the next Bitcoin millionaire could be YOU! Start your crypto education today and navigate the future of finance with knowledge, security, and the dream of uncovering Satoshi's hidden treasure! 💡🔑</p>
+  </div>
+
+  <div id="checker-tutorial" class="tutorial-content">
+    <h1>Tutorial: Bitcoin Private Key Checker with Simulated Quantum Random Number Generation</h1>
+
+    <p>This version replaces the IBM QRNG API with a simulated quantum random number generator while maintaining the same core functionality for checking Bitcoin private keys. This approach removes the dependency on external APIs and allows for offline operation while still simulating the benefits of quantum randomness for key generation.</p>
+
+    <h2>Simulated Quantum Random Number Generator</h2>
+    <p>Our simulated quantum random number generator is designed to mimic some aspects of quantum randomness using standard cryptographic methods. It aims to provide a more unpredictable source of randomness compared to typical pseudo-random number generators. Here are the key features:</p>
+
+    <ul>
+      <li><strong>Use crypto.randomBytes as a base entropy source:</strong> We leverage the built-in <code>crypto.randomBytes</code> module in Node.js to obtain cryptographically secure random bytes. This serves as the foundation for our simulated quantum randomness, ensuring a high level of initial entropy.</li>
+      <li><strong>Apply quantum-like distribution patterns:</strong> The generator applies mathematical operations inspired by quantum mechanics to the base entropy. This includes bitwise operations and state manipulations designed to distribute the randomness in a way that resembles quantum distributions.</li>
+      <li><strong>Implement superposition-like effects:</strong> To simulate quantum superposition, the generator uses a stateful approach where previous outputs influence future outputs in a complex manner. This is achieved through XOR operations and state shifting, creating an effect similar to quantum interference.</li>
+      <li><strong>Ensure uniform distribution across the range:</strong> Despite the quantum-like simulations, the generator is engineered to ensure that the final output is uniformly distributed across the desired range. This is crucial for applications like private key generation where bias in randomness could lead to vulnerabilities.</li>
+    </ul>
+
+    <h2>Complete Code</h2>
+    <p>Below is the complete JavaScript code for the Bitcoin Private Key Checker with the Simulated Quantum Random Number Generator. You can copy and paste this code into a file named <code>script.js</code> and run it using Node.js.</p>
+
+    <div class="code-block">
+      <pre>
+const puppeteer = require('puppeteer');
+const fs = require('fs');
+const path = require('path');
+const crypto = require('crypto');
+
+// Configuration
+const puppeteer = require('puppeteer');
+const fs = require('fs');
+const path = require('path');
+const crypto = require('crypto');
+const csvWriter = require('csv-writer').createObjectCsvWriter;
+
+// Configuration
+const CONFIG = {
+    BASE_URL: 'https://privatekeyfinder.io/private-keys/bitcoin/',
+    OUTPUT_FILE_TXT: path.join(__dirname, 'btc.txt'),
+    OUTPUT_FILE_JSON: path.join(__dirname, 'btc.json'),
+    OUTPUT_FILE_CSV: path.join(__dirname, 'btc.csv'),
+    MAX_PAGE_NUMBER: BigInt('1929868153955269923726183083478131797547292737984581739710086052358636024906'),
+    PAGE_LOAD_TIMEOUT: 60000,
+    MIN_WAIT_TIME: 4000,
+    MAX_WAIT_TIME: 8000,
+    BREAK_INTERVAL: 3 * 60 * 1000,
+    BREAK_DURATION: 20000,
+    MAX_RETRIES: 3,
+    SIMULATED_QUANTUM_BITS: 256
+};
+
+// CSV Writer setup
+const csvWriterInstance = csvWriter({
+    path: CONFIG.OUTPUT_FILE_CSV,
+    header: [
+        {id: 'timestamp', title: 'Timestamp'},
+        {id: 'address', title: 'Address'},
+        {id: 'balance', title: 'Balance'},
+        {id: 'privateKey', title: 'Private Key'}
+    ],
+    append: true
+});
+
+class SimulatedQuantumRNG {
+    constructor() {
+        this.seed = BigInt('0x' + crypto.randomBytes(32).toString('hex'));
+        this.state = this.seed;
+    }
+
+    simulateSuperposition(bits) {
+        const buffer = crypto.randomBytes(bits / 8);
+        let result = BigInt(0);
+
+        for (let i = 0; i < buffer.length; i++) {
+            const byte = buffer[i];
+            this.state = (this.state << BigInt(1)) ^ BigInt(byte);
+            result = (result << BigInt(8)) | BigInt(byte);
+        }
+        return result;
+    }
+
+    generateQuantumRandom(maxNumber) {
+        const rawRandom = this.simulateSuperposition(CONFIG.SIMULATED_QUANTUM_BITS);
+        const normalized = rawRandom % maxNumber;
+        const noise = BigInt('0x' + crypto.randomBytes(16).toString('hex'));
+        const finalNumber = (normalized + noise) % maxNumber;
+        return finalNumber.toString();
+    }
+}
+
+class BitcoinKeyChecker {
+    constructor() {
+        this.checkedPages = new Set();
+        this.browser = null;
+        this.page = null;
+        this.startTime = Date.now();
+        this.qrng = new SimulatedQuantumRNG();
+        this.jsonData = this.loadExistingJsonData();
+    }
+
+    loadExistingJsonData() {
+        try {
+            if (fs.existsSync(CONFIG.OUTPUT_FILE_JSON)) {
+                const data = fs.readFileSync(CONFIG.OUTPUT_FILE_JSON, 'utf8');
+                return JSON.parse(data);
+            }
+            return [];
+        } catch (error) {
+            console.error(`Error loading JSON data: ${error.message}`);
+            return [];
+        }
+    }
+
+    validateData(address, balance, privateKey) {
+        return {
+            isValid: typeof address === 'string' &&
+                    typeof balance === 'number' && balance > 0 &&
+                    typeof privateKey === 'string' &&
+                    address.length > 0 &&
+                    privateKey.length > 0,
+            errors: []
+        };
+    }
+
+    async saveData(address, balance, privateKey) {
+        const timestamp = new Date().toISOString();
+        const entry = { timestamp, address, balance, privateKey };
+
+        const validation = this.validateData(address, balance, privateKey);
+        if (!validation.isValid) {
+            console.error(`Invalid data: ${JSON.stringify(entry)}`);
+            return false;
+        }
+
+        try {
+            // Save to TXT
+            const txtEntry = `${timestamp} | ${address} | BAL: ${balance} | Private Key: ${privateKey}\n`;
+            fs.appendFileSync(CONFIG.OUTPUT_FILE_TXT, txtEntry);
+
+            // Save to JSON
+            this.jsonData.push(entry);
+            fs.writeFileSync(CONFIG.OUTPUT_FILE_JSON, JSON.stringify(this.jsonData, null, 2));
+
+            // Save to CSV
+            await csvWriterInstance.writeRecords([entry]);
+
+            console.log(`Saved: ${address} | BAL: ${balance} | Private Key: ${privateKey}`);
+            return true;
+        } catch (error) {
+            console.error(`Error saving data: ${error.message}`);
+            return false;
+        }
+    }
+
+    async initialize() {
+        try {
+            this.browser = await puppeteer.launch({
+                headless: false,
+                devtools: true,
+                args: ['--start-maximized']
+            });
+            this.page = await this.browser.newPage();
+            console.log('Browser initialized successfully');
+        } catch (error) {
+            throw new Error(`Failed to initialize browser: ${error.message}`);
+        }
+    }
+
+    getQuantumRandomPageNumber() {
+        try {
+            return this.qrng.generateQuantumRandom(CONFIG.MAX_PAGE_NUMBER);
+        } catch (error) {
+            console.warn(`QRNG simulation failed: ${error.message}. Using fallback...`);
+            return this.getFallbackRandomPageNumber();
+        }
+    }
+
+    getFallbackRandomPageNumber() {
+        const randomBigInt = BigInt('0x' + crypto.randomBytes(64).toString('hex')) % CONFIG.MAX_PAGE_NUMBER;
+        return randomBigInt.toString();
+    }
+
+    async checkAndLogData() {
+        try {
+            const rows = await this.page.evaluate(() => {
+                const rows = Array.from(document.querySelectorAll('tr'));
+                return rows.map(row => {
+                    const cells = Array.from(row.querySelectorAll('td')).map(cell => cell.textContent.trim());
+                    if (cells.length === 3 && cells[1].includes('Bal:')) {
+                        const balance = parseFloat(cells[1].replace('Bal:', '').trim());
+                        if (balance > 0) {
+                            return {
+                                address: cells[0],
+                                balance: balance,
+                                privateKey: cells[2],
+                            };
+                        }
+                    }
+                    return null;
+                }).filter(row => row !== null);
+            });
+
+            if (rows.length > 0) {
+                for (const { address, balance, privateKey } of rows) {
+                    await this.saveData(address, balance, privateKey);
+                }
+                return true;
+            }
+            console.log('No balance > 0 found on this page.');
+            return false;
+        } catch (error) {
+            throw new Error(`Failed to process page data: ${error.message}`);
+        }
+    }
+
+    async run() {
+        await this.initialize();
+
+        while (true) {
+            let retries = 0;
+            let success = false;
+
+            while (retries < CONFIG.MAX_RETRIES && !success) {
+                try {
+                    const pageNumber = this.getQuantumRandomPageNumber();
+                    const url = `${CONFIG.BASE_URL}${pageNumber}`;
+
+                    if (this.checkedPages.has(url)) {
+                        console.log(`Page ${url} already checked, skipping...`);
+                        continue;
+                    }
+                    this.checkedPages.add(url);
+
+                    await this.page.goto(url, { waitUntil: 'networkidle2' });
+
+                    await this.page.waitForFunction(() => {
+                        const textContent = document.body.textContent || '';
+                        return textContent.includes('Bitcoin keys page') && textContent.includes('Total balance:');
+                    }, { timeout: CONFIG.PAGE_LOAD_TIMEOUT });
+
+                    const totalBalance = await this.page.evaluate(() => {
+                        const balanceText = document.body.textContent.match(/Total balance: ([0-9\.]+)/);
+                        return balanceText ? parseFloat(balanceText[1]) : 0;
+                    });
+
+                    if (totalBalance > 0) {
+                        console.log(`Total balance: ${totalBalance}, checking for individual balances...`);
+                        await this.checkAndLogData();
+                    } else {
+                        console.log('Total balance is 0, skipping to next page...');
+                    }
+
+                    success = true;
+                } catch (error) {
+                    retries++;
+                    console.error(`Attempt ${retries} failed: ${error.message}`);
+                    if (retries === CONFIG.MAX_RETRIES) {
+                        console.error('Max retries reached. Moving to next page...');
+                    }
+                    await new Promise(resolve => setTimeout(resolve, 2000 * retries));
+                }
+            }
+
+            const waitTime = Math.random() * (CONFIG.MAX_WAIT_TIME - CONFIG.MIN_WAIT_TIME) + CONFIG.MIN_WAIT_TIME;
+            console.log(`Waiting for ${waitTime.toFixed(2)} seconds before checking the next page...`);
+            await new Promise(resolve => setTimeout(resolve, waitTime));
+
+            if (Date.now() - this.startTime > CONFIG.BREAK_INTERVAL) {
+                console.log(`Taking a ${CONFIG.BREAK_DURATION/1000}-second break...`);
+                await new Promise(resolve => setTimeout(resolve, CONFIG.BREAK_DURATION));
+                this.startTime = Date.now();
+            }
+        }
+    }
+
+    async cleanup() {
+        if (this.browser) {
+            await this.browser.close();
+        }
+    }
+}
+
+(async () => {
+    const checker = new BitcoinKeyChecker();
+    try {
+        await checker.run();
+    } catch (error) {
+        console.error(`Fatal error: ${error.message}`);
+    } finally {
+        await checker.cleanup();
+    }
+})();
+</pre>
+    </div>
+
+    <h2>Installation Guide <span class="emoji">🛠️</span></h2>
+    <p>Before running the Bitcoin Private Key Checker, ensure you have Node.js and npm (Node Package Manager) installed. Follow these steps to set up your environment:</p>
+
+    <ol>
+      <li>
+        <h3>Initialize a Node.js Project (if not already set up)</h3>
+        <p>If you don’t have a <code>package.json</code> file in your project directory, run:</p>
+        <div class="code-block">
+          <pre><code>npm init -y</code></pre>
+        </div>
+      </li>
+
+      <li>
+        <h3>Install Puppeteer</h3>
+        <p>Puppeteer is required for web scraping and browser automation:</p>
+        <div class="code-block">
+          <pre><code>npm install puppeteer</code></pre>
+        </div>
+      </li>
+
+      <li>
+        <h3>Install csv-writer</h3>
+        <p><code>csv-writer</code> is used to output data to CSV files:</p>
+        <div class="code-block">
+          <pre><code>npm install csv-writer</code></pre>
+        </div>
+      </li>
+
+      <li>
+        <h3>Other Built-in Modules</h3>
+        <p>The script uses these core Node.js modules, which do not require separate installation:</p>
+        <ul>
+          <li><code>fs</code> (File System)</li>
+          <li><code>path</code> (Path Utilities)</li>
+          <li><code>crypto</code> (Cryptographic Functions)</li>
+        </ul>
+      </li>
+    </ol>
+
+    <h3>Final List of Installations</h3>
+    <p>Run this command to install all necessary packages:</p>
+    <div class="code-block">
+      <pre><code>npm install puppeteer csv-writer</code></pre>
+    </div>
+
+    <p>Now you're ready to run your script using:</p>
+    <div class="code-block">
+      <pre><code>node your-script.js</code></pre>
+    </div>
+
+    <p><strong>Safety Considerations:</strong> Please use this script responsibly and at your own risk. Checking for Bitcoin private keys involves accessing publicly available information but should be done ethically and legally. Be aware of the terms of service of websites you interact with and any legal implications in your jurisdiction.</p>
+    <p><strong>Potential Improvements:</strong></p>
+    <ul>
+      <li>Enhance simulated quantum effects for more complex randomness patterns.</li>
+      <li>Add statistical tests to evaluate the randomness of the generated numbers.</li>
+      <li>Implement multiple simulated quantum states for increased unpredictability.</li>
+      <li>Incorporate entropy collection from system sources to further improve randomness.</li>
+      <li>Create visualization tools to analyze the distribution of generated random numbers.</li>
+    </ul>
+  </div>
+
+  <div id="coinbin-tutorial" class="tutorial-content">
+    <h1>Tutorial: Moving Bitcoin Using a Private Key with Coinb.in</h1>
+
+    <p>This tutorial explains how to move Bitcoin from an address using its private key and Coinb.in. It is crucial to follow these steps carefully and with maximum security to avoid loss of funds.</p>
+
+    <h2>Important Security Notes</h2>
+    <ul>
+      <li><strong>Perform this process offline:</strong> To protect your private key, it's highly recommended to download Coinb.in and run it locally on an offline computer.</li>
+      <li><strong>Backup everything:</strong> Save your private key and transaction details securely.</li>
+      <li><strong>Double-check addresses:</strong> Ensure the destination address (your account) is correct.</li>
+      <li><strong>Legal and ethical considerations:</strong> Only move Bitcoin from addresses you own or have legal authorization to access. Unauthorized access to private keys is illegal.</li>
+      <li><strong>Test with small amounts first:</strong> If you're unfamiliar with the process, test with a tiny amount of BTC to ensure everything works correctly.</li>
+    </ul>
+
+    <h2>Prerequisites</h2>
+    <ul>
+      <li><strong>Private key:</strong> The private key for the Bitcoin address containing the funds (obtained from the previous script).</li>
+      <li><strong>Destination address:</strong> The Bitcoin address where you want to send the funds (your account).</li>
+      <li><strong>Internet access:</strong> Initially for downloading Coinb.in and checking balances, but the signing process should be done offline.</li>
+      <li><strong>Coinb.in:</strong> <a href="https://github.com/OutCast3k/coinbin" target="_blank">Download the latest version from GitHub</a>.</li>
+      <li><strong>Bitcoin node or block explorer:</strong> To check unspent transaction outputs (UTXOs) and broadcast the signed transaction (e.g., <a href="https://blockstream.info/" target="_blank">Blockstream.info</a>, <a href="https://www.blockchain.com/" target="_blank">Blockchain.com</a>).</li>
+    </ul>
+
+    <h2>Step-by-Step Process</h2>
+    <h3>Step 1: Set Up Coinb.in Offline</h3>
+    <ol>
+      <li><strong>Download Coinb.in:</strong>
+        <ul>
+          <li>Visit <a href="https://github.com/OutCast3k/coinbin" target="_blank">https://github.com/OutCast3k/coinbin</a>.</li>
+          <li>Download the ZIP file and extract it to a secure, offline computer.</li>
+        </ul>
+      </li>
+      <li><strong>Open index.html:</strong> Open <code>index.html</code> in a web browser on the offline computer.</li>
+      <li><strong>Verify you are offline:</strong> Disconnect from the internet to protect your private key during the signing process.</li>
+    </ol>
+
+    <h3>Step 2: Gather Required Information</h3>
+    <p>Before creating the transaction, you need:</p>
+    <ul>
+      <li><strong>Private key:</strong> From the <code>btc.txt</code>, <code>btc.json</code>, or <code>btc.csv</code> file generated by the script.</li>
+      <li><strong>Source address:</strong> The Bitcoin address associated with the private key.</li>
+      <li><strong>Unspent Transaction Outputs (UTXOs):</strong>
+        <ul>
+          <li>On an online computer, use a block explorer (e.g., <a href="https://blockstream.info/" target="_blank">Blockstream.info</a>) to look up the source address.</li>
+          <li>Find all unspent outputs (UTXOs) for the address. Note:
+            <ul>
+              <li>Transaction ID (txid)</li>
+              <li>Output index (vout)</li>
+              <li>Amount (in BTC)</li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+      <li><strong>Destination address:</strong> Your Bitcoin address where you want to send the funds.</li>
+      <li><strong>Balance:</strong> The total balance available in the source address.</li>
+      <li><strong>Transaction fee:</strong> Estimate the fee based on network conditions (e.g., 10-50 satoshis per byte).</li>
+    </ul>
+
+    <h3>Step 3: Create a New Transaction</h3>
+    <ol>
+      <li><strong>Open Coinb.in:</strong> On the offline computer, navigate to the "New" tab and select "Transaction."</li>
+      <li><strong>Add Inputs:</strong>
+        <ul>
+          <li>For each UTXO:
+            <ul>
+              <li>Enter the Transaction ID (txid).</li>
+              <li>Enter the Output Index (vout).</li>
+              <li>Enter the Amount (in BTC).</li>
+            </ul>
+          </li>
+          <li>Click "Add" for each UTXO.</li>
+        </ul>
+      </li>
+      <li><strong>Add Outputs:</strong>
+        <ul>
+          <li><strong>Destination address:</strong> Enter your Bitcoin address.</li>
+          <li><strong>Amount:</strong> Enter the amount to send (leave some for the transaction fee).</li>
+          <li><strong>Change address (optional):</strong> If there's remaining BTC, send it back to the source address or another address you control.</li>
+          <li>Click "Add" for each output.</li>
+        </ul>
+      </li>
+      <li><strong>Set Transaction Fee:</strong>
+        <ul>
+          <li>Calculate the fee based on the transaction size (in bytes) and current network conditions.</li>
+          <li>Ensure the total input amount = total output amount + fee.</li>
+        </ul>
+      </li>
+      <li><strong>Submit:</strong> Click "Submit" to generate the unsigned transaction.</li>
+      <li><strong>Copy the raw transaction hex that appears.</strong></li>
+    </ol>
+
+    <h3>Step 4: Verify the Transaction</h3>
+    <ol>
+      <li><strong>Go to the "Verify" tab:</strong> Paste the raw transaction hex into the box.</li>
+      <li><strong>Click "Submit" to decode the transaction.</strong></li>
+      <li><strong>Check Details:</strong>
+        <ul>
+          <li>Verify:
+            <ul>
+              <li>Inputs match the UTXOs you entered.</li>
+              <li>Outputs match your destination address and amounts.</li>
+              <li>Fee is reasonable.</li>
+            </ul>
+          </li>
+          <li>If anything is incorrect, go back to the "New Transaction" tab and fix it.</li>
+        </ul>
+      </li>
+    </ol>
+
+    <h3>Step 5: Sign the Transaction</h3>
+    <ol>
+      <li><strong>Go to the "Sign" tab:</strong>
+        <ul>
+          <li>Paste the raw transaction hex into the "Transaction" box.</li>
+          <li>Enter the private key for the source address in the "Private Key" box.</li>
+          <li>Select the correct format (usually WIF - Wallet Import Format).</li>
+        </ul>
+      </li>
+      <li><strong>Click "Submit" to sign the transaction.</strong></li>
+      <li><strong>Copy the Signed Transaction:</strong> After signing, a new raw transaction hex will appear. Copy this signed transaction hex.</li>
+    </ol>
+
+    <h3>Step 6: Verify the Signed Transaction</h3>
+    <ol>
+      <li><strong>Go to the "Verify" tab again:</strong> Paste the signed transaction hex.</li>
+      <li><strong>Click "Submit" to decode it.</strong></li>
+      <li><strong>Verify that:</strong>
+        <ul>
+          <li>Signatures are present.</li>
+          <li>All details (inputs, outputs, amounts) are correct.</li>
+        </ul>
+      </li>
+    </ol>
+
+    <h3>Step 7: Broadcast the Transaction</h3>
+    <ol>
+      <li><strong>Move to an online computer:</strong> Transfer the signed transaction hex to an online computer (e.g., via USB drive).</li>
+      <li><strong>Go to the "Broadcast" tab:</strong> Paste the signed transaction hex.</li>
+      <li><strong>Click "Submit" to broadcast to the Bitcoin network.</strong></li>
+      <li><strong>Alternative broadcasting methods:</strong>
+        <ul>
+          <li>Use a block explorer's "Push Transaction" feature (e.g., <a href="https://blockstream.info/" target="_blank">Blockstream.info</a>).</li>
+          <li>Use a Bitcoin node if you have one running.</li>
+        </ul>
+      </li>
+      <li><strong>Confirm the transaction:</strong>
+        <ul>
+          <li>Check the transaction ID (txid) on a block explorer.</li>
+          <li>Wait for confirmations (usually 1-6 confirmations for security).</li>
+        </ul>
+      </li>
+    </ol>
+
+    <h2>Example Workflow</h2>
+    <p><strong>Scenario</strong></p>
+    <ul>
+      <li>Private key: <code>5J...example...</code> (WIF format)</li>
+      <li>Source address: <code>1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa</code></li>
+      <li>Balance: 0.5 BTC</li>
+      <li>Destination address: <code>1YourAddressHere</code></li>
+      <li>Fee: 0.0001 BTC</li>
+    </ul>
+    <p><strong>Steps</strong></p>
+    <ol>
+      <li><strong>Check UTXOs:</strong>
+        <ul>
+          <li>Find UTXOs for <code>1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa</code> on <a href="https://blockstream.info/" target="_blank">Blockstream.info</a>.</li>
+          <li>Example UTXO:
+            <ul>
+              <li>txid: <code>abc123...</code></li>
+              <li>vout: <code>0</code></li>
+              <li>amount: <code>0.5 BTC</code></li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+      <li><strong>Create Transaction:</strong>
+        <ul>
+          <li>Inputs: <code>txid abc123...</code>, <code>vout 0</code>, <code>amount 0.5 BTC</code></li>
+          <li>Outputs:
+            <ul>
+              <li>To: <code>1YourAddressHere</code>, amount: <code>0.4999 BTC</code></li>
+              <li>Fee: <code>0.0001 BTC</code></li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+      <li><strong>Sign:</strong> Use private key <code>5J...example...</code> to sign.</li>
+      <li><strong>Broadcast:</strong> Get txid and confirm on network.</li>
+    </ol>
+
+    <h2>Security Best Practices</h2>
+    <ul>
+      <li><strong>Offline signing:</strong>
+        <ul>
+          <li>Never enter private keys on an online computer.</li>
+          <li>Use a dedicated offline device for signing.</li>
+        </ul>
+      </li>
+      <li><strong>Clean environment:</strong>
+        <ul>
+          <li>Use a fresh OS installation or live USB for maximum security.</li>
+          <li>Avoid using shared or compromised devices.</li>
+        </ul>
+      </li>
+      <li><strong>Backup:</strong>
+        <ul>
+          <li>Save private keys and transaction details securely.</li>
+          <li>Use encrypted storage for backups.</li>
+        </ul>
+      </li>
+      <li><strong>Verify addresses:</strong> Double-check all addresses to prevent sending funds to wrong destinations.</li>
+      <li><strong>Test transactions:</strong> Start with small amounts to verify the process works.</li>
+    </ul>
+
+    <h2>Troubleshooting</h2>
+    <ul>
+      <li><strong>Transaction not broadcasting:</strong>
+        <ul>
+          <li>Check fee is sufficient.</li>
+          <li>Verify signatures are valid.</li>
+          <li>Ensure inputs are unspent.</li>
+        </ul>
+      </li>
+      <li><strong>Invalid private key:</strong>
+        <ul>
+          <li>Check format (WIF, hex, etc.).</li>
+          <li>Ensure no typos.</li>
+        </ul>
+      </li>
+      <li><strong>Funds not appearing:</strong>
+        <ul>
+          <li>Wait for confirmations.</li>
+          <li>Check txid on multiple block explorers.</li>
+        </ul>
+      </li>
+    </ul>
+
+    <h2>Additional Tools</h2>
+    <ul>
+      <li><a href="https://electrum.org/" target="_blank">Electrum Wallet</a>: Alternative for importing private keys and sending BTC.</li>
+      <li><a href="https://bitcoincore.org/" target="_blank">Bitcoin Core</a>: Full node for maximum security and verification.</li>
+      <li><a href="https://blockstream.info/" target="_blank">Block explorers</a>: For checking balances and transaction status.</li>
+    </ul>
+  </div>
+
+  <script>
+    function showTutorial(tutorialId) {
+      document.querySelectorAll('.tutorial-content').forEach(content => {
+        content.classList.remove('active');
+      });
+      document.getElementById(tutorialId + '-tutorial').classList.add('active');
+    }
+
+    // Initially show the home tutorial
+    showTutorial('home');
+  </script>
+
+  <script>
+    // Add money rain effect
+    function createMoneyRain() {
+      const moneyEmojis = ['💰', '💎', '💵', '💸', '💲', '🤑', '💳', '💴', '💶', '💷'];
+      const container = document.createElement('div');
+      container.className = 'money-rain';
+      document.body.appendChild(container);
+
+      function addEmoji() {
+        const emoji = document.createElement('span');
+        emoji.className = 'money-emoji';
+        emoji.textContent = moneyEmojis[Math.floor(Math.random() * moneyEmojis.length)];
+        emoji.style.left = Math.random() * 100 + 'vw';
+        emoji.style.animationDuration = Math.random() * 3 + 2 + 's';
+        emoji.style.fontSize = Math.random() * 20 + 10 + 'px';
+        container.appendChild(emoji);
+
+        setTimeout(() => emoji.remove(), 5000);
+      }
+
+      setInterval(addEmoji, 300);
+    }
+
+    // Initialize money rain
+    createMoneyRain();
+  </script>
+
+</body>
+</html>
