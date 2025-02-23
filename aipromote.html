@@ -1,0 +1,413 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Image Generator</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #000;
+            color: #00ffcc;
+        }
+
+        .container {
+            background-color: #111;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 255, 204, 0.3);
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        h2 {
+            color: #00ffcc;
+            text-align: center;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #00ffcc;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            box-sizing: border-box;
+            background-color: #222;
+            color: #fff;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .checkbox-group input[type="checkbox"] {
+            width: auto;
+            margin: 0;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: #00ffcc;
+            color: #000;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+            box-shadow: 0 0 10px rgba(0, 255, 204, 0.5);
+        }
+
+        button:hover {
+            background-color: #00cc99;
+            box-shadow: 0 0 15px rgba(0, 255, 204, 0.7);
+        }
+
+        button:disabled {
+            background-color: #333;
+            color: #666;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        .logout-container {
+            text-align: right;
+            margin-bottom: 20px;
+        }
+
+        .logout-btn {
+            width: auto;
+            padding: 8px 16px;
+            background-color: #ff4444;
+        }
+
+        .logout-btn:hover {
+            background-color: #cc3333;
+        }
+
+        .output-container {
+            text-align: center;
+        }
+
+        #outputImage {
+            max-width: 100%;
+            margin-top: 20px;
+            border-radius: 5px;
+            display: none;
+            border: 2px solid #00ffcc;
+        }
+
+        .loader {
+            display: none;
+            margin: 20px auto;
+            width: 50px;
+            height: 50px;
+            border: 5px solid #333;
+            border-radius: 50%;
+            border-top: 5px solid #00ffcc;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .error-message {
+            color: #ff6600;
+            margin-top: 10px;
+            display: none;
+        }
+
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .welcome-text {
+            font-size: 1.2em;
+            color: #00ffcc;
+        }
+
+        #nameInput {
+            margin-bottom: 10px;
+        }
+
+        .api-tutorial {
+            background-color: #222;
+            padding: 20px;
+            border-radius: 5px;
+            margin-top: 20px;
+            color: #eee;
+            font-size: 0.9em;
+        }
+
+        .api-tutorial h3 {
+            color: #00ffcc;
+            margin-top: 0;
+        }
+
+        .api-tutorial ol {
+            padding-left: 20px;
+        }
+
+        .api-tutorial li {
+            margin-bottom: 10px;
+        }
+
+        .api-tutorial code {
+            background-color: #333;
+            color: #ddd;
+            padding: 2px 5px;
+            border-radius: 3px;
+            font-size: 0.85em;
+        }
+
+        .api-tutorial a {
+            color: #00cc99;
+            text-decoration: none;
+        }
+
+        .api-tutorial a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div id="loginContainer" class="container">
+        <h2>Welcome!</h2>
+        <div class="input-group">
+            <input type="text" id="nameInput" placeholder="Enter your name">
+            <input type="password" id="apiKeyInput" placeholder="Enter your Hugging Face API key">
+            <button id="loginButton" onclick="handleLogin()">Login</button>
+            <div class="checkbox-group">
+                <input type="checkbox" id="rememberMe" checked>
+                <label for="rememberMe">Stay logged in</label>
+            </div>
+        </div>
+        <div class="error-message" id="loginError"></div>
+
+        <div class="api-tutorial">
+            <h3>How to Get Your Hugging Face API Key</h3>
+            <ol>
+                <li><strong>Create a Hugging Face Account</strong><br>
+                    If you haven't already, go to <a href="https://huggingface.co/" target="_blank">Hugging Face's website</a> and sign up for a free account.</li>
+                <li><strong>Obtain Your Hugging Face API Key</strong><br>
+                    After creating an account, navigate to your <a href="https://huggingface.co/settings/tokens" target="_blank">Hugging Face Account Settings</a>.<br>
+                    Under the Access Tokens section, click on <strong>New Token</strong>.<br>
+                    You can name the token and choose the permissions you need (usually Read is sufficient for inference).<br>
+                    Once created, copy your API Token. It will look something like <code>hf_XXXXXXXXXXXXXXXXXXXXXXXX</code>.</li>
+                <li><strong>Integrate Hugging Face API in Your HTML Page</strong><br>
+                    Now that you have your API key, you can use it to make requests to Hugging Face's FLUX.1-dev model. In your existing HTML file, replace the API key with your own Hugging Face API key.</li>
+            </ol>
+        </div>
+    </div>
+
+    <div id="appContainer" class="container" style="display: none;">
+        <div class="header-container">
+            <div class="welcome-text">Welcome, <span id="userNameDisplay"></span>!</div>
+            <button id="logoutButton" onclick="handleLogout()" class="logout-btn">Logout</button>
+        </div>
+        <h2>Social Media Clone AI Promoting</h2>
+        <div class="input-group">
+            <select id="sizeSelect">
+                <option value="" disabled selected>Select Size (Optional)</option>
+                <option value="instagram">Instagram Post (1:1)</option>
+                <option value="instagram-story">Instagram Story (9:16)</option>
+                <option value="twitter">Twitter Post (16:9)</option>
+                <option value="facebook">Facebook Post</option>
+                <option value="youtube-thumbnail">YouTube Thumbnail (16:9)</option>
+                <option value="linkedin">LinkedIn Post</option>
+                <option value="pinterest">Pinterest Pin (2:3)</option>
+                <option value="tiktok">TikTok Video (9:16)</option>
+                <option value="snapchat">Snapchat Story (9:16)</option>
+            </select>
+            <input type="text" id="textInput" placeholder="Terminator Robot with red eyes holding a sign that says Visit CAIMEO.SHOP NOW! ">
+            <button id="generateButton" onclick="generateImage()">Generate Image</button>
+        </div>
+        <div class="output-container">
+            <div class="loader" id="loader"></div>
+            <div class="error-message" id="errorMessage"></div>
+            <img id="outputImage" alt="Generated image will appear here">
+        </div>
+    </div>
+    <script>
+        let isGenerating = false;
+        let apiKey = '';
+        let userName = '';
+
+        // Check for saved credentials on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            const savedApiKey = localStorage.getItem('apiKey');
+            const savedUserName = localStorage.getItem('userName');
+
+            if (savedApiKey && savedUserName) {
+                apiKey = savedApiKey;
+                userName = savedUserName;
+                showApp();
+                updateUserNameDisplay();
+            }
+
+            // Set remember me checkbox to checked by default
+            document.getElementById('rememberMe').checked = true;
+        });
+
+        function handleLogin() {
+            const nameInput = document.getElementById('nameInput');
+            const apiKeyInput = document.getElementById('apiKeyInput');
+            const rememberMe = document.getElementById('rememberMe');
+            const loginError = document.getElementById('loginError');
+
+            userName = nameInput.value.trim();
+            apiKey = apiKeyInput.value.trim();
+
+            if (!userName) {
+                loginError.textContent = 'Please enter your name';
+                loginError.style.display = 'block';
+                return;
+            }
+
+            if (!apiKey) {
+                loginError.textContent = 'Please enter an API key';
+                loginError.style.display = 'block';
+                return;
+            }
+
+            // Save credentials if remember me is checked
+            if (rememberMe.checked) {
+                localStorage.setItem('apiKey', apiKey);
+                localStorage.setItem('userName', userName);
+            } else {
+                localStorage.removeItem('apiKey');
+                localStorage.removeItem('userName');
+            }
+
+            showApp();
+            updateUserNameDisplay();
+        }
+
+        function updateUserNameDisplay() {
+            document.getElementById('userNameDisplay').textContent = userName;
+        }
+
+        function handleLogout() {
+            apiKey = '';
+            userName = '';
+            localStorage.removeItem('apiKey');
+            localStorage.removeItem('userName');
+            showLogin();
+        }
+
+        function showApp() {
+            document.getElementById('loginContainer').style.display = 'none';
+            document.getElementById('appContainer').style.display = 'block';
+        }
+
+        function showLogin() {
+            document.getElementById('loginContainer').style.display = 'block';
+            document.getElementById('appContainer').style.display = 'none';
+            document.getElementById('apiKeyInput').value = '';
+            document.getElementById('nameInput').value = '';
+        }
+
+        async function generateImage() {
+            const textInput = document.getElementById("textInput");
+            const generateButton = document.getElementById("generateButton");
+            const loader = document.getElementById("loader");
+            const outputImage = document.getElementById("outputImage");
+            const errorMessage = document.getElementById("errorMessage");
+            const sizeSelect = document.getElementById("sizeSelect");
+            const selectedSize = sizeSelect.value;
+
+            if (!textInput.value.trim()) {
+                errorMessage.textContent = "Please enter some text.";
+                errorMessage.style.display = "block";
+                return;
+            }
+
+            if (isGenerating) return;
+
+            try {
+                isGenerating = true;
+                errorMessage.style.display = "none";
+                outputImage.style.display = "none";
+                loader.style.display = "block";
+                generateButton.disabled = true;
+
+                let promptText = textInput.value.trim();
+                if (selectedSize) {
+                    promptText += `, ${selectedSize} size`;
+                }
+
+                const response = await fetch("https://api-inference.huggingface.co/models/black-forest-labs/FLUX.1-dev", {
+                    method: "POST",
+                    headers: {
+                        "Authorization": `Bearer ${apiKey}`,
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        inputs: promptText
+                    })
+                });
+
+                if (!response.ok) {
+                    if (response.status === 401) {
+                        throw new Error('Invalid API key');
+                    }
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const result = await response.blob();
+                outputImage.src = URL.createObjectURL(result);
+                outputImage.style.display = "block";
+            } catch (error) {
+                console.error("Error generating image:", error);
+                if (error.message === 'Invalid API key') {
+                    handleLogout();
+                    return;
+                }
+                errorMessage.textContent = "An error occurred while generating the image. Please try again.";
+                errorMessage.style.display = "block";
+            } finally {
+                isGenerating = false;
+                loader.style.display = "none";
+                generateButton.disabled = false;
+            }
+        }
+
+        // Event listeners
+        document.getElementById("textInput").addEventListener("keypress", (event) => {
+            if (event.key === "Enter") {
+                generateImage();
+            }
+        });
+
+        document.getElementById("apiKeyInput").addEventListener("keypress", (event) => {
+            if (event.key === "Enter") {
+                handleLogin();
+            }
+        });
+
+        document.getElementById("nameInput").addEventListener("keypress", (event) => {
+            if (event.key === "Enter") {
+                document.getElementById("apiKeyInput").focus();
+            }
+        });
+    </script>
+</body>
+</html>
