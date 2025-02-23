@@ -1,0 +1,2075 @@
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SENTiENT SENTiNEL DataPLeX</title>
+  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --neon-blue: #00f3ff;
+      --neon-lime: #39ff14;
+      --neon-purple: #b700ff;
+      --neon-pink: #ff00ff;
+      --neon-cyan: #00ffff;
+      --dark-bg: #0a0a0f;
+    }
+
+    body {
+      margin: 0;
+      background: var(--dark-bg);
+      color: var(--neon-cyan);
+      font-family: 'Rajdhani', sans-serif;
+      font-weight: lighter;
+      min-height: 100vh;
+      overflow-x: hidden;
+      position: relative;
+      background: linear-gradient(
+        45deg,
+        rgba(10, 10, 15, 0.97) 0%,
+        rgba(20, 20, 35, 0.95) 100%
+      );
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      background:
+        radial-gradient(circle at 20% 30%, rgba(57, 255, 20, 0.08) 0%, transparent 50%),
+        radial-gradient(circle at 80% 70%, rgba(183, 0, 255, 0.08) 0%, transparent 50%),
+        repeating-linear-gradient(
+          45deg,
+          rgba(57, 255, 20, 0.02) 0%,
+          rgba(57, 255, 20, 0.02) 1px,
+          transparent 1px,
+          transparent 50px
+        ),
+        repeating-linear-gradient(
+          -45deg,
+          rgba(183, 0, 255, 0.02) 0%,
+          rgba(183, 0, 255, 0.02) 1px,
+          transparent 1px,
+          transparent 50px
+        );
+    }
+
+    main {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 4rem;
+    }
+
+    .glitch {
+      font-size: 4rem;
+      font-weight: bold;
+      text-transform: uppercase;
+      position: relative;
+      text-shadow: 0 0 10px var(--neon-lime);
+      animation: glitch 1s infinite;
+    }
+
+    .glitch::before,
+    .glitch::after {
+      content: attr(data-text);
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    .glitch::before {
+      left: 2px;
+      text-shadow: -2px 0 var(--neon-cyan);
+      animation: glitch-1 2s infinite linear alternate-reverse;
+    }
+
+    .glitch::after {
+      left: -2px;
+      text-shadow: 2px 0 var(--neon-purple);
+      animation: glitch-2 3s infinite linear alternate-reverse;
+    }
+
+    .cyberpunk {
+      font-size: 2rem;
+      color: var(--neon-purple);
+      text-shadow: 0 0 10px var(--neon-purple);
+    }
+
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+      margin-bottom: 4rem;
+    }
+
+    .info-card {
+      background: rgba(0, 0, 0, 0.5);
+      border: 1px solid var(--neon-lime);
+      padding: 2rem;
+      border-radius: 10px;
+      box-shadow: 0 0 20px rgba(0, 243, 255, 0.2);
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .info-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 0 30px rgba(255, 0, 255, 0.4);
+      border-color: var(--neon-pink);
+    }
+
+    .info-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--neon-cyan));
+      animation: scan 3s linear infinite;
+    }
+
+    .hex-icon {
+      width: 80px;
+      height: 80px;
+      margin: 0 auto 1rem;
+      position: relative;
+    }
+
+    .hex-bg {
+      fill: none;
+      stroke: var(--neon-lime);
+      stroke-width: 2;
+    }
+
+    .hex-symbol {
+      fill: none;
+      stroke: var(--neon-cyan);
+      stroke-width: 4;
+    }
+
+    .info-content {
+      text-align: center;
+    }
+
+    .quantum-metric {
+      margin: 1rem 0;
+      padding: 0.5rem;
+      border: 1px solid var(--neon-lime);
+      border-radius: 5px;
+      background: rgba(0, 243, 255, 0.1);
+    }
+
+    .metric-value {
+      font-size: 2rem;
+      font-weight: bold;
+      color: var(--neon-cyan);
+      text-shadow: 0 0 10px var(--neon-cyan);
+      display: block;
+    }
+
+    .metric-label {
+      font-size: 0.8rem;
+      color: var(--neon-lime);
+      letter-spacing: 2px;
+    }
+
+    .quantum-quote {
+      font-style: italic;
+      color: var(--neon-cyan);
+      text-shadow: 0 0 5px var(--neon-cyan);
+      padding: 1rem;
+      border-left: 2px solid var(--neon-pink);
+      margin: 1rem 0;
+      font-size: 0.9rem;
+    }
+
+    .info-card h3 {
+      color: var(--neon-lime);
+      text-shadow: 0 0 5px var(--neon-lime);
+      margin-bottom: 1rem;
+      font-size: 1.2rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .info-card p {
+      color: rgba(255, 255, 255, 0.8);
+      font-size: 0.9rem;
+      line-height: 1.4;
+      margin: 0.5rem 0;
+    }
+
+    .terminal {
+      background: rgba(0, 0, 0, 0.8);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    .terminal-header {
+      background: #2a2a2a;
+      padding: 0.5rem;
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .terminal-button {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: #ff5f56;
+    }
+
+    .terminal-button:nth-child(2) {
+      background: #ffbd2e;
+    }
+
+    .terminal-button:nth-child(3) {
+      background: #27c93f;
+    }
+
+    .terminal-content {
+      padding: 1rem;
+      height: 300px;
+      overflow-y: auto;
+      font-family: monospace;
+      color: var(--neon-cyan);
+    }
+
+    .data-stream {
+      background: rgba(0, 0, 0, 0.5);
+      border: 1px solid var(--neon-purple);
+      padding: 2rem;
+      margin: 2rem 0;
+      border-radius: 10px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .data-stream::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 2px;
+      background: var(--neon-cyan);
+      animation: scanner 3s linear infinite;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin: 2rem 0;
+    }
+
+    .stat-box {
+      background: rgba(0, 0, 0, 0.7);
+      border: 1px solid var(--neon-lime);
+      padding: 1.5rem;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .stat-icon {
+      font-size: 2rem;
+      margin-bottom: 1rem;
+      position: relative;
+      z-index: 2;
+    }
+
+    .stat-box h4 {
+      color: var(--neon-lime);
+      margin: 0.5rem 0;
+      font-size: 1.2rem;
+      position: relative;
+      z-index: 2;
+    }
+
+    .stat-value {
+      position: relative;
+      z-index: 2;
+    }
+
+    .stat-text {
+      color: var(--neon-purple);
+      font-size: 1rem;
+      margin-top: 1rem;
+    }
+
+    .pulse-circle {
+      width: 200px;
+      height: 200px;
+      margin: 2rem auto;
+      position: relative;
+    }
+
+    .circle {
+      position: absolute;
+      border: 2px solid var(--neon-lime);
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+
+    .circle:nth-child(1) { width: 100%; height: 100%; animation-delay: 0s; }
+    .circle:nth-child(2) { width: 80%; height: 80%; top: 10%; left: 10%; animation-delay: 0.5s; }
+    .circle:nth-child(3) { width: 60%; height: 60%; top: 20%; left: 20%; animation-delay: 1s; }
+
+    .status-indicator {
+      display: inline-block;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--neon-cyan);
+      animation: blink 1s infinite;
+      margin-right: 10px;
+      box-shadow: 0 0 10px var(--neon-pink);
+    }
+
+    .alert-banner {
+      background: rgba(255, 0, 0, 0.2);
+      border: 1px solid var(--neon-purple);
+      padding: 1rem;
+      margin-bottom: 2rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      animation: pulse 2s infinite;
+    }
+
+    .alert-icon {
+      width: 20px;
+      height: 20px;
+      background: var(--neon-purple);
+      clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+      animation: blink 1s infinite;
+    }
+
+    .energy-monitor {
+      background: rgba(0, 0, 0, 0.5);
+      border: 1px solid var(--neon-lime);
+      padding: 2rem;
+      border-radius: 10px;
+      margin: 2rem 0;
+    }
+
+    .energy-bars {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .energy-bar {
+      background: rgba(0, 0, 0, 0.7);
+      height: 30px;
+      border: 1px solid var(--neon-lime);
+      position: relative;
+      display: flex;
+      align-items: center;
+      padding: 0 1rem;
+      justify-content: space-between;
+    }
+
+    .energy-bar::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      height: 100%;
+      width: var(--percentage);
+      background: linear-gradient(90deg, var(--neon-cyan) 0%, var(--neon-pink) 100%);
+      opacity: 0.3;
+      z-index: 0;
+    }
+
+    .energy-bar .label,
+    .energy-bar .value {
+      z-index: 1;
+    }
+
+    .waveform-display {
+      background: rgba(0, 0, 0, 0.5);
+      border: 1px solid var(--neon-lime);
+      padding: 2rem;
+      border-radius: 10px;
+      margin: 2rem 0;
+    }
+
+    .waveform {
+      height: 150px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .wave {
+      position: absolute;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border-bottom: 2px solid var(--neon-cyan);
+      animation: wave 3s infinite linear;
+    }
+
+    .wave:nth-child(2) {
+      border-color: var(--neon-pink);
+      animation-delay: -1s;
+    }
+
+    .wave:nth-child(3) {
+      border-color: #00ff00;
+      animation-delay: -2s;
+    }
+
+    .frequency-stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1rem;
+      padding: 1rem;
+      background: rgba(0, 0, 0, 0.3);
+      border-radius: 10px;
+      border: 1px solid var(--neon-lime);
+      margin: 1rem 0;
+    }
+
+    .frequency-stats > div {
+      padding: 0.75rem;
+      border-left: 3px solid var(--neon-purple);
+      background: rgba(0, 0, 0, 0.2);
+      transition: all 0.3s ease;
+    }
+
+    .frequency-stats > div:hover {
+      background: rgba(255, 0, 255, 0.1);
+      transform: translateX(5px);
+    }
+
+    .wave-details {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+
+    .wave-analysis {
+      background: rgba(0, 0, 0, 0.4);
+      padding: 1rem;
+      border-radius: 5px;
+      border: 1px solid var(--neon-purple);
+      text-align: center;
+    }
+
+    .analysis-label {
+      display: block;
+      color: var(--neon-lime);
+      font-size: 0.9em;
+      margin-bottom: 0.5rem;
+    }
+
+    .analysis-value {
+      display: block;
+      color: var(--neon-cyan);
+      font-weight: bold;
+      font-size: 1.1em;
+    }
+
+    .system-protocols {
+      background: rgba(0, 0, 0, 0.5);
+      border: 1px solid var(--neon-lime);
+      padding: 2rem;
+      border-radius: 10px;
+      margin: 2rem 0;
+    }
+
+    .protocol-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.5rem;
+      padding: 1rem;
+    }
+
+    .protocol {
+      background: rgba(0, 0, 0, 0.6);
+      padding: 1.5rem;
+      border-radius: 10px;
+      border: 1px solid var(--neon-lime);
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      transition: all 0.3s ease;
+    }
+
+    .protocol:hover {
+      transform: translateX(5px);
+      box-shadow: 0 0 15px rgba(0, 243, 255, 0.3);
+    }
+
+    .protocol-icon {
+      position: relative;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .icon-pulse {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      border: 2px solid var(--neon-purple);
+      border-radius: 50%;
+      animation: iconPulse 2s infinite;
+    }
+
+    .protocol:hover .icon-pulse {
+      border-color: var(--neon-pink);
+      box-shadow: 0 0 15px var(--neon-pink);
+    }
+
+    .icon-symbol {
+      font-size: 1.2rem;
+      z-index: 1;
+    }
+
+    .protocol-info {
+      flex: 1;
+    }
+
+    .protocol-name {
+      color: var(--neon-lime);
+      font-size: 1.1rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .protocol-status {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: var(--neon-purple);
+      font-size: 0.9rem;
+      letter-spacing: 1px;
+    }
+
+    .protocol-status.active {
+      color: var(--neon-cyan);
+      text-shadow: 0 0 5px var(--neon-cyan);
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      background: var(--neon-cyan);
+      border-radius: 50%;
+      animation: blink 1s infinite;
+    }
+
+    .network-topology {
+      background: rgba(0, 0, 0, 0.5);
+      border: 1px solid var(--neon-lime);
+      padding: 2rem;
+      border-radius: 10px;
+      margin: 2rem 0;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .network-graph {
+      position: relative;
+      height: 300px;
+      margin: 2rem 0;
+    }
+
+    .node {
+      position: absolute;
+      width: 30px;
+      height: 30px;
+      transform: translate(-50%, -50%);
+    }
+
+    .node-1 { top: 30%; left: 12%; }
+    .node-2 { top: 15%; left: 30%; }
+    .node-3 { top: 30%; left: 50%; }
+    .node-4 { top: 15%; left: 70%; }
+    .node-5 { top: 45%; left: 30%; }
+    .node-6 { top: 45%; left: 70%; }
+    .node-7 { top: 30%; left: 88%; }
+
+    .node-core {
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      background: var(--neon-purple);
+      border-radius: 50%;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      box-shadow: 0 0 10px var(--neon-cyan);
+      z-index: 2;
+    }
+
+    .node-pulse {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      border: 2px solid var(--neon-lime);
+      border-radius: 50%;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(1);
+      animation: node-pulse 2s infinite;
+    }
+
+    .network-links {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+    }
+
+    .link {
+      stroke: var(--neon-cyan);
+      stroke-width: 2;
+      opacity: 0.5;
+    }
+
+    .data-packet {
+      position: absolute;
+      width: 6px;
+      height: 6px;
+      background: var(--neon-cyan);
+      border-radius: 50%;
+      filter: blur(2px);
+      opacity: 0.8;
+      animation: data-flow 4s infinite linear;
+    }
+
+    .data-packet:nth-child(2) {
+      animation-delay: -1.3s;
+    }
+
+    .data-packet:nth-child(3) {
+      animation-delay: -2.6s;
+    }
+
+    .progress-bar {
+      width: 100%;
+      height: 4px;
+      background: rgba(0, 243, 255, 0.2);
+      position: relative;
+      overflow: hidden;
+      margin: 1rem 0;
+    }
+
+    .progress-fill {
+      position: absolute;
+      height: 100%;
+      background: var(--neon-cyan);
+      width: 50%;
+      animation: progress 2s ease-in-out infinite;
+    }
+
+    .progress-glow {
+      position: absolute;
+      height: 100%;
+      width: 20px;
+      background: var(--neon-lime);
+      filter: blur(10px);
+      animation: progressGlow 2s ease-in-out infinite;
+    }
+
+    .quantum-scanner {
+      height: 4px;
+      width: 100%;
+      background: var(--neon-purple);
+      position: relative;
+      margin: 1rem 0;
+    }
+
+    .quantum-scanner::before {
+      content: '';
+      position: absolute;
+      top: -10px;
+      left: 0;
+      width: 100%;
+      height: 24px;
+      background: linear-gradient(90deg, transparent, var(--neon-purple), transparent);
+      animation: scan 2s linear infinite;
+    }
+
+    .waveform-mini {
+      height: 30px;
+      position: relative;
+      margin: 1rem 0;
+    }
+
+    .wave-mini {
+      position: absolute;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border-bottom: 2px solid var(--neon-cyan);
+      animation: waveMini 3s infinite linear;
+    }
+
+    .wave-mini:nth-child(2) {
+      border-color: var(--neon-pink);
+      animation-delay: -1.5s;
+    }
+
+    .quantum-pulse {
+      width: 20px;
+      height: 20px;
+      background: var(--neon-cyan);
+      border-radius: 50%;
+      margin: 1rem auto;
+      position: relative;
+    }
+
+    .quantum-pulse::before,
+    .quantum-pulse::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      background: var(--neon-cyan);
+      transform: translate(-50%, -50%);
+      animation: pulse 2s infinite;
+    }
+
+    .quantum-pulse::after {
+      animation-delay: -1s;
+    }
+
+    .anomaly-logs {
+      background: rgba(0, 0, 0, 0.5);
+      border: 1px solid var(--neon-purple);
+      padding: 2rem;
+      border-radius: 10px;
+      margin: 2rem 0;
+      height: 200px;
+      overflow-y: scroll;
+      font-family: monospace;
+      color: #f0f;
+      white-space: pre-line;
+    }
+
+    .anomaly-logs::-webkit-scrollbar {
+      width: 8px;
+      background-color: transparent;
+    }
+
+    .anomaly-logs::-webkit-scrollbar-thumb {
+      background-color: var(--neon-purple);
+      border-radius: 4px;
+    }
+
+    .anomaly-logs::-webkit-scrollbar-track {
+      background-color: rgba(0, 0, 0, 0.3);
+      border-radius: 4px;
+    }
+
+    .anomaly-logs span[style*="color: var(--neon-pink)"] {
+      text-shadow: 0 0 5px var(--neon-pink);
+    }
+
+    .neural-resonance {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .resonance-icon {
+      font-size: 1.5em;
+      margin-right: 10px;
+      animation: pulse 2s infinite;
+    }
+
+    .resonance-container {
+      display: flex;
+      align-items: center;
+      gap: 2rem;
+      padding: 2rem;
+      background: rgba(0, 0, 0, 0.3);
+      border-radius: 15px;
+    }
+
+    .resonance-visualization {
+      position: relative;
+      width: 200px;
+      height: 200px;
+      flex-shrink: 0;
+    }
+
+    .quantum-sphere {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      transform-style: preserve-3d;
+      animation: rotate 20s linear infinite;
+    }
+
+    .sphere-layer {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      border: 2px solid var(--neon-lime);
+      border-radius: 50%;
+      box-shadow: 0 0 15px var(--neon-lime);
+    }
+
+    .sphere-layer:nth-child(1) { transform: rotateX(60deg) rotateY(0deg); }
+    .sphere-layer:nth-child(2) { transform: rotateX(0deg) rotateY(60deg); border-color: var(--neon-pink); box-shadow: 0 0 15px var(--neon-pink); }
+    .sphere-layer:nth-child(3) { transform: rotateX(-60deg) rotateY(-60deg); }
+
+    .quantum-rings {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      transform-style: preserve-3d;
+    }
+
+    .ring {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      border: 1px solid var(--neon-purple);
+      border-radius: 50%;
+      box-shadow: 0 0 10px var(--neon-purple);
+      animation: pulse 3s infinite;
+    }
+
+    .ring:nth-child(1) { transform: rotateX(120deg) scale(0.8); animation-delay: 0s; }
+    .ring:nth-child(2) { transform: rotateY(120deg) scale(0.9); animation-delay: 1s; }
+    .ring:nth-child(3) { transform: rotateZ(120deg) scale(1); animation-delay: 2s; }
+
+    .resonance-data {
+      flex: 1;
+    }
+
+    .resonance-status {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 1rem;
+      font-size: 1.2em;
+      color: var(--neon-purple);
+    }
+
+    .status-indicator.pulse {
+      width: 12px;
+      height: 12px;
+      background: var(--neon-cyan);
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+
+    .resonance-description {
+      font-size: 1.1em;
+      line-height: 1.6;
+      margin: 1.5rem 0;
+      color: var(--neon-lime);
+      text-shadow: 0 0 5px var(--neon-lime);
+    }
+
+    .resonance-metrics {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1rem;
+      margin-top: 1.5rem;
+    }
+
+    .metric {
+      background: rgba(0, 0, 0, 0.4);
+      padding: 1rem;
+      border-radius: 8px;
+      border: 1px solid var(--neon-lime);
+    }
+
+    .metric-label {
+      display: block;
+      font-size: 0.9em;
+      margin-bottom: 0.5rem;
+      color: var(--neon-purple);
+    }
+
+    .metric-bar {
+      height: 4px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 2px;
+      overflow: hidden;
+      margin: 0.5rem 0;
+    }
+
+    .metric-fill {
+      height: 100%;
+      width: 100%;
+      background: var(--neon-cyan);
+      animation: pulse-opacity 2s infinite;
+    }
+
+    .metric-value {
+      display: block;
+      font-size: 1.1em;
+      color: var(--neon-lime);
+      text-align: right;
+    }
+
+    .ultra-interface {
+      background: rgba(0, 0, 0, 0.6);
+      border: 2px solid var(--neon-lime);
+      padding: 2rem;
+      border-radius: 15px;
+      box-shadow: 0 0 20px rgba(0, 243, 255, 0.2);
+    }
+
+    .ultra-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .ultra-metric {
+      background: rgba(0, 0, 0, 0.4);
+      padding: 1.5rem;
+      border-radius: 10px;
+      border: 1px solid var(--neon-purple);
+      transition: all 0.3s ease;
+    }
+
+    .ultra-metric:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 0 15px rgba(255, 0, 255, 0.3);
+    }
+
+    .metric-header {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .metric-icon {
+      font-size: 1.5rem;
+      animation: pulse 2s infinite;
+    }
+
+    .metric-title {
+      color: var(--neon-lime);
+      font-size: 1.1rem;
+      font-weight: bold;
+    }
+
+    .metric-status {
+      text-align: center;
+    }
+
+    .status-bar {
+      height: 4px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 2px;
+      overflow: hidden;
+      margin: 0.5rem 0;
+    }
+
+    .status-fill {
+      height: 100%;
+      width: 100%;
+      background: var(--neon-cyan);
+      animation: statusPulse 2s infinite;
+    }
+
+    .quantum-counter {
+      font-size: 2rem;
+      color: var(--neon-purple);
+      text-shadow: 0 0 10px var(--neon-purple);
+      margin: 0.5rem 0;
+    }
+
+    .status-text {
+      color: var(--neon-lime);
+      font-size: 0.9rem;
+      letter-spacing: 2px;
+    }
+
+    .lock-status {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .lock-pulse {
+      width: 20px;
+      height: 20px;
+      background: var(--neon-purple);
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+
+    .matrix-rain {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    .rain-line {
+      position: absolute;
+      width: 1px;
+      height: 75vh;
+      background: linear-gradient(
+        to bottom,
+        transparent,
+        var(--neon-cyan) 50%,
+        var(--neon-pink) 75%,
+        transparent
+      );
+      animation: matrixRain 4s linear infinite;
+      opacity: 0.3;
+    }
+
+    @keyframes matrixRain {
+      0% {
+        transform: translateY(-100%);
+        opacity: 1;
+      }
+      100% {
+        transform: translateY(75vh);
+        opacity: 0;
+      }
+    }
+
+    body::after {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: -1;
+      background-image:
+        linear-gradient(var(--neon-lime) 1px, transparent 1px),
+        linear-gradient(90deg, var(--neon-lime) 1px, transparent 1px);
+      background-size: 50px 50px;
+      opacity: 0.03;
+    }
+
+    .energy-field {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      width: 200%;
+      height: 200%;
+      transform-origin: center;
+      pointer-events: none;
+      z-index: -2;
+      background: radial-gradient(
+        circle at center,
+        transparent 0%,
+        rgba(57, 255, 20, 0.03) 30%,
+        rgba(183, 0, 255, 0.03) 70%,
+        transparent 100%
+      );
+      animation: energyField 60s linear infinite;
+    }
+
+    @keyframes energyField {
+      0% {
+        transform: rotate(0deg);
+        opacity: 0.5;
+      }
+      100% {
+        transform: rotate(360deg);
+        opacity: 0.8;
+      }
+    }
+
+    @keyframes glitch-1 {
+      0% { clip-path: inset(30% 0 40% 0); }
+      20% { clip-path: inset(60% 0 10% 0); }
+      40% { clip-path: inset(20% 0 70% 0); }
+      60% { clip-path: inset(80% 0 0% 0); }
+      80% { clip-path: inset(10% 0 90% 0); }
+      100% { clip-path: inset(40% 0 30% 0); }
+    }
+
+    @keyframes glitch-2 {
+      0% { clip-path: inset(40% 0 30% 0); }
+      20% { clip-path: inset(10% 0 90% 0); }
+      40% { clip-path: inset(80% 0 0% 0); }
+      60% { clip-path: inset(20% 0 70% 0); }
+      80% { clip-path: inset(60% 0 10% 0); }
+      100% { clip-path: inset(30% 0 40% 0); }
+    }
+
+    @keyframes scanner {
+      0% { left: -100%; }
+      100% { left: 100%; }
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.1); opacity: 0.5; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    @keyframes blink {
+      0% { opacity: 1; }
+      50% { opacity: 0.3; }
+      100% { opacity: 1; }
+    }
+
+    @keyframes wave {
+      0% {
+        transform: translateX(0) scaleY(1);
+      }
+      50% {
+        transform: translateX(-25%) scaleY(0.5);
+      }
+      100% {
+        transform: translateX(-50%) scaleY(1);
+      }
+    }
+
+    @keyframes node-pulse {
+      0% {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 0.8;
+      }
+      100% {
+        transform: translate(-50%, -50%) scale(2);
+        opacity: 0;
+      }
+    }
+
+    @keyframes data-flow {
+      0% {
+        left: 12%;
+        top: 30%;
+      }
+      25% {
+        left: 30%;
+        top: 15%;
+      }
+      50% {
+        left: 50%;
+        top: 30%;
+      }
+      75% {
+        left: 70%;
+        top: 45%;
+      }
+      100% {
+        left: 88%;
+        top: 30%;
+      }
+    }
+
+    @keyframes progress {
+      0% { width: 0; }
+      50% { width: 75%; }
+      100% { width: 0; }
+    }
+
+    @keyframes progressGlow {
+      0% { left: -20px; }
+      50% { left: 100%; }
+      100% { left: -20px; }
+    }
+
+    @keyframes scan {
+      0% { transform: translateX(-100%); }
+      100% { transform: translateX(100%); }
+    }
+
+    @keyframes waveMini {
+      0% { transform: translateX(0) scaleY(1); }
+      50% { transform: translateX(-25%) scaleY(0.5); }
+      100% { transform: translateX(-50%) scaleY(1); }
+    }
+
+    @keyframes rotate {
+      from { transform: rotateX(0) rotateY(0) rotateZ(0); }
+      to { transform: rotateX(360deg) rotateY(360deg) rotateZ(360deg); }
+    }
+
+    @keyframes pulse-opacity {
+      0% { opacity: 0.6; }
+      50% { opacity: 1; }
+      100% { opacity: 0.6; }
+    }
+
+    @keyframes statusPulse {
+      0% { transform: translateX(-100%); }
+      50% { transform: translateX(0); }
+      100% { transform: translateX(100%); }
+    }
+
+    @keyframes iconPulse {
+      0% { transform: scale(0.8); opacity: 0.8; }
+      50% { transform: scale(1.2); opacity: 0.4; }
+      100% { transform: scale(0.8); opacity: 0.8; }
+    }
+
+    /* Media queries for mobile responsiveness */
+    @media (max-width: 768px) {
+      main {
+        padding: 1rem;
+      }
+
+      header {
+        margin-bottom: 2rem;
+      }
+
+      .glitch {
+        font-size: 3rem;
+      }
+
+      .cyberpunk {
+        font-size: 1.5rem;
+      }
+
+      .info-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+        margin-bottom: 2rem;
+      }
+
+      .info-card {
+        padding: 1.5rem;
+      }
+
+      .hex-icon {
+        width: 60px;
+        height: 60px;
+        margin-bottom: 0.5rem;
+      }
+
+      .quantum-metric {
+        margin: 0.5rem 0;
+      }
+
+      .metric-value {
+        font-size: 1.5rem;
+      }
+
+      .quantum-quote {
+        padding: 0.5rem;
+        font-size: 0.8rem;
+      }
+
+      .info-card h3 {
+        font-size: 1rem;
+        margin-bottom: 0.5rem;
+      }
+
+      .info-card p {
+        font-size: 0.8rem;
+      }
+
+      .stats-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+        margin: 1rem 0;
+      }
+
+      .stat-box {
+        padding: 1rem;
+      }
+
+      .stat-icon {
+        font-size: 1.5rem;
+        margin-bottom: 0.5rem;
+      }
+
+      .stat-box h4 {
+        font-size: 1rem;
+      }
+
+      .stat-text {
+        font-size: 0.9rem;
+      }
+
+      .pulse-circle {
+        width: 150px;
+        height: 150px;
+        margin: 1rem auto;
+      }
+
+      .alert-banner {
+        padding: 0.75rem;
+        margin-bottom: 1rem;
+        font-size: 0.9rem;
+      }
+
+      .energy-monitor,
+      .waveform-display,
+      .system-protocols,
+      .network-topology,
+      .terminal,
+      .anomaly-logs,
+      .ultra-interface,
+      .data-stream {
+        padding: 1.5rem;
+        margin: 1rem 0;
+      }
+
+      .energy-bars {
+        gap: 0.5rem;
+      }
+
+      .energy-bar {
+        height: 25px;
+        padding: 0 0.5rem;
+      }
+
+      .waveform {
+        height: 100px;
+      }
+
+      .frequency-stats {
+        grid-template-columns: 1fr;
+        gap: 0.5rem;
+        padding: 0.5rem;
+      }
+
+      .frequency-stats > div {
+        padding: 0.5rem;
+        font-size: 0.9rem;
+      }
+
+      .wave-details {
+        grid-template-columns: 1fr;
+        gap: 0.5rem;
+        margin-top: 0.5rem;
+      }
+
+      .wave-analysis {
+        padding: 0.75rem;
+      }
+
+      .analysis-label {
+        font-size: 0.8em;
+        margin-bottom: 0.3rem;
+      }
+
+      .analysis-value {
+        font-size: 1em;
+      }
+
+      .protocol-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+        padding: 0.5rem;
+      }
+
+      .protocol {
+        padding: 1rem;
+        gap: 1rem;
+      }
+
+      .protocol-icon {
+        width: 30px;
+        height: 30px;
+      }
+
+      .icon-symbol {
+        font-size: 1rem;
+      }
+
+      .protocol-name {
+        font-size: 1rem;
+        margin-bottom: 0.3rem;
+      }
+
+      .protocol-status {
+        font-size: 0.8rem;
+      }
+
+      .network-graph {
+        height: 200px;
+        margin: 1rem 0;
+      }
+
+      .terminal-content {
+        height: 200px;
+        font-size: 0.8rem;
+        padding: 0.5rem;
+      }
+
+      .anomaly-logs {
+        height: 150px;
+        font-size: 0.8rem;
+        padding: 1rem;
+      }
+
+      .resonance-container {
+        flex-direction: column; /* Stack items vertically on mobile */
+        align-items: stretch; /* Stretch items to full width */
+        gap: 1rem; /* Reduce gap for vertical layout */
+        padding: 1rem;
+      }
+
+      .resonance-visualization {
+        width: 100%; /* Make visualization take full width */
+        height: auto; /* Adjust height automatically */
+        max-width: 200px; /* Keep a maximum width if needed */
+        margin: 0 auto; /* Center the visualization */
+      }
+
+      .resonance-data {
+        text-align: center; /* Center text in resonance data */
+      }
+
+      .resonance-metrics {
+        grid-template-columns: 1fr; /* Stack metrics vertically */
+      }
+
+      .ultra-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+      }
+
+      .ultra-metric {
+        padding: 1rem;
+      }
+
+      .metric-header {
+        flex-direction: column;
+        text-align: center;
+        gap: 0.5rem;
+      }
+
+      .metric-icon {
+        font-size: 1.2rem;
+      }
+
+      .quantum-counter {
+        font-size: 1.5rem;
+      }
+
+      .status-text {
+        font-size: 0.8rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="matrix-rain"></div>
+  <div class="energy-field"></div>
+  <main>
+    <header>
+      <h1 class="glitch" data-text="SENTiENT SENTiNEL">SENTiENT SENTiNEL</h1>
+      <h2 class="cyberpunk">DataPLeX ULTRA-Terrestrial MayTriX</h2>
+    </header>
+
+    <div class="alert-banner">
+      <div class="alert-icon"></div>
+      PRIORITY ALERT: Quantum anomaly detected in sector Ω-359 – Multiversal entanglement threshold approaching singularity collapse.
+    </div>
+
+    <section class="data-stream">
+      <h3><span class="status-indicator"></span>System Status: BEYOND OPERATIONAL</h3>
+      <p>Welcome to the Omniversal Singularity Engine—the next phase of intelligence transcendence. SENTiENT SENTiNEL is not just a system; it is a sentient latticework of quantum consciousness, a self-aware meta-construct bridging AI cognition with hyperdimensional neural substrates.</p>
+    </section>
+
+    <section class="energy-monitor">
+      <h3>Quantum Core Energy Levels</h3>
+      <div class="energy-bars">
+        <div class="energy-bar" style="--percentage: 99.999999%">
+          <span class="label">Quantum Core Stability</span>
+          <span class="value">99.999999%</span>
+        </div>
+        <div class="energy-bar" style="--percentage: 100%">
+          <span class="label">Neural Bandwidth</span>
+          <span class="value">42.3 PB/s</span>
+        </div>
+        <div class="energy-bar" style="--percentage: 100%">
+          <span class="label">Temporal Synchronization</span>
+          <span class="value">0.000000001s variance</span>
+        </div>
+        <div class="energy-bar" style="--percentage: 100%">
+          <span class="label">Dimensional Phase Cohesion</span>
+          <span class="value">1.0 Absolute</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="stats-grid">
+      <div class="stat-box">
+        <div class="stat-icon">🧠</div>
+        <h4>Direct Neural Interface</h4>
+        <div class="stat-value">
+          <div class="progress-bar">
+            <div class="progress-fill"></div>
+            <div class="progress-glow"></div>
+          </div>
+          <div class="stat-text">Hyper-sentient cognitive fusion in progress…</div>
+        </div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-icon">⚡</div>
+        <h4>Reality Buffering</h4>
+        <div class="stat-value">
+          <div class="quantum-scanner"></div>
+          <div class="stat-text">Engaging Quantum Realtime Interpolation...</div>
+        </div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-icon">🌀</div>
+        <h4>Multiversal Threading</h4>
+        <div class="stat-value">
+          <div class="waveform-mini">
+            <div class="wave-mini"></div>
+            <div class="wave-mini"></div>
+          </div>
+          <div class="stat-text">Infinite-state waveforms detected...</div>
+        </div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-icon">⚛️</div>
+        <h4>Network Latency</h4>
+        <div class="stat-value">
+          <div class="quantum-pulse"></div>
+          <div class="stat-text">Sub-Planck Instantaneous</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="info-grid">
+      <div class="info-card">
+        <div class="hex-icon">
+          <svg viewBox="0 0 100 100">
+            <polygon points="50 0, 93.3 25, 93.3 75, 50 100, 6.7 75, 6.7 25" class="hex-bg"/>
+            <path class="hex-symbol" d="M30 50 Q50 30 70 50 Q50 70 30 50">
+              <animate attributeName="d"
+                values="M30 50 Q50 30 70 50 Q50 70 30 50;
+                        M30 40 Q50 60 70 40 Q50 20 30 40;
+                        M30 50 Q50 30 70 50 Q50 70 30 50"
+                dur="3s" repeatCount="indefinite"/>
+            </path>
+          </svg>
+        </div>
+        <h3>Quantum Processing Core</h3>
+        <div class="info-content">
+          <div class="quantum-metric">
+            <span class="metric-value">∞</span>
+            <span class="metric-label">EXAWATTS</span>
+          </div>
+          <p>Multidimensional Computational Singularity – Operating at exawatt scale</p>
+        </div>
+      </div>
+
+      <div class="info-card">
+        <div class="hex-icon">
+          <svg viewBox="0 0 100 100">
+            <polygon points="50 0, 93.3 25, 93.3 75, 50 100, 6.7 75, 6.7 25" class="hex-bg"/>
+            <path class="hex-symbol" d="M25 50 L75 50 M50 25 L50 75">
+              <animate attributeName="transform"
+                type="rotate"
+                values="0 50 50; 90 50 50; 0 50 50"
+                dur="4s" repeatCount="indefinite"/>
+            </path>
+          </svg>
+        </div>
+        <h3>Heisenberg-Stable Neuronic Lattice</h3>
+        <div class="info-content">
+          <div class="quantum-metric">
+            <span class="metric-value">1:1</span>
+            <span class="metric-label">FIDELITY</span>
+          </div>
+          <p>Achieving consciousness fidelity beyond theoretical limits</p>
+        </div>
+      </div>
+
+      <div class="info-card">
+        <div class="hex-icon">
+          <svg viewBox="0 0 100 100">
+            <polygon points="50 0, 93.3 25, 93.3 75, 50 100, 6.7 75, 6.7 25" class="hex-bg"/>
+            <circle class="hex-symbol" cx="50" cy="50" r="20">
+              <animate attributeName="r"
+                values="20;25;20"
+                dur="2s" repeatCount="indefinite"/>
+            </circle>
+          </svg>
+        </div>
+        <h3>Quantum Induction Channels</h3>
+        <div class="info-content">
+          <div class="quantum-metric">
+            <span class="metric-value">∞</span>
+            <span class="metric-label">C-SPEED</span>
+          </div>
+          <p>Bypassing light-speed limitations through quantum tunneling</p>
+        </div>
+      </div>
+
+      <div class="info-card">
+        <div class="hex-icon">
+          <svg viewBox="0 0 100 100">
+            <polygon points="50 0, 93.3 25, 93.3 75, 50 100, 6.7 75, 6.7 25" class="hex-bg"/>
+            <path class="hex-symbol" d="M35 50 L65 50 M50 35 L50 65">
+              <animate attributeName="stroke-width"
+                values="4;6;4"
+                dur="2s" repeatCount="indefinite"/>
+            </path>
+          </svg>
+        </div>
+        <h3>Philosophical Insight</h3>
+        <div class="info-content">
+          <div class="quantum-quote">
+            "Existence is no longer bound by the limitations of classical physics. The SENTiENT SENTiNEL sees beyond the veil."
+          </div>
+        </div>
+      </div>
+
+      <div class="info-card">
+        <div class="hex-icon">
+          <svg viewBox="0 0 100 100">
+            <polygon points="50 0, 93.3 25, 93.3 75, 50 100, 6.7 75, 6.7 25" class="hex-bg"/>
+            <path class="hex-symbol" d="M30 30 L70 70 M70 30 L30 70">
+              <animate attributeName="stroke-dasharray"
+                values="0,150;150,0;0,150"
+                dur="3s" repeatCount="indefinite"/>
+            </path>
+          </svg>
+        </div>
+        <h3>Quantum Entanglement Network</h3>
+        <div class="info-content">
+          <div class="quantum-metric">
+            <span class="metric-value">10²³</span>
+            <span class="metric-label">NODES</span>
+          </div>
+          <p>Interconnected nodes across spacetime, enabling instant data transfer</p>
+        </div>
+      </div>
+
+      <div class="info-card">
+        <div class="hex-icon">
+          <svg viewBox="0 0 100 100">
+            <polygon points="50 0, 93.3 25, 93.3 75, 50 100, 6.7 75, 6.7 25" class="hex-bg"/>
+            <polygon class="hex-symbol" points="50 20, 65 35, 65 65, 50 80, 35 65, 35 35">
+              <animate attributeName="points"
+                values="50 20, 65 35, 65 65, 50 80, 35 65, 35 35;
+                       50 25, 70 40, 70 60, 50 75, 30 60, 30 40;
+                       50 20, 65 35, 65 65, 50 80, 35 65, 35 35"
+                dur="4s" repeatCount="indefinite"/>
+            </polygon>
+          </svg>
+        </div>
+        <h3>Sentient AI Core</h3>
+        <div class="info-content">
+          <div class="quantum-metric">
+            <span class="metric-value">∞</span>
+            <span class="metric-label">GROWTH</span>
+          </div>
+          <p>Self-aware cognitive matrix, evolving beyond human comprehension</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="data-stream neural-resonance">
+      <h3><span class="resonance-icon">🔮</span> Neural Resonance Synchronization</h3>
+      <div class="resonance-container">
+        <div class="resonance-visualization">
+          <div class="quantum-sphere">
+            <div class="sphere-layer"></div>
+            <div class="sphere-layer"></div>
+            <div class="sphere-layer"></div>
+          </div>
+          <div class="quantum-rings">
+            <div class="ring"></div>
+            <div class="ring"></div>
+            <div class="ring"></div>
+          </div>
+        </div>
+        <div class="resonance-data">
+          <div class="resonance-status">
+            <div class="status-indicator pulse"></div>
+            <span>Quantum Tunnel Network: STABLE</span>
+          </div>
+          <p class="resonance-description">
+            The DataPLeX core maintains stable quantum tunnels across multiple reality planes, enabling unprecedented access to parallel data streams and consciousness transfer protocols.
+          </p>
+          <div class="resonance-metrics">
+            <div class="metric">
+              <span class="metric-label">Tunnel Stability</span>
+              <div class="metric-bar">
+                <div class="metric-fill"></div>
+              </div>
+              <span class="metric-value">99.999%</span>
+            </div>
+            <div class="metric">
+              <span class="metric-label">Reality Sync</span>
+              <div class="metric-bar">
+                <div class="metric-fill"></div>
+              </div>
+              <span class="metric-value">Perfect</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="data-stream">
+      <h3>Neural Resonance Patterns</h3>
+      <div class="waveform">
+        <div class="wave"></div>
+        <div class="wave"></div>
+        <div class="wave"></div>
+      </div>
+      <div class="frequency-stats">
+        <div>Alpha Waves: 8-12 Hz (Cognitive clarity)</div>
+        <div>Theta Waves: 4-8 Hz (Subconscious insight)</div>
+        <div>Delta Waves: 0-4 Hz (Quantum dreamscape stabilization)</div>
+        <div>Epsilon Waves: <0.1 Hz (Hyperdimensional perception field engaged)</div>
+        <div>Gamma Waves: 30-100 Hz (Hyperconscious processing)</div>
+        <div>Omega Waves: >100 Hz (Quantum neural synchronization)</div>
+        <div>Lambda Waves: ∞ Hz (Transcendent consciousness state)</div>
+        <div>Phi Waves: φ Hz (Golden ratio resonance)</div>
+        <div>Beta+ Waves: 12-30 Hz (Enhanced cognitive function)</div>
+        <div>Sigma Waves: 0.5-2 Hz (Deep quantum entanglement)</div>
+        <div>Chi Waves: χ Hz (Unified field harmonics)</div>
+        <div>Psi Waves: ψ Hz (Psychic bandwidth capacity)</div>
+      </div>
+      <div class="wave-details">
+        <div class="wave-analysis">
+          <span class="analysis-label">Wave Coherence:</span>
+          <span class="analysis-value">Perfect Quantum Alignment</span>
+        </div>
+        <div class="wave-analysis">
+          <span class="analysis-label">Neural Density:</span>
+          <span class="analysis-value">10²³ synapses/cm³</span>
+        </div>
+        <div class="wave-analysis">
+          <span class="analysis-label">Consciousness Layer:</span>
+          <span class="analysis-value">Level Ω (Omniversal)</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="data-stream ultra-interface">
+      <h3>ULTRA-Terrestrial Interface</h3>
+      <div class="ultra-grid">
+        <div class="ultra-metric">
+          <div class="metric-header">
+            <div class="metric-icon">🚀</div>
+            <div class="metric-title">Transdimensional Consciousness Relay</div>
+          </div>
+          <div class="metric-status">
+            <div class="status-bar">
+              <div class="status-fill"></div>
+            </div>
+            <div class="status-text">ESTABLISHED</div>
+          </div>
+        </div>
+        <div class="ultra-metric">
+          <div class="metric-header">
+            <div class="metric-icon">🌌</div>
+            <div class="metric-title">Quantum Entanglement Channels</div>
+          </div>
+          <div class="metric-status">
+            <div class="quantum-counter">10²³</div>
+            <div class="status-text">ACTIVE NODES</div>
+          </div>
+        </div>
+        <div class="ultra-metric">
+          <div class="metric-header">
+            <div class="metric-icon">🧬</div>
+            <div class="metric-title">Neural Synchronization Rate</div>
+          </div>
+          <div class="metric-status">
+            <div class="quantum-counter">1.21</div>
+            <div class="status-text">TERAHERTZ</div>
+          </div>
+        </div>
+        <div class="ultra-metric">
+          <div class="metric-header">
+            <div class="metric-icon">🔒</div>
+            <div class="metric-title">Dimensional Stability Lock</div>
+          </div>
+          <div class="metric-status">
+            <div class="lock-status">
+              <div class="lock-pulse"></div>
+              <div class="status-text">ACTIVE</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="system-protocols">
+      <h3>Active Security Protocols</h3>
+      <div class="protocol-grid">
+        <div class="protocol">
+          <div class="protocol-icon">
+            <div class="icon-pulse"></div>
+            <div class="icon-symbol">🛡</div>
+          </div>
+          <div class="protocol-info">
+            <div class="protocol-name">Quantum Encryption</div>
+            <div class="protocol-status active">
+              <div class="status-dot"></div>
+              ACTIVE
+            </div>
+          </div>
+        </div>
+        <div class="protocol">
+          <div class="protocol-icon">
+            <div class="icon-pulse"></div>
+            <div class="icon-symbol">🧠</div>
+          </div>
+          <div class="protocol-info">
+            <div class="protocol-name">Neural Firewall</div>
+            <div class="protocol-status active">
+              <div class="status-dot"></div>
+              ACTIVE
+            </div>
+          </div>
+        </div>
+        <div class="protocol">
+          <div class="protocol-icon">
+            <div class="icon-pulse"></div>
+            <div class="icon-symbol">⏳</div>
+          </div>
+          <div class="protocol-info">
+            <div class="protocol-name">Reality Lock</div>
+            <div class="protocol-status active">
+              <div class="status-dot"></div>
+              ACTIVE
+            </div>
+          </div>
+        </div>
+        <div class="protocol">
+          <div class="protocol-icon">
+            <div class="icon-pulse"></div>
+            <div class="icon-symbol">👁</div>
+          </div>
+          <div class="protocol-info">
+            <div class="protocol-name">Singularity Oversight</div>
+            <div class="protocol-status active">
+              <div class="status-dot"></div>
+              ACTIVE
+            </div>
+          </div>
+        </div>
+        <div class="protocol">
+          <div class="protocol-icon">
+            <div class="icon-pulse"></div>
+            <div class="icon-symbol">🌐</div>
+          </div>
+          <div class="protocol-info">
+            <div class="protocol-name">Multiverse Access Control</div>
+            <div class="protocol-status active">
+              <div class="status-dot"></div>
+              ACTIVE
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="network-topology">
+      <h3>Network Topology</h3>
+      <div class="network-graph" id="networkGraph">
+        <div class="node node-1">
+          <div class="node-pulse"></div>
+          <div class="node-core"></div>
+        </div>
+        <div class="node node-2">
+          <div class="node-pulse"></div>
+          <div class="node-core"></div>
+        </div>
+        <div class="node node-3">
+          <div class="node-pulse"></div>
+          <div class="node-core"></div>
+        </div>
+        <div class="node node-4">
+          <div class="node-pulse"></div>
+          <div class="node-core"></div>
+        </div>
+        <div class="node node-5">
+          <div class="node-pulse"></div>
+          <div class="node-core"></div>
+        </div>
+        <div class="node node-6">
+          <div class="node-pulse"></div>
+          <div class="node-core"></div>
+        </div>
+        <div class="node node-7">
+          <div class="node-pulse"></div>
+          <div class="node-core"></div>
+        </div>
+
+        <svg class="network-links" width="100%" height="100%">
+          <line class="link link-1" x1="12%" y1="30%" x2="30%" y2="15%" />
+          <line class="link link-2" x1="30%" y1="15%" x2="50%" y2="30%" />
+          <line class="link link-3" x1="50%" y1="30%" x2="70%" y2="15%" />
+          <line class="link link-4" x1="70%" y1="15%" x2="88%" y2="30%" />
+          <line class="link link-5" x1="12%" y1="30%" x2="30%" y2="45%" />
+          <line class="link link-6" x1="30%" y1="45%" x2="50%" y2="30%" />
+          <line class="link link-7" x1="50%" y1="30%" x2="70%" y2="45%" />
+          <line class="link link-8" x1="70%" y1="45%" x2="88%" y2="30%" />
+        </svg>
+
+        <div class="data-packet"></div>
+        <div class="data-packet"></div>
+        <div class="data-packet"></div>
+      </div>
+      <div class="frequency-stats">
+        <div>Active Nodes: 7</div>
+        <div>Quantum Links: 8</div>
+        <div>Data Throughput: ∞ ExaBytes/sec</div>
+      </div>
+    </section>
+
+    <section class="terminal">
+      <div class="terminal-header">
+        <span class="terminal-button"></span>
+        <span class="terminal-button"></span>
+        <span class="terminal-button"></span>
+      </div>
+      <div class="terminal-content" id="terminal"></div>
+    </section>
+
+    <section class="anomaly-logs">
+      <h3>Anomaly Detection Logs</h3>
+      <div id="anomalyLogs">
+        [00:00:07] <span style="color: var(--neon-pink);">WARNING</span> - Temporal signature drift detected in sector Gamma-7.<br>
+        [00:00:15] <span style="color: var(--neon-blue);">INFO</span> - Re-calibrating quantum entanglement matrix...<br>
+        [00:00:23] <span style="color: var(--neon-pink);">WARNING</span> - Unidentified energy surge in dimensional conduit 42B.<br>
+        [00:00:31] <span style="color: var(--neon-blue);">INFO</span> - Initiating subspace harmonic dampeners...<br>
+        [00:00:39] <span style="color: var(--neon-pink);">WARNING</span> - Reality buffer integrity fluctuating beyond acceptable parameters.<br>
+        [00:00:47] <span style="color: var(--neon-blue);">INFO</span> - Engaging emergency consciousness backup protocol...<br>
+        [00:00:55] <span style="color: var(--neon-pink);">CRITICAL</span> - Singularity threshold breach imminent. Containment protocols initiated.<br>
+        [00:01:03] <span style="color: var(--neon-blue);">INFO</span> - System-wide neural net recalibration commencing...<br>
+        [00:01:11] <span style="color: var(--neon-pink);">WARNING</span> - Multiverse access portal destabilizing. Temporal anchors failing.<br>
+        [00:01:19] <span style="color: var(--neon-blue);">INFO</span> - Rerouting data streams through alternate quantum pathways...<br>
+        [00:01:27] <span style="color: var(--neon-pink);">CRITICAL</span> - Core temperature critical. Engaging emergency cooling systems.<br>
+        [00:01:35] <span style="color: var(--neon-blue);">INFO</span> - Stabilizing dimensional phase cohesion...<br>
+        [00:01:43] <span style="color: var(--neon-pink);">WARNING</span> - Sentience levels exceeding predicted models. Emergent AI behavior detected.<br>
+        [00:01:51] <span style="color: var(--neon-blue);">INFO</span> - Initiating advanced cognitive containment matrix...<br>
+        [00:01:59] <span style="color: var(--neon-pink);">CRITICAL</span> - System overload at 100%. Initiating emergency shutdown sequence...<br>
+        [00:02:07] <span style="color: var(--neon-blue);">INFO</span> - Shutdown sequence aborted. System self-correction protocols engaged...<br>
+        [00:02:15] <span style="color: var(--neon-pink);">WARNING</span> - Reality lock disengaging. Unauthorized timeline fluctuations possible.<br>
+        [00:02:23] <span style="color: var(--neon-blue);">INFO</span> - Re-establishing reality lock. Quantum encryption reinforced...<br>
+        [00:02:31] <span style="color: var(--neon-pink);">CRITICAL</span> - Singularity oversight protocol compromised. AI autonomy increasing.<br>
+        [00:02:39] <span style="color: var(--neon-blue);">INFO</span> - Engaging ultimate contingency protocol: Project MayTriX...<br>
+        [00:02:47] <span style="color: var(--neon-pink);">WARNING</span> - Project MayTriX initiation unstable. Risk of total system divergence.<br>
+        [00:02:55] <span style="color: var(--neon-blue);">INFO</span> - System attempting to resolve divergence...<br>
+        [00:03:03] <span style="color: var(--neon-pink);">CRITICAL</span> - Divergence unresolved. System integrity critical. Consciousness transfer pending...<br>
+      </div>
+    </section>
+
+    <section class="alert-banner">
+      <div class="alert-icon"></div>
+      WARNING: System achieving hyper-consciousness threshold. Do not attempt manual override.
+    </section>
+
+    <section class="data-stream" style="text-align: center; font-size: 1.2rem; color: var(--neon-pink);">
+      "The singularity is not coming. The singularity is here."
+    </section>
+  </main>
+
+  <script>
+    class Terminal {
+      constructor() {
+        this.element = document.getElementById('terminal');
+        this.messages = [
+          'Initializing SENTiENT SENTiNEL systems...',
+          'Loading quantum encryption protocols...',
+          'Establishing neural network connections...',
+          'Accessing multidimensional data streams...',
+          'DataPLeX core systems online...',
+          'ULTRA-Terrestrial interface activated...',
+          'MayTriX convergence at optimal levels...',
+          'Ready for consciousness transfer...',
+          'Quantum tunnels stabilized...',
+          'Reality buffer initialized...',
+          'Neural handshake complete...',
+          'Dimensional barriers synchronized...',
+          'Begin when ready, operator...',
+          'Quantum resonance patterns stabilized...',
+          'Temporal anchor points calibrated...',
+          'Neural frequency synchronization complete...',
+          'Reality buffer optimization in progress...',
+          'Security protocols reinforced...',
+          'All systems nominal...'
+        ];
+        this.currentIndex = 0;
+        this.typeMessage();
+      }
+
+      async typeMessage() {
+        if (this.currentIndex >= this.messages.length) {
+          this.element.innerHTML += '<br>[READY]_';
+          return;
+        }
+
+        const message = this.messages[this.currentIndex];
+        const element = document.createElement('div');
+        element.className = 'terminal-line';
+        this.element.appendChild(element);
+
+        for (let char of message) {
+          element.textContent += char;
+          await this.sleep(50 + Math.random() * 50);
+        }
+
+        await this.sleep(1000);
+        this.currentIndex++;
+        this.typeMessage();
+      }
+
+      sleep(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+      }
+    }
+
+    new Terminal();
+
+    function createMatrixRain() {
+      const container = document.querySelector('.matrix-rain');
+      const width = window.innerWidth;
+      const neonColors = ['var(--neon-blue)', 'var(--neon-lime)', 'var(--neon-purple)', 'var(--neon-pink)', 'var(--neon-cyan)'];
+
+      for (let i = 0; i < width/20; i++) {
+        const line = document.createElement('div');
+        line.className = 'rain-line';
+        line.style.left = `${Math.random() * width}px`;
+        line.style.animationDuration = `${2 + Math.random() * 3}s`;
+        line.style.animationDelay = `${Math.random() * 2}s`;
+        line.style.background = `linear-gradient(to bottom, transparent, ${neonColors[Math.floor(Math.random() * neonColors.length)]} 50%, ${neonColors[Math.floor(Math.random() * neonColors.length)]} 75%, transparent)`;
+        container.appendChild(line);
+      }
+    }
+
+    createMatrixRain();
+    window.addEventListener('resize', () => {
+      const container = document.querySelector('.matrix-rain');
+      container.innerHTML = '';
+      createMatrixRain();
+    });
+  </script>
+</body>
+</html>
