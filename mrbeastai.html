@@ -6,7 +6,7 @@
         body {
             margin: 0;
             padding: 0;
-            background: #000000;
+            background: transparent;
             font-family: 'Montserrat', sans-serif;
             height: 100vh;
             overflow: hidden;
@@ -26,7 +26,6 @@
             border: 2px solid #fff;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
             z-index: 1000;
-            /* Ensure it's always on top */
         }
 
         .chat-bubble:hover {
@@ -51,7 +50,6 @@
             box-shadow: 0 0 20px rgba(0, 163, 255, 0.3);
             overflow: hidden;
             z-index: 999;
-            /* Ensure it's above other content but below the chat bubble */
         }
 
         .chat-header {
@@ -76,7 +74,6 @@
             font-size: 24px;
             cursor: pointer;
             font-family: sans-serif;
-            /* Fix the font issue */
         }
 
         .chat-messages {
@@ -198,12 +195,7 @@
                 addMessage(message, true);
                 userInput.value = '';
 
-                const newMessage = {
-                    role: "user",
-                    content: message
-                };
-                conversationHistory.push(newMessage);
-                conversationHistory = conversationHistory.slice(-10);
+               !function(){const newMessage={role:"user",content:message};conversationHistory.push(newMessage);conversationHistory=conversationHistory.slice(-10)}();
 
                 try {
                     const completion = await websim.chat.completions.create({
@@ -258,4 +250,5 @@
         </div>
     </div>
 </body>
+
 </html>
