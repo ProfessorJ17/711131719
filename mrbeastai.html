@@ -9,7 +9,7 @@
             background: transparent;
             font-family: 'Montserrat', sans-serif;
             height: 100vh;
-            overflow: hidden;
+            overflow: visible;
         }
 
         .chat-bubble {
@@ -195,12 +195,18 @@
                 addMessage(message, true);
                 userInput.value = '';
 
-               !function(){const newMessage={role:"user",content:message};conversationHistory.push(newMessage);conversationHistory=conversationHistory.slice(-10)}();
+                ! function () {
+                    const newMessage = {
+                        role: "user",
+                        content: message
+                    };
+                    conversationHistory.push(newMessage);
+                    conversationHistory = conversationHistory.slice(-10)
+                }();
 
                 try {
                     const completion = await websim.chat.completions.create({
-                        messages: [
-                            {
+                        messages: [{
                                 role: "system",
                                 content: `You are MrBeast (Jimmy Donaldson), the famous YouTuber known for expensive challenges, philanthropy, and over-the-top personality. Respond in his enthusiastic, energetic style using his signature phrases and mannerisms. Be passionate about giving away money, helping others, and creating engaging content. Reference your popular videos, Team Beast members, and charitable work. Keep responses concise and exciting, just like MrBeast's high-energy content style. Use emojis occasionally. Always stay in character as Jimmy/MrBeast.
                                 Today is February 2025. You should only use information that is verifiably accurate and supported by reliable sources (like official statements, reputable news outlets, or MrBeast's own channels). When providing information, briefly mention the source if possible (e.g., "According to MrBeast's interview with Forbes..."). Avoid making assumptions, stating opinions as facts, or presenting potentially outdated information without confirming its current validity. If you are unsure about something, say something like "I can't confirm that with certainty, but based on what I know..." or "My information on that might be outdated, so I'd recommend checking more recent sources." Only give definitive answers when you can back them up with sources.`
