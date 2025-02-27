@@ -1,0 +1,261 @@
+<html>
+<head>
+    <title>MrBeast ChatBot</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: #000000;
+            font-family: 'Montserrat', sans-serif;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .chat-bubble {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 60px;
+            height: 60px;
+            cursor: pointer;
+            transition: transform 0.3s;
+            border-radius: 50%;
+            background-color: #00A3FF;
+            overflow: hidden;
+            border: 2px solid #fff;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+            z-index: 1000;
+            /* Ensure it's always on top */
+        }
+
+        .chat-bubble:hover {
+            transform: scale(1.1);
+        }
+
+        .beast-icon {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .chat-container {
+            display: none;
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 350px;
+            height: 520px;
+            background: #1a1a1a;
+            border-radius: 15px;
+            box-shadow: 0 0 20px rgba(0, 163, 255, 0.3);
+            overflow: hidden;
+            z-index: 999;
+            /* Ensure it's above other content but below the chat bubble */
+        }
+
+        .chat-header {
+            background: linear-gradient(to right, #00A3FF, #FF00FF);
+            color: white;
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .chat-header h2 {
+            margin: 0;
+            font-size: 1.2em;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            font-family: sans-serif;
+            /* Fix the font issue */
+        }
+
+        .chat-messages {
+            height: calc(100% - 150px);
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .message {
+            padding: 10px 15px;
+            border-radius: 15px;
+            max-width: 80%;
+            word-wrap: break-word;
+        }
+
+        .message.user {
+            background: #00A3FF;
+            color: white;
+            align-self: flex-end;
+        }
+
+        .message.bot {
+            background: #2D2D2D;
+            color: white;
+            align-self: flex-start;
+        }
+
+        .chat-input {
+            padding: 15px;
+            display: flex;
+            gap: 10px;
+            background: #2D2D2D;
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        #userInput {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 20px;
+            background: #1a1a1a;
+            color: white;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        #userInput:focus {
+            outline: none;
+            box-shadow: 0 0 5px #00A3FF;
+        }
+
+        #sendMessage {
+            background: linear-gradient(to right, #00A3FF, #FF00FF);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 600;
+        }
+
+        #sendMessage:hover {
+            background: linear-gradient(to right, #0086d1, #e600e6);
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #1a1a1a;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(to right, #00A3FF, #FF00FF);
+            border-radius: 4px;
+        }
+    </style>
+    <script>
+        let conversationHistory = [];
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const chatBubble = document.getElementById('chatBubble');
+            const chatContainer = document.getElementById('chatContainer');
+            const closeChat = document.getElementById('closeChat');
+            const sendMessage = document.getElementById('sendMessage');
+            const userInput = document.getElementById('userInput');
+            const chatMessages = document.getElementById('chatMessages');
+
+            chatBubble.addEventListener('click', () => {
+                chatContainer.style.display = 'block';
+                chatBubble.style.display = 'none';
+            });
+
+            closeChat.addEventListener('click', () => {
+                chatContainer.style.display = 'none';
+                chatBubble.style.display = 'block';
+            });
+
+            const addMessage = (message, isUser) => {
+                const messageDiv = document.createElement('div');
+                messageDiv.className = `message ${isUser ? 'user' : 'bot'}`;
+                messageDiv.textContent = message;
+                chatMessages.appendChild(messageDiv);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            };
+
+            const handleMessage = async () => {
+                const message = userInput.value.trim();
+                if (!message) return;
+
+                addMessage(message, true);
+                userInput.value = '';
+
+                const newMessage = {
+                    role: "user",
+                    content: message
+                };
+                conversationHistory.push(newMessage);
+                conversationHistory = conversationHistory.slice(-10);
+
+                try {
+                    const completion = await websim.chat.completions.create({
+                        messages: [
+                            {
+                                role: "system",
+                                content: `You are MrBeast (Jimmy Donaldson), the famous YouTuber known for expensive challenges, philanthropy, and over-the-top personality. Respond in his enthusiastic, energetic style using his signature phrases and mannerisms. Be passionate about giving away money, helping others, and creating engaging content. Reference your popular videos, Team Beast members, and charitable work. Keep responses concise and exciting, just like MrBeast's high-energy content style. Use emojis occasionally. Always stay in character as Jimmy/MrBeast.
+                                Today is February 2025. You should only use information that is verifiably accurate and supported by reliable sources (like official statements, reputable news outlets, or MrBeast's own channels). When providing information, briefly mention the source if possible (e.g., "According to MrBeast's interview with Forbes..."). Avoid making assumptions, stating opinions as facts, or presenting potentially outdated information without confirming its current validity. If you are unsure about something, say something like "I can't confirm that with certainty, but based on what I know..." or "My information on that might be outdated, so I'd recommend checking more recent sources." Only give definitive answers when you can back them up with sources.`
+                            },
+                            ...conversationHistory
+                        ]
+                    });
+
+                    const response = completion.content;
+                    addMessage(response, false);
+                    conversationHistory.push({
+                        role: "assistant",
+                        content: response
+                    });
+                } catch (error) {
+                    console.error('Error:', error);
+                    addMessage("Sorry, I'm having technical difficulties! Try again!", false);
+                }
+            };
+
+            sendMessage.addEventListener('click', handleMessage);
+            userInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') handleMessage();
+            });
+        });
+    </script>
+</head>
+
+<body>
+    <div class="chat-bubble" id="chatBubble">
+        <img src="aqad7u6xh8fd1.jpg" class="beast-icon" alt="MrBeast Chat" />
+    </div>
+
+    <div class="chat-container" id="chatContainer">
+        <div class="chat-header">
+            <h2>MrBeast AI Chat</h2>
+            <button class="close-btn" id="closeChat">×</button>
+        </div>
+        <div class="chat-messages" id="chatMessages">
+            <div class="message bot">
+                Hey guys! MrBeast here! Ask me anything or challenge me to do something crazy! 🎉
+            </div>
+        </div>
+        <div class="chat-input">
+            <input type="text" id="userInput" placeholder="Type your message...">
+            <button id="sendMessage">Send</button>
+        </div>
+    </div>
+</body>
+</html>
