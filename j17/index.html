@@ -42,7 +42,10 @@
         #status, #countdown, #lockout-countdown {
             color: #ff5555;
             margin: 10px 0;
-            font-size: 0.9em;
+            font-size: 1em;
+            position: relative;
+            top: 0;
+            width: 100%;
         }
         #agent-container {
             width: 100%;
@@ -60,14 +63,14 @@
 </head>
 <body>
     <h1>4everAI</h1>
+    <div id="countdown"></div>
+    <div id="lockout-countdown"></div>
     <div id="user-name"></div>
     <input type="email" id="email" placeholder="Enter email" />
     <input type="password" id="password" placeholder="Enter password" />
     <button onclick="signIn()">Sign In</button>
     <button onclick="signOut()" id="signout" style="display: none;">Sign Out</button>
     <div id="status"></div>
-    <div id="countdown"></div>
-    <div id="lockout-countdown"></div>
     <div id="agent-container">
         <script
             type="module"
@@ -103,7 +106,6 @@
         const functions = getFunctions(app);
         const analytics = getAnalytics(app);
 
-        let accessTimer = null;
         let countdownInterval = null;
         let lockoutInterval = null;
 
@@ -142,25 +144,18 @@
                 userNameDiv.textContent = `${userName}`;
                 console.log('User name set to:', userName);
 
-                const userRef = doc(db, 'users', user.uid);
-                const userDoc = await getDoc(userRef);
-                const userDocData = userDoc.exists() ? userDoc.data() : {};
-                const now = Date.now();
-
-                if (userDocData.lockoutUntil && now < userDocData.lockoutUntil) {
-                    status.textContent = 'Locked out!';
-                    startLockoutCountdown(userDocData.lockoutUntil);
-                    return;
-                }
-
                 const checkAccess = httpsCallable(functions, 'checkAccess');
                 console.log('Calling checkAccess function...');
                 const { data } = await checkAccess();
                 console.log('checkAccess response:', data);
 
                 if (!data.access) {
-                    status.textContent = 'Locked out!';
-                    startLockoutCountdown(userDocData.lockoutUntil || Date.now() + 24 * 60 * 60 * 1000);
+                    status.textContent = 'Outside access window or locked out.';
+                    if (data.timeUntilMidnight) {
+                        startMidnightCountdown(data.timeUntilMidnight);
+                    } else if (data.timeLeft) {
+                        startLockoutCountdown(data.timeLeft);
+                    }
                     return;
                 }
 
@@ -168,8 +163,7 @@
                 status.textContent = 'Access granted!';
                 agentContainer.style.display = 'block';
                 signoutButton.style.display = 'block';
-                startAccessCountdown();
-                startLockoutCountdown(userDocData.lockoutUntil || null);
+                startAccessCountdown(data.timeLeft);
 
             } catch (error) {
                 console.error('Sign-in error:', error.message);
@@ -177,52 +171,52 @@
             }
         };
 
-        function startAccessCountdown() {
+        function startAccessCountdown(timeLeft) {
             const countdown = document.getElementById('countdown');
-            let timeLeft = 300; // 5 minutes in seconds
-            countdown.textContent = `Time remaining: ${formatTime(timeLeft)}`;
+            countdown.textContent = `Chat time left: ${formatTime(timeLeft)}`;
 
-            countdownInterval = setInterval(async () => {
+            clearInterval(countdownInterval);
+            countdownInterval = setInterval(() => {
                 timeLeft--;
-                countdown.textContent = `Time remaining: ${formatTime(timeLeft)}`;
+                countdown.textContent = `Chat time left: ${formatTime(timeLeft)}`;
                 if (timeLeft <= 0) {
                     clearInterval(countdownInterval);
-                    const user = auth.currentUser;
-                    if (user) {
-                        console.log('Timer expired, locking out');
-                        const userRef = doc(db, 'users', user.uid);
-                        const lockoutUntil = Date.now() + 24 * 60 * 60 * 1000;
-                        await updateDoc(userRef, { lockoutUntil });
-                        document.getElementById('agent-container').style.display = 'none';
-                        document.getElementById('status').textContent = 'Time’s up! 24-hour lockout started.';
-                        document.getElementById('user-name').textContent = '';
-                        document.getElementById('signout').style.display = 'none';
-                        startLockoutCountdown(lockoutUntil);
-                        await authSignOut(auth);
-                    }
+                    document.getElementById('agent-container').style.display = 'none';
+                    document.getElementById('status').textContent = 'Access window ended.';
+                    document.getElementById('signout').style.display = 'none';
+                    startMidnightCountdown(24 * 60 * 60 - 5 * 60); // Time until next midnight
                 }
             }, 1000);
         }
 
-        function startLockoutCountdown(lockoutUntil) {
+        function startMidnightCountdown(timeUntilMidnight) {
             const lockoutCountdown = document.getElementById('lockout-countdown');
-            clearInterval(lockoutInterval); // Clear any existing interval
-            if (!lockoutUntil || Date.now() >= lockoutUntil) {
-                lockoutCountdown.textContent = 'No active lockout.';
-                return;
-            }
+            lockoutCountdown.textContent = `Next access at midnight CST in: ${formatTime(timeUntilMidnight)}`;
 
-            const updateLockout = () => {
-                const now = Date.now();
-                const timeLeft = Math.max(0, Math.floor((lockoutUntil - now) / 1000));
-                lockoutCountdown.textContent = `Agent available in: ${formatTime(timeLeft)}`;
+            clearInterval(lockoutInterval);
+            lockoutInterval = setInterval(() => {
+                timeUntilMidnight--;
+                lockoutCountdown.textContent = `Next access at midnight CST in: ${formatTime(timeUntilMidnight)}`;
+                if (timeUntilMidnight <= 0) {
+                    clearInterval(lockoutInterval);
+                    lockoutCountdown.textContent = 'Access window open now! Sign in again.';
+                }
+            }, 1000);
+        }
+
+        function startLockoutCountdown(timeLeft) {
+            const lockoutCountdown = document.getElementById('lockout-countdown');
+            lockoutCountdown.textContent = `Locked out for: ${formatTime(timeLeft)}`;
+
+            clearInterval(lockoutInterval);
+            lockoutInterval = setInterval(() => {
+                timeLeft--;
+                lockoutCountdown.textContent = `Locked out for: ${formatTime(timeLeft)}`;
                 if (timeLeft <= 0) {
                     clearInterval(lockoutInterval);
-                    lockoutCountdown.textContent = 'Agent is available now!';
+                    lockoutCountdown.textContent = 'Lockout expired. Sign in again.';
                 }
-            };
-            updateLockout();
-            lockoutInterval = setInterval(updateLockout, 1000);
+            }, 1000);
         }
 
         function formatTime(seconds) {
