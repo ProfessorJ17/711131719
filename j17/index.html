@@ -66,21 +66,11 @@
     <button onclick="signIn()">Sign In</button>
     <button onclick="signOut()" id="signout" style="display: none;">Sign Out</button>
     <div id="status"></div>
-    <div id="agent-container">
-        <script
-            type="module"
-            src="https://agent.d-id.com/v1/index.js"
-            data-name="did-agent"
-            data-mode="fabio"
-            data-client-key="Z29vZ2xlLW9hdXRoMnwxMDI1NDc5NDg2ODI5NjkwNzc4MDg6RkpFT0VWOTBqYVFVb3lHT3hMU2Zt"
-            data-agent-id="agt_k9HerVqC"
-            data-monitor="true">
-        </script>
-    </div>
+    <div id="agent-container"></div> <!-- Empty until script is injected -->
 
     <script type="module">
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js';
-        import { getAuth, signInWithEmailAndPassword, signOut as authSignOut, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js';
+        import { getAuth, signInWithEmailAndPassword, signOut as authSignOut } from 'https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js';
         import { getFirestore, doc, getDoc, setDoc, updateDoc } from 'https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js';
         import { getFunctions, httpsCallable } from 'https://www.gstatic.com/firebasejs/9.23.0/firebase-functions.js';
         import { getAnalytics } from 'https://www.gstatic.com/firebasejs/9.23.0/firebase-analytics.js';
@@ -102,26 +92,6 @@
         const analytics = getAnalytics(app);
 
         let accessTimer = null;
-
-        // Sign out on page load to force fresh login
-        window.addEventListener('load', async () => {
-            await authSignOut(auth);
-            document.getElementById('status').textContent = 'Please sign in to access the agent.';
-            document.getElementById('agent-container').style.display = 'none';
-            document.getElementById('signout').style.display = 'none';
-            document.getElementById('user-name').textContent = '';
-            document.getElementById('email').value = '';
-            document.getElementById('password').value = '';
-        });
-
-        // Monitor auth state (optional debugging)
-        onAuthStateChanged(auth, (user) => {
-            if (user) {
-                console.log('User is signed in:', user.email);
-            } else {
-                console.log('No user signed in.');
-            }
-        });
 
         window.signIn = async () => {
             const email = document.getElementById('email').value.trim();
@@ -163,6 +133,17 @@
                     return;
                 }
 
+                // Dynamically load D-ID Agent
+                const agentScript = document.createElement('script');
+                agentScript.type = 'module';
+                agentScript.src = 'https://agent.d-id.com/v1/index.js';
+                agentScript.setAttribute('data-name', 'did-agent');
+                agentScript.setAttribute('data-mode', 'fabio');
+                agentScript.setAttribute('data-client-key', 'Z29vZ2xlLW9hdXRoMnwxMDI1NDc5NDg2ODI5NjkwNzc4MDg6RkpFT0VWOTBqYVFVb3lHT3hMU2Zt');
+                agentScript.setAttribute('data-agent-id', 'agt_k9HerVqC');
+                agentScript.setAttribute('data-monitor', 'true');
+                agentContainer.appendChild(agentScript);
+
                 status.textContent = 'Access granted! You have 5 minutes.';
                 agentContainer.style.display = 'block';
                 signoutButton.style.display = 'block';
@@ -173,6 +154,7 @@
                         lockoutUntil: Date.now() + 24 * 60 * 60 * 1000
                     });
                     agentContainer.style.display = 'none';
+                    agentContainer.innerHTML = ''; // Clear agent on timeout
                     status.textContent = 'Time’s up! 24-hour lockout started.';
                     userNameDiv.textContent = '';
                     await authSignOut(auth);
@@ -187,8 +169,10 @@
         window.signOut = async () => {
             clearTimeout(accessTimer);
             await authSignOut(auth);
+            const agentContainer = document.getElementById('agent-container');
+            agentContainer.style.display = 'none';
+            agentContainer.innerHTML = ''; // Clear agent on sign-out
             document.getElementById('status').textContent = 'Signed out. Please sign in again.';
-            document.getElementById('agent-container').style.display = 'none';
             document.getElementById('signout').style.display = 'none';
             document.getElementById('user-name').textContent = '';
         };
