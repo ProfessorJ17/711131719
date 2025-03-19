@@ -8,17 +8,17 @@
         body {
             margin: 0;
             padding: 20px;
-            background-color: #000000; /* Black background */
+            background-color: #000000;
             font-family: Arial, sans-serif;
             display: flex;
             flex-direction: column;
-            align-items: flex-start; /* Left-align content */
+            align-items: flex-start;
             min-height: 100vh;
             box-sizing: border-box;
-            color: #ffffff; /* White text for contrast */
+            color: #ffffff;
         }
         h1 {
-            font-size: 2em; /* Larger for "4everAI" */
+            font-size: 2em;
             margin: 0 0 10px 0;
         }
         #user-name {
@@ -32,15 +32,15 @@
             margin: 5px 0;
             box-sizing: border-box;
             font-size: 1em;
-            background-color: #333333; /* Dark input/button background */
+            background-color: #333333;
             color: #ffffff;
             border: 1px solid #555555;
         }
         button:hover {
-            background-color: #555555; /* Hover effect */
+            background-color: #555555;
         }
         #status {
-            color: #ff5555; /* Lighter red for visibility */
+            color: #ff5555;
             margin: 10px 0;
             font-size: 0.9em;
         }
@@ -78,22 +78,106 @@
         </script>
     </div>
 
-    <!-- Firebase SDK -->
-    <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-auth.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-firestore.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-functions.js"></script>
-    <script>
+    <!-- Firebase Modular SDK via CDN -->
+    <script type="module">
+        // Import Firebase SDKs
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.17.1/firebase-app.js';
+        import { getAuth, signInWithEmailAndPassword, signOut as authSignOut } from 'https://www.gstatic.com/firebasejs/9.17.1/firebase-auth.js';
+        import { getFirestore, doc, getDoc, setDoc, updateDoc } from 'https://www.gstatic.com/firebasejs/9.17.1/firebase-firestore.js';
+        import { getFunctions, httpsCallable } from 'https://www.gstatic.com/firebasejs/9.17.1/firebase-functions.js';
+        import { getAnalytics } from 'https://www.gstatic.com/firebasejs/9.17.1/firebase-analytics.js';
+
+        // Your Firebase configuration
         const firebaseConfig = {
-            apiKey: "your-api-key",
-            authDomain: "your-project-id.firebaseapp.com",
-            projectId: "your-project-id",
-            storageBucket: "your-project-id.appspot.com",
-            messagingSenderId: "your-sender-id",
-            appId: "your-app-id"
+            apiKey: "AIzaSyDpIapJzv54LIApO_yM2f-SrwkXbjjLRPo",
+            authDomain: "ever4-e1efb.firebaseapp.com",
+            projectId: "ever4-e1efb",
+            storageBucket: "ever4-e1efb.firebasestorage.app",
+            messagingSenderId: "473102358637",
+            appId: "1:473102358637:web:a28114096fac995e640764",
+            measurementId: "G-NX3JS6DVKB"
         };
-        firebase.initializeApp(firebaseConfig);
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        const functions = getFunctions(app);
+        const analytics = getAnalytics(app);
+
+        let accessTimer = null;
+
+        // Sign-in function
+        window.signIn = async () => {
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value.trim();
+            const status = document.getElementById('status');
+            const agentContainer = document.getElementById('agent-container');
+            const signoutButton = document.getElementById('signout');
+            const userNameDiv = document.getElementById('user-name');
+
+            if (!email || !password) {
+                status.textContent = 'Please enter email and password';
+                return;
+            }
+
+            try {
+                const userCredential = await signInWithEmailAndPassword(auth, email, password);
+                const user = userCredential.user;
+
+                const allowedEmailRef = doc(db, 'allowedEmails', email);
+                const allowedEmailSnap = await getDoc(allowedEmailRef);
+                if (!allowedEmailSnap.exists()) {
+                    status.textContent = 'Email not authorized. Please purchase access.';
+                    await authSignOut(auth);
+                    return;
+                }
+
+                const userData = allowedEmailSnap.data();
+                const userName = userData.name || 'User';
+                userNameDiv.textContent = `${userName}`;
+
+                const checkAccess = httpsCallable(functions, 'checkAccess');
+                const { data } = await checkAccess();
+
+                if (!data.access) {
+                    status.textContent = `Locked out for ${data.timeLeft} minutes`;
+                    agentContainer.style.display = 'none';
+                    userNameDiv.textContent = '';
+                    await authSignOut(auth);
+                    return;
+                }
+
+                status.textContent = 'Access granted! You have 5 minutes.';
+                agentContainer.style.display = 'block';
+                signoutButton.style.display = 'block';
+
+                accessTimer = setTimeout(async () => {
+                    const userRef = doc(db, 'users', user.uid);
+                    await updateDoc(userRef, {
+                        lockoutUntil: Date.now() + 24 * 60 * 60 * 1000
+                    });
+                    agentContainer.style.display = 'none';
+                    status.textContent = 'Time’s up! 24-hour lockout started.';
+                    userNameDiv.textContent = '';
+                    await authSignOut(auth);
+                }, 300000); // 5 minutes
+
+                window.onbeforeunload = () => clearTimeout(accessTimer);
+            } catch (error) {
+                status.textContent = `Sign-in error: ${error.message}`;
+            }
+        };
+
+        // Sign-out function
+        window.signOut = async () => {
+            clearTimeout(accessTimer);
+            await authSignOut(auth);
+            document.getElementById('status').textContent = 'Signed out. Please sign in again.';
+            document.getElementById('agent-container').style.display = 'none';
+            document.getElementById('signout').style.display = 'none';
+            document.getElementById('user-name').textContent = '';
+        };
     </script>
-    <script src="script.js"></script>
 </body>
 </html>
