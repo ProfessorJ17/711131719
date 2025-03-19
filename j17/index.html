@@ -66,7 +66,17 @@
     <button onclick="signIn()">Sign In</button>
     <button onclick="signOut()" id="signout" style="display: none;">Sign Out</button>
     <div id="status"></div>
-    <div id="agent-container"></div> <!-- Empty until script is injected -->
+    <div id="agent-container">
+        <script
+            type="module"
+            src="https://agent.d-id.com/v1/index.js"
+            data-name="did-agent"
+            data-mode="fabio"
+            data-client-key="Z29vZ2xlLW9hdXRoMnwxMDI1NDc5NDg2ODI5NjkwNzc4MDg6RkpFT0VWOTBqYVFVb3lHT3hMU2Zt"
+            data-agent-id="agt_k9HerVqC"
+            data-monitor="true">
+        </script>
+    </div>
 
     <script type="module">
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js';
@@ -88,7 +98,7 @@
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
-        const functions = getFunctions(app, 'us-central1'); // Match deployed region
+        const functions = getFunctions(app);
         const analytics = getAnalytics(app);
 
         let accessTimer = null;
@@ -107,10 +117,8 @@
             }
 
             try {
-                console.log('Attempting sign-in with:', email);
                 const userCredential = await signInWithEmailAndPassword(auth, email, password);
                 const user = userCredential.user;
-                console.log('Signed in as:', user.uid);
 
                 const allowedEmailRef = doc(db, 'allowedEmails', email);
                 const allowedEmailSnap = await getDoc(allowedEmailRef);
@@ -123,12 +131,9 @@
                 const userData = allowedEmailSnap.data();
                 const userName = userData.name || 'User';
                 userNameDiv.textContent = `${userName}`;
-                console.log('User name set:', userName);
 
                 const checkAccess = httpsCallable(functions, 'checkAccess');
-                console.log('Calling checkAccess function');
                 const { data } = await checkAccess();
-                console.log('checkAccess response:', data);
 
                 if (!data.access) {
                     status.textContent = `Locked out for ${data.timeLeft} minutes`;
@@ -138,24 +143,9 @@
                     return;
                 }
 
-                // Dynamically load D-ID Agent
-                agentContainer.innerHTML = ''; // Clear any previous content
-                const agentScript = document.createElement('script');
-                agentScript.type = 'module';
-                agentScript.src = 'https://agent.d-id.com/v1/index.js';
-                agentScript.setAttribute('data-name', 'did-agent');
-                agentScript.setAttribute('data-mode', 'fabio');
-                agentScript.setAttribute('data-client-key', 'Z29vZ2xlLW9hdXRoMnwxMDI1NDc5NDg2ODI5NjkwNzc4MDg6RkpFT0VWOTBqYVFVb3lHT3hMU2Zt');
-                agentScript.setAttribute('data-agent-id', 'agt_k9HerVqC');
-                agentScript.setAttribute('data-monitor', 'true');
-                agentScript.onload = () => console.log('D-ID Agent script loaded');
-                agentScript.onerror = (e) => console.error('D-ID Agent script failed to load:', e);
-                agentContainer.appendChild(agentScript);
-
                 status.textContent = 'Access granted! You have 5 minutes.';
                 agentContainer.style.display = 'block';
                 signoutButton.style.display = 'block';
-                console.log('Agent container set to block');
 
                 accessTimer = setTimeout(async () => {
                     const userRef = doc(db, 'users', user.uid);
@@ -163,7 +153,6 @@
                         lockoutUntil: Date.now() + 24 * 60 * 60 * 1000
                     });
                     agentContainer.style.display = 'none';
-                    agentContainer.innerHTML = ''; // Clear agent on timeout
                     status.textContent = 'Time’s up! 24-hour lockout started.';
                     userNameDiv.textContent = '';
                     await authSignOut(auth);
@@ -171,7 +160,6 @@
 
                 window.onbeforeunload = () => clearTimeout(accessTimer);
             } catch (error) {
-                console.error('Sign-in error details:', error);
                 status.textContent = `Sign-in error: ${error.message}`;
             }
         };
@@ -179,10 +167,8 @@
         window.signOut = async () => {
             clearTimeout(accessTimer);
             await authSignOut(auth);
-            const agentContainer = document.getElementById('agent-container');
-            agentContainer.style.display = 'none';
-            agentContainer.innerHTML = ''; // Clear agent on sign-out
             document.getElementById('status').textContent = 'Signed out. Please sign in again.';
+            document.getElementById('agent-container').style.display = 'none';
             document.getElementById('signout').style.display = 'none';
             document.getElementById('user-name').textContent = '';
         };
