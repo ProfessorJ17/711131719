@@ -21,10 +21,6 @@
             font-size: 2em;
             margin: 0 0 10px 0;
         }
-        #timer, #lockout-reset {
-            font-size: 1.2em;
-            margin-bottom: 10px;
-        }
         #user-name {
             font-size: 1.5em;
             margin-bottom: 15px;
@@ -56,7 +52,6 @@
         }
         @media (max-width: 600px) {
             h1 { font-size: 1.5em; }
-            #timer, #lockout-reset { font-size: 1em; }
             #user-name { font-size: 1.2em; }
             input, button { font-size: 0.9em; }
             #agent-container { max-width: 100%; }
@@ -65,8 +60,6 @@
 </head>
 <body>
     <h1>4everAI</h1>
-    <div id="timer"></div>
-    <div id="lockout-reset"></div>
     <div id="user-name"></div>
     <input type="email" id="email" placeholder="Enter email" />
     <input type="password" id="password" placeholder="Enter password" />
@@ -87,7 +80,7 @@
 
     <script type="module">
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js';
-        import { getAuth, signInWithEmailAndPassword, signOut as authSignOut } from 'https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js';
+        import { getAuth, signInWithEmailAndPassword, signOut as authSignOut, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js';
         import { getFirestore, doc, getDoc, setDoc, updateDoc } from 'https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js';
         import { getFunctions, httpsCallable } from 'https://www.gstatic.com/firebasejs/9.23.0/firebase-functions.js';
         import { getAnalytics } from 'https://www.gstatic.com/firebasejs/9.23.0/firebase-analytics.js';
@@ -109,37 +102,26 @@
         const analytics = getAnalytics(app);
 
         let accessTimer = null;
-        let countdownInterval = null;
 
-        function startCountdown(secondsLeft) {
-            const timerDiv = document.getElementById('timer');
-            countdownInterval = setInterval(() => {
-                const minutes = Math.floor(secondsLeft / 60);
-                const seconds = secondsLeft % 60;
-                timerDiv.textContent = `Time Left: ${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
-                secondsLeft--;
-                if (secondsLeft < 0) {
-                    clearInterval(countdownInterval);
-                    timerDiv.textContent = '';
-                }
-            }, 1000);
-        }
+        // Sign out on page load to force fresh login
+        window.addEventListener('load', async () => {
+            await authSignOut(auth);
+            document.getElementById('status').textContent = 'Please sign in to access the agent.';
+            document.getElementById('agent-container').style.display = 'none';
+            document.getElementById('signout').style.display = 'none';
+            document.getElementById('user-name').textContent = '';
+            document.getElementById('email').value = '';
+            document.getElementById('password').value = '';
+        });
 
-        function showLockoutReset(lockoutUntil) {
-            const lockoutDiv = document.getElementById('lockout-reset');
-            setInterval(() => {
-                const now = Date.now();
-                const timeLeftMs = lockoutUntil - now;
-                if (timeLeftMs <= 0) {
-                    lockoutDiv.textContent = 'Lockout reset. You can sign in again.';
-                } else {
-                    const hours = Math.floor(timeLeftMs / (1000 * 60 * 60));
-                    const minutes = Math.floor((timeLeftMs % (1000 * 60 * 60)) / (1000 * 60));
-                    const seconds = Math.floor((timeLeftMs % (1000 * 60)) / 1000);
-                    lockoutDiv.textContent = `Lockout resets in: ${hours}h ${minutes}m ${seconds}s`;
-                }
-            }, 1000);
-        }
+        // Monitor auth state (optional debugging)
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                console.log('User is signed in:', user.email);
+            } else {
+                console.log('No user signed in.');
+            }
+        });
 
         window.signIn = async () => {
             const email = document.getElementById('email').value.trim();
@@ -148,8 +130,6 @@
             const agentContainer = document.getElementById('agent-container');
             const signoutButton = document.getElementById('signout');
             const userNameDiv = document.getElementById('user-name');
-            const timerDiv = document.getElementById('timer');
-            const lockoutDiv = document.getElementById('lockout-reset');
 
             if (!email || !password) {
                 status.textContent = 'Please enter email and password';
@@ -177,7 +157,6 @@
 
                 if (!data.access) {
                     status.textContent = `Locked out for ${data.timeLeft} minutes`;
-                    showLockoutReset(Date.now() + data.timeLeft * 60 * 1000);
                     agentContainer.style.display = 'none';
                     userNameDiv.textContent = '';
                     await authSignOut(auth);
@@ -187,29 +166,19 @@
                 status.textContent = 'Access granted! You have 5 minutes.';
                 agentContainer.style.display = 'block';
                 signoutButton.style.display = 'block';
-                timerDiv.textContent = '';
-                lockoutDiv.textContent = '';
-
-                const sessionDuration = 5 * 60 * 1000; // 5 minutes in milliseconds
-                startCountdown(sessionDuration / 1000); // Start 5-minute countdown
 
                 accessTimer = setTimeout(async () => {
                     const userRef = doc(db, 'users', user.uid);
-                    const lockoutUntil = Date.now() + 24 * 60 * 60 * 1000; // 24 hours from now
-                    await updateDoc(userRef, { lockoutUntil });
-                    clearInterval(countdownInterval);
-                    timerDiv.textContent = '';
+                    await updateDoc(userRef, {
+                        lockoutUntil: Date.now() + 24 * 60 * 60 * 1000
+                    });
                     agentContainer.style.display = 'none';
                     status.textContent = 'Time’s up! 24-hour lockout started.';
-                    showLockoutReset(lockoutUntil);
                     userNameDiv.textContent = '';
                     await authSignOut(auth);
-                }, sessionDuration);
+                }, 300000); // 5 minutes
 
-                window.onbeforeunload = () => {
-                    clearTimeout(accessTimer);
-                    clearInterval(countdownInterval);
-                };
+                window.onbeforeunload = () => clearTimeout(accessTimer);
             } catch (error) {
                 status.textContent = `Sign-in error: ${error.message}`;
             }
@@ -217,10 +186,7 @@
 
         window.signOut = async () => {
             clearTimeout(accessTimer);
-            clearInterval(countdownInterval);
             await authSignOut(auth);
-            document.getElementById('timer').textContent = '';
-            document.getElementById('lockout-reset').textContent = '';
             document.getElementById('status').textContent = 'Signed out. Please sign in again.';
             document.getElementById('agent-container').style.display = 'none';
             document.getElementById('signout').style.display = 'none';
