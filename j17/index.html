@@ -88,7 +88,7 @@
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
-        const functions = getFunctions(app);
+        const functions = getFunctions(app, 'us-central1'); // Match deployed region
         const analytics = getAnalytics(app);
 
         let accessTimer = null;
@@ -107,8 +107,10 @@
             }
 
             try {
+                console.log('Attempting sign-in with:', email);
                 const userCredential = await signInWithEmailAndPassword(auth, email, password);
                 const user = userCredential.user;
+                console.log('Signed in as:', user.uid);
 
                 const allowedEmailRef = doc(db, 'allowedEmails', email);
                 const allowedEmailSnap = await getDoc(allowedEmailRef);
@@ -121,9 +123,12 @@
                 const userData = allowedEmailSnap.data();
                 const userName = userData.name || 'User';
                 userNameDiv.textContent = `${userName}`;
+                console.log('User name set:', userName);
 
                 const checkAccess = httpsCallable(functions, 'checkAccess');
+                console.log('Calling checkAccess function');
                 const { data } = await checkAccess();
+                console.log('checkAccess response:', data);
 
                 if (!data.access) {
                     status.textContent = `Locked out for ${data.timeLeft} minutes`;
@@ -134,6 +139,7 @@
                 }
 
                 // Dynamically load D-ID Agent
+                agentContainer.innerHTML = ''; // Clear any previous content
                 const agentScript = document.createElement('script');
                 agentScript.type = 'module';
                 agentScript.src = 'https://agent.d-id.com/v1/index.js';
@@ -142,11 +148,14 @@
                 agentScript.setAttribute('data-client-key', 'Z29vZ2xlLW9hdXRoMnwxMDI1NDc5NDg2ODI5NjkwNzc4MDg6RkpFT0VWOTBqYVFVb3lHT3hMU2Zt');
                 agentScript.setAttribute('data-agent-id', 'agt_k9HerVqC');
                 agentScript.setAttribute('data-monitor', 'true');
+                agentScript.onload = () => console.log('D-ID Agent script loaded');
+                agentScript.onerror = (e) => console.error('D-ID Agent script failed to load:', e);
                 agentContainer.appendChild(agentScript);
 
                 status.textContent = 'Access granted! You have 5 minutes.';
                 agentContainer.style.display = 'block';
                 signoutButton.style.display = 'block';
+                console.log('Agent container set to block');
 
                 accessTimer = setTimeout(async () => {
                     const userRef = doc(db, 'users', user.uid);
@@ -162,6 +171,7 @@
 
                 window.onbeforeunload = () => clearTimeout(accessTimer);
             } catch (error) {
+                console.error('Sign-in error details:', error);
                 status.textContent = `Sign-in error: ${error.message}`;
             }
         };
