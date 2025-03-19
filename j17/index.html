@@ -78,16 +78,13 @@
         </script>
     </div>
 
-    <!-- Firebase Modular SDK via CDN -->
     <script type="module">
-        // Import Firebase SDKs
-        import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.17.1/firebase-app.js';
-        import { getAuth, signInWithEmailAndPassword, signOut as authSignOut } from 'https://www.gstatic.com/firebasejs/9.17.1/firebase-auth.js';
-        import { getFirestore, doc, getDoc, setDoc, updateDoc } from 'https://www.gstatic.com/firebasejs/9.17.1/firebase-firestore.js';
-        import { getFunctions, httpsCallable } from 'https://www.gstatic.com/firebasejs/9.17.1/firebase-functions.js';
-        import { getAnalytics } from 'https://www.gstatic.com/firebasejs/9.17.1/firebase-analytics.js';
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js';
+        import { getAuth, signInWithEmailAndPassword, signOut as authSignOut } from 'https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js';
+        import { getFirestore, doc, getDoc, setDoc, updateDoc } from 'https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js';
+        import { getFunctions, httpsCallable } from 'https://www.gstatic.com/firebasejs/9.23.0/firebase-functions.js';
+        import { getAnalytics } from 'https://www.gstatic.com/firebasejs/9.23.0/firebase-analytics.js';
 
-        // Your Firebase configuration
         const firebaseConfig = {
             apiKey: "AIzaSyDpIapJzv54LIApO_yM2f-SrwkXbjjLRPo",
             authDomain: "ever4-e1efb.firebaseapp.com",
@@ -98,7 +95,6 @@
             measurementId: "G-NX3JS6DVKB"
         };
 
-        // Initialize Firebase
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
@@ -107,7 +103,6 @@
 
         let accessTimer = null;
 
-        // Sign-in function
         window.signIn = async () => {
             const email = document.getElementById('email').value.trim();
             const password = document.getElementById('password').value.trim();
@@ -169,7 +164,6 @@
             }
         };
 
-        // Sign-out function
         window.signOut = async () => {
             clearTimeout(accessTimer);
             await authSignOut(auth);
