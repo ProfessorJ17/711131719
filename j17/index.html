@@ -39,7 +39,7 @@
         button:hover {
             background-color: #555555;
         }
-        #status {
+        #status, #countdown, #lockout-countdown {
             color: #ff5555;
             margin: 10px 0;
             font-size: 0.9em;
@@ -66,6 +66,8 @@
     <button onclick="signIn()">Sign In</button>
     <button onclick="signOut()" id="signout" style="display: none;">Sign Out</button>
     <div id="status"></div>
+    <div id="countdown"></div>
+    <div id="lockout-countdown"></div>
     <div id="agent-container">
         <script
             type="module"
@@ -102,11 +104,15 @@
         const analytics = getAnalytics(app);
 
         let accessTimer = null;
+        let countdownInterval = null;
+        let lockoutInterval = null;
 
         window.signIn = async () => {
             const email = document.getElementById('email').value.trim();
             const password = document.getElementById('password').value.trim();
             const status = document.getElementById('status');
+            const countdown = document.getElementById('countdown');
+            const lockoutCountdown = document.getElementById('lockout-countdown');
             const agentContainer = document.getElementById('agent-container');
             const signoutButton = document.getElementById('signout');
             const userNameDiv = document.getElementById('user-name');
@@ -117,11 +123,14 @@
             }
 
             try {
+                console.log('Attempting sign-in with:', email);
                 const userCredential = await signInWithEmailAndPassword(auth, email, password);
                 const user = userCredential.user;
+                console.log('Signed in as:', user.email, 'UID:', user.uid);
 
                 const allowedEmailRef = doc(db, 'allowedEmails', email);
                 const allowedEmailSnap = await getDoc(allowedEmailRef);
+                console.log('Allowed email snapshot exists:', allowedEmailSnap.exists());
                 if (!allowedEmailSnap.exists()) {
                     status.textContent = 'Email not authorized. Please purchase access.';
                     await authSignOut(auth);
@@ -131,46 +140,117 @@
                 const userData = allowedEmailSnap.data();
                 const userName = userData.name || 'User';
                 userNameDiv.textContent = `${userName}`;
+                console.log('User name set to:', userName);
 
-                const checkAccess = httpsCallable(functions, 'checkAccess');
-                const { data } = await checkAccess();
+                const userRef = doc(db, 'users', user.uid);
+                const userDoc = await getDoc(userRef);
+                const userDocData = userDoc.exists() ? userDoc.data() : {};
+                const now = Date.now();
 
-                if (!data.access) {
-                    status.textContent = `Locked out for ${data.timeLeft} minutes`;
-                    agentContainer.style.display = 'none';
-                    userNameDiv.textContent = '';
-                    await authSignOut(auth);
+                if (userDocData.lockoutUntil && now < userDocData.lockoutUntil) {
+                    status.textContent = 'Locked out!';
+                    startLockoutCountdown(userDocData.lockoutUntil);
                     return;
                 }
 
-                status.textContent = 'Access granted! You have 5 minutes.';
+                const checkAccess = httpsCallable(functions, 'checkAccess');
+                console.log('Calling checkAccess function...');
+                const { data } = await checkAccess();
+                console.log('checkAccess response:', data);
+
+                if (!data.access) {
+                    status.textContent = 'Locked out!';
+                    startLockoutCountdown(userDocData.lockoutUntil || Date.now() + 24 * 60 * 60 * 1000);
+                    return;
+                }
+
+                console.log('Access granted, showing agent and starting timer');
+                status.textContent = 'Access granted!';
                 agentContainer.style.display = 'block';
                 signoutButton.style.display = 'block';
+                startAccessCountdown();
+                startLockoutCountdown(userDocData.lockoutUntil || null);
 
-                accessTimer = setTimeout(async () => {
-                    const userRef = doc(db, 'users', user.uid);
-                    await updateDoc(userRef, {
-                        lockoutUntil: Date.now() + 24 * 60 * 60 * 1000
-                    });
-                    agentContainer.style.display = 'none';
-                    status.textContent = 'Time’s up! 24-hour lockout started.';
-                    userNameDiv.textContent = '';
-                    await authSignOut(auth);
-                }, 300000); // 5 minutes
-
-                window.onbeforeunload = () => clearTimeout(accessTimer);
             } catch (error) {
+                console.error('Sign-in error:', error.message);
                 status.textContent = `Sign-in error: ${error.message}`;
             }
         };
 
+        function startAccessCountdown() {
+            const countdown = document.getElementById('countdown');
+            let timeLeft = 300; // 5 minutes in seconds
+            countdown.textContent = `Time remaining: ${formatTime(timeLeft)}`;
+
+            countdownInterval = setInterval(async () => {
+                timeLeft--;
+                countdown.textContent = `Time remaining: ${formatTime(timeLeft)}`;
+                if (timeLeft <= 0) {
+                    clearInterval(countdownInterval);
+                    const user = auth.currentUser;
+                    if (user) {
+                        console.log('Timer expired, locking out');
+                        const userRef = doc(db, 'users', user.uid);
+                        const lockoutUntil = Date.now() + 24 * 60 * 60 * 1000;
+                        await updateDoc(userRef, { lockoutUntil });
+                        document.getElementById('agent-container').style.display = 'none';
+                        document.getElementById('status').textContent = 'Time’s up! 24-hour lockout started.';
+                        document.getElementById('user-name').textContent = '';
+                        document.getElementById('signout').style.display = 'none';
+                        startLockoutCountdown(lockoutUntil);
+                        await authSignOut(auth);
+                    }
+                }
+            }, 1000);
+        }
+
+        function startLockoutCountdown(lockoutUntil) {
+            const lockoutCountdown = document.getElementById('lockout-countdown');
+            clearInterval(lockoutInterval); // Clear any existing interval
+            if (!lockoutUntil || Date.now() >= lockoutUntil) {
+                lockoutCountdown.textContent = 'No active lockout.';
+                return;
+            }
+
+            const updateLockout = () => {
+                const now = Date.now();
+                const timeLeft = Math.max(0, Math.floor((lockoutUntil - now) / 1000));
+                lockoutCountdown.textContent = `Agent available in: ${formatTime(timeLeft)}`;
+                if (timeLeft <= 0) {
+                    clearInterval(lockoutInterval);
+                    lockoutCountdown.textContent = 'Agent is available now!';
+                }
+            };
+            updateLockout();
+            lockoutInterval = setInterval(updateLockout, 1000);
+        }
+
+        function formatTime(seconds) {
+            const hours = Math.floor(seconds / 3600);
+            const minutes = Math.floor((seconds % 3600) / 60);
+            const secs = seconds % 60;
+            return `${hours}h ${minutes}m ${secs}s`;
+        }
+
         window.signOut = async () => {
-            clearTimeout(accessTimer);
+            clearInterval(countdownInterval);
+            clearInterval(lockoutInterval);
             await authSignOut(auth);
             document.getElementById('status').textContent = 'Signed out. Please sign in again.';
             document.getElementById('agent-container').style.display = 'none';
             document.getElementById('signout').style.display = 'none';
             document.getElementById('user-name').textContent = '';
+            document.getElementById('countdown').textContent = '';
+            document.getElementById('lockout-countdown').textContent = '';
+        };
+
+        window.onbeforeunload = async () => {
+            clearInterval(countdownInterval);
+            clearInterval(lockoutInterval);
+            if (auth.currentUser) {
+                await authSignOut(auth);
+                console.log('Signed out on page close');
+            }
         };
     </script>
 </body>
