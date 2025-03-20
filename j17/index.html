@@ -3,156 +3,35 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Firebase Login with D-ID Agent</title>
+    <title>Secure Iframe Access</title>
+    <script src="https://www.gstatic.com/firebasejs/10.3.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.3.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.3.1/firebase-firestore.js"></script>
     <style>
-        body {
-            background-color: black;
-            margin: 0;
-            overflow: hidden;
-            color: white;
-            font-family: Arial, sans-serif;
-        }
-        #timer {
-            position: fixed;
-            top: 10px;
-            left: 50%;
-            transform: translateX(-50%);
-            color: #ff5555;
-            font-size: 1.2em;
-            z-index: 3;
-        }
-        #login-container {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            z-index: 2;
-            text-align: center;
-        }
-        #agent-container {
-            position: fixed;
-            bottom: 0;
-            right: 0;
-            width: 100%;
-            max-width: 600px;
-            height: 100%;
-            max-height: 400px;
-            display: none;
-            z-index: 1;
-        }
-        input, button {
-            display: block;
-            width: 200px;
-            padding: 10px;
-            margin: 10px auto;
-            background-color: #333;
-            color: white;
-            border: 1px solid #555;
-            font-size: 1em;
-        }
-        button:hover {
-            background-color: #555;
-        }
+        body { background-color: black; color: white; text-align: center; }
+        #iframe-container { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; }
+        iframe { width: 100%; height: 100%; border: none; }
     </style>
 </head>
 <body>
-    <div id="timer">Time left: 00:00</div>
-    <div id="login-container">
-        <input type="email" id="email" placeholder="Enter email" />
-        <input type="password" id="password" placeholder="Enter password" />
-        <button onclick="signIn()">Sign In</button>
-        <button onclick="signOut()" id="signout" style="display: none;">Sign Out</button>
+    <h1>Login to Access Content</h1>
+    <div id="login-form">
+        <input type="email" id="email" placeholder="Email"><br>
+        <input type="password" id="password" placeholder="Password"><br>
+        <button onclick="login()">Login</button>
     </div>
-    <div id="agent-container"></div>
+    
+    <div id="iframe-container">
+        <iframe id="restricted-iframe" src="https://www.youtube.com/embed/dQw4w9WgXcQ"></iframe>
+    </div>
+    
+    <div style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1;">
+        <iframe id="youtube-iframe" width="100%" height="100%" style="border: none;"></iframe>
+    </div>
+    
+    <div id="character-container" style="position: fixed; bottom: 0; right: 0; z-index: 2;"></div>
 
-    <script type="module">
-        import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js';
-        import { getAuth, signInWithEmailAndPassword, signOut as authSignOut, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js';
-        import { getFirestore, doc, getDoc, setDoc } from 'https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js';
-        import { getAnalytics } from 'https://www.gstatic.com/firebasejs/9.23.0/firebase-analytics.js';
-
-        const firebaseConfig = {
-            apiKey: "AIzaSyDpIapJzv54LIApO_yM2f-SrwkXbjjLRPo",
-            authDomain: "ever4-e1efb.firebaseapp.com",
-            projectId: "ever4-e1efb",
-            storageBucket: "ever4-e1efb.firebasestorage.app",
-            messagingSenderId: "473102358637",
-            appId: "1:473102358637:web:a28114096fac995e640764",
-            measurementId: "G-NX3JS6DVKB"
-        };
-
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
-        const analytics = getAnalytics(app);
-
-        let countdownInterval = null;
-        const sessionDuration = 5 * 60; // 5 minutes in seconds
-        const lockoutDuration = 24 * 60 * 60 - sessionDuration; // 23 hours, 55 minutes in seconds
-
-        onAuthStateChanged(auth, (user) => {
-            console.log('Auth state changed:', user ? user.email : 'No user');
-            if (user) {
-                checkSession(user);
-            } else {
-                resetUI();
-            }
-        });
-
-        window.signIn = async () => {
-            const email = document.getElementById('email').value.trim();
-            const password = document.getElementById('password').value.trim();
-
-            if (!email || !password) {
-                alert('Please enter email and password');
-                return;
-            }
-
-            try {
-                console.log('Attempting sign-in with:', email);
-                const userCredential = await signInWithEmailAndPassword(auth, email, password);
-                console.log('Signed in as:', userCredential.user.email, 'UID:', userCredential.user.uid);
-            } catch (error) {
-                console.error('Sign-in error:', error.code, error.message);
-                alert(`Sign-in error: ${error.message}`);
-            }
-        };
-
-        async function checkSession(user) {
-            const userRef = doc(db, 'users', user.uid);
-            const userDoc = await getDoc(userRef);
-            const now = Date.now();
-            const userData = userDoc.exists() ? userDoc.data() : {};
-
-            const lockoutUntil = userData.lockoutUntil || 0;
-
-            if (now < lockoutUntil) {
-                const timeLeft = Math.ceil((lockoutUntil - now) / 1000);
-                startLockoutCountdown(timeLeft);
-                return;
-            }
-
-            // Start new session
-            await setDoc(userRef, {
-                startTime: now,
-                lockoutUntil: now + (sessionDuration + lockoutDuration) * 1000
-            }, { merge: true });
-            startSession();
-        }
-
-        function startSession() {
-            const loginContainer = document.getElementById('login-container');
-            const signoutButton = document.getElementById('signout');
-            const agentContainer = document.getElementById('agent-container');
-            const timer = document.getElementById('timer');
-
-            loginContainer.style.display = 'none';
-            signoutButton.style.display = 'block';
-            loadDIDAgent(agentContainer);
-            agentContainer.style.display = 'block';
-            startCountdown(sessionDuration);
-        }
-
+    <script>
         function loadDIDAgent(container) {
             if (!container.querySelector('script')) {
                 const script = document.createElement('script');
@@ -169,87 +48,59 @@
             }
         }
 
-        function startCountdown(seconds) {
-            const timer = document.getElementById('timer');
-            timer.textContent = `Time left: ${formatTime(seconds)}`;
-
-            clearInterval(countdownInterval);
-            countdownInterval = setInterval(() => {
-                seconds--;
-                timer.textContent = `Time left: ${formatTime(seconds)}`;
-                if (seconds <= 0) {
-                    clearInterval(countdownInterval);
-                    endSession();
-                }
-            }, 1000);
+        const firebaseConfig = {
+            apiKey: "AIzaSyDpIapJzv54LIApO_yM2f-SrwkXbjjLRPo",
+            authDomain: "ever4-e1efb.firebaseapp.com",
+            projectId: "ever4-e1efb",
+            storageBucket: "ever4-e1efb.appspot.com",
+            messagingSenderId: "473102358637",
+            appId: "1:473102358637:web:a28114096fac995e640764"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+        
+        function login() {
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            auth.signInWithEmailAndPassword(email, password)
+                .then(user => checkAccess(user.user.uid))
+                .catch(error => alert(error.message));
         }
-
-        function startLockoutCountdown(seconds) {
-            const timer = document.getElementById('timer');
-            timer.textContent = `Next session in: ${formatTime(seconds)}`;
-
-            clearInterval(countdownInterval);
-            countdownInterval = setInterval(() => {
-                seconds--;
-                timer.textContent = `Next session in: ${formatTime(seconds)}`;
-                if (seconds <= 0) {
-                    clearInterval(countdownInterval);
-                    resetUI();
-                }
-            }, 1000);
-        }
-
-        function formatTime(seconds) {
-            const hours = Math.floor(seconds / 3600);
-            const minutes = Math.floor((seconds % 3600) / 60);
-            const secs = seconds % 60;
-            return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
-        }
-
-        async function endSession() {
-            const agentContainer = document.getElementById('agent-container');
-            agentContainer.style.display = 'none';
-            agentContainer.innerHTML = '';
-            await authSignOut(auth);
-            console.log('Session ended, user signed out');
-            const user = auth.currentUser;
-            if (!user) {
-                const userRef = doc(db, 'users', auth.currentUser?.uid || 'temp');
-                const userDoc = await getDoc(userRef);
-                const lockoutUntil = userDoc.data()?.lockoutUntil || 0;
+        
+        function checkAccess(uid) {
+            const userRef = db.collection("users").doc(uid);
+            userRef.get().then(doc => {
+                const lastAccess = doc.exists ? doc.data().lastAccess : 0;
                 const now = Date.now();
-                const timeLeft = Math.ceil((lockoutUntil - now) / 1000);
-                if (timeLeft > 0) startLockoutCountdown(timeLeft);
-            }
+                const oneDay = 24 * 60 * 60 * 1000;
+                
+                if (!doc.exists || now - lastAccess > oneDay) {
+                    userRef.set({ lastAccess: now });
+                    grantAccess();
+                } else {
+                    alert("You can only access this once per 24 hours!");
+                }
+            });
         }
-
-        window.signOut = async () => {
-            clearInterval(countdownInterval);
-            await authSignOut(auth);
-            resetUI();
-        };
-
-        function resetUI() {
-            const loginContainer = document.getElementById('login-container');
-            const signoutButton = document.getElementById('signout');
-            const agentContainer = document.getElementById('agent-container');
-            const timer = document.getElementById('timer');
-
-            loginContainer.style.display = 'block';
-            signoutButton.style.display = 'none';
-            agentContainer.style.display = 'none';
-            agentContainer.innerHTML = '';
-            timer.textContent = 'Time left: 00:00';
-            clearInterval(countdownInterval);
+        
+        function grantAccess() {
+            document.getElementById("iframe-container").style.display = "block";
+            setTimeout(() => {
+                document.getElementById("iframe-container").style.display = "none";
+                alert("Time's up! Come back tomorrow.");
+            }, 5 * 60 * 1000);
         }
-
-        window.onbeforeunload = async () => {
-            clearInterval(countdownInterval);
-            if (auth.currentUser) {
-                await authSignOut(auth);
-                console.log('Signed out on page close');
-            }
-        };
+    </script>
+    
+    <script 
+        type="module"
+        src="https://agent.d-id.com/v1/index.js"
+        data-name="did-agent"
+        data-mode="fabio"
+        data-client-key="Z29vZ2xlLW9hdXRoMnwxMDI1NDc5NDg2ODI5NjkwNzc4MDg6RkpFT0VWOTBqYVFVb3lHT3hMU2Zt"
+        data-agent-id="agt_k9HerVqC"
+        data-monitor="true">
     </script>
 </body>
 </html>
