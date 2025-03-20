@@ -38,7 +38,7 @@
         #logout-button:hover {
             background-color: #555;
         }
-        #content-container {
+        #character-container {
             position: fixed;
             bottom: 0;
             right: 0;
@@ -48,7 +48,7 @@
             z-index: 2;
             pointer-events: none; /* Disable interaction by default */
         }
-        #content-container.active {
+        #character-container.active {
             pointer-events: auto; /* Enable interaction when active */
         }
         input, button {
@@ -75,7 +75,7 @@
         <button id="login-btn">Login</button>
     </div>
     <button id="logout-button">Logout</button>
-    <div id="content-container"></div>
+    <div id="character-container"></div>
 
     <script type="module">
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.3.1/firebase-app.js';
@@ -175,18 +175,18 @@
 
         function grantAccess(seconds) {
             console.log('Granting access with', seconds, 'seconds');
-            const contentContainer = document.getElementById("content-container");
+            const characterContainer = document.getElementById("character-container");
 
             // Load D-ID Agent only if not already loaded
-            if (!contentContainer.querySelector('script')) {
-                loadDIDAgent(contentContainer);
+            if (!characterContainer.querySelector('script')) {
+                loadDIDAgent(characterContainer);
             }
-            contentContainer.classList.add("active"); // Enable interaction
+            characterContainer.classList.add("active"); // Enable interaction
             document.getElementById("logout-button").style.display = "block";
             startCountdown(seconds, "Time left");
 
             setTimeout(async () => {
-                contentContainer.classList.remove("active"); // Disable interaction
+                characterContainer.classList.remove("active"); // Disable interaction
                 await signOut(auth);
                 console.log('Session ended');
             }, seconds * 1000);
@@ -249,7 +249,7 @@
         function resetUI() {
             document.getElementById("login-form").style.display = "block";
             document.getElementById("logout-button").style.display = "none";
-            document.getElementById("content-container").classList.remove("active");
+            document.getElementById("character-container").classList.remove("active");
             document.getElementById("name").textContent = "";
             document.getElementById("timer").textContent = "Time left: 00:00";
             clearInterval(countdownInterval);
