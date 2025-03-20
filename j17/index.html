@@ -49,6 +49,16 @@
             max-height: 400px;
             z-index: 2;
         }
+        #youtube-iframe {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+            z-index: 1;
+            display: none; /* Hidden by default unless needed */
+        }
         input, button {
             display: block;
             width: 200px;
@@ -64,7 +74,7 @@
         }
     </style>
 </head>
-<body>
+<body style="background-color: black; margin: 0; overflow: hidden;">
     <div id="name"></div>
     <div id="timer">Time left: 00:00</div>
     <div id="login-form">
@@ -73,6 +83,7 @@
         <button id="login-btn">Login</button>
     </div>
     <button id="logout-button">Logout</button>
+    <iframe id="youtube-iframe"></iframe>
     <div id="character-container"></div>
 
     <script type="module">
@@ -82,13 +93,13 @@
         import { getFirestore, doc, getDoc } from 'https://www.gstatic.com/firebasejs/10.3.1/firebase-firestore.js';
 
         const firebaseConfig = {
-            apiKey: "YOUR_API_KEY",
-            authDomain: "YOUR_AUTH_DOMAIN",
-            projectId: "YOUR_PROJECT_ID",
-            storageBucket: "YOUR_STORAGE_BUCKET",
-            messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-            appId: "YOUR_APP_ID",
-            measurementId: "YOUR_MEASUREMENT_ID"
+            apiKey: "AIzaSyDpIapJzv54LIApO_yM2f-SrwkXbjjLRPo",
+            authDomain: "ever4-e1efb.firebaseapp.com",
+            projectId: "ever4-e1efb",
+            storageBucket: "ever4-e1efb.firebasestorage.app",
+            messagingSenderId: "473102358637",
+            appId: "1:473102358637:web:a28114096fac995e640764",
+            measurementId: "G-NX3JS6DVKB"
         };
 
         const app = initializeApp(firebaseConfig);
@@ -101,6 +112,7 @@
 
         // Login button
         document.getElementById('login-btn').addEventListener('click', async () => {
+            console.log('Login button clicked');
             const email = document.getElementById('email').value.trim();
             const password = document.getElementById('password').value.trim();
 
@@ -110,20 +122,25 @@
             }
 
             try {
+                console.log('Attempting login with:', email);
                 await signInWithEmailAndPassword(auth, email, password);
+                console.log('Login successful');
             } catch (error) {
+                console.error('Login error:', error.code, error.message);
                 alert(`Login error: ${error.message}`);
             }
         });
 
         // Logout button
         document.getElementById('logout-button').addEventListener('click', async () => {
+            console.log('Logout button clicked');
             clearInterval(countdownInterval);
             await signOut(auth);
         });
 
         // Auth state listener
         onAuthStateChanged(auth, async user => {
+            console.log('Auth state changed:', user ? user.email : 'No user');
             if (user) {
                 document.getElementById("login-form").style.display = "none";
                 document.getElementById("logout-button").style.display = "block";
@@ -134,11 +151,12 @@
         });
 
         async function checkAccess(user) {
-            // Get user name from Firestore (or use "jesse33" as default)
+            console.log('Checking access for:', user.email);
             const allowedEmailRef = doc(db, "allowedEmails", user.email);
             const allowedEmailDoc = await getDoc(allowedEmailRef);
 
             if (!allowedEmailDoc.exists() || !allowedEmailDoc.data().purchased) {
+                console.log('User not authorized or not purchased');
                 alert("Email not authorized or purchase required.");
                 await signOut(auth);
                 return;
@@ -147,32 +165,36 @@
             const userData = allowedEmailDoc.data();
             document.getElementById("name").textContent = userData.name || "jesse33";
 
-            // Call Cloud Function to check access
             try {
                 const result = await checkAccessFn();
                 const { access, timeLeft } = result.data;
 
                 if (access) {
+                    console.log('Access granted, time left:', timeLeft);
                     grantAccess(timeLeft);
                 } else {
+                    console.log('Locked out, time left:', timeLeft);
                     startLockoutCountdown(timeLeft, "Next session in");
                 }
             } catch (error) {
+                console.error('Check access error:', error.code, error.message);
                 alert(`Access check failed: ${error.message}`);
                 await signOut(auth);
             }
         }
 
         function grantAccess(seconds) {
+            console.log('Granting access');
             const container = document.getElementById("character-container");
             loadDIDAgent(container);
             container.style.display = "block";
-            startCountdown(seconds, "Time left");
             document.getElementById("logout-button").style.display = "block";
+            startCountdown(seconds, "Time left");
 
             setTimeout(async () => {
                 container.style.display = "none";
                 await signOut(auth);
+                console.log('Session ended');
             }, seconds * 1000);
         }
 
@@ -183,10 +205,12 @@
                 script.src = 'https://agent.d-id.com/v1/index.js';
                 script.setAttribute('data-name', 'did-agent');
                 script.setAttribute('data-mode', 'fabio');
-                script.setAttribute('data-client-key', 'YOUR_D-ID_CLIENT_KEY');
-                script.setAttribute('data-agent-id', 'YOUR_AGENT_ID');
+                script.setAttribute('data-client-key', 'Z29vZ2xlLW9hdXRoMnwxMDI1NDc5NDg2ODI5NjkwNzc4MDg6RkpFT0VWOTBqYVFVb3lHT3hMU2Zt');
+                script.setAttribute('data-agent-id', 'agt_k9HerVqC');
                 script.setAttribute('data-monitor', 'true');
                 container.appendChild(script);
+                console.log('D-ID Agent script loaded');
+                script.onload = () => console.log('D-ID Agent script fully loaded');
             }
         }
 
@@ -218,19 +242,27 @@
         }
 
         function formatTime(seconds) {
-            const minutes = Math.floor(seconds / 60);
+            const hours = Math.floor(seconds / 3600);
+            const minutes = Math.floor((seconds % 3600) / 60);
             const secs = seconds % 60;
-            return `${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+            return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
         }
 
         function resetUI() {
             document.getElementById("login-form").style.display = "block";
             document.getElementById("logout-button").style.display = "none";
             document.getElementById("character-container").style.display = "none";
+            document.getElementById("youtube-iframe").style.display = "none";
             document.getElementById("name").textContent = "";
             document.getElementById("timer").textContent = "Time left: 00:00";
             clearInterval(countdownInterval);
+            console.log('UI reset');
         }
+
+        window.onbeforeunload = async () => {
+            clearInterval(countdownInterval);
+            if (auth.currentUser) await signOut(auth);
+        };
     </script>
 </body>
 </html>
