@@ -4,9 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Secure Iframe Access</title>
-    <script src="https://www.gstatic.com/firebasejs/10.3.1/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.3.1/firebase-auth.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.3.1/firebase-firestore.js"></script>
     <style>
         body {
             background-color: black;
@@ -67,70 +64,39 @@
     <div id="login-form">
         <input type="email" id="email" placeholder="Email"><br>
         <input type="password" id="password" placeholder="Password"><br>
-        <button onclick="login()">Login</button>
+        <button id="login-btn">Login</button>
     </div>
-    <button id="logout-button" onclick="logout()">Logout</button>
+    <button id="logout-button" style="display: none;">Logout</button>
     <div id="iframe-container"></div>
 
-    <script>
-        console.log('Script started');
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.3.1/firebase-app.js';
+        import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.3.1/firebase-auth.js';
+        import { getFirestore, doc, getDoc, setDoc } from 'https://www.gstatic.com/firebasejs/10.3.1/firebase-firestore.js';
 
-        // Wait for Firebase scripts to load
-        function initializeFirebase() {
-            if (typeof firebase === 'undefined') {
-                console.error('Firebase not loaded yet');
-                alert('Firebase SDK failed to load. Please check your network and try again.');
-                return false;
-            }
+        console.log('Module script loaded');
 
-            const firebaseConfig = {
-                apiKey: "AIzaSyDpIapJzv54LIApO_yM2f-SrwkXbjjLRPo",
-                authDomain: "ever4-e1efb.firebaseapp.com",
-                projectId: "ever4-e1efb",
-                storageBucket: "ever4-e1efb.appspot.com",
-                messagingSenderId: "473102358637",
-                appId: "1:473102358637:web:a28114096fac995e640764"
-            };
+        const firebaseConfig = {
+            apiKey: "AIzaSyDpIapJzv54LIApO_yM2f-SrwkXbjjLRPo",
+            authDomain: "ever4-e1efb.firebaseapp.com",
+            projectId: "ever4-e1efb",
+            storageBucket: "ever4-e1efb.appspot.com",
+            messagingSenderId: "473102358637",
+            appId: "1:473102358637:web:a28114096fac995e640764"
+        };
 
-            try {
-                firebase.initializeApp(firebaseConfig);
-                console.log('Firebase initialized');
-                return true;
-            } catch (error) {
-                console.error('Firebase initialization error:', error);
-                alert('Failed to initialize Firebase: ' + error.message);
-                return false;
-            }
-        }
+        try {
+            const app = initializeApp(firebaseConfig);
+            console.log('Firebase initialized');
+            const auth = getAuth(app);
+            const db = getFirestore(app);
 
-        // Check if Firebase is ready before proceeding
-        document.addEventListener('DOMContentLoaded', () => {
-            console.log('DOM loaded');
-            if (initializeFirebase()) {
-                startApp();
-            }
-        });
-
-        function startApp() {
-            const auth = firebase.auth();
-            const db = firebase.firestore();
-
-            const sessionDuration = 5 * 60 * 1000; // 5 minutes in milliseconds
-            const lockoutDuration = 24 * 60 * 60 * 1000 - sessionDuration; // 23 hours, 55 minutes
+            const sessionDuration = 5 * 60 * 1000; // 5 minutes
+            const lockoutDuration = 24 * 60 * 60 * 1000 - sessionDuration; // 23h 55m
             let countdownInterval = null;
 
-            auth.onAuthStateChanged(user => {
-                console.log('Auth state changed:', user ? user.email : 'No user');
-                if (user) {
-                    document.getElementById("login-form").style.display = "none";
-                    document.getElementById("logout-button").style.display = "block";
-                    checkAccess(user);
-                } else {
-                    resetUI();
-                }
-            });
-
-            window.login = function() {
+            // Login button
+            document.getElementById('login-btn').addEventListener('click', async () => {
                 console.log('Login button clicked');
                 const email = document.getElementById('email').value.trim();
                 const password = document.getElementById('password').value.trim();
@@ -141,26 +107,44 @@
                     return;
                 }
 
-                console.log('Attempting login with:', email);
-                auth.signInWithEmailAndPassword(email, password)
-                    .then(userCredential => {
-                        console.log('Login successful:', userCredential.user.email);
-                    })
-                    .catch(error => {
-                        console.error('Login error:', error.code, error.message);
-                        alert(`Login error: ${error.message}`);
-                    });
-            };
+                try {
+                    console.log('Attempting login with:', email);
+                    const userCredential = await signInWithEmailAndPassword(auth, email, password);
+                    console.log('Login successful:', userCredential.user.email);
+                } catch (error) {
+                    console.error('Login error:', error.code, error.message);
+                    alert(`Login error: ${error.message}`);
+                }
+            });
+
+            // Logout button
+            document.getElementById('logout-button').addEventListener('click', async () => {
+                console.log('Logout button clicked');
+                clearInterval(countdownInterval);
+                await signOut(auth);
+            });
+
+            // Auth state listener
+            onAuthStateChanged(auth, user => {
+                console.log('Auth state changed:', user ? user.email : 'No user');
+                if (user) {
+                    document.getElementById("login-form").style.display = "none";
+                    document.getElementById("logout-button").style.display = "block";
+                    checkAccess(user);
+                } else {
+                    resetUI();
+                }
+            });
 
             async function checkAccess(user) {
                 console.log('Checking access for:', user.email);
-                const allowedEmailRef = db.collection("allowedEmails").doc(user.email);
-                const allowedEmailDoc = await allowedEmailRef.get();
+                const allowedEmailRef = doc(db, "allowedEmails", user.email);
+                const allowedEmailDoc = await getDoc(allowedEmailRef);
 
-                if (!allowedEmailDoc.exists || !allowedEmailDoc.data().purchased) {
+                if (!allowedEmailDoc.exists() || !allowedEmailDoc.data().purchased) {
                     console.log('User not authorized or not purchased');
                     alert("Email not authorized or purchase required.");
-                    await auth.signOut();
+                    await signOut(auth);
                     return;
                 }
 
@@ -168,10 +152,10 @@
                 document.getElementById("name").textContent = userData.name || "User";
                 console.log('Name set to:', userData.name);
 
-                const userRef = db.collection("users").doc(user.uid);
-                const userDoc = await userRef.get();
+                const userRef = doc(db, "users", user.uid);
+                const userDoc = await getDoc(userRef);
                 const now = Date.now();
-                const sessionData = userDoc.exists ? userDoc.data() : {};
+                const sessionData = userDoc.exists() ? userDoc.data() : {};
                 const lockoutUntil = sessionData.lockoutUntil || 0;
 
                 if (now < lockoutUntil) {
@@ -182,7 +166,7 @@
                 }
 
                 console.log('Granting new session');
-                await userRef.set({
+                await setDoc(userRef, {
                     name: userData.name,
                     purchased: true,
                     startTime: now,
@@ -200,7 +184,7 @@
 
                 setTimeout(async () => {
                     iframeContainer.style.display = "none";
-                    await auth.signOut();
+                    await signOut(auth);
                     console.log('Session ended');
                 }, sessionDuration);
             }
@@ -253,12 +237,6 @@
                 return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
             }
 
-            window.logout = function() {
-                clearInterval(countdownInterval);
-                auth.signOut();
-                console.log('User logged out manually');
-            };
-
             function resetUI() {
                 document.getElementById("login-form").style.display = "block";
                 document.getElementById("logout-button").style.display = "none";
@@ -269,10 +247,13 @@
                 console.log('UI reset');
             }
 
-            window.onbeforeunload = () => {
+            window.onbeforeunload = async () => {
                 clearInterval(countdownInterval);
-                if (auth.currentUser) auth.signOut();
+                if (auth.currentUser) await signOut(auth);
             };
+        } catch (error) {
+            console.error('Initialization error:', error);
+            alert('Failed to initialize app: ' + error.message);
         }
     </script>
 </body>
