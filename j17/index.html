@@ -44,6 +44,7 @@
             margin: 10px 0;
             font-size: 1em;
             width: 100%;
+            visibility: hidden; /* Hidden until populated */
         }
         #agent-container {
             width: 100%;
@@ -83,7 +84,7 @@
 
     <script type="module">
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js';
-        import { getAuth, signInWithEmailAndPassword, signOut as authSignOut } from 'https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js';
+        import { getAuth, signInWithEmailAndPassword, signOut as authSignOut, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js';
         import { getFirestore, doc, getDoc } from 'https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js';
         import { getFunctions, httpsCallable } from 'https://www.gstatic.com/firebasejs/9.23.0/firebase-functions.js';
         import { getAnalytics } from 'https://www.gstatic.com/firebasejs/9.23.0/firebase-analytics.js';
@@ -109,9 +110,41 @@
         let autoLogoutTimer = null;
         const inactivityTimeout = 10 * 60 * 1000; // 10 minutes
 
+        // Check auth state on page load
+        onAuthStateChanged(auth, (user) => {
+            console.log('Auth state changed:', user ? user.email : 'No user');
+            if (user) {
+                checkUserAccess(user);
+            } else {
+                resetUI();
+            }
+        });
+
         window.signIn = async () => {
             const email = document.getElementById('email').value.trim();
             const password = document.getElementById('password').value.trim();
+            const status = document.getElementById('status');
+
+            if (!email || !password) {
+                status.textContent = 'Please enter email and password';
+                status.style.visibility = 'visible';
+                return;
+            }
+
+            try {
+                console.log('Attempting sign-in with:', email);
+                const userCredential = await signInWithEmailAndPassword(auth, email, password);
+                console.log('Signed in as:', userCredential.user.email, 'UID:', userCredential.user.uid);
+                // checkUserAccess will handle the rest via onAuthStateChanged
+            } catch (error) {
+                console.error('Sign-in error:', error.code, error.message);
+                status.textContent = `Sign-in error: ${error.message}`;
+                status.style.visibility = 'visible';
+                await authSignOut(auth);
+            }
+        };
+
+        async function checkUserAccess(user) {
             const status = document.getElementById('status');
             const countdown = document.getElementById('countdown');
             const lockoutCountdown = document.getElementById('lockout-countdown');
@@ -119,22 +152,13 @@
             const signoutButton = document.getElementById('signout');
             const userNameDiv = document.getElementById('user-name');
 
-            if (!email || !password) {
-                status.textContent = 'Please enter email and password';
-                return;
-            }
-
             try {
-                console.log('Attempting sign-in with:', email);
-                const userCredential = await signInWithEmailAndPassword(auth, email, password);
-                const user = userCredential.user;
-                console.log('Signed in as:', user.email, 'UID:', user.uid);
-
-                const allowedEmailRef = doc(db, 'allowedEmails', email);
+                const allowedEmailRef = doc(db, 'allowedEmails', user.email);
                 const allowedEmailSnap = await getDoc(allowedEmailRef);
                 console.log('Allowed email snapshot exists:', allowedEmailSnap.exists());
                 if (!allowedEmailSnap.exists()) {
                     status.textContent = 'Email not authorized. Please purchase access.';
+                    status.style.visibility = 'visible';
                     await authSignOut(auth);
                     return;
                 }
@@ -151,6 +175,9 @@
 
                 if (!data.access) {
                     status.textContent = 'Outside access window or locked out.';
+                    status.style.visibility = 'visible';
+                    agentContainer.style.display = 'none';
+                    signoutButton.style.display = 'block';
                     if (data.timeUntilMidnight) {
                         startMidnightCountdown(data.timeUntilMidnight);
                     } else if (data.timeLeft) {
@@ -162,21 +189,24 @@
 
                 console.log('Access granted, showing agent and starting timer');
                 status.textContent = 'Access granted!';
+                status.style.visibility = 'visible';
                 agentContainer.style.display = 'block';
                 signoutButton.style.display = 'block';
                 startAccessCountdown(data.timeLeft);
                 setupAutoLogout();
 
             } catch (error) {
-                console.error('Sign-in error:', error.code, error.message);
-                status.textContent = `Sign-in error: ${error.message}`;
+                console.error('Access check error:', error.code, error.message);
+                status.textContent = `Access error: ${error.message}`;
+                status.style.visibility = 'visible';
                 await authSignOut(auth);
             }
-        };
+        }
 
         function startAccessCountdown(timeLeft) {
             const countdown = document.getElementById('countdown');
             countdown.textContent = `Chat time left: ${formatTime(timeLeft)}`;
+            countdown.style.visibility = 'visible';
 
             clearInterval(countdownInterval);
             countdownInterval = setInterval(() => {
@@ -186,6 +216,7 @@
                     clearInterval(countdownInterval);
                     document.getElementById('agent-container').style.display = 'none';
                     document.getElementById('status').textContent = 'Access window ended.';
+                    document.getElementById('status').style.visibility = 'visible';
                     document.getElementById('signout').style.display = 'none';
                     startMidnightCountdown(24 * 60 * 60 - 5 * 60);
                 }
@@ -195,6 +226,7 @@
         function startMidnightCountdown(timeUntilMidnight) {
             const lockoutCountdown = document.getElementById('lockout-countdown');
             lockoutCountdown.textContent = `Next access at midnight CST in: ${formatTime(timeUntilMidnight)}`;
+            lockoutCountdown.style.visibility = 'visible';
 
             clearInterval(lockoutInterval);
             lockoutInterval = setInterval(() => {
@@ -210,6 +242,7 @@
         function startLockoutCountdown(timeLeft) {
             const lockoutCountdown = document.getElementById('lockout-countdown');
             lockoutCountdown.textContent = `Locked out for: ${formatTime(timeLeft)}`;
+            lockoutCountdown.style.visibility = 'visible';
 
             clearInterval(lockoutInterval);
             lockoutInterval = setInterval(() => {
@@ -258,13 +291,20 @@
             clearInterval(lockoutInterval);
             clearTimeout(autoLogoutTimer);
             await authSignOut(auth);
+            resetUI();
+        };
+
+        function resetUI() {
             document.getElementById('status').textContent = 'Signed out. Please sign in again.';
+            document.getElementById('status').style.visibility = 'visible';
             document.getElementById('agent-container').style.display = 'none';
             document.getElementById('signout').style.display = 'none';
             document.getElementById('user-name').textContent = '';
             document.getElementById('countdown').textContent = '';
+            document.getElementById('countdown').style.visibility = 'hidden';
             document.getElementById('lockout-countdown').textContent = '';
-        };
+            document.getElementById('lockout-countdown').style.visibility = 'hidden';
+        }
 
         window.onbeforeunload = async () => {
             clearInterval(countdownInterval);
