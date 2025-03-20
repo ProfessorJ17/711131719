@@ -3,86 +3,35 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>D-ID Agent Access</title>
+    <title>Secure D-ID Agent with Timer</title>
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js"></script>
     <style>
-        body {
-            background-color: black;
-            margin: 0;
-            overflow: hidden;
-            color: white;
-            font-family: Arial, sans-serif;
-            text-align: center;
-        }
-        #name {
-            margin-top: 20px;
-            font-size: 1.5em;
-        }
-        #timer {
-            margin-top: 10px;
-            color: #ff5555;
-            font-size: 1.2em;
-        }
-        #login-form {
-            margin-top: 50px;
-        }
-        #logout-button {
-            display: none;
-            width: 200px;
-            padding: 10px;
-            margin: 20px auto;
-            background-color: #333;
-            color: white;
-            border: 1px solid #555;
-            font-size: 1em;
-        }
-        #logout-button:hover {
-            background-color: #555;
-        }
-        #character-container {
-            position: fixed;
-            bottom: 0;
-            right: 0;
-            width: 100%;
-            max-width: 600px;
-            height: 400px;
-            z-index: 2;
-            pointer-events: none; /* Disable interaction by default */
-        }
-        #character-container.active {
-            pointer-events: auto; /* Enable interaction when active */
-        }
-        input, button {
-            display: block;
-            width: 200px;
-            padding: 10px;
-            margin: 10px auto;
-            background-color: #333;
-            color: white;
-            border: 1px solid #555;
-            font-size: 1em;
-        }
-        button:hover {
-            background-color: #555;
-        }
+        body { background-color: black; margin: 0; overflow: hidden; color: white; text-align: center; }
+        #character-container { display: none; position: fixed; bottom: 0; right: 0; z-index: 2; }
+        #login-container { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 3; }
+        #timer { font-size: 24px; margin-top: 20px; }
+        input, button { margin: 5px; padding: 10px; }
     </style>
 </head>
 <body>
-    <div id="name"></div>
-    <div id="timer">Time left: 00:00</div>
-    <div id="login-form">
-        <input type="email" id="email" placeholder="Email"><br>
-        <input type="password" id="password" placeholder="Password"><br>
-        <button id="login-btn">Login</button>
+    <!-- Login / Signup UI -->
+    <div id="login-container">
+        <input type="email" id="email" placeholder="Email">
+        <input type="password" id="password" placeholder="Password">
+        <button onclick="signup()">Sign Up</button>
+        <button onclick="login()">Login</button>
+        <button onclick="logout()">Logout</button>
     </div>
-    <button id="logout-button">Logout</button>
+
+    <!-- Timer Display -->
+    <h2 id="timer">Time Left: --:--</h2>
+
+    <!-- D-ID Character Container -->
     <div id="character-container"></div>
 
-    <script type="module">
-        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.3.1/firebase-app.js';
-        import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.3.1/firebase-auth.js';
-        import { getFunctions, httpsCallable } from 'https://www.gstatic.com/firebasejs/10.3.1/firebase-functions.js';
-        import { getFirestore, doc, getDoc } from 'https://www.gstatic.com/firebasejs/10.3.1/firebase-firestore.js';
-
+    <script>
         const firebaseConfig = {
             apiKey: "AIzaSyDpIapJzv54LIApO_yM2f-SrwkXbjjLRPo",
             authDomain: "ever4-e1efb.firebaseapp.com",
@@ -93,173 +42,134 @@
             measurementId: "G-NX3JS6DVKB"
         };
 
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
-        const functions = getFunctions(app);
-        const checkAccessFn = httpsCallable(functions, 'checkAccess');
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
 
-        let countdownInterval = null;
+        let timerInterval;
+        let remainingTime = 0;
 
-        document.getElementById('login-btn').addEventListener('click', async () => {
-            console.log('Login button clicked');
-            const email = document.getElementById('email').value.trim();
-            const password = document.getElementById('password').value.trim();
-
-            if (!email || !password) {
-                alert('Please enter both email and password');
-                return;
-            }
-
-            try {
-                console.log('Attempting login with:', email);
-                await signInWithEmailAndPassword(auth, email, password);
-                console.log('Login successful');
-            } catch (error) {
-                console.error('Login error:', error.code, error.message);
-                alert(`Login error: ${error.message}`);
-            }
-        });
-
-        document.getElementById('logout-button').addEventListener('click', async () => {
-            console.log('Logout button clicked');
-            clearInterval(countdownInterval);
-            await signOut(auth);
-        });
-
-        onAuthStateChanged(auth, async user => {
-            console.log('Auth state changed:', user ? user.email : 'No user');
-            if (user) {
-                document.getElementById("login-form").style.display = "none";
-                document.getElementById("logout-button").style.display = "block";
-                await checkAccess(user);
-            } else {
-                resetUI();
-            }
-        });
-
-        async function checkAccess(user) {
-            console.log('Checking access for:', user.email);
-            const allowedEmailRef = doc(db, "allowedEmails", user.email);
-            const allowedEmailDoc = await getDoc(allowedEmailRef);
-
-            if (!allowedEmailDoc.exists() || !allowedEmailDoc.data().purchased) {
-                console.log('User not authorized or not purchased');
-                alert("Email not authorized or purchase required.");
-                await signOut(auth);
-                return;
-            }
-
-            const userData = allowedEmailDoc.data();
-            document.getElementById("name").textContent = userData.name || "jesse33";
-            console.log('Name set to:', document.getElementById("name").textContent);
-
-            try {
-                const result = await checkAccessFn();
-                console.log('CheckAccess result:', result.data);
-                const { access, timeLeft } = result.data;
-
-                if (access) {
-                    console.log('Access granted, time left:', timeLeft);
-                    grantAccess(timeLeft);
-                } else {
-                    console.log('Locked out, time left:', timeLeft);
-                    startLockoutCountdown(timeLeft, "Next session in");
-                }
-            } catch (error) {
-                console.error('Check access error:', error.code, error.message);
-                alert(`Access check failed: ${error.message}`);
-                await signOut(auth);
-            }
+        function signup() {
+            const email = document.getElementById("email").value;
+            const password = document.getElementById("password").value;
+            auth.createUserWithEmailAndPassword(email, password)
+                .then(() => alert("Signup successful! Please log in."))
+                .catch(error => alert("Error: " + error.message));
         }
 
-        function grantAccess(seconds) {
-            console.log('Granting access with', seconds, 'seconds');
-            const characterContainer = document.getElementById("character-container");
+        function login() {
+            const email = document.getElementById("email").value;
+            const password = document.getElementById("password").value;
+            auth.signInWithEmailAndPassword(email, password)
+                .then(userCredential => {
+                    alert("Login successful!");
+                    checkAccess(userCredential.user.uid);
+                })
+                .catch(error => alert("Error: " + error.message));
+        }
 
-            // Load D-ID Agent only if not already loaded
-            if (!characterContainer.querySelector('script')) {
-                loadDIDAgent(characterContainer);
+        function logout() {
+            auth.signOut().then(() => {
+                alert("Logged out!");
+                document.getElementById("character-container").style.display = "none";
+                clearInterval(timerInterval);
+                document.getElementById("timer").textContent = "Time Left: --:--";
+            }).catch(error => alert("Error: " + error.message));
+        }
+
+        async function checkAccess(userId) {
+            const accessDoc = db.collection("userAccess").doc(userId);
+            const doc = await accessDoc.get();
+
+            const now = new Date();
+            const lastAccess = doc.exists ? doc.data().timestamp.toDate() : null;
+
+            if (lastAccess) {
+                const elapsed = (now - lastAccess) / 1000; // Seconds passed
+                remainingTime = 5 * 60 - elapsed; // 5 minutes timer
+                const timeLeftForNextAccess = 24 * 60 * 60 - elapsed;
+
+                if (timeLeftForNextAccess > 0 && remainingTime <= 0) {
+                    // If 24h has not passed and time is over
+                    showCountdown(timeLeftForNextAccess);
+                    return;
+                }
+
+                if (remainingTime > 0) {
+                    // Resume timer from remaining time
+                    showDIDAgent(remainingTime);
+                    return;
+                }
             }
-            characterContainer.classList.add("active"); // Enable interaction
-            document.getElementById("logout-button").style.display = "block";
-            startCountdown(seconds, "Time left");
 
-            setTimeout(async () => {
-                characterContainer.classList.remove("active"); // Disable interaction
-                await signOut(auth);
-                console.log('Session ended');
-            }, seconds * 1000);
+            // Start new session
+            await accessDoc.set({ timestamp: firebase.firestore.Timestamp.now() });
+            showDIDAgent(5 * 60); // 5 minutes
+        }
+
+        function showDIDAgent(timeLeft) {
+            remainingTime = timeLeft;
+            document.getElementById("character-container").style.display = "block";
+            loadDIDAgent(document.getElementById("character-container"));
+            startTimer();
+        }
+
+        function startTimer() {
+            clearInterval(timerInterval);
+            timerInterval = setInterval(() => {
+                if (remainingTime > 0) {
+                    remainingTime--;
+                    updateTimerDisplay(remainingTime);
+                } else {
+                    clearInterval(timerInterval);
+                    document.getElementById("character-container").style.display = "none";
+                    alert("Time's up! You can access it again in 24 hours.");
+                    start24hCountdown();
+                }
+            }, 1000);
+        }
+
+        function updateTimerDisplay(seconds) {
+            let minutes = Math.floor(seconds / 60);
+            let sec = seconds % 60;
+            document.getElementById("timer").textContent = `Time Left: ${minutes}:${sec < 10 ? '0' : ''}${sec}`;
+        }
+
+        function start24hCountdown() {
+            let remaining = 24 * 60 * 60;
+            showCountdown(remaining);
+        }
+
+        function showCountdown(timeLeft) {
+            clearInterval(timerInterval);
+            timerInterval = setInterval(() => {
+                if (timeLeft > 0) {
+                    timeLeft--;
+                    let hours = Math.floor(timeLeft / 3600);
+                    let minutes = Math.floor((timeLeft % 3600) / 60);
+                    let seconds = timeLeft % 60;
+                    document.getElementById("timer").textContent = `Next access in: ${hours}:${minutes}:${seconds}`;
+                } else {
+                    clearInterval(timerInterval);
+                    document.getElementById("timer").textContent = "You can now access the agent!";
+                }
+            }, 1000);
         }
 
         function loadDIDAgent(container) {
-            const script = document.createElement('script');
-            script.type = 'module';
-            script.src = 'https://agent.d-id.com/v1/index.js';
-            script.setAttribute('data-name', 'did-agent');
-            script.setAttribute('data-mode', 'fabio');
-            script.setAttribute('data-client-key', 'Z29vZ2xlLW9hdXRoMnwxMDI1NDc5NDg2ODI5NjkwNzc4MDg6RkpFT0VWOTBqYVFVb3lHT3hMU2Zt');
-            script.setAttribute('data-agent-id', 'agt_k9HerVqC');
-            script.setAttribute('data-monitor', 'true');
-            container.appendChild(script);
-            console.log('D-ID Agent script loaded');
-            script.onload = () => console.log('D-ID Agent script fully loaded');
+            if (!container.querySelector('script')) {
+                const script = document.createElement('script');
+                script.type = 'module';
+                script.src = 'https://agent.d-id.com/v1/index.js';
+                script.setAttribute('data-name', 'did-agent');
+                script.setAttribute('data-mode', 'fabio');
+                script.setAttribute('data-client-key', 'Z29vZ2xlLW9hdXRoMnwxMDI1NDc5NDg2ODI5NjkwNzc4MDg6RkpFT0VWOTBqYVFVb3lHT3hMU2Zt');
+                script.setAttribute('data-agent-id', 'agt_k9HerVqC');
+                script.setAttribute('data-monitor', 'true');
+                container.appendChild(script);
+                console.log('D-ID Agent script loaded');
+            }
         }
-
-        function startCountdown(seconds, label) {
-            const timer = document.getElementById('timer');
-            console.log('Starting countdown from:', seconds);
-            timer.textContent = `${label}: ${formatTime(seconds)}`;
-
-            clearInterval(countdownInterval);
-            countdownInterval = setInterval(() => {
-                seconds--;
-                timer.textContent = `${label}: ${formatTime(seconds)}`;
-                if (seconds <= 0) {
-                    clearInterval(countdownInterval);
-                    console.log('Countdown ended');
-                }
-            }, 1000);
-        }
-
-        function startLockoutCountdown(seconds, label) {
-            const timer = document.getElementById('timer');
-            console.log('Starting lockout countdown from:', seconds);
-            timer.textContent = `${label}: ${formatTime(seconds)}`;
-
-            clearInterval(countdownInterval);
-            countdownInterval = setInterval(() => {
-                seconds--;
-                timer.textContent = `${label}: ${formatTime(seconds)}`;
-                if (seconds <= 0) {
-                    clearInterval(countdownInterval);
-                    resetUI();
-                    console.log('Lockout countdown ended');
-                }
-            }, 1000);
-        }
-
-        function formatTime(seconds) {
-            const hours = Math.floor(seconds / 3600);
-            const minutes = Math.floor((seconds % 3600) / 60);
-            const secs = seconds % 60;
-            return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
-        }
-
-        function resetUI() {
-            document.getElementById("login-form").style.display = "block";
-            document.getElementById("logout-button").style.display = "none";
-            document.getElementById("character-container").classList.remove("active");
-            document.getElementById("name").textContent = "";
-            document.getElementById("timer").textContent = "Time left: 00:00";
-            clearInterval(countdownInterval);
-            console.log('UI reset');
-        }
-
-        window.onbeforeunload = async () => {
-            clearInterval(countdownInterval);
-            if (auth.currentUser) await signOut(auth);
-        };
     </script>
 </body>
 </html>
