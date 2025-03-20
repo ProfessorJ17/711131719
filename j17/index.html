@@ -108,6 +108,8 @@
 
         let countdownInterval = null;
         let lockoutInterval = null;
+        let autoLogoutTimer = null;
+        const inactivityTimeout = 10 * 60 * 1000; // 10 minutes in milliseconds
 
         window.signIn = async () => {
             const email = document.getElementById('email').value.trim();
@@ -156,6 +158,7 @@
                     } else if (data.timeLeft) {
                         startLockoutCountdown(data.timeLeft);
                     }
+                    setupAutoLogout();
                     return;
                 }
 
@@ -164,6 +167,7 @@
                 agentContainer.style.display = 'block';
                 signoutButton.style.display = 'block';
                 startAccessCountdown(data.timeLeft);
+                setupAutoLogout();
 
             } catch (error) {
                 console.error('Sign-in error:', error.message);
@@ -226,9 +230,35 @@
             return `${hours}h ${minutes}m ${secs}s`;
         }
 
+        function setupAutoLogout() {
+            clearTimeout(autoLogoutTimer);
+            autoLogoutTimer = setTimeout(async () => {
+                if (auth.currentUser) {
+                    console.log('Auto-logout due to inactivity');
+                    await signOut();
+                }
+            }, inactivityTimeout);
+
+            // Reset timer on user activity
+            const resetTimer = () => {
+                clearTimeout(autoLogoutTimer);
+                autoLogoutTimer = setTimeout(async () => {
+                    if (auth.currentUser) {
+                        console.log('Auto-logout due to inactivity');
+                        await signOut();
+                    }
+                }, inactivityTimeout);
+            };
+
+            document.addEventListener('mousemove', resetTimer);
+            document.addEventListener('keypress', resetTimer);
+            document.addEventListener('click', resetTimer);
+        }
+
         window.signOut = async () => {
             clearInterval(countdownInterval);
             clearInterval(lockoutInterval);
+            clearTimeout(autoLogoutTimer);
             await authSignOut(auth);
             document.getElementById('status').textContent = 'Signed out. Please sign in again.';
             document.getElementById('agent-container').style.display = 'none';
@@ -241,6 +271,7 @@
         window.onbeforeunload = async () => {
             clearInterval(countdownInterval);
             clearInterval(lockoutInterval);
+            clearTimeout(autoLogoutTimer);
             if (auth.currentUser) {
                 await authSignOut(auth);
                 console.log('Signed out on page close');
