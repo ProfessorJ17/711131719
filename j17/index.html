@@ -40,24 +40,12 @@
         }
         #character-container {
             display: none;
-            position: fixed;
-            bottom: 0;
-            right: 0;
+            position: relative;
             width: 100%;
             max-width: 600px;
-            height: 100%;
-            max-height: 400px;
+            height: 400px;
+            margin: 0 auto;
             z-index: 2;
-        }
-        #youtube-iframe {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            border: none;
-            z-index: 1;
-            display: none; /* Hidden by default unless needed */
         }
         input, button {
             display: block;
@@ -74,7 +62,7 @@
         }
     </style>
 </head>
-<body style="background-color: black; margin: 0; overflow: hidden;">
+<body>
     <div id="name"></div>
     <div id="timer">Time left: 00:00</div>
     <div id="login-form">
@@ -83,7 +71,6 @@
         <button id="login-btn">Login</button>
     </div>
     <button id="logout-button">Logout</button>
-    <iframe id="youtube-iframe"></iframe>
     <div id="character-container"></div>
 
     <script type="module">
@@ -164,10 +151,12 @@
 
             const userData = allowedEmailDoc.data();
             document.getElementById("name").textContent = userData.name || "jesse33";
+            console.log('Name set to:', document.getElementById("name").textContent);
 
             try {
                 const result = await checkAccessFn();
                 const { access, timeLeft } = result.data;
+                console.log('CheckAccess result:', result.data);
 
                 if (access) {
                     console.log('Access granted, time left:', timeLeft);
@@ -184,7 +173,7 @@
         }
 
         function grantAccess(seconds) {
-            console.log('Granting access');
+            console.log('Granting access with', seconds, 'seconds');
             const container = document.getElementById("character-container");
             loadDIDAgent(container);
             container.style.display = "block";
@@ -211,12 +200,15 @@
                 container.appendChild(script);
                 console.log('D-ID Agent script loaded');
                 script.onload = () => console.log('D-ID Agent script fully loaded');
+            } else {
+                console.log('D-ID Agent script already present');
             }
         }
 
         function startCountdown(seconds, label) {
             const timer = document.getElementById('timer');
             timer.textContent = `${label}: ${formatTime(seconds)}`;
+            console.log('Starting countdown from:', seconds);
 
             clearInterval(countdownInterval);
             countdownInterval = setInterval(() => {
@@ -229,6 +221,7 @@
         function startLockoutCountdown(seconds, label) {
             const timer = document.getElementById('timer');
             timer.textContent = `${label}: ${formatTime(seconds)}`;
+            console.log('Starting lockout countdown from:', seconds);
 
             clearInterval(countdownInterval);
             countdownInterval = setInterval(() => {
@@ -252,7 +245,6 @@
             document.getElementById("login-form").style.display = "block";
             document.getElementById("logout-button").style.display = "none";
             document.getElementById("character-container").style.display = "none";
-            document.getElementById("youtube-iframe").style.display = "none";
             document.getElementById("name").textContent = "";
             document.getElementById("timer").textContent = "Time left: 00:00";
             clearInterval(countdownInterval);
