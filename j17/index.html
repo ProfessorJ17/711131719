@@ -44,13 +44,13 @@
             margin: 10px 0;
             font-size: 1em;
             width: 100%;
-            visibility: hidden; /* Hidden until populated */
+            visibility: hidden;
         }
         #agent-container {
             width: 100%;
             max-width: 600px;
             margin-top: 20px;
-            display: none;
+            display: none !important; /* Enforce hiding */
         }
         @media (max-width: 600px) {
             h1 { font-size: 1.5em; }
@@ -70,17 +70,7 @@
     <button onclick="signIn()">Sign In</button>
     <button onclick="signOut()" id="signout" style="display: none;">Sign Out</button>
     <div id="status"></div>
-    <div id="agent-container">
-        <script
-            type="module"
-            src="https://agent.d-id.com/v1/index.js"
-            data-name="did-agent"
-            data-mode="fabio"
-            data-client-key="Z29vZ2xlLW9hdXRoMnwxMDI1NDc5NDg2ODI5NjkwNzc4MDg6RkpFT0VWOTBqYVFVb3lHT3hMU2Zt"
-            data-agent-id="agt_k9HerVqC"
-            data-monitor="true">
-        </script>
-    </div>
+    <div id="agent-container"></div> <!-- Empty until script is added -->
 
     <script type="module">
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js';
@@ -110,7 +100,6 @@
         let autoLogoutTimer = null;
         const inactivityTimeout = 10 * 60 * 1000; // 10 minutes
 
-        // Check auth state on page load
         onAuthStateChanged(auth, (user) => {
             console.log('Auth state changed:', user ? user.email : 'No user');
             if (user) {
@@ -135,7 +124,6 @@
                 console.log('Attempting sign-in with:', email);
                 const userCredential = await signInWithEmailAndPassword(auth, email, password);
                 console.log('Signed in as:', userCredential.user.email, 'UID:', userCredential.user.uid);
-                // checkUserAccess will handle the rest via onAuthStateChanged
             } catch (error) {
                 console.error('Sign-in error:', error.code, error.message);
                 status.textContent = `Sign-in error: ${error.message}`;
@@ -176,7 +164,7 @@
                 if (!data.access) {
                     status.textContent = 'Outside access window or locked out.';
                     status.style.visibility = 'visible';
-                    agentContainer.style.display = 'none';
+                    agentContainer.style.display = 'none !important';
                     signoutButton.style.display = 'block';
                     if (data.timeUntilMidnight) {
                         startMidnightCountdown(data.timeUntilMidnight);
@@ -190,7 +178,8 @@
                 console.log('Access granted, showing agent and starting timer');
                 status.textContent = 'Access granted!';
                 status.style.visibility = 'visible';
-                agentContainer.style.display = 'block';
+                loadDIDAgent(agentContainer);
+                agentContainer.style.display = 'block !important';
                 signoutButton.style.display = 'block';
                 startAccessCountdown(data.timeLeft);
                 setupAutoLogout();
@@ -200,6 +189,21 @@
                 status.textContent = `Access error: ${error.message}`;
                 status.style.visibility = 'visible';
                 await authSignOut(auth);
+            }
+        }
+
+        function loadDIDAgent(container) {
+            if (!container.querySelector('script')) {
+                const script = document.createElement('script');
+                script.type = 'module';
+                script.src = 'https://agent.d-id.com/v1/index.js';
+                script.setAttribute('data-name', 'did-agent');
+                script.setAttribute('data-mode', 'fabio');
+                script.setAttribute('data-client-key', 'Z29vZ2xlLW9hdXRoMnwxMDI1NDc5NDg2ODI5NjkwNzc4MDg6RkpFT0VWOTBqYVFVb3lHT3hMU2Zt');
+                script.setAttribute('data-agent-id', 'agt_k9HerVqC');
+                script.setAttribute('data-monitor', 'true');
+                container.appendChild(script);
+                console.log('D-ID Agent script loaded');
             }
         }
 
@@ -214,7 +218,7 @@
                 countdown.textContent = `Chat time left: ${formatTime(timeLeft)}`;
                 if (timeLeft <= 0) {
                     clearInterval(countdownInterval);
-                    document.getElementById('agent-container').style.display = 'none';
+                    document.getElementById('agent-container').style.display = 'none !important';
                     document.getElementById('status').textContent = 'Access window ended.';
                     document.getElementById('status').style.visibility = 'visible';
                     document.getElementById('signout').style.display = 'none';
@@ -295,9 +299,11 @@
         };
 
         function resetUI() {
+            const agentContainer = document.getElementById('agent-container');
+            agentContainer.style.display = 'none !important';
+            agentContainer.innerHTML = ''; // Clear D-ID script
             document.getElementById('status').textContent = 'Signed out. Please sign in again.';
             document.getElementById('status').style.visibility = 'visible';
-            document.getElementById('agent-container').style.display = 'none';
             document.getElementById('signout').style.display = 'none';
             document.getElementById('user-name').textContent = '';
             document.getElementById('countdown').textContent = '';
