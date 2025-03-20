@@ -3,35 +3,38 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Secure D-ID Agent with Timer</title>
-    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js"></script>
+    <title>D-ID Agent with Firebase</title>
     <style>
-        body { background-color: black; margin: 0; overflow: hidden; color: white; text-align: center; }
-        #character-container { display: none; position: fixed; bottom: 0; right: 0; z-index: 2; }
-        #login-container { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 3; }
-        #timer { font-size: 24px; margin-top: 20px; }
-        input, button { margin: 5px; padding: 10px; }
+        body {
+            background-color: black;
+            margin: 0;
+            overflow: hidden;
+        }
+        .iframe-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+        #did-iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
     </style>
 </head>
 <body>
-    <!-- Login / Signup UI -->
-    <div id="login-container">
-        <input type="email" id="email" placeholder="Email">
-        <input type="password" id="password" placeholder="Password">
-        <button onclick="signup()">Sign Up</button>
-        <button onclick="login()">Login</button>
-        <button onclick="logout()">Logout</button>
+    <div class="iframe-container">
+        <iframe id="did-iframe"></iframe>
     </div>
 
-    <!-- Timer Display -->
-    <h2 id="timer">Time Left: --:--</h2>
+    <script type="module">
+        // Firebase initialization
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.x.x/firebase-app.js';
+        import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/9.x.x/firebase-auth.js';
 
-    <!-- D-ID Character Container -->
-    <div id="character-container"></div>
-
-    <script>
         const firebaseConfig = {
             apiKey: "AIzaSyDpIapJzv54LIApO_yM2f-SrwkXbjjLRPo",
             authDomain: "ever4-e1efb.firebaseapp.com",
@@ -42,120 +45,10 @@
             measurementId: "G-NX3JS6DVKB"
         };
 
-        firebase.initializeApp(firebaseConfig);
-        const auth = firebase.auth();
-        const db = firebase.firestore();
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
 
-        let timerInterval;
-        let remainingTime = 0;
-
-        function signup() {
-            const email = document.getElementById("email").value;
-            const password = document.getElementById("password").value;
-            auth.createUserWithEmailAndPassword(email, password)
-                .then(() => alert("Signup successful! Please log in."))
-                .catch(error => alert("Error: " + error.message));
-        }
-
-        function login() {
-            const email = document.getElementById("email").value;
-            const password = document.getElementById("password").value;
-            auth.signInWithEmailAndPassword(email, password)
-                .then(userCredential => {
-                    alert("Login successful!");
-                    checkAccess(userCredential.user.uid);
-                })
-                .catch(error => alert("Error: " + error.message));
-        }
-
-        function logout() {
-            auth.signOut().then(() => {
-                alert("Logged out!");
-                document.getElementById("character-container").style.display = "none";
-                clearInterval(timerInterval);
-                document.getElementById("timer").textContent = "Time Left: --:--";
-            }).catch(error => alert("Error: " + error.message));
-        }
-
-        async function checkAccess(userId) {
-            const accessDoc = db.collection("userAccess").doc(userId);
-            const doc = await accessDoc.get();
-
-            const now = new Date();
-            const lastAccess = doc.exists ? doc.data().timestamp.toDate() : null;
-
-            if (lastAccess) {
-                const elapsed = (now - lastAccess) / 1000; // Seconds passed
-                remainingTime = 5 * 60 - elapsed; // 5 minutes timer
-                const timeLeftForNextAccess = 24 * 60 * 60 - elapsed;
-
-                if (timeLeftForNextAccess > 0 && remainingTime <= 0) {
-                    // If 24h has not passed and time is over
-                    showCountdown(timeLeftForNextAccess);
-                    return;
-                }
-
-                if (remainingTime > 0) {
-                    // Resume timer from remaining time
-                    showDIDAgent(remainingTime);
-                    return;
-                }
-            }
-
-            // Start new session
-            await accessDoc.set({ timestamp: firebase.firestore.Timestamp.now() });
-            showDIDAgent(5 * 60); // 5 minutes
-        }
-
-        function showDIDAgent(timeLeft) {
-            remainingTime = timeLeft;
-            document.getElementById("character-container").style.display = "block";
-            loadDIDAgent(document.getElementById("character-container"));
-            startTimer();
-        }
-
-        function startTimer() {
-            clearInterval(timerInterval);
-            timerInterval = setInterval(() => {
-                if (remainingTime > 0) {
-                    remainingTime--;
-                    updateTimerDisplay(remainingTime);
-                } else {
-                    clearInterval(timerInterval);
-                    document.getElementById("character-container").style.display = "none";
-                    alert("Time's up! You can access it again in 24 hours.");
-                    start24hCountdown();
-                }
-            }, 1000);
-        }
-
-        function updateTimerDisplay(seconds) {
-            let minutes = Math.floor(seconds / 60);
-            let sec = seconds % 60;
-            document.getElementById("timer").textContent = `Time Left: ${minutes}:${sec < 10 ? '0' : ''}${sec}`;
-        }
-
-        function start24hCountdown() {
-            let remaining = 24 * 60 * 60;
-            showCountdown(remaining);
-        }
-
-        function showCountdown(timeLeft) {
-            clearInterval(timerInterval);
-            timerInterval = setInterval(() => {
-                if (timeLeft > 0) {
-                    timeLeft--;
-                    let hours = Math.floor(timeLeft / 3600);
-                    let minutes = Math.floor((timeLeft % 3600) / 60);
-                    let seconds = timeLeft % 60;
-                    document.getElementById("timer").textContent = `Next access in: ${hours}:${minutes}:${seconds}`;
-                } else {
-                    clearInterval(timerInterval);
-                    document.getElementById("timer").textContent = "You can now access the agent!";
-                }
-            }, 1000);
-        }
-
+        // Function to load D-ID Agent
         function loadDIDAgent(container) {
             if (!container.querySelector('script')) {
                 const script = document.createElement('script');
@@ -168,8 +61,41 @@
                 script.setAttribute('data-monitor', 'true');
                 container.appendChild(script);
                 console.log('D-ID Agent script loaded');
+                script.onload = () => console.log('D-ID Agent script fully loaded');
             }
         }
+
+        // Handle authentication state
+        onAuthStateChanged(auth, (user) => {
+            const iframe = document.getElementById('did-iframe');
+            if (user) {
+                // User is logged in, load D-ID agent in iframe
+                const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+                iframeDoc.open();
+                iframeDoc.write(`
+                    <!DOCTYPE html>
+                    <html>
+                    <head>
+                        <style>
+                            body { margin: 0; background-color: black; }
+                            #character-container { position: fixed; bottom: 0; right: 0; z-index: 2; }
+                        </style>
+                    </head>
+                    <body>
+                        <div id="character-container"></div>
+                    </body>
+                    </html>
+                `);
+                iframeDoc.close();
+
+                // Load D-ID agent into the iframe's character container
+                const container = iframeDoc.getElementById('character-container');
+                loadDIDAgent(container);
+            } else {
+                // User is not logged in, redirect to login
+                window.location.href = '/login'; // Adjust this to your login page URL
+            }
+        });
     </script>
 </body>
 </html>
