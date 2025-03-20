@@ -1,164 +1,94 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
+<html>
+  <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ever4 - Secure D-ID Agent</title>
-    <style>
-        body {
-            background-color: black;
-            margin: 0;
-            overflow: hidden;
-            color: white;
-            font-family: Arial, sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            text-align: center;
-        }
-        #login-container {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 3;
-        }
-        #content-container {
-            display: none;
-        }
-        button {
-            padding: 10px 20px;
-            font-size: 16px;
-            background-color: #333;
-            color: white;
-            border: none;
-            cursor: pointer;
-        }
-        button:hover {
-            background-color: #555;
-        }
-        input {
-            padding: 10px;
-            margin: 5px;
-            font-size: 16px;
-            width: 200px;
-        }
-    </style>
-</head>
-<body style="background-color: black; margin: 0; overflow: hidden;">
-    <!-- Login UI -->
-    <div id="login-container">
-        <div>
-            <h2>Welcome to Ever4</h2>
-            <input type="email" id="email" placeholder="Email">
-            <input type="password" id="password" placeholder="Password">
-            <button id="loginButton">Login</button>
-            <p id="login-status"></p>
-            <p id="error-message" style="color: red;"></p>
-        </div>
+    <title>Login Page</title>
+    <!-- Include Firebase libraries -->
+    <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-functions.js"></script>
+  </head>
+  <body>
+    <!-- Login Form -->
+    <div id="login-div">
+      <h2>Login</h2>
+      <input type="email" id="email" placeholder="Email" /><br>
+      <input type="password" id="password" placeholder="Password" /><br>
+      <button id="login">Login</button>
     </div>
+    <!-- Content Displayed After Login -->
+    <div id="content" style="display:none;"></div>
+    <button id="logout" style="display:none;">Logout</button>
 
-    <!-- Main Content (D-ID agent) -->
-    <div id="content-container">
-        <div id="character-container" style="position: fixed; bottom: 0; right: 0; z-index: 2;"></div>
-        <script 
-            type="module"
-            src="https://agent.d-id.com/v1/index.js"
-            data-name="did-agent"
-            data-mode="fabio"
-            data-client-key="Z29vZ2xlLW9hdXRoMnwxMDI1NDc5NDg2ODI5NjkwNzc4MDg6RkpFT0VWOTBqYVFVb3lHT3hMU2Zt"
-            data-agent-id="agt_k9HerVqC"
-            data-monitor="true">
-        </script>
-    </div>
-
-    <!-- Firebase SDKs -->
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-functions.js"></script>
-
-    <!-- Firebase Config and Logic -->
     <script>
-        // Firebase Configuration
-        const firebaseConfig = {
-            apiKey: "AIzaSyDpIapJzv54LIApO_yM2f-SrwkXbjjLRPo",
-            authDomain: "ever4-e1efb.firebaseapp.com",
-            projectId: "ever4-e1efb",
-            storageBucket: "ever4-e1efb.firebasestorage.app",
-            messagingSenderId: "473102358637",
-            appId: "1:473102358637:web:a28114096fac995e640764"
-        };
+      // Firebase configuration with your credentials
+      const firebaseConfig = {
+        apiKey: "AIzaSyDpIapJzv54LIApO_yM2f-SrwkXbjjLRPo",
+        authDomain: "ever4-e1efb.firebaseapp.com",
+        projectId: "ever4-e1efb",
+        storageBucket: "ever4-e1efb.firebasestorage.app",
+        messagingSenderId: "473102358637",
+        appId: "1:473102358637:web:a28114096fac995e640764",
+        measurementId: "G-NX3JS6DVKB"
+      };
 
-        // Initialize Firebase
-        firebase.initializeApp(firebaseConfig);
-        const auth = firebase.auth();
-        const functions = firebase.functions();
+      // Initialize Firebase
+      firebase.initializeApp(firebaseConfig);
+      const auth = firebase.auth();
+      const functions = firebase.functions();
 
-        // For local testing with emulator (uncomment if using emulator)
-        // functions.useEmulator('localhost', 5001);
+      // Login button event listener
+      document.getElementById("login").addEventListener("click", () => {
+        const email = document.getElementById("email").value;
+        const password = document.getElementById("password").value;
+        auth.signInWithEmailAndPassword(email, password)
+          .then(() => {
+            // Hide login form on success
+            document.getElementById("login-div").style.display = "none";
+          })
+          .catch((error) => {
+            alert("Error: " + error.message);
+          });
+      });
 
-        // UI Elements
-        const loginButton = document.getElementById('loginButton');
-        const emailInput = document.getElementById('email');
-        const passwordInput = document.getElementById('password');
-        const loginContainer = document.getElementById('login-container');
-        const contentContainer = document.getElementById('content-container');
-        const errorMessage = document.getElementById('error-message');
-        const loginStatus = document.getElementById('login-status');
+      // Monitor authentication state changes
+      auth.onAuthStateChanged(async (user) => {
+        const contentEl = document.getElementById("content");
+        const logoutBtn = document.getElementById("logout");
 
-        // Callable Function Reference
-        const checkAccess = functions.httpsCallable('checkAccess');
-
-        // Login with Email and Password
-        loginButton.addEventListener('click', () => {
-            const email = emailInput.value;
-            const password = passwordInput.value;
-            auth.signInWithEmailAndPassword(email, password)
-                .then((result) => handleAuth(result.user))
-                .catch((error) => {
-                    errorMessage.textContent = `Login Error: ${error.message}`;
-                });
-        });
-
-        // Handle Authentication and Call Cloud Function
-        async function handleAuth(user) {
-            try {
-                const result = await checkAccess();
-                const { access, timeLeft } = result.data;
-                if (access) {
-                    loginContainer.style.display = 'none';
-                    contentContainer.style.display = 'block';
-                    loginStatus.textContent = 'You have logged in';
-                    console.log(`Access granted for ${timeLeft} seconds`);
-                    setTimeout(() => {
-                        auth.signOut();
-                        location.reload();
-                    }, timeLeft * 1000); // Auto-logout after session
-                } else {
-                    errorMessage.textContent = `Access denied. Try again in ${timeLeft} seconds.`;
-                    loginStatus.textContent = 'You are not logged in';
-                    auth.signOut();
-                }
-            } catch (error) {
-                errorMessage.textContent = `Error: ${error.message}`;
-                loginStatus.textContent = 'You are not logged in';
-                auth.signOut();
-            }
-        }
-
-        // Check auth state on page load
-        auth.onAuthStateChanged((user) => {
-            if (user) {
-                loginStatus.textContent = 'You have logged in';
-                handleAuth(user);
+        if (user) {
+          // Call the Cloud Function to verify access
+          const checkAccess = functions.httpsCallable('checkAccess');
+          try {
+            const result = await checkAccess();
+            if (result.data.access === true) {
+              contentEl.innerHTML = `<h3>Logged in after: Welcome ${user.email}</h3>`;
+              contentEl.style.display = "block";
+              logoutBtn.style.display = "block";
             } else {
-                loginStatus.textContent = 'You are not logged in';
-                loginContainer.style.display = 'block';
-                contentContainer.style.display = 'none';
+              contentEl.innerHTML = `<h3>Access Denied. Purchase required to view this page.</h3>`;
+              contentEl.style.display = "block";
+              logoutBtn.style.display = "none";
             }
+          } catch (error) {
+            console.error("Error calling checkAccess:", error);
+          }
+        } else {
+          // Reset UI for logged-out state
+          document.getElementById("login-div").style.display = "block";
+          contentEl.style.display = "none";
+          logoutBtn.style.display = "none";
+        }
+      });
+
+      // Logout button event listener
+      document.getElementById("logout").addEventListener("click", () => {
+        auth.signOut().then(() => {
+          document.getElementById("login-div").style.display = "block";
+          document.getElementById("content").style.display = "none";
+          document.getElementById("logout").style.display = "none";
         });
+      });
     </script>
-</body>
+  </body>
 </html>
