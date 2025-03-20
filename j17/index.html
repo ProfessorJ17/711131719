@@ -25,6 +25,19 @@
         #login-form {
             margin-top: 50px;
         }
+        #logout-button {
+            display: none;
+            width: 200px;
+            padding: 10px;
+            margin: 20px auto;
+            background-color: #333;
+            color: white;
+            border: 1px solid #555;
+            font-size: 1em;
+        }
+        #logout-button:hover {
+            background-color: #555;
+        }
         #character-container {
             display: none;
             position: fixed;
@@ -49,9 +62,6 @@
         button:hover {
             background-color: #555;
         }
-        #logout-button {
-            display: none;
-        }
     </style>
 </head>
 <body>
@@ -68,29 +78,29 @@
     <script type="module">
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.3.1/firebase-app.js';
         import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.3.1/firebase-auth.js';
-        import { getFirestore, doc, getDoc, setDoc } from 'https://www.gstatic.com/firebasejs/10.3.1/firebase-firestore.js';
+        import { getFunctions, httpsCallable } from 'https://www.gstatic.com/firebasejs/10.3.1/firebase-functions.js';
+        import { getFirestore, doc, getDoc } from 'https://www.gstatic.com/firebasejs/10.3.1/firebase-firestore.js';
 
         const firebaseConfig = {
-            apiKey: "AIzaSyDpIapJzv54LIApO_yM2f-SrwkXbjjLRPo",
-            authDomain: "ever4-e1efb.firebaseapp.com",
-            projectId: "ever4-e1efb",
-            storageBucket: "ever4-e1efb.firebasestorage.app",
-            messagingSenderId: "473102358637",
-            appId: "1:473102358637:web:a28114096fac995e640764",
-            measurementId: "G-NX3JS6DVKB"
+            apiKey: "YOUR_API_KEY",
+            authDomain: "YOUR_AUTH_DOMAIN",
+            projectId: "YOUR_PROJECT_ID",
+            storageBucket: "YOUR_STORAGE_BUCKET",
+            messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+            appId: "YOUR_APP_ID",
+            measurementId: "YOUR_MEASUREMENT_ID"
         };
 
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
+        const functions = getFunctions(app);
+        const checkAccessFn = httpsCallable(functions, 'checkAccess');
 
-        const sessionDuration = 5 * 60 * 1000; // 5 minutes
-        const lockoutDuration = 24 * 60 * 60 * 1000 - sessionDuration; // 23 hours, 55 minutes
         let countdownInterval = null;
 
         // Login button
         document.getElementById('login-btn').addEventListener('click', async () => {
-            console.log('Login button clicked');
             const email = document.getElementById('email').value.trim();
             const password = document.getElementById('password').value.trim();
 
@@ -100,84 +110,70 @@
             }
 
             try {
-                console.log('Attempting login with:', email);
-                const userCredential = await signInWithEmailAndPassword(auth, email, password);
-                console.log('Login successful:', userCredential.user.email);
+                await signInWithEmailAndPassword(auth, email, password);
             } catch (error) {
-                console.error('Login error:', error.code, error.message);
                 alert(`Login error: ${error.message}`);
             }
         });
 
         // Logout button
         document.getElementById('logout-button').addEventListener('click', async () => {
-            console.log('Logout button clicked');
             clearInterval(countdownInterval);
             await signOut(auth);
         });
 
         // Auth state listener
-        onAuthStateChanged(auth, user => {
-            console.log('Auth state changed:', user ? user.email : 'No user');
+        onAuthStateChanged(auth, async user => {
             if (user) {
                 document.getElementById("login-form").style.display = "none";
                 document.getElementById("logout-button").style.display = "block";
-                checkAccess(user);
+                await checkAccess(user);
             } else {
                 resetUI();
             }
         });
 
         async function checkAccess(user) {
-            console.log('Checking access for:', user.email);
+            // Get user name from Firestore (or use "jesse33" as default)
             const allowedEmailRef = doc(db, "allowedEmails", user.email);
             const allowedEmailDoc = await getDoc(allowedEmailRef);
 
             if (!allowedEmailDoc.exists() || !allowedEmailDoc.data().purchased) {
-                console.log('User not authorized or not purchased');
                 alert("Email not authorized or purchase required.");
                 await signOut(auth);
                 return;
             }
 
             const userData = allowedEmailDoc.data();
-            document.getElementById("name").textContent = userData.name || "User";
+            document.getElementById("name").textContent = userData.name || "jesse33";
 
-            const userRef = doc(db, "users", user.uid);
-            const userDoc = await getDoc(userRef);
-            const now = Date.now();
-            const sessionData = userDoc.exists() ? userDoc.data() : {};
-            const lockoutUntil = sessionData.lockoutUntil || 0;
+            // Call Cloud Function to check access
+            try {
+                const result = await checkAccessFn();
+                const { access, timeLeft } = result.data;
 
-            if (now < lockoutUntil) {
-                const timeLeft = Math.ceil((lockoutUntil - now) / 1000);
-                console.log('User locked out, time left:', timeLeft);
-                startLockoutCountdown(timeLeft);
-                return;
+                if (access) {
+                    grantAccess(timeLeft);
+                } else {
+                    startLockoutCountdown(timeLeft, "Next session in");
+                }
+            } catch (error) {
+                alert(`Access check failed: ${error.message}`);
+                await signOut(auth);
             }
-
-            console.log('Granting new session');
-            await setDoc(userRef, {
-                name: userData.name,
-                purchased: true,
-                startTime: now,
-                lockoutUntil: now + sessionDuration + lockoutDuration
-            }, { merge: true });
-            grantAccess();
         }
 
-        function grantAccess() {
-            console.log('Granting access');
+        function grantAccess(seconds) {
             const container = document.getElementById("character-container");
             loadDIDAgent(container);
             container.style.display = "block";
-            startCountdown(sessionDuration / 1000);
+            startCountdown(seconds, "Time left");
+            document.getElementById("logout-button").style.display = "block";
 
             setTimeout(async () => {
                 container.style.display = "none";
                 await signOut(auth);
-                console.log('Session ended');
-            }, sessionDuration);
+            }, seconds * 1000);
         }
 
         function loadDIDAgent(container) {
@@ -187,35 +183,33 @@
                 script.src = 'https://agent.d-id.com/v1/index.js';
                 script.setAttribute('data-name', 'did-agent');
                 script.setAttribute('data-mode', 'fabio');
-                script.setAttribute('data-client-key', 'Z29vZ2xlLW9hdXRoMnwxMDI1NDc5NDg2ODI5NjkwNzc4MDg6RkpFT0VWOTBqYVFVb3lHT3hMU2Zt');
-                script.setAttribute('data-agent-id', 'agt_k9HerVqC');
+                script.setAttribute('data-client-key', 'YOUR_D-ID_CLIENT_KEY');
+                script.setAttribute('data-agent-id', 'YOUR_AGENT_ID');
                 script.setAttribute('data-monitor', 'true');
                 container.appendChild(script);
-                console.log('D-ID Agent script loaded');
-                script.onload = () => console.log('D-ID Agent script fully loaded');
             }
         }
 
-        function startCountdown(seconds) {
+        function startCountdown(seconds, label) {
             const timer = document.getElementById('timer');
-            timer.textContent = `Time left: ${formatTime(seconds)}`;
+            timer.textContent = `${label}: ${formatTime(seconds)}`;
 
             clearInterval(countdownInterval);
             countdownInterval = setInterval(() => {
                 seconds--;
-                timer.textContent = `Time left: ${formatTime(seconds)}`;
+                timer.textContent = `${label}: ${formatTime(seconds)}`;
                 if (seconds <= 0) clearInterval(countdownInterval);
             }, 1000);
         }
 
-        function startLockoutCountdown(seconds) {
+        function startLockoutCountdown(seconds, label) {
             const timer = document.getElementById('timer');
-            timer.textContent = `Next session in: ${formatTime(seconds)}`;
+            timer.textContent = `${label}: ${formatTime(seconds)}`;
 
             clearInterval(countdownInterval);
             countdownInterval = setInterval(() => {
                 seconds--;
-                timer.textContent = `Next session in: ${formatTime(seconds)}`;
+                timer.textContent = `${label}: ${formatTime(seconds)}`;
                 if (seconds <= 0) {
                     clearInterval(countdownInterval);
                     resetUI();
@@ -224,10 +218,9 @@
         }
 
         function formatTime(seconds) {
-            const hours = Math.floor(seconds / 3600);
-            const minutes = Math.floor((seconds % 3600) / 60);
+            const minutes = Math.floor(seconds / 60);
             const secs = seconds % 60;
-            return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+            return `${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
         }
 
         function resetUI() {
@@ -237,13 +230,7 @@
             document.getElementById("name").textContent = "";
             document.getElementById("timer").textContent = "Time left: 00:00";
             clearInterval(countdownInterval);
-            console.log('UI reset');
         }
-
-        window.onbeforeunload = async () => {
-            clearInterval(countdownInterval);
-            if (auth.currentUser) await signOut(auth);
-        };
     </script>
 </body>
 </html>
