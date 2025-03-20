@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Secure D-ID Agent</title>
+    <title>Secure D-ID Agent with Cloud Function</title>
     <style>
         body {
             background-color: black;
@@ -23,10 +23,10 @@
             left: 0;
             width: 100%;
             height: 100%;
-            z-index: 3; /* Above content until login */
+            z-index: 3;
         }
         #content-container {
-            display: none; /* Hidden until login */
+            display: none;
         }
         button {
             padding: 10px 20px;
@@ -51,7 +51,7 @@
         </div>
     </div>
 
-    <!-- Main Content (just D-ID agent) -->
+    <!-- Main Content (D-ID agent) -->
     <div id="content-container">
         <div id="character-container" style="position: fixed; bottom: 0; right: 0; z-index: 2;"></div>
         <script 
@@ -68,7 +68,7 @@
     <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-functions.js"></script>
 
     <!-- Firebase Config and Logic -->
     <script>
@@ -86,7 +86,10 @@
         // Initialize Firebase
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
-        const db = firebase.firestore();
+        const functions = firebase.functions();
+
+        // For local testing with emulator (uncomment if using emulator)
+        // functions.useEmulator('localhost', 5001);
 
         // UI Elements
         const signInButton = document.getElementById('signInButton');
@@ -97,6 +100,9 @@
         // Google Auth Provider
         const provider = new firebase.auth.GoogleAuthProvider();
 
+        // Callable Function Reference
+        const checkAccess = functions.httpsCallable('checkAccess');
+
         // Sign In with Google
         signInButton.addEventListener('click', () => {
             auth.signInWithPopup(provider)
@@ -106,20 +112,27 @@
                 });
         });
 
-        // Handle Authentication and Access Check
+        // Handle Authentication and Call Cloud Function
         async function handleAuth(user) {
             try {
-                const emailDoc = await db.collection('allowedEmails').doc(user.email).get();
-                if (emailDoc.exists()) {
-                    // User is allowed, show content
+                const result = await checkAccess();
+                const { access, timeLeft } = result.data;
+                if (access) {
+                    // User has access, show content
                     loginContainer.style.display = 'none';
                     contentContainer.style.display = 'block';
+                    console.log(`Access granted for ${timeLeft} seconds`);
+                    // Optional: Auto-logout after session expires
+                    setTimeout(() => {
+                        auth.signOut();
+                        location.reload();
+                    }, timeLeft * 1000);
                 } else {
-                    errorMessage.textContent = 'Your email is not authorized.';
-                    auth.signOut(); // Log out unauthorized users
+                    errorMessage.textContent = `Access denied. Try again in ${timeLeft} seconds.`;
+                    auth.signOut();
                 }
             } catch (error) {
-                errorMessage.textContent = `Firestore Error: ${error.message}`;
+                errorMessage.textContent = `Error: ${error.message}`;
                 auth.signOut();
             }
         }
