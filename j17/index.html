@@ -126,7 +126,7 @@
                 console.error('Sign-in error:', error.code, error.message);
                 status.textContent = `Sign-in error: ${error.message}`;
                 status.style.visibility = 'visible';
-                await authSignOut(auth);
+                // Removed: await authSignOut(auth);
             }
         };
 
@@ -145,7 +145,7 @@
                 if (!allowedEmailSnap.exists()) {
                     status.textContent = 'Email not authorized. Please purchase access.';
                     status.style.visibility = 'visible';
-                    await authSignOut(auth);
+                    // Removed: await authSignOut(auth);
                     return;
                 }
 
@@ -162,7 +162,7 @@
                 if (!data.access) {
                     status.textContent = 'Outside access window or locked out.';
                     status.style.visibility = 'visible';
-                    agentContainer.style.display = 'none';
+                    agentContainer.style.display = 'none !important';
                     signoutButton.style.display = 'block';
                     if (data.timeUntilMidnight) {
                         startMidnightCountdown(data.timeUntilMidnight);
@@ -184,7 +184,7 @@
                 console.error('Access check error:', error.code, error.message);
                 status.textContent = `Access error: ${error.message}`;
                 status.style.visibility = 'visible';
-                await authSignOut(auth);
+                // Removed: await authSignOut(auth);
             }
         }
 
