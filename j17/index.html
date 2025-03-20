@@ -50,7 +50,7 @@
             width: 100%;
             max-width: 600px;
             margin-top: 20px;
-            display: none !important; /* Enforce hiding */
+            display: none !important;
         }
         @media (max-width: 600px) {
             h1 { font-size: 1.5em; }
@@ -70,7 +70,7 @@
     <button onclick="signIn()">Sign In</button>
     <button onclick="signOut()" id="signout" style="display: none;">Sign Out</button>
     <div id="status"></div>
-    <div id="agent-container"></div> <!-- Empty until script is added -->
+    <div id="agent-container"></div>
 
     <script type="module">
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js';
@@ -97,8 +97,6 @@
 
         let countdownInterval = null;
         let lockoutInterval = null;
-        let autoLogoutTimer = null;
-        const inactivityTimeout = 10 * 60 * 1000; // 10 minutes
 
         onAuthStateChanged(auth, (user) => {
             console.log('Auth state changed:', user ? user.email : 'No user');
@@ -171,7 +169,6 @@
                     } else if (data.timeLeft) {
                         startLockoutCountdown(data.timeLeft);
                     }
-                    setupAutoLogout();
                     return;
                 }
 
@@ -182,7 +179,6 @@
                 agentContainer.style.display = 'block !important';
                 signoutButton.style.display = 'block';
                 startAccessCountdown(data.timeLeft);
-                setupAutoLogout();
 
             } catch (error) {
                 console.error('Access check error:', error.code, error.message);
@@ -266,34 +262,9 @@
             return `${hours}h ${minutes}m ${secs}s`;
         }
 
-        function setupAutoLogout() {
-            clearTimeout(autoLogoutTimer);
-            autoLogoutTimer = setTimeout(async () => {
-                if (auth.currentUser) {
-                    console.log('Auto-logout due to inactivity');
-                    await signOut();
-                }
-            }, inactivityTimeout);
-
-            const resetTimer = () => {
-                clearTimeout(autoLogoutTimer);
-                autoLogoutTimer = setTimeout(async () => {
-                    if (auth.currentUser) {
-                        console.log('Auto-logout due to inactivity');
-                        await signOut();
-                    }
-                }, inactivityTimeout);
-            };
-
-            document.addEventListener('mousemove', resetTimer);
-            document.addEventListener('keypress', resetTimer);
-            document.addEventListener('click', resetTimer);
-        }
-
         window.signOut = async () => {
             clearInterval(countdownInterval);
             clearInterval(lockoutInterval);
-            clearTimeout(autoLogoutTimer);
             await authSignOut(auth);
             resetUI();
         };
@@ -301,7 +272,7 @@
         function resetUI() {
             const agentContainer = document.getElementById('agent-container');
             agentContainer.style.display = 'none !important';
-            agentContainer.innerHTML = ''; // Clear D-ID script
+            agentContainer.innerHTML = '';
             document.getElementById('status').textContent = 'Signed out. Please sign in again.';
             document.getElementById('status').style.visibility = 'visible';
             document.getElementById('signout').style.display = 'none';
@@ -315,7 +286,6 @@
         window.onbeforeunload = async () => {
             clearInterval(countdownInterval);
             clearInterval(lockoutInterval);
-            clearTimeout(autoLogoutTimer);
             if (auth.currentUser) {
                 await authSignOut(auth);
                 console.log('Signed out on page close');
