@@ -96,7 +96,6 @@
 
         let countdownInterval = null;
 
-        // Login button
         document.getElementById('login-btn').addEventListener('click', async () => {
             console.log('Login button clicked');
             const email = document.getElementById('email').value.trim();
@@ -117,14 +116,12 @@
             }
         });
 
-        // Logout button
         document.getElementById('logout-button').addEventListener('click', async () => {
             console.log('Logout button clicked');
             clearInterval(countdownInterval);
             await signOut(auth);
         });
 
-        // Auth state listener
         onAuthStateChanged(auth, async user => {
             console.log('Auth state changed:', user ? user.email : 'No user');
             if (user) {
@@ -154,8 +151,8 @@
 
             try {
                 const result = await checkAccessFn();
-                const { access, timeLeft } = result.data;
                 console.log('CheckAccess result:', result.data);
+                const { access, timeLeft } = result.data;
 
                 if (access) {
                     console.log('Access granted, time left:', timeLeft);
@@ -176,7 +173,6 @@
             const contentContainer = document.getElementById("content-container");
             const characterContainer = document.getElementById("character-container");
 
-            // Load D-ID Agent script
             loadDIDAgent(characterContainer);
             contentContainer.style.display = "block";
             document.getElementById("logout-button").style.display = "block";
@@ -209,21 +205,24 @@
 
         function startCountdown(seconds, label) {
             const timer = document.getElementById('timer');
-            timer.textContent = `${label}: ${formatTime(seconds)}`;
             console.log('Starting countdown from:', seconds);
+            timer.textContent = `${label}: ${formatTime(seconds)}`;
 
             clearInterval(countdownInterval);
             countdownInterval = setInterval(() => {
                 seconds--;
                 timer.textContent = `${label}: ${formatTime(seconds)}`;
-                if (seconds <= 0) clearInterval(countdownInterval);
+                if (seconds <= 0) {
+                    clearInterval(countdownInterval);
+                    console.log('Countdown ended');
+                }
             }, 1000);
         }
 
         function startLockoutCountdown(seconds, label) {
             const timer = document.getElementById('timer');
-            timer.textContent = `${label}: ${formatTime(seconds)}`;
             console.log('Starting lockout countdown from:', seconds);
+            timer.textContent = `${label}: ${formatTime(seconds)}`;
 
             clearInterval(countdownInterval);
             countdownInterval = setInterval(() => {
@@ -232,6 +231,7 @@
                 if (seconds <= 0) {
                     clearInterval(countdownInterval);
                     resetUI();
+                    console.log('Lockout countdown ended');
                 }
             }, 1000);
         }
