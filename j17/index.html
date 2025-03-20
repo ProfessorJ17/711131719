@@ -1,94 +1,88 @@
 <!DOCTYPE html>
-<html>
-  <head>
+<html lang="en">
+<head>
     <meta charset="UTF-8">
-    <title>Login Page</title>
-    <!-- Include Firebase libraries -->
-    <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-auth.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-functions.js"></script>
-  </head>
-  <body>
-    <!-- Login Form -->
-    <div id="login-div">
-      <h2>Login</h2>
-      <input type="email" id="email" placeholder="Email" /><br>
-      <input type="password" id="password" placeholder="Password" /><br>
-      <button id="login">Login</button>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>J17 Login</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; padding: 50px; }
+        button { padding: 10px 20px; font-size: 16px; margin: 10px; }
+        #user-info { display: none; }
+    </style>
+</head>
+<body>
+    <h1>Welcome to J17</h1>
+    <button id="login-btn" onclick="login()">Sign in with Google</button>
+    <button id="logout-btn" onclick="logout()" style="display: none;">Sign Out</button>
+    <div id="user-info">
+        <p>Logged in as: <span id="user-name"></span></p>
     </div>
-    <!-- Content Displayed After Login -->
-    <div id="content" style="display:none;"></div>
-    <button id="logout" style="display:none;">Logout</button>
 
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js"></script>
     <script>
-      // Firebase configuration with your credentials
-      const firebaseConfig = {
-        apiKey: "AIzaSyDpIapJzv54LIApO_yM2f-SrwkXbjjLRPo",
-        authDomain: "ever4-e1efb.firebaseapp.com",
-        projectId: "ever4-e1efb",
-        storageBucket: "ever4-e1efb.firebasestorage.app",
-        messagingSenderId: "473102358637",
-        appId: "1:473102358637:web:a28114096fac995e640764",
-        measurementId: "G-NX3JS6DVKB"
-      };
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyDpIapJzv54LIApO_yM2f-SrwkXbjjLRPo",
+            authDomain: "ever4-e1efb.firebaseapp.com",
+            projectId: "ever4-e1efb",
+            storageBucket: "ever4-e1efb.firebasestorage.app",
+            messagingSenderId: "473102358637",
+            appId: "1:473102358637:web:a28114096fac995e640764",
+            measurementId: "G-NX3JS6DVKB"
+        };
 
-      // Initialize Firebase
-      firebase.initializeApp(firebaseConfig);
-      const auth = firebase.auth();
-      const functions = firebase.functions();
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const provider = new firebase.auth.GoogleAuthProvider();
 
-      // Login button event listener
-      document.getElementById("login").addEventListener("click", () => {
-        const email = document.getElementById("email").value;
-        const password = document.getElementById("password").value;
-        auth.signInWithEmailAndPassword(email, password)
-          .then(() => {
-            // Hide login form on success
-            document.getElementById("login-div").style.display = "none";
-          })
-          .catch((error) => {
-            alert("Error: " + error.message);
-          });
-      });
-
-      // Monitor authentication state changes
-      auth.onAuthStateChanged(async (user) => {
-        const contentEl = document.getElementById("content");
-        const logoutBtn = document.getElementById("logout");
-
-        if (user) {
-          // Call the Cloud Function to verify access
-          const checkAccess = functions.httpsCallable('checkAccess');
-          try {
-            const result = await checkAccess();
-            if (result.data.access === true) {
-              contentEl.innerHTML = `<h3>Logged in after: Welcome ${user.email}</h3>`;
-              contentEl.style.display = "block";
-              logoutBtn.style.display = "block";
-            } else {
-              contentEl.innerHTML = `<h3>Access Denied. Purchase required to view this page.</h3>`;
-              contentEl.style.display = "block";
-              logoutBtn.style.display = "none";
-            }
-          } catch (error) {
-            console.error("Error calling checkAccess:", error);
-          }
-        } else {
-          // Reset UI for logged-out state
-          document.getElementById("login-div").style.display = "block";
-          contentEl.style.display = "none";
-          logoutBtn.style.display = "none";
+        // Login function
+        function login() {
+            firebase.auth().signInWithRedirect(provider);
         }
-      });
 
-      // Logout button event listener
-      document.getElementById("logout").addEventListener("click", () => {
-        auth.signOut().then(() => {
-          document.getElementById("login-div").style.display = "block";
-          document.getElementById("content").style.display = "none";
-          document.getElementById("logout").style.display = "none";
+        // Logout function
+        function logout() {
+            firebase.auth().signOut().then(() => {
+                console.log("Logged out");
+            }).catch((error) => {
+                console.error("Logout error:", error);
+            });
+        }
+
+        // Handle authentication state
+        firebase.auth().onAuthStateChanged((user) => {
+            const loginBtn = document.getElementById("login-btn");
+            const logoutBtn = document.getElementById("logout-btn");
+            const userInfo = document.getElementById("user-info");
+            const userName = document.getElementById("user-name");
+
+            if (user) {
+                loginBtn.style.display = "none";
+                logoutBtn.style.display = "inline";
+                userInfo.style.display = "block";
+                userName.textContent = user.displayName;
+                console.log("Logged in as:", user.displayName);
+            } else {
+                loginBtn.style.display = "inline";
+                logoutBtn.style.display = "none";
+                userInfo.style.display = "none";
+                console.log("No user signed in");
+            }
         });
-      });
+
+        // Handle redirect result
+        firebase.auth().getRedirectResult()
+            .then((result) => {
+                if (result.user) {
+                    console.log("Redirect login successful:", result.user.displayName);
+                }
+            })
+            .catch((error) => {
+                console.error("Redirect login error:", error);
+            });
     </script>
-  </body>
+</body>
 </html>
