@@ -7,7 +7,8 @@
     <style>
         body { font-family: Arial, sans-serif; text-align: center; padding: 50px; }
         button { padding: 10px 20px; font-size: 16px; margin: 10px; }
-        #user-info { display: none; }
+        #user-info, #error-msg { display: none; }
+        #error-msg { color: red; }
     </style>
 </head>
 <body>
@@ -17,10 +18,14 @@
     <div id="user-info">
         <p>Logged in as: <span id="user-name"></span></p>
     </div>
+    <div id="error-msg">
+        <p>Sorry, your email is not allowed to access this app.</p>
+    </div>
 
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js"></script>
     <script>
         // Firebase configuration
         const firebaseConfig = {
@@ -36,6 +41,7 @@
         // Initialize Firebase
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
+        const db = firebase.firestore();
         const provider = new firebase.auth.GoogleAuthProvider();
 
         // Login function
@@ -52,23 +58,53 @@
             });
         }
 
+        // Check if email is allowed
+        function checkEmailAllowed(email) {
+            db.collection("allowedEmails").doc(email).get()
+                .then((doc) => {
+                    const loginBtn = document.getElementById("login-btn");
+                    const logoutBtn = document.getElementById("logout-btn");
+                    const userInfo = document.getElementById("user-info");
+                    const userName = document.getElementById("user-name");
+                    const errorMsg = document.getElementById("error-msg");
+
+                    if (doc.exists) {
+                        // Email is allowed
+                        loginBtn.style.display = "none";
+                        logoutBtn.style.display = "inline";
+                        userInfo.style.display = "block";
+                        userName.textContent = auth.currentUser.displayName;
+                        errorMsg.style.display = "none";
+                        console.log("Email allowed:", email);
+                    } else {
+                        // Email not allowed, sign out
+                        firebase.auth().signOut();
+                        loginBtn.style.display = "inline";
+                        logoutBtn.style.display = "none";
+                        userInfo.style.display = "none";
+                        errorMsg.style.display = "block";
+                        console.log("Email not allowed:", email);
+                    }
+                })
+                .catch((error) => {
+                    console.error("Error checking email:", error);
+                });
+        }
+
         // Handle authentication state
         firebase.auth().onAuthStateChanged((user) => {
-            const loginBtn = document.getElementById("login-btn");
-            const logoutBtn = document.getElementById("logout-btn");
-            const userInfo = document.getElementById("user-info");
-            const userName = document.getElementById("user-name");
-
             if (user) {
-                loginBtn.style.display = "none";
-                logoutBtn.style.display = "inline";
-                userInfo.style.display = "block";
-                userName.textContent = user.displayName;
-                console.log("Logged in as:", user.displayName);
+                checkEmailAllowed(user.email);
             } else {
+                const loginBtn = document.getElementById("login-btn");
+                const logoutBtn = document.getElementById("logout-btn");
+                const userInfo = document.getElementById("user-info");
+                const errorMsg = document.getElementById("error-msg");
+                
                 loginBtn.style.display = "inline";
                 logoutBtn.style.display = "none";
                 userInfo.style.display = "none";
+                errorMsg.style.display = "none";
                 console.log("No user signed in");
             }
         });
@@ -78,6 +114,7 @@
             .then((result) => {
                 if (result.user) {
                     console.log("Redirect login successful:", result.user.displayName);
+                    checkEmailAllowed(result.user.email);
                 }
             })
             .catch((error) => {
