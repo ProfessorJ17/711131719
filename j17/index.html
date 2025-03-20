@@ -73,186 +73,207 @@
     <div id="iframe-container"></div>
 
     <script>
-        console.log('Script loaded');
+        console.log('Script started');
 
-        const firebaseConfig = {
-            apiKey: "AIzaSyDpIapJzv54LIApO_yM2f-SrwkXbjjLRPo",
-            authDomain: "ever4-e1efb.firebaseapp.com",
-            projectId: "ever4-e1efb",
-            storageBucket: "ever4-e1efb.appspot.com",
-            messagingSenderId: "473102358637",
-            appId: "1:473102358637:web:a28114096fac995e640764"
-        };
+        // Wait for Firebase scripts to load
+        function initializeFirebase() {
+            if (typeof firebase === 'undefined') {
+                console.error('Firebase not loaded yet');
+                alert('Firebase SDK failed to load. Please check your network and try again.');
+                return false;
+            }
 
-        try {
-            firebase.initializeApp(firebaseConfig);
-            console.log('Firebase initialized');
-        } catch (error) {
-            console.error('Firebase initialization error:', error);
-            alert('Failed to initialize Firebase: ' + error.message);
+            const firebaseConfig = {
+                apiKey: "AIzaSyDpIapJzv54LIApO_yM2f-SrwkXbjjLRPo",
+                authDomain: "ever4-e1efb.firebaseapp.com",
+                projectId: "ever4-e1efb",
+                storageBucket: "ever4-e1efb.appspot.com",
+                messagingSenderId: "473102358637",
+                appId: "1:473102358637:web:a28114096fac995e640764"
+            };
+
+            try {
+                firebase.initializeApp(firebaseConfig);
+                console.log('Firebase initialized');
+                return true;
+            } catch (error) {
+                console.error('Firebase initialization error:', error);
+                alert('Failed to initialize Firebase: ' + error.message);
+                return false;
+            }
         }
 
-        const auth = firebase.auth();
-        const db = firebase.firestore();
-
-        const sessionDuration = 5 * 60 * 1000; // 5 minutes in milliseconds
-        const lockoutDuration = 24 * 60 * 60 * 1000 - sessionDuration; // 23 hours, 55 minutes
-        let countdownInterval = null;
-
-        auth.onAuthStateChanged(user => {
-            console.log('Auth state changed:', user ? user.email : 'No user');
-            if (user) {
-                document.getElementById("login-form").style.display = "none";
-                document.getElementById("logout-button").style.display = "block";
-                checkAccess(user);
-            } else {
-                resetUI();
+        // Check if Firebase is ready before proceeding
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('DOM loaded');
+            if (initializeFirebase()) {
+                startApp();
             }
         });
 
-        function login() {
-            console.log('Login button clicked');
-            const email = document.getElementById('email').value.trim();
-            const password = document.getElementById('password').value.trim();
+        function startApp() {
+            const auth = firebase.auth();
+            const db = firebase.firestore();
 
-            if (!email || !password) {
-                console.log('Missing email or password');
-                alert('Please enter both email and password');
-                return;
-            }
+            const sessionDuration = 5 * 60 * 1000; // 5 minutes in milliseconds
+            const lockoutDuration = 24 * 60 * 60 * 1000 - sessionDuration; // 23 hours, 55 minutes
+            let countdownInterval = null;
 
-            console.log('Attempting login with:', email);
-            auth.signInWithEmailAndPassword(email, password)
-                .then(userCredential => {
-                    console.log('Login successful:', userCredential.user.email);
-                })
-                .catch(error => {
-                    console.error('Login error:', error.code, error.message);
-                    alert(`Login error: ${error.message}`);
-                });
-        }
-
-        async function checkAccess(user) {
-            console.log('Checking access for:', user.email);
-            const allowedEmailRef = db.collection("allowedEmails").doc(user.email);
-            const allowedEmailDoc = await allowedEmailRef.get();
-
-            if (!allowedEmailDoc.exists || !allowedEmailDoc.data().purchased) {
-                console.log('User not authorized or not purchased');
-                alert("Email not authorized or purchase required.");
-                await auth.signOut();
-                return;
-            }
-
-            const userData = allowedEmailDoc.data();
-            document.getElementById("name").textContent = userData.name || "User";
-            console.log('Name set to:', userData.name);
-
-            const userRef = db.collection("users").doc(user.uid);
-            const userDoc = await userRef.get();
-            const now = Date.now();
-            const sessionData = userDoc.exists ? userDoc.data() : {};
-            const lockoutUntil = sessionData.lockoutUntil || 0;
-
-            if (now < lockoutUntil) {
-                const timeLeft = Math.ceil((lockoutUntil - now) / 1000);
-                console.log('User locked out, time left:', timeLeft);
-                startLockoutCountdown(timeLeft);
-                return;
-            }
-
-            console.log('Granting new session');
-            await userRef.set({
-                name: userData.name,
-                purchased: true,
-                startTime: now,
-                lockoutUntil: now + sessionDuration + lockoutDuration
-            }, { merge: true });
-            grantAccess();
-        }
-
-        function grantAccess() {
-            console.log('Granting access');
-            const iframeContainer = document.getElementById("iframe-container");
-            loadDIDAgent(iframeContainer);
-            iframeContainer.style.display = "block";
-            startCountdown(sessionDuration / 1000);
-
-            setTimeout(async () => {
-                iframeContainer.style.display = "none";
-                await auth.signOut();
-                console.log('Session ended');
-            }, sessionDuration);
-        }
-
-        function loadDIDAgent(container) {
-            if (!container.querySelector('script')) {
-                const script = document.createElement('script');
-                script.src = 'https://agent.d-id.com/v1/index.js';
-                script.setAttribute('data-name', 'did-agent');
-                script.setAttribute('data-mode', 'fabio');
-                script.setAttribute('data-client-key', 'Z29vZ2xlLW9hdXRoMnwxMDI1NDc5NDg2ODI5NjkwNzc4MDg6RkpFT0VWOTBqYVFVb3lHT3hMU2Zt');
-                script.setAttribute('data-agent-id', 'agt_k9HerVqC');
-                script.setAttribute('data-monitor', 'true');
-                container.appendChild(script);
-                console.log('D-ID Agent script loaded');
-            }
-        }
-
-        function startCountdown(seconds) {
-            const timer = document.getElementById('timer');
-            timer.textContent = `Time left: ${formatTime(seconds)}`;
-
-            clearInterval(countdownInterval);
-            countdownInterval = setInterval(() => {
-                seconds--;
-                timer.textContent = `Time left: ${formatTime(seconds)}`;
-                if (seconds <= 0) clearInterval(countdownInterval);
-            }, 1000);
-        }
-
-        function startLockoutCountdown(seconds) {
-            const timer = document.getElementById('timer');
-            timer.textContent = `Next session in: ${formatTime(seconds)}`;
-
-            clearInterval(countdownInterval);
-            countdownInterval = setInterval(() => {
-                seconds--;
-                timer.textContent = `Next session in: ${formatTime(seconds)}`;
-                if (seconds <= 0) {
-                    clearInterval(countdownInterval);
+            auth.onAuthStateChanged(user => {
+                console.log('Auth state changed:', user ? user.email : 'No user');
+                if (user) {
+                    document.getElementById("login-form").style.display = "none";
+                    document.getElementById("logout-button").style.display = "block";
+                    checkAccess(user);
+                } else {
                     resetUI();
                 }
-            }, 1000);
-        }
+            });
 
-        function formatTime(seconds) {
-            const hours = Math.floor(seconds / 3600);
-            const minutes = Math.floor((seconds % 3600) / 60);
-            const secs = seconds % 60;
-            return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
-        }
+            window.login = function() {
+                console.log('Login button clicked');
+                const email = document.getElementById('email').value.trim();
+                const password = document.getElementById('password').value.trim();
 
-        function logout() {
-            clearInterval(countdownInterval);
-            auth.signOut();
-            console.log('User logged out manually');
-        }
+                if (!email || !password) {
+                    console.log('Missing email or password');
+                    alert('Please enter both email and password');
+                    return;
+                }
 
-        function resetUI() {
-            document.getElementById("login-form").style.display = "block";
-            document.getElementById("logout-button").style.display = "none";
-            document.getElementById("iframe-container").style.display = "none";
-            document.getElementById("name").textContent = "";
-            document.getElementById("timer").textContent = "Time left: 00:00";
-            clearInterval(countdownInterval);
-            console.log('UI reset');
-        }
+                console.log('Attempting login with:', email);
+                auth.signInWithEmailAndPassword(email, password)
+                    .then(userCredential => {
+                        console.log('Login successful:', userCredential.user.email);
+                    })
+                    .catch(error => {
+                        console.error('Login error:', error.code, error.message);
+                        alert(`Login error: ${error.message}`);
+                    });
+            };
 
-        window.onbeforeunload = () => {
-            clearInterval(countdownInterval);
-            if (auth.currentUser) auth.signOut();
-        };
+            async function checkAccess(user) {
+                console.log('Checking access for:', user.email);
+                const allowedEmailRef = db.collection("allowedEmails").doc(user.email);
+                const allowedEmailDoc = await allowedEmailRef.get();
+
+                if (!allowedEmailDoc.exists || !allowedEmailDoc.data().purchased) {
+                    console.log('User not authorized or not purchased');
+                    alert("Email not authorized or purchase required.");
+                    await auth.signOut();
+                    return;
+                }
+
+                const userData = allowedEmailDoc.data();
+                document.getElementById("name").textContent = userData.name || "User";
+                console.log('Name set to:', userData.name);
+
+                const userRef = db.collection("users").doc(user.uid);
+                const userDoc = await userRef.get();
+                const now = Date.now();
+                const sessionData = userDoc.exists ? userDoc.data() : {};
+                const lockoutUntil = sessionData.lockoutUntil || 0;
+
+                if (now < lockoutUntil) {
+                    const timeLeft = Math.ceil((lockoutUntil - now) / 1000);
+                    console.log('User locked out, time left:', timeLeft);
+                    startLockoutCountdown(timeLeft);
+                    return;
+                }
+
+                console.log('Granting new session');
+                await userRef.set({
+                    name: userData.name,
+                    purchased: true,
+                    startTime: now,
+                    lockoutUntil: now + sessionDuration + lockoutDuration
+                }, { merge: true });
+                grantAccess();
+            }
+
+            function grantAccess() {
+                console.log('Granting access');
+                const iframeContainer = document.getElementById("iframe-container");
+                loadDIDAgent(iframeContainer);
+                iframeContainer.style.display = "block";
+                startCountdown(sessionDuration / 1000);
+
+                setTimeout(async () => {
+                    iframeContainer.style.display = "none";
+                    await auth.signOut();
+                    console.log('Session ended');
+                }, sessionDuration);
+            }
+
+            function loadDIDAgent(container) {
+                if (!container.querySelector('script')) {
+                    const script = document.createElement('script');
+                    script.src = 'https://agent.d-id.com/v1/index.js';
+                    script.setAttribute('data-name', 'did-agent');
+                    script.setAttribute('data-mode', 'fabio');
+                    script.setAttribute('data-client-key', 'Z29vZ2xlLW9hdXRoMnwxMDI1NDc5NDg2ODI5NjkwNzc4MDg6RkpFT0VWOTBqYVFVb3lHT3hMU2Zt');
+                    script.setAttribute('data-agent-id', 'agt_k9HerVqC');
+                    script.setAttribute('data-monitor', 'true');
+                    container.appendChild(script);
+                    console.log('D-ID Agent script loaded');
+                }
+            }
+
+            function startCountdown(seconds) {
+                const timer = document.getElementById('timer');
+                timer.textContent = `Time left: ${formatTime(seconds)}`;
+
+                clearInterval(countdownInterval);
+                countdownInterval = setInterval(() => {
+                    seconds--;
+                    timer.textContent = `Time left: ${formatTime(seconds)}`;
+                    if (seconds <= 0) clearInterval(countdownInterval);
+                }, 1000);
+            }
+
+            function startLockoutCountdown(seconds) {
+                const timer = document.getElementById('timer');
+                timer.textContent = `Next session in: ${formatTime(seconds)}`;
+
+                clearInterval(countdownInterval);
+                countdownInterval = setInterval(() => {
+                    seconds--;
+                    timer.textContent = `Next session in: ${formatTime(seconds)}`;
+                    if (seconds <= 0) {
+                        clearInterval(countdownInterval);
+                        resetUI();
+                    }
+                }, 1000);
+            }
+
+            function formatTime(seconds) {
+                const hours = Math.floor(seconds / 3600);
+                const minutes = Math.floor((seconds % 3600) / 60);
+                const secs = seconds % 60;
+                return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+            }
+
+            window.logout = function() {
+                clearInterval(countdownInterval);
+                auth.signOut();
+                console.log('User logged out manually');
+            };
+
+            function resetUI() {
+                document.getElementById("login-form").style.display = "block";
+                document.getElementById("logout-button").style.display = "none";
+                document.getElementById("iframe-container").style.display = "none";
+                document.getElementById("name").textContent = "";
+                document.getElementById("timer").textContent = "Time left: 00:00";
+                clearInterval(countdownInterval);
+                console.log('UI reset');
+            }
+
+            window.onbeforeunload = () => {
+                clearInterval(countdownInterval);
+                if (auth.currentUser) auth.signOut();
+            };
+        }
     </script>
 </body>
 </html>
