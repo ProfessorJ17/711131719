@@ -161,7 +161,7 @@
                     console.log('checkAccess response:', data);
                 } catch (funcError) {
                     console.error('checkAccess failed:', funcError.code, funcError.message, funcError.details);
-                    throw new Error(`Function error: ${funcError.message}`);
+                    throw new Error(`Function error: ${funcError.message} (Code: ${funcError.code})`);
                 }
 
                 if (!data.access) {
@@ -189,7 +189,7 @@
                 console.error('Access check error:', error.message);
                 status.textContent = `Access error: ${error.message}`;
                 status.style.visibility = 'visible';
-                // Fallback: Check local time as a temporary workaround
+                // Fallback: Check local time
                 const now = new Date();
                 const cstOffset = -6 * 60 * 60 * 1000;
                 const nowCST = new Date(now.getTime() + cstOffset);
@@ -220,6 +220,7 @@
                 script.setAttribute('data-monitor', 'true');
                 container.appendChild(script);
                 console.log('D-ID Agent script loaded');
+                script.onload = () => console.log('D-ID Agent script fully loaded');
             }
         }
 
