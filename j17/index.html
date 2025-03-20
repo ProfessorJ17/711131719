@@ -3,15 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Secure Iframe Access</title>
+    <title>D-ID Agent Access</title>
     <style>
         body {
             background-color: black;
-            color: white;
-            text-align: center;
             margin: 0;
             overflow: hidden;
+            color: white;
             font-family: Arial, sans-serif;
+            text-align: center;
         }
         #name {
             margin-top: 20px;
@@ -25,7 +25,7 @@
         #login-form {
             margin-top: 50px;
         }
-        #iframe-container {
+        #character-container {
             display: none;
             position: fixed;
             bottom: 0;
@@ -34,11 +34,7 @@
             max-width: 600px;
             height: 100%;
             max-height: 400px;
-        }
-        iframe {
-            width: 100%;
-            height: 100%;
-            border: none;
+            z-index: 2;
         }
         input, button {
             display: block;
@@ -66,195 +62,188 @@
         <input type="password" id="password" placeholder="Password"><br>
         <button id="login-btn">Login</button>
     </div>
-    <button id="logout-button" style="display: none;">Logout</button>
-    <div id="iframe-container"></div>
+    <button id="logout-button">Logout</button>
+    <div id="character-container"></div>
 
     <script type="module">
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.3.1/firebase-app.js';
         import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.3.1/firebase-auth.js';
         import { getFirestore, doc, getDoc, setDoc } from 'https://www.gstatic.com/firebasejs/10.3.1/firebase-firestore.js';
 
-        console.log('Module script loaded');
-
         const firebaseConfig = {
             apiKey: "AIzaSyDpIapJzv54LIApO_yM2f-SrwkXbjjLRPo",
             authDomain: "ever4-e1efb.firebaseapp.com",
             projectId: "ever4-e1efb",
-            storageBucket: "ever4-e1efb.appspot.com",
+            storageBucket: "ever4-e1efb.firebasestorage.app",
             messagingSenderId: "473102358637",
-            appId: "1:473102358637:web:a28114096fac995e640764"
+            appId: "1:473102358637:web:a28114096fac995e640764",
+            measurementId: "G-NX3JS6DVKB"
         };
 
-        try {
-            const app = initializeApp(firebaseConfig);
-            console.log('Firebase initialized');
-            const auth = getAuth(app);
-            const db = getFirestore(app);
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
 
-            const sessionDuration = 5 * 60 * 1000; // 5 minutes
-            const lockoutDuration = 24 * 60 * 60 * 1000 - sessionDuration; // 23h 55m
-            let countdownInterval = null;
+        const sessionDuration = 5 * 60 * 1000; // 5 minutes
+        const lockoutDuration = 24 * 60 * 60 * 1000 - sessionDuration; // 23 hours, 55 minutes
+        let countdownInterval = null;
 
-            // Login button
-            document.getElementById('login-btn').addEventListener('click', async () => {
-                console.log('Login button clicked');
-                const email = document.getElementById('email').value.trim();
-                const password = document.getElementById('password').value.trim();
+        // Login button
+        document.getElementById('login-btn').addEventListener('click', async () => {
+            console.log('Login button clicked');
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value.trim();
 
-                if (!email || !password) {
-                    console.log('Missing email or password');
-                    alert('Please enter both email and password');
-                    return;
-                }
+            if (!email || !password) {
+                alert('Please enter both email and password');
+                return;
+            }
 
-                try {
-                    console.log('Attempting login with:', email);
-                    const userCredential = await signInWithEmailAndPassword(auth, email, password);
-                    console.log('Login successful:', userCredential.user.email);
-                } catch (error) {
-                    console.error('Login error:', error.code, error.message);
-                    alert(`Login error: ${error.message}`);
-                }
-            });
+            try {
+                console.log('Attempting login with:', email);
+                const userCredential = await signInWithEmailAndPassword(auth, email, password);
+                console.log('Login successful:', userCredential.user.email);
+            } catch (error) {
+                console.error('Login error:', error.code, error.message);
+                alert(`Login error: ${error.message}`);
+            }
+        });
 
-            // Logout button
-            document.getElementById('logout-button').addEventListener('click', async () => {
-                console.log('Logout button clicked');
-                clearInterval(countdownInterval);
+        // Logout button
+        document.getElementById('logout-button').addEventListener('click', async () => {
+            console.log('Logout button clicked');
+            clearInterval(countdownInterval);
+            await signOut(auth);
+        });
+
+        // Auth state listener
+        onAuthStateChanged(auth, user => {
+            console.log('Auth state changed:', user ? user.email : 'No user');
+            if (user) {
+                document.getElementById("login-form").style.display = "none";
+                document.getElementById("logout-button").style.display = "block";
+                checkAccess(user);
+            } else {
+                resetUI();
+            }
+        });
+
+        async function checkAccess(user) {
+            console.log('Checking access for:', user.email);
+            const allowedEmailRef = doc(db, "allowedEmails", user.email);
+            const allowedEmailDoc = await getDoc(allowedEmailRef);
+
+            if (!allowedEmailDoc.exists() || !allowedEmailDoc.data().purchased) {
+                console.log('User not authorized or not purchased');
+                alert("Email not authorized or purchase required.");
                 await signOut(auth);
-            });
+                return;
+            }
 
-            // Auth state listener
-            onAuthStateChanged(auth, user => {
-                console.log('Auth state changed:', user ? user.email : 'No user');
-                if (user) {
-                    document.getElementById("login-form").style.display = "none";
-                    document.getElementById("logout-button").style.display = "block";
-                    checkAccess(user);
-                } else {
+            const userData = allowedEmailDoc.data();
+            document.getElementById("name").textContent = userData.name || "User";
+
+            const userRef = doc(db, "users", user.uid);
+            const userDoc = await getDoc(userRef);
+            const now = Date.now();
+            const sessionData = userDoc.exists() ? userDoc.data() : {};
+            const lockoutUntil = sessionData.lockoutUntil || 0;
+
+            if (now < lockoutUntil) {
+                const timeLeft = Math.ceil((lockoutUntil - now) / 1000);
+                console.log('User locked out, time left:', timeLeft);
+                startLockoutCountdown(timeLeft);
+                return;
+            }
+
+            console.log('Granting new session');
+            await setDoc(userRef, {
+                name: userData.name,
+                purchased: true,
+                startTime: now,
+                lockoutUntil: now + sessionDuration + lockoutDuration
+            }, { merge: true });
+            grantAccess();
+        }
+
+        function grantAccess() {
+            console.log('Granting access');
+            const container = document.getElementById("character-container");
+            loadDIDAgent(container);
+            container.style.display = "block";
+            startCountdown(sessionDuration / 1000);
+
+            setTimeout(async () => {
+                container.style.display = "none";
+                await signOut(auth);
+                console.log('Session ended');
+            }, sessionDuration);
+        }
+
+        function loadDIDAgent(container) {
+            if (!container.querySelector('script')) {
+                const script = document.createElement('script');
+                script.type = 'module';
+                script.src = 'https://agent.d-id.com/v1/index.js';
+                script.setAttribute('data-name', 'did-agent');
+                script.setAttribute('data-mode', 'fabio');
+                script.setAttribute('data-client-key', 'Z29vZ2xlLW9hdXRoMnwxMDI1NDc5NDg2ODI5NjkwNzc4MDg6RkpFT0VWOTBqYVFVb3lHT3hMU2Zt');
+                script.setAttribute('data-agent-id', 'agt_k9HerVqC');
+                script.setAttribute('data-monitor', 'true');
+                container.appendChild(script);
+                console.log('D-ID Agent script loaded');
+                script.onload = () => console.log('D-ID Agent script fully loaded');
+            }
+        }
+
+        function startCountdown(seconds) {
+            const timer = document.getElementById('timer');
+            timer.textContent = `Time left: ${formatTime(seconds)}`;
+
+            clearInterval(countdownInterval);
+            countdownInterval = setInterval(() => {
+                seconds--;
+                timer.textContent = `Time left: ${formatTime(seconds)}`;
+                if (seconds <= 0) clearInterval(countdownInterval);
+            }, 1000);
+        }
+
+        function startLockoutCountdown(seconds) {
+            const timer = document.getElementById('timer');
+            timer.textContent = `Next session in: ${formatTime(seconds)}`;
+
+            clearInterval(countdownInterval);
+            countdownInterval = setInterval(() => {
+                seconds--;
+                timer.textContent = `Next session in: ${formatTime(seconds)}`;
+                if (seconds <= 0) {
+                    clearInterval(countdownInterval);
                     resetUI();
                 }
-            });
-
-            async function checkAccess(user) {
-                console.log('Checking access for:', user.email);
-                const allowedEmailRef = doc(db, "allowedEmails", user.email);
-                const allowedEmailDoc = await getDoc(allowedEmailRef);
-
-                if (!allowedEmailDoc.exists() || !allowedEmailDoc.data().purchased) {
-                    console.log('User not authorized or not purchased');
-                    alert("Email not authorized or purchase required.");
-                    await signOut(auth);
-                    return;
-                }
-
-                const userData = allowedEmailDoc.data();
-                document.getElementById("name").textContent = userData.name || "User";
-                console.log('Name set to:', userData.name);
-
-                const userRef = doc(db, "users", user.uid);
-                const userDoc = await getDoc(userRef);
-                const now = Date.now();
-                const sessionData = userDoc.exists() ? userDoc.data() : {};
-                const lockoutUntil = sessionData.lockoutUntil || 0;
-
-                if (now < lockoutUntil) {
-                    const timeLeft = Math.ceil((lockoutUntil - now) / 1000);
-                    console.log('User locked out, time left:', timeLeft);
-                    startLockoutCountdown(timeLeft);
-                    return;
-                }
-
-                console.log('Granting new session');
-                await setDoc(userRef, {
-                    name: userData.name,
-                    purchased: true,
-                    startTime: now,
-                    lockoutUntil: now + sessionDuration + lockoutDuration
-                }, { merge: true });
-                grantAccess();
-            }
-
-            function grantAccess() {
-                console.log('Granting access');
-                const iframeContainer = document.getElementById("iframe-container");
-                loadDIDAgent(iframeContainer);
-                iframeContainer.style.display = "block";
-                startCountdown(sessionDuration / 1000);
-
-                setTimeout(async () => {
-                    iframeContainer.style.display = "none";
-                    await signOut(auth);
-                    console.log('Session ended');
-                }, sessionDuration);
-            }
-
-            function loadDIDAgent(container) {
-                if (!container.querySelector('script')) {
-                    const script = document.createElement('script');
-                    script.src = 'https://agent.d-id.com/v1/index.js';
-                    script.setAttribute('data-name', 'did-agent');
-                    script.setAttribute('data-mode', 'fabio');
-                    script.setAttribute('data-client-key', 'Z29vZ2xlLW9hdXRoMnwxMDI1NDc5NDg2ODI5NjkwNzc4MDg6RkpFT0VWOTBqYVFVb3lHT3hMU2Zt');
-                    script.setAttribute('data-agent-id', 'agt_k9HerVqC');
-                    script.setAttribute('data-monitor', 'true');
-                    container.appendChild(script);
-                    console.log('D-ID Agent script loaded');
-                }
-            }
-
-            function startCountdown(seconds) {
-                const timer = document.getElementById('timer');
-                timer.textContent = `Time left: ${formatTime(seconds)}`;
-
-                clearInterval(countdownInterval);
-                countdownInterval = setInterval(() => {
-                    seconds--;
-                    timer.textContent = `Time left: ${formatTime(seconds)}`;
-                    if (seconds <= 0) clearInterval(countdownInterval);
-                }, 1000);
-            }
-
-            function startLockoutCountdown(seconds) {
-                const timer = document.getElementById('timer');
-                timer.textContent = `Next session in: ${formatTime(seconds)}`;
-
-                clearInterval(countdownInterval);
-                countdownInterval = setInterval(() => {
-                    seconds--;
-                    timer.textContent = `Next session in: ${formatTime(seconds)}`;
-                    if (seconds <= 0) {
-                        clearInterval(countdownInterval);
-                        resetUI();
-                    }
-                }, 1000);
-            }
-
-            function formatTime(seconds) {
-                const hours = Math.floor(seconds / 3600);
-                const minutes = Math.floor((seconds % 3600) / 60);
-                const secs = seconds % 60;
-                return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
-            }
-
-            function resetUI() {
-                document.getElementById("login-form").style.display = "block";
-                document.getElementById("logout-button").style.display = "none";
-                document.getElementById("iframe-container").style.display = "none";
-                document.getElementById("name").textContent = "";
-                document.getElementById("timer").textContent = "Time left: 00:00";
-                clearInterval(countdownInterval);
-                console.log('UI reset');
-            }
-
-            window.onbeforeunload = async () => {
-                clearInterval(countdownInterval);
-                if (auth.currentUser) await signOut(auth);
-            };
-        } catch (error) {
-            console.error('Initialization error:', error);
-            alert('Failed to initialize app: ' + error.message);
+            }, 1000);
         }
+
+        function formatTime(seconds) {
+            const hours = Math.floor(seconds / 3600);
+            const minutes = Math.floor((seconds % 3600) / 60);
+            const secs = seconds % 60;
+            return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+        }
+
+        function resetUI() {
+            document.getElementById("login-form").style.display = "block";
+            document.getElementById("logout-button").style.display = "none";
+            document.getElementById("character-container").style.display = "none";
+            document.getElementById("name").textContent = "";
+            document.getElementById("timer").textContent = "Time left: 00:00";
+            clearInterval(countdownInterval);
+            console.log('UI reset');
+        }
+
+        window.onbeforeunload = async () => {
+            clearInterval(countdownInterval);
+            if (auth.currentUser) await signOut(auth);
+        };
     </script>
 </body>
 </html>
