@@ -21,33 +21,13 @@
         <button onclick="login()">Login</button>
     </div>
     
+    <button id="logout-button" onclick="logout()" style="display: none;">Logout</button>
+    
     <div id="iframe-container">
         <iframe id="restricted-iframe" src="https://www.youtube.com/embed/dQw4w9WgXcQ"></iframe>
     </div>
     
-    <div style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1;">
-        <iframe id="youtube-iframe" width="100%" height="100%" style="border: none;"></iframe>
-    </div>
-    
-    <div id="character-container" style="position: fixed; bottom: 0; right: 0; z-index: 2;"></div>
-
     <script>
-        function loadDIDAgent(container) {
-            if (!container.querySelector('script')) {
-                const script = document.createElement('script');
-                script.type = 'module';
-                script.src = 'https://agent.d-id.com/v1/index.js';
-                script.setAttribute('data-name', 'did-agent');
-                script.setAttribute('data-mode', 'fabio');
-                script.setAttribute('data-client-key', 'Z29vZ2xlLW9hdXRoMnwxMDI1NDc5NDg2ODI5NjkwNzc4MDg6RkpFT0VWOTBqYVFVb3lHT3hMU2Zt');
-                script.setAttribute('data-agent-id', 'agt_k9HerVqC');
-                script.setAttribute('data-monitor', 'true');
-                container.appendChild(script);
-                console.log('D-ID Agent script loaded');
-                script.onload = () => console.log('D-ID Agent script fully loaded');
-            }
-        }
-
         const firebaseConfig = {
             apiKey: "AIzaSyDpIapJzv54LIApO_yM2f-SrwkXbjjLRPo",
             authDomain: "ever4-e1efb.firebaseapp.com",
@@ -60,6 +40,18 @@
         const auth = firebase.auth();
         const db = firebase.firestore();
         
+        auth.onAuthStateChanged(user => {
+            if (user) {
+                document.getElementById("login-form").style.display = "none";
+                document.getElementById("logout-button").style.display = "block";
+                checkAccess(user.uid);
+            } else {
+                document.getElementById("login-form").style.display = "block";
+                document.getElementById("logout-button").style.display = "none";
+                document.getElementById("iframe-container").style.display = "none";
+            }
+        });
+        
         function login() {
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
@@ -71,9 +63,14 @@
                         purchased: true,
                         lastAccess: 0
                     }, { merge: true });
-                    checkAccess(user.user.uid);
                 })
                 .catch(error => alert(error.message));
+        }
+        
+        function logout() {
+            auth.signOut().then(() => {
+                document.getElementById("iframe-container").style.display = "none";
+            });
         }
         
         function checkAccess(uid) {
@@ -101,14 +98,5 @@
         }
     </script>
     
-    <script 
-        type="module"
-        src="https://agent.d-id.com/v1/index.js"
-        data-name="did-agent"
-        data-mode="fabio"
-        data-client-key="Z29vZ2xlLW9hdXRoMnwxMDI1NDc5NDg2ODI5NjkwNzc4MDg6RkpFT0VWOTBqYVFVb3lHT3hMU2Zt"
-        data-agent-id="agt_k9HerVqC"
-        data-monitor="true">
-    </script>
 </body>
 </html>
