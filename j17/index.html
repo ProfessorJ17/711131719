@@ -3,38 +3,76 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>D-ID Agent with Firebase</title>
+    <title>Secure D-ID Agent</title>
     <style>
         body {
             background-color: black;
             margin: 0;
             overflow: hidden;
+            color: white;
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            text-align: center;
         }
-        .iframe-container {
+        #login-container {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            z-index: 1;
+            z-index: 3; /* Above content until login */
         }
-        #did-iframe {
-            width: 100%;
-            height: 100%;
+        #content-container {
+            display: none; /* Hidden until login */
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #333;
+            color: white;
             border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #555;
         }
     </style>
 </head>
-<body>
-    <div class="iframe-container">
-        <iframe id="did-iframe"></iframe>
+<body style="background-color: black; margin: 0; overflow: hidden;">
+    <!-- Login UI -->
+    <div id="login-container">
+        <div>
+            <h2>Please Sign In</h2>
+            <button id="signInButton">Sign in with Google</button>
+            <p id="error-message" style="color: red;"></p>
+        </div>
     </div>
 
-    <script type="module">
-        // Firebase initialization
-        import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.x.x/firebase-app.js';
-        import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/9.x.x/firebase-auth.js';
+    <!-- Main Content (just D-ID agent) -->
+    <div id="content-container">
+        <div id="character-container" style="position: fixed; bottom: 0; right: 0; z-index: 2;"></div>
+        <script 
+            type="module"
+            src="https://agent.d-id.com/v1/index.js"
+            data-name="did-agent"
+            data-mode="fabio"
+            data-client-key="Z29vZ2xlLW9hdXRoMnwxMDI1NDc5NDg2ODI5NjkwNzc4MDg6RkpFT0VWOTBqYVFVb3lHT3hMU2Zt"
+            data-agent-id="agt_k9HerVqC"
+            data-monitor="true">
+        </script>
+    </div>
 
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js"></script>
+
+    <!-- Firebase Config and Logic -->
+    <script>
+        // Firebase Configuration
         const firebaseConfig = {
             apiKey: "AIzaSyDpIapJzv54LIApO_yM2f-SrwkXbjjLRPo",
             authDomain: "ever4-e1efb.firebaseapp.com",
@@ -45,55 +83,51 @@
             measurementId: "G-NX3JS6DVKB"
         };
 
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
 
-        // Function to load D-ID Agent
-        function loadDIDAgent(container) {
-            if (!container.querySelector('script')) {
-                const script = document.createElement('script');
-                script.type = 'module';
-                script.src = 'https://agent.d-id.com/v1/index.js';
-                script.setAttribute('data-name', 'did-agent');
-                script.setAttribute('data-mode', 'fabio');
-                script.setAttribute('data-client-key', 'Z29vZ2xlLW9hdXRoMnwxMDI1NDc5NDg2ODI5NjkwNzc4MDg6RkpFT0VWOTBqYVFVb3lHT3hMU2Zt');
-                script.setAttribute('data-agent-id', 'agt_k9HerVqC');
-                script.setAttribute('data-monitor', 'true');
-                container.appendChild(script);
-                console.log('D-ID Agent script loaded');
-                script.onload = () => console.log('D-ID Agent script fully loaded');
+        // UI Elements
+        const signInButton = document.getElementById('signInButton');
+        const loginContainer = document.getElementById('login-container');
+        const contentContainer = document.getElementById('content-container');
+        const errorMessage = document.getElementById('error-message');
+
+        // Google Auth Provider
+        const provider = new firebase.auth.GoogleAuthProvider();
+
+        // Sign In with Google
+        signInButton.addEventListener('click', () => {
+            auth.signInWithPopup(provider)
+                .then((result) => handleAuth(result.user))
+                .catch((error) => {
+                    errorMessage.textContent = `Error: ${error.message}`;
+                });
+        });
+
+        // Handle Authentication and Access Check
+        async function handleAuth(user) {
+            try {
+                const emailDoc = await db.collection('allowedEmails').doc(user.email).get();
+                if (emailDoc.exists()) {
+                    // User is allowed, show content
+                    loginContainer.style.display = 'none';
+                    contentContainer.style.display = 'block';
+                } else {
+                    errorMessage.textContent = 'Your email is not authorized.';
+                    auth.signOut(); // Log out unauthorized users
+                }
+            } catch (error) {
+                errorMessage.textContent = `Firestore Error: ${error.message}`;
+                auth.signOut();
             }
         }
 
-        // Handle authentication state
-        onAuthStateChanged(auth, (user) => {
-            const iframe = document.getElementById('did-iframe');
+        // Check auth state on page load
+        auth.onAuthStateChanged((user) => {
             if (user) {
-                // User is logged in, load D-ID agent in iframe
-                const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
-                iframeDoc.open();
-                iframeDoc.write(`
-                    <!DOCTYPE html>
-                    <html>
-                    <head>
-                        <style>
-                            body { margin: 0; background-color: black; }
-                            #character-container { position: fixed; bottom: 0; right: 0; z-index: 2; }
-                        </style>
-                    </head>
-                    <body>
-                        <div id="character-container"></div>
-                    </body>
-                    </html>
-                `);
-                iframeDoc.close();
-
-                // Load D-ID agent into the iframe's character container
-                const container = iframeDoc.getElementById('character-container');
-                loadDIDAgent(container);
-            } else {
-                // User is not logged in, redirect to login
-                window.location.href = '/login'; // Adjust this to your login page URL
+                handleAuth(user);
             }
         });
     </script>
