@@ -39,7 +39,6 @@
             background-color: #555;
         }
         #content-container {
-            display: none;
             position: fixed;
             bottom: 0;
             right: 0;
@@ -47,6 +46,10 @@
             max-width: 600px;
             height: 400px;
             z-index: 2;
+            pointer-events: none; /* Disable interaction by default */
+        }
+        #content-container.active {
+            pointer-events: auto; /* Enable interaction when active */
         }
         input, button {
             display: block;
@@ -174,34 +177,33 @@
             console.log('Granting access with', seconds, 'seconds');
             const contentContainer = document.getElementById("content-container");
 
-            loadDIDAgent(contentContainer);
-            contentContainer.style.display = "block";
+            // Load D-ID Agent only if not already loaded
+            if (!contentContainer.querySelector('script')) {
+                loadDIDAgent(contentContainer);
+            }
+            contentContainer.classList.add("active"); // Enable interaction
             document.getElementById("logout-button").style.display = "block";
             startCountdown(seconds, "Time left");
 
             setTimeout(async () => {
-                contentContainer.style.display = "none";
+                contentContainer.classList.remove("active"); // Disable interaction
                 await signOut(auth);
                 console.log('Session ended');
             }, seconds * 1000);
         }
 
         function loadDIDAgent(container) {
-            if (!container.querySelector('script')) {
-                const script = document.createElement('script');
-                script.type = 'module';
-                script.src = 'https://agent.d-id.com/v1/index.js';
-                script.setAttribute('data-name', 'did-agent');
-                script.setAttribute('data-mode', 'fabio');
-                script.setAttribute('data-client-key', 'Z29vZ2xlLW9hdXRoMnwxMDI1NDc5NDg2ODI5NjkwNzc4MDg6RkpFT0VWOTBqYVFVb3lHT3hMU2Zt');
-                script.setAttribute('data-agent-id', 'agt_k9HerVqC');
-                script.setAttribute('data-monitor', 'true');
-                container.appendChild(script);
-                console.log('D-ID Agent script loaded');
-                script.onload = () => console.log('D-ID Agent script fully loaded');
-            } else {
-                console.log('D-ID Agent script already present');
-            }
+            const script = document.createElement('script');
+            script.type = 'module';
+            script.src = 'https://agent.d-id.com/v1/index.js';
+            script.setAttribute('data-name', 'did-agent');
+            script.setAttribute('data-mode', 'fabio');
+            script.setAttribute('data-client-key', 'Z29vZ2xlLW9hdXRoMnwxMDI1NDc5NDg2ODI5NjkwNzc4MDg6RkpFT0VWOTBqYVFVb3lHT3hMU2Zt');
+            script.setAttribute('data-agent-id', 'agt_k9HerVqC');
+            script.setAttribute('data-monitor', 'true');
+            container.appendChild(script);
+            console.log('D-ID Agent script loaded');
+            script.onload = () => console.log('D-ID Agent script fully loaded');
         }
 
         function startCountdown(seconds, label) {
@@ -247,7 +249,7 @@
         function resetUI() {
             document.getElementById("login-form").style.display = "block";
             document.getElementById("logout-button").style.display = "none";
-            document.getElementById("content-container").style.display = "none";
+            document.getElementById("content-container").classList.remove("active");
             document.getElementById("name").textContent = "";
             document.getElementById("timer").textContent = "Time left: 00:00";
             clearInterval(countdownInterval);
