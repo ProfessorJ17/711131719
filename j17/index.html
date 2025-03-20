@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Secure D-ID Agent with Cloud Function</title>
+    <title>Ever4 - Secure D-ID Agent</title>
     <style>
         body {
             background-color: black;
@@ -45,7 +45,7 @@
     <!-- Login UI -->
     <div id="login-container">
         <div>
-            <h2>Please Sign In</h2>
+            <h2>Welcome to Ever4</h2>
             <button id="signInButton">Sign in with Google</button>
             <p id="error-message" style="color: red;"></p>
         </div>
@@ -79,8 +79,7 @@
             projectId: "ever4-e1efb",
             storageBucket: "ever4-e1efb.firebasestorage.app",
             messagingSenderId: "473102358637",
-            appId: "1:473102358637:web:a28114096fac995e640764",
-            measurementId: "G-NX3JS6DVKB"
+            appId: "1:473102358637:web:a28114096fac995e640764"
         };
 
         // Initialize Firebase
@@ -108,7 +107,7 @@
             auth.signInWithPopup(provider)
                 .then((result) => handleAuth(result.user))
                 .catch((error) => {
-                    errorMessage.textContent = `Error: ${error.message}`;
+                    errorMessage.textContent = `Login Error: ${error.message}`;
                 });
         });
 
@@ -118,15 +117,13 @@
                 const result = await checkAccess();
                 const { access, timeLeft } = result.data;
                 if (access) {
-                    // User has access, show content
                     loginContainer.style.display = 'none';
                     contentContainer.style.display = 'block';
                     console.log(`Access granted for ${timeLeft} seconds`);
-                    // Optional: Auto-logout after session expires
                     setTimeout(() => {
                         auth.signOut();
                         location.reload();
-                    }, timeLeft * 1000);
+                    }, timeLeft * 1000); // Auto-logout after session
                 } else {
                     errorMessage.textContent = `Access denied. Try again in ${timeLeft} seconds.`;
                     auth.signOut();
