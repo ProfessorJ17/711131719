@@ -162,7 +162,7 @@
                 if (!data.access) {
                     status.textContent = 'Outside access window or locked out.';
                     status.style.visibility = 'visible';
-                    agentContainer.style.display = 'none !important';
+                    agentContainer.style.display = 'none';
                     signoutButton.style.display = 'block';
                     if (data.timeUntilMidnight) {
                         startMidnightCountdown(data.timeUntilMidnight);
