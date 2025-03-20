@@ -39,6 +39,12 @@
         button:hover {
             background-color: #555;
         }
+        input {
+            padding: 10px;
+            margin: 5px;
+            font-size: 16px;
+            width: 200px;
+        }
     </style>
 </head>
 <body style="background-color: black; margin: 0; overflow: hidden;">
@@ -46,7 +52,10 @@
     <div id="login-container">
         <div>
             <h2>Welcome to Ever4</h2>
-            <button id="signInButton">Sign in with Google</button>
+            <input type="email" id="email" placeholder="Email">
+            <input type="password" id="password" placeholder="Password">
+            <button id="loginButton">Login</button>
+            <p id="login-status"></p>
             <p id="error-message" style="color: red;"></p>
         </div>
     </div>
@@ -91,20 +100,22 @@
         // functions.useEmulator('localhost', 5001);
 
         // UI Elements
-        const signInButton = document.getElementById('signInButton');
+        const loginButton = document.getElementById('loginButton');
+        const emailInput = document.getElementById('email');
+        const passwordInput = document.getElementById('password');
         const loginContainer = document.getElementById('login-container');
         const contentContainer = document.getElementById('content-container');
         const errorMessage = document.getElementById('error-message');
-
-        // Google Auth Provider
-        const provider = new firebase.auth.GoogleAuthProvider();
+        const loginStatus = document.getElementById('login-status');
 
         // Callable Function Reference
         const checkAccess = functions.httpsCallable('checkAccess');
 
-        // Sign In with Google
-        signInButton.addEventListener('click', () => {
-            auth.signInWithPopup(provider)
+        // Login with Email and Password
+        loginButton.addEventListener('click', () => {
+            const email = emailInput.value;
+            const password = passwordInput.value;
+            auth.signInWithEmailAndPassword(email, password)
                 .then((result) => handleAuth(result.user))
                 .catch((error) => {
                     errorMessage.textContent = `Login Error: ${error.message}`;
@@ -119,6 +130,7 @@
                 if (access) {
                     loginContainer.style.display = 'none';
                     contentContainer.style.display = 'block';
+                    loginStatus.textContent = 'You have logged in';
                     console.log(`Access granted for ${timeLeft} seconds`);
                     setTimeout(() => {
                         auth.signOut();
@@ -126,10 +138,12 @@
                     }, timeLeft * 1000); // Auto-logout after session
                 } else {
                     errorMessage.textContent = `Access denied. Try again in ${timeLeft} seconds.`;
+                    loginStatus.textContent = 'You are not logged in';
                     auth.signOut();
                 }
             } catch (error) {
                 errorMessage.textContent = `Error: ${error.message}`;
+                loginStatus.textContent = 'You are not logged in';
                 auth.signOut();
             }
         }
@@ -137,7 +151,12 @@
         // Check auth state on page load
         auth.onAuthStateChanged((user) => {
             if (user) {
+                loginStatus.textContent = 'You have logged in';
                 handleAuth(user);
+            } else {
+                loginStatus.textContent = 'You are not logged in';
+                loginContainer.style.display = 'block';
+                contentContainer.style.display = 'none';
             }
         });
     </script>
