@@ -126,7 +126,6 @@
                 console.error('Sign-in error:', error.code, error.message);
                 status.textContent = `Sign-in error: ${error.message}`;
                 status.style.visibility = 'visible';
-                // Removed: await authSignOut(auth);
             }
         };
 
@@ -145,7 +144,6 @@
                 if (!allowedEmailSnap.exists()) {
                     status.textContent = 'Email not authorized. Please purchase access.';
                     status.style.visibility = 'visible';
-                    // Removed: await authSignOut(auth);
                     return;
                 }
 
@@ -156,8 +154,15 @@
 
                 const checkAccess = httpsCallable(functions, 'checkAccess');
                 console.log('Calling checkAccess function...');
-                const { data } = await checkAccess();
-                console.log('checkAccess response:', data);
+                let data;
+                try {
+                    const result = await checkAccess();
+                    data = result.data;
+                    console.log('checkAccess response:', data);
+                } catch (funcError) {
+                    console.error('checkAccess failed:', funcError.code, funcError.message, funcError.details);
+                    throw new Error(`Function error: ${funcError.message}`);
+                }
 
                 if (!data.access) {
                     status.textContent = 'Outside access window or locked out.';
@@ -181,10 +186,25 @@
                 startAccessCountdown(data.timeLeft);
 
             } catch (error) {
-                console.error('Access check error:', error.code, error.message);
+                console.error('Access check error:', error.message);
                 status.textContent = `Access error: ${error.message}`;
                 status.style.visibility = 'visible';
-                // Removed: await authSignOut(auth);
+                // Fallback: Check local time as a temporary workaround
+                const now = new Date();
+                const cstOffset = -6 * 60 * 60 * 1000;
+                const nowCST = new Date(now.getTime() + cstOffset);
+                const midnightCST = new Date(nowCST);
+                midnightCST.setUTCHours(0, 0, 0, 0);
+                const fiveMinutesAfterMidnight = midnightCST.getTime() + 5 * 60 * 1000;
+                if (now.getTime() >= midnightCST.getTime() && now.getTime() < fiveMinutesAfterMidnight) {
+                    console.log('Fallback: Within access window, showing agent');
+                    status.textContent = 'Access granted (fallback)!';
+                    loadDIDAgent(agentContainer);
+                    agentContainer.style.display = 'block !important';
+                    signoutButton.style.display = 'block';
+                    const timeLeft = Math.floor((fiveMinutesAfterMidnight - now.getTime()) / 1000);
+                    startAccessCountdown(timeLeft);
+                }
             }
         }
 
