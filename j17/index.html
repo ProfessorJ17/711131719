@@ -8,25 +8,70 @@
     <script src="https://www.gstatic.com/firebasejs/10.3.1/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.3.1/firebase-firestore.js"></script>
     <style>
-        body { background-color: black; color: white; text-align: center; }
-        #iframe-container { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; }
-        iframe { width: 100%; height: 100%; border: none; }
+        body {
+            background-color: black;
+            color: white;
+            text-align: center;
+            margin: 0;
+            overflow: hidden;
+            font-family: Arial, sans-serif;
+        }
+        #name {
+            margin-top: 20px;
+            font-size: 1.5em;
+        }
+        #timer {
+            margin-top: 10px;
+            color: #ff5555;
+            font-size: 1.2em;
+        }
+        #login-form {
+            margin-top: 50px;
+        }
+        #iframe-container {
+            display: none;
+            position: fixed;
+            bottom: 0;
+            right: 0;
+            width: 100%;
+            max-width: 600px;
+            height: 100%;
+            max-height: 400px;
+        }
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+        input, button {
+            display: block;
+            width: 200px;
+            padding: 10px;
+            margin: 10px auto;
+            background-color: #333;
+            color: white;
+            border: 1px solid #555;
+            font-size: 1em;
+        }
+        button:hover {
+            background-color: #555;
+        }
+        #logout-button {
+            display: none;
+        }
     </style>
 </head>
 <body>
-    <h1>Login to Access Content</h1>
+    <div id="name"></div>
+    <div id="timer">Time left: 00:00</div>
     <div id="login-form">
         <input type="email" id="email" placeholder="Email"><br>
         <input type="password" id="password" placeholder="Password"><br>
         <button onclick="login()">Login</button>
     </div>
-    
-    <button id="logout-button" onclick="logout()" style="display: none;">Logout</button>
-    
-    <div id="iframe-container">
-        <iframe id="restricted-iframe" src="https://www.youtube.com/embed/dQw4w9WgXcQ"></iframe>
-    </div>
-    
+    <button id="logout-button" onclick="logout()">Logout</button>
+    <div id="iframe-container"></div>
+
     <script>
         const firebaseConfig = {
             apiKey: "AIzaSyDpIapJzv54LIApO_yM2f-SrwkXbjjLRPo",
@@ -39,64 +84,141 @@
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
         const db = firebase.firestore();
-        
+
+        const sessionDuration = 5 * 60 * 1000; // 5 minutes in milliseconds
+        const lockoutDuration = 24 * 60 * 60 * 1000 - sessionDuration; // 23 hours, 55 minutes
+        let countdownInterval = null;
+
         auth.onAuthStateChanged(user => {
             if (user) {
                 document.getElementById("login-form").style.display = "none";
                 document.getElementById("logout-button").style.display = "block";
-                checkAccess(user.uid);
+                checkAccess(user);
             } else {
-                document.getElementById("login-form").style.display = "block";
-                document.getElementById("logout-button").style.display = "none";
-                document.getElementById("iframe-container").style.display = "none";
+                resetUI();
             }
         });
-        
+
         function login() {
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
             auth.signInWithEmailAndPassword(email, password)
-                .then(user => {
-                    const userRef = db.collection("users").doc(user.user.uid);
-                    userRef.set({
-                        name: "jesse",
-                        purchased: true,
-                        lastAccess: 0
-                    }, { merge: true });
-                })
-                .catch(error => alert(error.message));
+                .catch(error => alert(`Login error: ${error.message}`));
         }
-        
-        function logout() {
-            auth.signOut().then(() => {
-                document.getElementById("iframe-container").style.display = "none";
-            });
+
+        async function checkAccess(user) {
+            const allowedEmailRef = db.collection("allowedEmails").doc(user.email);
+            const allowedEmailDoc = await allowedEmailRef.get();
+
+            if (!allowedEmailDoc.exists || !allowedEmailDoc.data().purchased) {
+                alert("Email not authorized or purchase required.");
+                await auth.signOut();
+                return;
+            }
+
+            const userData = allowedEmailDoc.data();
+            document.getElementById("name").textContent = userData.name || "User";
+
+            const userRef = db.collection("users").doc(user.uid);
+            const userDoc = await userRef.get();
+            const now = Date.now();
+            const sessionData = userDoc.exists ? userDoc.data() : {};
+            const lockoutUntil = sessionData.lockoutUntil || 0;
+
+            if (now < lockoutUntil) {
+                const timeLeft = Math.ceil((lockoutUntil - now) / 1000);
+                startLockoutCountdown(timeLeft);
+                return;
+            }
+
+            // Start new session
+            await userRef.set({
+                name: userData.name,
+                purchased: true,
+                startTime: now,
+                lockoutUntil: now + sessionDuration + lockoutDuration
+            }, { merge: true });
+            grantAccess();
         }
-        
-        function checkAccess(uid) {
-            const userRef = db.collection("users").doc(uid);
-            userRef.get().then(doc => {
-                const lastAccess = doc.exists ? doc.data().lastAccess : 0;
-                const now = Date.now();
-                const oneDay = 24 * 60 * 60 * 1000;
-                
-                if (!doc.exists || now - lastAccess > oneDay) {
-                    userRef.set({ lastAccess: now }, { merge: true });
-                    grantAccess();
-                } else {
-                    alert("You can only access this once per 24 hours!");
-                }
-            });
-        }
-        
+
         function grantAccess() {
-            document.getElementById("iframe-container").style.display = "block";
-            setTimeout(() => {
-                document.getElementById("iframe-container").style.display = "none";
-                alert("Time's up! Come back tomorrow.");
-            }, 5 * 60 * 1000);
+            const iframeContainer = document.getElementById("iframe-container");
+            loadDIDAgent(iframeContainer);
+            iframeContainer.style.display = "block";
+            startCountdown(sessionDuration / 1000); // Convert to seconds
+
+            setTimeout(async () => {
+                iframeContainer.style.display = "none";
+                await auth.signOut();
+            }, sessionDuration);
         }
+
+        function loadDIDAgent(container) {
+            if (!container.querySelector('script')) {
+                const script = document.createElement('script');
+                script.src = 'https://agent.d-id.com/v1/index.js';
+                script.setAttribute('data-name', 'did-agent');
+                script.setAttribute('data-mode', 'fabio');
+                script.setAttribute('data-client-key', 'Z29vZ2xlLW9hdXRoMnwxMDI1NDc5NDg2ODI5NjkwNzc4MDg6RkpFT0VWOTBqYVFVb3lHT3hMU2Zt');
+                script.setAttribute('data-agent-id', 'agt_k9HerVqC');
+                script.setAttribute('data-monitor', 'true');
+                container.appendChild(script);
+                console.log('D-ID Agent script loaded');
+            }
+        }
+
+        function startCountdown(seconds) {
+            const timer = document.getElementById('timer');
+            timer.textContent = `Time left: ${formatTime(seconds)}`;
+
+            clearInterval(countdownInterval);
+            countdownInterval = setInterval(() => {
+                seconds--;
+                timer.textContent = `Time left: ${formatTime(seconds)}`;
+                if (seconds <= 0) clearInterval(countdownInterval);
+            }, 1000);
+        }
+
+        function startLockoutCountdown(seconds) {
+            const timer = document.getElementById('timer');
+            timer.textContent = `Next session in: ${formatTime(seconds)}`;
+
+            clearInterval(countdownInterval);
+            countdownInterval = setInterval(() => {
+                seconds--;
+                timer.textContent = `Next session in: ${formatTime(seconds)}`;
+                if (seconds <= 0) {
+                    clearInterval(countdownInterval);
+                    resetUI();
+                }
+            }, 1000);
+        }
+
+        function formatTime(seconds) {
+            const hours = Math.floor(seconds / 3600);
+            const minutes = Math.floor((seconds % 3600) / 60);
+            const secs = seconds % 60;
+            return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+        }
+
+        function logout() {
+            clearInterval(countdownInterval);
+            auth.signOut();
+        }
+
+        function resetUI() {
+            document.getElementById("login-form").style.display = "block";
+            document.getElementById("logout-button").style.display = "none";
+            document.getElementById("iframe-container").style.display = "none";
+            document.getElementById("name").textContent = "";
+            document.getElementById("timer").textContent = "Time left: 00:00";
+            clearInterval(countdownInterval);
+        }
+
+        window.onbeforeunload = () => {
+            clearInterval(countdownInterval);
+            if (auth.currentUser) auth.signOut();
+        };
     </script>
-    
 </body>
 </html>
