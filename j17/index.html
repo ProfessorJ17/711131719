@@ -116,6 +116,7 @@
 
         const MAX_DAILY_MINUTES = 5;
         const MILLISECONDS_PER_MINUTE = 60000;
+        const MAX_DAILY_MS = MAX_DAILY_MINUTES * MILLISECONDS_PER_MINUTE;
 
         // DOM elements
         const loginSection = document.getElementById('login-section');
@@ -145,18 +146,16 @@
             const userTimeDoc = doc(db, "userTime", userId);
             const docSnap = await getDoc(userTimeDoc);
 
-            if (docSnap.exists()) {
-                const data = docSnap.data();
-                if (data.date === today) {
-                    return Math.max(0, MAX_DAILY_MINUTES * MILLISECONDS_PER_MINUTE - data.timeUsed);
-                }
+            if (docSnap.exists() && docSnap.data().date === today) {
+                const timeUsed = docSnap.data().timeUsed || 0;
+                return Math.max(0, MAX_DAILY_MS - timeUsed);
             }
-            return MAX_DAILY_MINUTES * MILLISECONDS_PER_MINUTE;
+            return MAX_DAILY_MS; // Full time if no record or different date
         }
 
-        // Update time and display in real-time
+        // Update time used and display in real-time
         async function updateTimeUsed() {
-            if (!userData) return;
+            if (!userData || !timer) return;
 
             const today = new Date().toISOString().split('T')[0];
             const userTimeDoc = doc(db, "userTime", userData.uid);
@@ -164,16 +163,15 @@
             let timeUsed = 0;
 
             if (docSnap.exists() && docSnap.data().date === today) {
-                timeUsed = docSnap.data().timeUsed;
+                timeUsed = docSnap.data().timeUsed || 0;
             } else {
                 await setDoc(userTimeDoc, { date: today, timeUsed: 0 });
-                timeUsed = 0;
             }
 
             const elapsed = Date.now() - startTime;
             const totalTimeUsed = timeUsed + elapsed;
-            const timeRemaining = Math.max(0, MAX_DAILY_MINUTES * MILLISECONDS_PER_MINUTE - totalTimeUsed);
-            
+            const timeRemaining = Math.max(0, MAX_DAILY_MS - totalTimeUsed);
+
             timeDisplay.textContent = formatTime(timeRemaining);
             console.log("Time remaining:", timeRemaining);
 
@@ -188,6 +186,7 @@
 
             if (timeRemaining <= 0) {
                 clearInterval(timer);
+                timer = null;
                 window.alert("Your daily time limit has been reached.");
                 await logout();
             }
@@ -196,25 +195,17 @@
         // Fetch user data from Firestore
         async function getLatestUserData(user) {
             const userDoc = await getDoc(doc(db, "users", user.uid));
-            let purchased = false;
-            if (userDoc.exists()) {
-                const data = userDoc.data();
-                console.log("Firestore data:", data);
-                purchased = data.purchased === true;
-            } else {
-                console.log("No user doc found, creating with purchased: true");
-                await setDoc(doc(db, "users", user.uid), {
-                    email: user.email,
-                    purchased: true
-                });
-                purchased = true;
+            if (!userDoc.exists() || userDoc.data().purchased !== true) {
+                throw new Error("No active subscription found.");
             }
+
+            const timeRemaining = await checkTimeRemaining(user.uid);
             userData = {
                 email: user.email,
                 name: user.email.split('@')[0],
-                purchased: purchased,
+                purchased: true,
                 uid: user.uid,
-                timeRemaining: await checkTimeRemaining(user.uid)
+                timeRemaining: timeRemaining
             };
             localStorage.setItem('userData', JSON.stringify(userData));
             return userData;
@@ -224,7 +215,8 @@
         async function logout() {
             if (timer) {
                 clearInterval(timer);
-                await updateTimeUsed();
+                timer = null;
+                await updateTimeUsed(); // Save final time before logout
             }
             try {
                 await signOut(auth);
@@ -232,6 +224,7 @@
                 userData = null;
                 loginSection.style.display = 'block';
                 homepageSection.style.display = 'none';
+                timeDisplay.textContent = ''; // Clear time display
             } catch (error) {
                 console.error("Logout error:", error);
                 window.alert("Error during logout: " + error.message);
@@ -246,27 +239,19 @@
             try {
                 const userCredential = await signInWithEmailAndPassword(auth, email, password);
                 const user = userCredential.user;
-                
-                const userDoc = await getDoc(doc(db, "users", user.uid));
-                if (!userDoc.exists() || userDoc.data().purchased !== true) {
-                    window.alert("You must have an active subscription to log in.");
-                    await signOut(auth);
-                    return;
-                }
 
-                const timeRemaining = await checkTimeRemaining(user.uid);
-                if (timeRemaining <= 0) {
+                await getLatestUserData(user);
+
+                if (userData.timeRemaining <= 0) {
                     window.alert("You've used your 5-minute daily limit for today. Please try again tomorrow.");
                     await signOut(auth);
                     return;
                 }
 
-                await getLatestUserData(user);
-                
                 loginSection.style.display = 'none';
                 homepageSection.style.display = 'block';
                 usernameDisplay.textContent = userData.name;
-                purchaseStatusDisplay.textContent = userData.purchased ? 'Active' : 'Inactive';
+                purchaseStatusDisplay.textContent = 'Active';
                 timeDisplay.textContent = formatTime(userData.timeRemaining);
 
                 startTime = Date.now();
@@ -288,7 +273,7 @@
             loginSection.style.display = 'none';
             homepageSection.style.display = 'block';
             usernameDisplay.textContent = userData.name;
-            purchaseStatusDisplay.textContent = userData.purchased ? 'Active' : 'Inactive';
+            purchaseStatusDisplay.textContent = 'Active';
             timeDisplay.textContent = formatTime(userData.timeRemaining);
             startTime = Date.now();
             timer = setInterval(updateTimeUsed, 1000);
@@ -298,6 +283,7 @@
         window.addEventListener('beforeunload', async () => {
             if (timer) {
                 clearInterval(timer);
+                timer = null;
                 await updateTimeUsed();
             }
         });
