@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Homepage</title>
+    <link rel="stylesheet" href="main.css">
+    <style>
+        body {
+            background-color: #0583D2;
+            font-family: sans-serif;
+        }
+        .homepage-container {
+            background-color: white;
+            padding: 5%;
+            width: 50vw;
+            margin: 10vh auto;
+            box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+            text-align: center;
+        }
+        #logout-btn {
+            background-color: #0583D2;
+            color: white;
+            border: none;
+            padding: 2%;
+            margin-top: 5%;
+            width: 50%;
+            cursor: pointer;
+        }
+        #logout-btn:hover {
+            opacity: 0.8;
+            transition: 0.3s;
+        }
+    </style>
+</head>
+<body>
+    <div class="homepage-container">
+        <h1>Welcome <span id="username"></span>!</h1>
+        <p>Subscription Status: <span id="purchase-status"></span></p>
+        <button id="logout-btn">Logout</button>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js";
+        import { getAuth, signOut } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDpIapJzv54LIApO_yM2f-SrwkXbjjLRPo",
+            authDomain: "ever4-e1efb.firebaseapp.com",
+            projectId: "ever4-e1efb",
+            storageBucket: "ever4-e1efb.firebasestorage.app",
+            messagingSenderId: "473102358637",
+            appId: "1:473102358637:web:a28114096fac995e640764",
+            measurementId: "G-NX3JS6DVKB"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+
+        // Get user data from localStorage
+        const userData = JSON.parse(localStorage.getItem('userData'));
+        if (!userData) {
+            window.location.href = 'index.html';
+        } else {
+            document.getElementById('username').textContent = userData.name;
+            document.getElementById('purchase-status').textContent = 
+                userData.purchased ? 'Active' : 'Inactive';
+
+            document.getElementById('logout-btn').addEventListener('click', () => {
+                signOut(auth).then(() => {
+                    localStorage.removeItem('userData');
+                    window.location.href = 'index.html';
+                }).catch((error) => {
+                    console.error('Logout error:', error);
+                    window.alert('Error occurred during logout');
+                });
+            });
+        }
+    </script>
+</body>
+</html>
