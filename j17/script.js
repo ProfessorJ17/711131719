@@ -37,18 +37,21 @@ authForm.addEventListener("submit", (e) => {
         auth.signInWithEmailAndPassword(email, password)
             .then(async (userCredential) => {
                 const user = userCredential.user;
-                await user.reload();
+                await user.reload(); // Refresh user data
+                console.log("User after login:", user.email, "Verified:", user.emailVerified);
                 if (!user.emailVerified) {
                     auth.signOut();
                     throw new Error("Please verify your email before logging in.");
                 }
                 const userDoc = await db.collection("users").doc(user.uid).get();
+                console.log("Firestore doc:", userDoc.exists ? userDoc.data() : "Not found");
                 if (!userDoc.exists || userDoc.data().purchased !== true) {
                     auth.signOut();
                     throw new Error("Account not activated. Purchase required.");
                 }
             })
             .catch((error) => {
+                console.error("Login error:", error);
                 errorMsg.textContent = error.message;
             });
     } else {
@@ -56,30 +59,38 @@ authForm.addEventListener("submit", (e) => {
             .then((userCredential) => {
                 userCredential.user.sendEmailVerification();
                 errorMsg.textContent = "Verification email sent. Please check your inbox.";
-                // Optionally set purchased: false initially
                 db.collection("users").doc(userCredential.user.uid).set({ purchased: false });
             })
             .catch((error) => {
+                console.error("Signup error:", error);
                 errorMsg.textContent = error.message;
             });
     }
 });
 
 auth.onAuthStateChanged(async (user) => {
+    console.log("Auth state:", user ? user.uid : "No user");
     if (user) {
         await user.reload();
+        console.log("User reloaded, Verified:", user.emailVerified);
+        if (!user.emailVerified) {
+            auth.signOut();
+            errorMsg.textContent = "Please verify your email before logging in.";
+            loginSignupContainer.style.display = "block";
+            loggedInSection.style.display = "none";
+            return;
+        }
         const userDoc = await db.collection("users").doc(user.uid).get();
-        if (user.emailVerified && userDoc.exists && userDoc.data().purchased === true) {
+        console.log("Firestore check:", userDoc.exists ? userDoc.data() : "Not found");
+        if (userDoc.exists && userDoc.data().purchased === true) {
             loginSignupContainer.style.display = "none";
             loggedInSection.style.display = "block";
             userEmail.textContent = user.email;
         } else {
             auth.signOut();
+            errorMsg.textContent = "Account not activated. Purchase required.";
             loginSignupContainer.style.display = "block";
             loggedInSection.style.display = "none";
-            errorMsg.textContent = user.emailVerified
-                ? "Account not activated. Purchase required."
-                : "Please verify your email before logging in.";
         }
     } else {
         loginSignupContainer.style.display = "block";
