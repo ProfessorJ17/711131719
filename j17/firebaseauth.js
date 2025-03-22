@@ -3,10 +3,15 @@
  import {getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword} from "https://www.gstatic.com/firebasejs/10.11.1/firebase-auth.js";
  import{getFirestore, setDoc, doc} from "https://www.gstatic.com/firebasejs/10.11.1/firebase-firestore.js"
  
- const firebaseConfig = {
- //YOUR COPIED FIREBASE PART SHOULD BE HERE
- //WATCH THIS VIDEO TO LEARN WHAT TO PUT HERE   https://youtu.be/_Xczf06n6x0
- };
+const firebaseConfig = {
+            apiKey: "AIzaSyDpIapJzv54LIApO_yM2f-SrwkXbjjLRPo",
+            authDomain: "ever4-e1efb.firebaseapp.com",
+            projectId: "ever4-e1efb",
+            storageBucket: "ever4-e1efb.firebasestorage.app",
+            messagingSenderId: "473102358637",
+            appId: "1:473102358637:web:a28114096fac995e640764",
+            measurementId: "G-NX3JS6DVKB"
+        };
 
  // Initialize Firebase
  const app = initializeApp(firebaseConfig);
