@@ -72,8 +72,11 @@
             const userDoc = await getDoc(doc(db, "users", userData.uid));
             let purchased = false;
             if (userDoc.exists()) {
-                purchased = userDoc.data().purchased || false;
+                const data = userDoc.data();
+                console.log("Firestore data:", data); // Debug: Check raw data
+                purchased = data.purchased === true; // Explicitly check for true
             } else {
+                console.log("No user doc found, creating with purchased: false");
                 await setDoc(doc(db, "users", userData.uid), {
                     email: userData.email,
                     purchased: false
@@ -81,6 +84,7 @@
             }
             userData.purchased = purchased;
             localStorage.setItem('userData', JSON.stringify(userData));
+            console.log("Updated userData.purchased:", userData.purchased); // Debug
             return purchased;
         }
 
@@ -116,6 +120,7 @@
             const timeRemaining = Math.max(0, MAX_DAILY_MINUTES * MILLISECONDS_PER_MINUTE - totalTimeUsed);
             
             timeDisplay.textContent = formatTime(timeRemaining);
+            console.log("Time remaining:", timeRemaining); // Debug
 
             await updateDoc(userTimeDoc, {
                 timeUsed: totalTimeUsed,
@@ -123,7 +128,7 @@
             });
 
             if (timeRemaining <= 0) {
-                clearInterval(timer); // Stop timer when time runs out
+                clearInterval(timer);
                 window.alert("Your daily time limit has been reached.");
                 await signOut(auth);
                 localStorage.removeItem('userData');
@@ -144,6 +149,7 @@
 
             // Logout button handler
             logoutBtn.addEventListener('click', async () => {
+                console.log("Logout clicked"); // Debug
                 clearInterval(timer);
                 await updateTimeUsed();
                 try {
