@@ -151,10 +151,7 @@
         const createacctbtn = document.getElementById("create-acct-btn");
         const returnBtn = document.getElementById("return-btn");
 
-        async function checkTimeRemaining(userId, purchased) {
-            if (purchased) {
-                return Infinity; // No time limit for purchased users
-            }
+        async function checkTimeRemaining(userId) {
             const today = new Date().toISOString().split('T')[0];
             const userTimeDoc = doc(db, "userTime", userId);
             const docSnap = await getDoc(userTimeDoc);
@@ -180,9 +177,9 @@
                 const userDoc = await getDoc(doc(db, "users", user.uid));
                 const purchased = userDoc.exists() ? userDoc.data().purchased || false : false;
                 
-                const timeRemaining = await checkTimeRemaining(user.uid, purchased);
+                const timeRemaining = await checkTimeRemaining(user.uid);
 
-                if (!purchased && timeRemaining <= 0) {
+                if (timeRemaining <= 0) {
                     window.alert("You've used your 5-minute daily limit for today. Please try again tomorrow.");
                     await auth.signOut();
                     return;
