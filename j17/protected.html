@@ -25,7 +25,7 @@
   </div>
   <div id="unauthorized" style="display: none;">
     <h1>Access Denied</h1>
-    <p>Please log in to view this page.</p>
+    <p>Please log in and purchase to view this page.</p>
     <a href="index.html">Go to Login</a>
   </div>
 
@@ -37,17 +37,24 @@
   <script src="config.js"></script>
   <!-- Protected Page Logic -->
   <script>
-    // Initialize Firebase
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
     const db = firebase.firestore();
 
-    // Check authentication state
     auth.onAuthStateChanged(async (user) => {
       if (user) {
-        document.getElementById("protectedContent").style.display = "block";
-        document.getElementById("unauthorized").style.display = "none";
-        await manageClickLimit(user.uid);
+        await user.reload();
+        const userDoc = await db.collection("users").doc(user.uid).get();
+        if (user.emailVerified && userDoc.exists && userDoc.data().purchased === true) {
+          document.getElementById("protectedContent").style.display = "block";
+          document.getElementById("unauthorized").style.display = "none";
+          await manageClickLimit(user.uid);
+        } else {
+          auth.signOut();
+          document.getElementById("protectedContent").style.display = "none";
+          document.getElementById("unauthorized").style.display = "block";
+          setTimeout(() => window.location.href = "index.html", 2000);
+        }
       } else {
         document.getElementById("protectedContent").style.display = "none";
         document.getElementById("unauthorized").style.display = "block";
@@ -56,55 +63,51 @@
     });
 
     async function manageClickLimit(userId) {
-      const userRef = db.collection("userClicks").doc(userId);
+      const clickRef = db.collection("userClicks").doc(userId);
       const today = new Date().toISOString().split("T")[0];
       let clicksLeft = 5;
 
       try {
-        const doc = await userRef.get();
+        const doc = await clickRef.get();
         if (doc.exists) {
           const data = doc.data();
           if (data.lastReset !== today) {
-            await userRef.set({ count: 0, lastReset: today });
+            await clickRef.set({ count: 0, lastReset: today });
           } else {
             clicksLeft = 5 - data.count;
           }
         } else {
-          await userRef.set({ count: 0, lastReset: today });
+          await clickRef.set({ count: 0, lastReset: today });
         }
         document.getElementById("remaining").textContent = clicksLeft;
 
-        // Wait for D-ID agent to load
-        waitForAgent(userRef, clicksLeft);
+        waitForAgent(clickRef, clicksLeft);
       } catch (error) {
         console.error("Error managing click limit:", error);
         document.getElementById("remaining").textContent = "Error";
       }
     }
 
-    function waitForAgent(userRef, initialClicksLeft) {
+    function waitForAgent(clickRef, initialClicksLeft) {
       const checkAgent = setInterval(async () => {
         const agentElement = document.querySelector("[data-name='did-agent']");
         if (agentElement) {
           clearInterval(checkAgent);
-
-          // Add click listener to the embedded element
-          agentElement.addEventListener("click", async (event) => {
-            const docSnap = await userRef.get();
+          agentElement.addEventListener("click", async () => {
+            const docSnap = await clickRef.get();
             const currentCount = docSnap.data().count;
 
             if (currentCount < 5) {
-              await userRef.update({ count: currentCount + 1 });
+              await clickRef.update({ count: currentCount + 1 });
               const newClicksLeft = 5 - (currentCount + 1);
               document.getElementById("remaining").textContent = newClicksLeft;
-              console.log(`Click recorded. Remaining: ${newClicksLeft}`);
             } else {
               alert("You've reached your daily click limit of 5!");
-              agentElement.style.pointerEvents = "none"; // Disable further clicks
+              agentElement.style.pointerEvents = "none";
             }
           });
         }
-      }, 500); // Check every 500ms
+      }, 500);
     }
   </script>
 </body>
