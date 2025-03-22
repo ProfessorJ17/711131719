@@ -203,7 +203,8 @@
 
         // Fetch user data from Firestore
         async function getLatestUserData(user) {
-            const userDoc = await getDoc(doc(db, "users", user.uid));
+           // const userDoc = await getDoc(doc(db, "users", user.uid));
+            const userDoc = await getDoc(doc(db, "allowedEmails", user.email));
             if (!userDoc.exists()) {
                 throw new Error("User document not found.");
             }
