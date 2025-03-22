@@ -1,4 +1,3 @@
-// C:/j17/app.js
 firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const db = firebase.firestore();
@@ -14,20 +13,17 @@ const userEmail = document.getElementById("userEmail");
 
 auth.onAuthStateChanged(async (user) => {
   if (user) {
-    await user.reload(); // Refresh user data
-    if (user.emailVerified) {
-      const userDoc = await db.collection("users").doc(user.uid).get();
-      if (userDoc.exists && userDoc.data().purchased === true) {
-        loginSection.style.display = "none";
-        loggedInSection.style.display = "block";
-        userEmail.textContent = user.email;
-      } else {
-        auth.signOut();
-        errorMsg.textContent = "Account not activated. Purchase required.";
-      }
+    await user.reload();
+    const userDoc = await db.collection("users").doc(user.uid).get();
+    if (user.emailVerified && userDoc.exists && userDoc.data().purchased === true) {
+      loginSection.style.display = "none";
+      loggedInSection.style.display = "block";
+      userEmail.textContent = user.email;
     } else {
       auth.signOut();
-      errorMsg.textContent = "Please verify your email before logging in.";
+      errorMsg.textContent = user.emailVerified
+        ? "Account not activated. Purchase required."
+        : "Please verify your email before logging in.";
     }
   } else {
     loginSection.style.display = "block";
