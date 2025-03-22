@@ -67,7 +67,7 @@
             throw new Error("No user data");
         }
 
-        // Fetch latest purchased status from Firestore to ensure accuracy
+        // Fetch latest purchased status from Firestore
         async function getLatestUserData() {
             const userDoc = await getDoc(doc(db, "users", userData.uid));
             if (userDoc.exists()) {
@@ -76,16 +76,12 @@
             }
         }
 
-        // Call this immediately to sync with Firestore
-        getLatestUserData().then(() => {
-            document.getElementById('username').textContent = userData.name;
-            document.getElementById('purchase-status').textContent = 
-                userData.purchased ? 'Active' : 'Inactive';
-        });
-
-        let timeRemaining = userData.timeRemaining;
+        // DOM elements
+        const usernameDisplay = document.getElementById('username');
+        const purchaseStatusDisplay = document.getElementById('purchase-status');
         const timeDisplay = document.getElementById('time-remaining');
 
+        // Format time function
         function formatTime(ms) {
             if (ms === Infinity) return "Unlimited";
             const minutes = Math.floor(ms / 60000);
@@ -93,6 +89,7 @@
             return `${minutes}:${seconds < 10 ? '0' + seconds : seconds}`;
         }
 
+        // Update time and display in real-time
         async function updateTimeUsed() {
             if (userData.purchased) {
                 timeDisplay.textContent = "Unlimited";
@@ -108,14 +105,19 @@
                 timeUsed = docSnap.data().timeUsed;
             } else {
                 await setDoc(userTimeDoc, { date: today, timeUsed: 0 });
+                timeUsed = 0;
             }
 
             const elapsed = Date.now() - startTime;
-            timeRemaining = Math.max(0, MAX_DAILY_MINUTES * MILLISECONDS_PER_MINUTE - timeUsed - elapsed);
+            const totalTimeUsed = timeUsed + elapsed;
+            const timeRemaining = Math.max(0, MAX_DAILY_MINUTES * MILLISECONDS_PER_MINUTE - totalTimeUsed);
+            
+            // Update display in real-time
             timeDisplay.textContent = formatTime(timeRemaining);
 
+            // Save to Firestore
             await updateDoc(userTimeDoc, {
-                timeUsed: timeUsed + elapsed,
+                timeUsed: totalTimeUsed,
                 date: today
             });
 
@@ -127,24 +129,43 @@
             }
         }
 
+        // Initialize page
         const startTime = Date.now();
-        timeDisplay.textContent = formatTime(timeRemaining);
-        let timer;
-        if (!userData.purchased) {
-            timer = setInterval(updateTimeUsed, 1000);
-        }
+        getLatestUserData().then(() => {
+            usernameDisplay.textContent = userData.name;
+            purchaseStatusDisplay.textContent = userData.purchased ? 'Active' : 'Inactive';
+            
+            // Set initial time display
+            timeDisplay.textContent = formatTime(userData.timeRemaining);
 
-        document.getElementById('logout-btn').addEventListener('click', async () => {
-            if (timer) clearInterval(timer);
-            if (!userData.purchased) await updateTimeUsed();
-            await signOut(auth);
-            localStorage.removeItem('userData');
-            window.location.href = 'index.html';
-        });
+            // Start real-time timer for non-purchased users
+            if (!userData.purchased) {
+                const timer = setInterval(async () => {
+                    await updateTimeUsed();
+                }, 1000);
+                
+                // Cleanup on logout
+                document.getElementById('logout-btn').addEventListener('click', async () => {
+                    clearInterval(timer);
+                    await updateTimeUsed();
+                    await signOut(auth);
+                    localStorage.removeItem('userData');
+                    window.location.href = 'index.html';
+                });
 
-        window.addEventListener('beforeunload', async () => {
-            if (timer) clearInterval(timer);
-            if (!userData.purchased) await updateTimeUsed();
+                // Cleanup on page unload
+                window.addEventListener('beforeunload', async () => {
+                    clearInterval(timer);
+                    await updateTimeUsed();
+                });
+            } else {
+                timeDisplay.textContent = "Unlimited";
+                document.getElementById('logout-btn').addEventListener('click', async () => {
+                    await signOut(auth);
+                    localStorage.removeItem('userData');
+                    window.location.href = 'index.html';
+                });
+            }
         });
     </script>
 </body>
