@@ -118,6 +118,7 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js";
         import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-analytics.js";
         import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js";
+        import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyDpIapJzv54LIApO_yM2f-SrwkXbjjLRPo",
@@ -132,6 +133,10 @@
         const app = initializeApp(firebaseConfig);
         const analytics = getAnalytics(app);
         const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        const MAX_DAILY_MINUTES = 5;
+        const MILLISECONDS_PER_MINUTE = 60000;
 
         const submitButton = document.getElementById("submit");
         const signupButton = document.getElementById("sign-up");
@@ -146,32 +151,61 @@
         const createacctbtn = document.getElementById("create-acct-btn");
         const returnBtn = document.getElementById("return-btn");
 
-        submitButton.addEventListener("click", function() {
+        async function checkTimeRemaining(userId, purchased) {
+            if (purchased) {
+                return Infinity; // No time limit for purchased users
+            }
+            const today = new Date().toISOString().split('T')[0];
+            const userTimeDoc = doc(db, "userTime", userId);
+            const docSnap = await getDoc(userTimeDoc);
+
+            if (docSnap.exists()) {
+                const data = docSnap.data();
+                if (data.date === today) {
+                    return Math.max(0, MAX_DAILY_MINUTES * MILLISECONDS_PER_MINUTE - data.timeUsed);
+                }
+            }
+            return MAX_DAILY_MINUTES * MILLISECONDS_PER_MINUTE;
+        }
+
+        submitButton.addEventListener("click", async function() {
             const email = emailInput.value;
             const password = passwordInput.value;
 
-            signInWithEmailAndPassword(auth, email, password)
-                .then((userCredential) => {
-                    const user = userCredential.user;
-                    
-                    // Store user data in localStorage
-                    const userData = {
-                        email: email,
-                        name: email.split('@')[0], // Derive name from email
-                        purchased: false // Default to false, could be updated elsewhere
-                    };
-                    localStorage.setItem('userData', JSON.stringify(userData));
-                    
-                    window.alert("Success! Welcome back!");
-                    window.location.href = 'homepage.html';
-                })
-                .catch((error) => {
-                    console.log("Error:", error.message);
-                    window.alert("Error occurred: " + error.message);
-                });
+            try {
+                const userCredential = await signInWithEmailAndPassword(auth, email, password);
+                const user = userCredential.user;
+                
+                // Fetch purchased status from users collection
+                const userDoc = await getDoc(doc(db, "users", user.uid));
+                const purchased = userDoc.exists() ? userDoc.data().purchased || false : false;
+                
+                const timeRemaining = await checkTimeRemaining(user.uid, purchased);
+
+                if (!purchased && timeRemaining <= 0) {
+                    window.alert("You've used your 5-minute daily limit for today.");
+                    await auth.signOut();
+                    return;
+                }
+
+                const userData = {
+                    email: email,
+                    name: email.split('@')[0],
+                    purchased: purchased,
+                    uid: user.uid,
+                    timeRemaining: timeRemaining
+                };
+                localStorage.setItem('userData', JSON.stringify(userData));
+                
+                window.alert("Success! Welcome back!");
+                window.location.href = 'homepage.html';
+            } catch (error) {
+                console.log("Error:", error.message);
+                window.alert("Error occurred: " + error.message);
+            }
         });
 
-        createacctbtn.addEventListener("click", function() {
+        createacctbtn.addEventListener("click", async function() {
             var isVerified = true;
             const signupEmail = signupEmailIn.value;
             const confirmSignupEmail = confirmSignupEmailIn.value;
@@ -194,23 +228,37 @@
             }
 
             if(isVerified) {
-                createUserWithEmailAndPassword(auth, signupEmail, signupPassword)
-                    .then((userCredential) => {
-                        const user = userCredential.user;
-                        // Store user data in localStorage
-                        const userData = {
-                            email: signupEmail,
-                            name: signupEmail.split('@')[0],
-                            purchased: false // New users start with purchased=false
-                        };
-                        localStorage.setItem('userData', JSON.stringify(userData));
-                        
-                        window.alert("Success! Account created.");
-                        window.location.href = 'homepage.html';
-                    })
-                    .catch((error) => {
-                        window.alert("Error occurred: " + error.message);
+                try {
+                    const userCredential = await createUserWithEmailAndPassword(auth, signupEmail, signupPassword);
+                    const user = userCredential.user;
+                    
+                    // Set initial user data in users collection
+                    await setDoc(doc(db, "users", user.uid), {
+                        email: signupEmail,
+                        purchased: false
                     });
+
+                    // Initialize user time tracking
+                    const today = new Date().toISOString().split('T')[0];
+                    await setDoc(doc(db, "userTime", user.uid), {
+                        date: today,
+                        timeUsed: 0
+                    });
+
+                    const userData = {
+                        email: signupEmail,
+                        name: signupEmail.split('@')[0],
+                        purchased: false,
+                        uid: user.uid,
+                        timeRemaining: MAX_DAILY_MINUTES * MILLISECONDS_PER_MINUTE
+                    };
+                    localStorage.setItem('userData', JSON.stringify(userData));
+                    
+                    window.alert("Success! Account created.");
+                    window.location.href = 'homepage.html';
+                } catch (error) {
+                    window.alert("Error occurred: " + error.message);
+                }
             }
         });
 
