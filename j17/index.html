@@ -133,14 +133,6 @@
         const analytics = getAnalytics(app);
         const auth = getAuth(app);
 
-        // Define allowed emails and user data
-        const allowedEmails = {
-            "jesse3@example.com": {
-                name: "jesse3",
-                purchased: true
-            }
-        };
-
         const submitButton = document.getElementById("submit");
         const signupButton = document.getElementById("sign-up");
         const emailInput = document.getElementById("email");
@@ -158,12 +150,6 @@
             const email = emailInput.value;
             const password = passwordInput.value;
 
-            // Check if email is in allowed list
-            if (!allowedEmails.hasOwnProperty(email)) {
-                window.alert("Email not authorized. Please use an allowed email.");
-                return;
-            }
-
             signInWithEmailAndPassword(auth, email, password)
                 .then((userCredential) => {
                     const user = userCredential.user;
@@ -171,18 +157,17 @@
                     // Store user data in localStorage
                     const userData = {
                         email: email,
-                        name: allowedEmails[email].name,
-                        purchased: allowedEmails[email].purchased
+                        name: email.split('@')[0], // Derive name from email
+                        purchased: false // Default to false, could be updated elsewhere
                     };
                     localStorage.setItem('userData', JSON.stringify(userData));
                     
                     window.alert("Success! Welcome back!");
-                    // Redirect to homepage
                     window.location.href = 'homepage.html';
                 })
                 .catch((error) => {
                     console.log("Error:", error.message);
-                    window.alert("Error occurred. Try again.");
+                    window.alert("Error occurred: " + error.message);
                 });
         });
 
@@ -193,12 +178,12 @@
             const signupPassword = signupPasswordIn.value;
             const confirmSignUpPassword = confirmSignUpPasswordIn.value;
 
-            if(signupEmail != confirmSignupEmail) {
+            if(signupEmail !== confirmSignupEmail) {
                 window.alert("Email fields do not match. Try again.");
                 isVerified = false;
             }
 
-            if(signupPassword != confirmSignUpPassword) {
+            if(signupPassword !== confirmSignUpPassword) {
                 window.alert("Password fields do not match. Try again.");
                 isVerified = false;
             }
@@ -211,12 +196,17 @@
             if(isVerified) {
                 createUserWithEmailAndPassword(auth, signupEmail, signupPassword)
                     .then((userCredential) => {
-                        window.alert("Success! Account created.");
-                        // Optionally add new user to allowedEmails
-                        allowedEmails[signupEmail] = {
+                        const user = userCredential.user;
+                        // Store user data in localStorage
+                        const userData = {
+                            email: signupEmail,
                             name: signupEmail.split('@')[0],
-                            purchased: false
+                            purchased: false // New users start with purchased=false
                         };
+                        localStorage.setItem('userData', JSON.stringify(userData));
+                        
+                        window.alert("Success! Account created.");
+                        window.location.href = 'homepage.html';
                     })
                     .catch((error) => {
                         window.alert("Error occurred: " + error.message);
