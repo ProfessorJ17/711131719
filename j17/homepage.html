@@ -35,12 +35,14 @@
     <div class="homepage-container">
         <h1>Welcome <span id="username"></span>!</h1>
         <p>Subscription Status: <span id="purchase-status"></span></p>
+        <p>Time Remaining Today: <span id="time-remaining"></span></p>
         <button id="logout-btn">Logout</button>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js";
         import { getAuth, signOut } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js";
+        import { getFirestore, doc, updateDoc, getDoc } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyDpIapJzv54LIApO_yM2f-SrwkXbjjLRPo",
@@ -54,26 +56,84 @@
 
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
+        const db = getFirestore(app);
 
-        // Get user data from localStorage
+        const MAX_DAILY_MINUTES = 5;
+        const MILLISECONDS_PER_MINUTE = 60000;
+
         const userData = JSON.parse(localStorage.getItem('userData'));
         if (!userData) {
             window.location.href = 'index.html';
-        } else {
-            document.getElementById('username').textContent = userData.name;
-            document.getElementById('purchase-status').textContent = 
-                userData.purchased ? 'Active' : 'Inactive';
-
-            document.getElementById('logout-btn').addEventListener('click', () => {
-                signOut(auth).then(() => {
-                    localStorage.removeItem('userData');
-                    window.location.href = 'index.html';
-                }).catch((error) => {
-                    console.error('Logout error:', error);
-                    window.alert('Error occurred during logout');
-                });
-            });
+            throw new Error("No user data");
         }
+
+        document.getElementById('username').textContent = userData.name;
+        document.getElementById('purchase-status').textContent = 
+            userData.purchased ? 'Active' : 'Inactive';
+
+        let timeRemaining = userData.timeRemaining;
+        const timeDisplay = document.getElementById('time-remaining');
+
+        function formatTime(ms) {
+            if (ms === Infinity) return "Unlimited";
+            const minutes = Math.floor(ms / 60000);
+            const seconds = Math.floor((ms % 60000) / 1000);
+            return `${minutes}:${seconds < 10 ? '0' + seconds : seconds}`;
+        }
+
+        async function updateTimeUsed() {
+            if (userData.purchased) {
+                timeDisplay.textContent = "Unlimited";
+                return;
+            }
+
+            const today = new Date().toISOString().split('T')[0];
+            const userTimeDoc = doc(db, "userTime", userData.uid);
+            const docSnap = await getDoc(userTimeDoc);
+            let timeUsed = 0;
+
+            if (docSnap.exists() && docSnap.data().date === today) {
+                timeUsed = docSnap.data().timeUsed;
+            } else {
+                await setDoc(userTimeDoc, { date: today, timeUsed: 0 });
+            }
+
+            const elapsed = Date.now() - startTime;
+            timeRemaining = Math.max(0, MAX_DAILY_MINUTES * MILLISECONDS_PER_MINUTE - timeUsed - elapsed);
+            timeDisplay.textContent = formatTime(timeRemaining);
+
+            await updateDoc(userTimeDoc, {
+                timeUsed: timeUsed + elapsed,
+                date: today
+            });
+
+            if (timeRemaining <= 0) {
+                window.alert("Your daily time limit has been reached.");
+                await signOut(auth);
+                localStorage.removeItem('userData');
+                window.location.href = 'index.html';
+            }
+        }
+
+        const startTime = Date.now();
+        timeDisplay.textContent = formatTime(timeRemaining);
+        let timer;
+        if (!userData.purchased) {
+            timer = setInterval(updateTimeUsed, 1000);
+        }
+
+        document.getElementById('logout-btn').addEventListener('click', async () => {
+            if (timer) clearInterval(timer);
+            if (!userData.purchased) await updateTimeUsed();
+            await signOut(auth);
+            localStorage.removeItem('userData');
+            window.location.href = 'index.html';
+        });
+
+        window.addEventListener('beforeunload', async () => {
+            if (timer) clearInterval(timer);
+            if (!userData.purchased) await updateTimeUsed();
+        });
     </script>
 </body>
 </html>
