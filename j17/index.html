@@ -177,10 +177,14 @@
             timeDisplay.textContent = formatTime(timeRemaining);
             console.log("Time remaining:", timeRemaining);
 
-            await updateDoc(userTimeDoc, {
-                timeUsed: totalTimeUsed,
-                date: today
-            });
+            try {
+                await updateDoc(userTimeDoc, {
+                    timeUsed: totalTimeUsed,
+                    date: today
+                });
+            } catch (error) {
+                console.error("Error updating time:", error);
+            }
 
             if (timeRemaining <= 0) {
                 clearInterval(timer);
@@ -192,7 +196,7 @@
         // Fetch user data from Firestore
         async function getLatestUserData(user) {
             const userDoc = await getDoc(doc(db, "users", user.uid));
-            let purchased = true; // Default to true if login succeeds
+            let purchased = false;
             if (userDoc.exists()) {
                 const data = userDoc.data();
                 console.log("Firestore data:", data);
@@ -203,6 +207,7 @@
                     email: user.email,
                     purchased: true
                 });
+                purchased = true;
             }
             userData = {
                 email: user.email,
@@ -242,6 +247,13 @@
                 const userCredential = await signInWithEmailAndPassword(auth, email, password);
                 const user = userCredential.user;
                 
+                const userDoc = await getDoc(doc(db, "users", user.uid));
+                if (!userDoc.exists() || userDoc.data().purchased !== true) {
+                    window.alert("You must have an active subscription to log in.");
+                    await signOut(auth);
+                    return;
+                }
+
                 const timeRemaining = await checkTimeRemaining(user.uid);
                 if (timeRemaining <= 0) {
                     window.alert("You've used your 5-minute daily limit for today. Please try again tomorrow.");
