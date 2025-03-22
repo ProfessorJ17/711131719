@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html>
 <head>
     <title>Login & Homepage</title>
@@ -141,7 +142,7 @@
             return `${minutes}:${seconds < 10 ? '0' + seconds : seconds}`;
         }
 
-        // Check remaining time
+        // Check remaining time from Firestore
         async function checkTimeRemaining(userId) {
             const today = new Date().toISOString().split('T')[0];
             const userTimeDoc = doc(db, "userTime", userId);
@@ -149,12 +150,15 @@
 
             if (docSnap.exists() && docSnap.data().date === today) {
                 const timeUsed = docSnap.data().timeUsed || 0;
+                console.log("Fetched timeUsed from Firestore:", timeUsed);
                 return Math.max(0, MAX_DAILY_MS - timeUsed);
             }
-            return MAX_DAILY_MS; // Full time if no record or different date
+            // Reset if no record or different date
+            await setDoc(userTimeDoc, { date: today, timeUsed: 0 });
+            return MAX_DAILY_MS;
         }
 
-        // Update time used and display in real-time
+        // Update time used and save to Firestore
         async function updateTimeUsed() {
             if (!userData || !timer) return;
 
@@ -165,16 +169,13 @@
 
             if (docSnap.exists() && docSnap.data().date === today) {
                 timeUsed = docSnap.data().timeUsed || 0;
-            } else {
-                await setDoc(userTimeDoc, { date: today, timeUsed: 0 });
             }
 
             const elapsed = Date.now() - startTime;
             const totalTimeUsed = Math.min(timeUsed + elapsed, MAX_DAILY_MS); // Cap at 5 minutes
             const timeRemaining = Math.max(0, MAX_DAILY_MS - totalTimeUsed);
 
-            timeDisplay.textContent = formatTime(timeRemaining);
-            console.log("Time remaining:", timeRemaining);
+            console.log("Updating Firestore - timeUsed:", totalTimeUsed, "timeRemaining:", timeRemaining);
 
             try {
                 await updateDoc(userTimeDoc, {
@@ -185,12 +186,7 @@
                 console.error("Error updating time:", error);
             }
 
-            if (timeRemaining <= 0) {
-                clearInterval(timer);
-                timer = null;
-                window.alert("Your daily time limit has been reached.");
-                await logout();
-            }
+            return timeRemaining;
         }
 
         // Fetch user data from Firestore
@@ -217,7 +213,8 @@
             if (timer) {
                 clearInterval(timer);
                 timer = null;
-                await updateTimeUsed(); // Save final time before logout
+                const finalTimeRemaining = await updateTimeUsed();
+                console.log("Logged out with remaining time:", finalTimeRemaining);
             }
             try {
                 await signOut(auth);
@@ -225,7 +222,7 @@
                 userData = null;
                 loginSection.style.display = 'block';
                 homepageSection.style.display = 'none';
-                timeDisplay.textContent = ''; // Clear time display
+                timeDisplay.textContent = '';
             } catch (error) {
                 console.error("Logout error:", error);
                 window.alert("Error during logout: " + error.message);
@@ -258,14 +255,16 @@
                 startTime = Date.now();
                 lastUpdateTime = Date.now();
                 timer = setInterval(async () => {
-                    if (Date.now() - lastUpdateTime >= UPDATE_INTERVAL) {
-                        await updateTimeUsed();
-                        lastUpdateTime = Date.now();
-                    }
-                    // Update display every second
                     const elapsed = Date.now() - startTime;
                     const timeRemaining = Math.max(0, userData.timeRemaining - elapsed);
                     timeDisplay.textContent = formatTime(timeRemaining);
+
+                    if (Date.now() - lastUpdateTime >= UPDATE_INTERVAL) {
+                        await updateTimeUsed();
+                        lastUpdateTime = Date.now();
+                        userData.timeRemaining = timeRemaining; // Update local data
+                    }
+
                     if (timeRemaining <= 0) {
                         clearInterval(timer);
                         timer = null;
@@ -295,14 +294,16 @@
             startTime = Date.now();
             lastUpdateTime = Date.now();
             timer = setInterval(async () => {
-                if (Date.now() - lastUpdateTime >= UPDATE_INTERVAL) {
-                    await updateTimeUsed();
-                    lastUpdateTime = Date.now();
-                }
-                // Update display every second
                 const elapsed = Date.now() - startTime;
                 const timeRemaining = Math.max(0, userData.timeRemaining - elapsed);
                 timeDisplay.textContent = formatTime(timeRemaining);
+
+                if (Date.now() - lastUpdateTime >= UPDATE_INTERVAL) {
+                    await updateTimeUsed();
+                    lastUpdateTime = Date.now();
+                    userData.timeRemaining = timeRemaining;
+                }
+
                 if (timeRemaining <= 0) {
                     clearInterval(timer);
                     timer = null;
