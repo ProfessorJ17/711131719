@@ -73,6 +73,14 @@
             if (userDoc.exists()) {
                 userData.purchased = userDoc.data().purchased || false;
                 localStorage.setItem('userData', JSON.stringify(userData));
+            } else {
+                // If no user doc exists, create it with default purchased: false
+                await setDoc(doc(db, "users", userData.uid), {
+                    email: userData.email,
+                    purchased: false
+                });
+                userData.purchased = false;
+                localStorage.setItem('userData', JSON.stringify(userData));
             }
         }
 
@@ -83,7 +91,6 @@
 
         // Format time function
         function formatTime(ms) {
-            if (ms === Infinity) return "Unlimited";
             const minutes = Math.floor(ms / 60000);
             const seconds = Math.floor((ms % 60000) / 1000);
             return `${minutes}:${seconds < 10 ? '0' + seconds : seconds}`;
@@ -91,11 +98,6 @@
 
         // Update time and display in real-time
         async function updateTimeUsed() {
-            if (userData.purchased) {
-                timeDisplay.textContent = "Unlimited";
-                return;
-            }
-
             const today = new Date().toISOString().split('T')[0];
             const userTimeDoc = doc(db, "userTime", userData.uid);
             const docSnap = await getDoc(userTimeDoc);
@@ -138,34 +140,25 @@
             // Set initial time display
             timeDisplay.textContent = formatTime(userData.timeRemaining);
 
-            // Start real-time timer for non-purchased users
-            if (!userData.purchased) {
-                const timer = setInterval(async () => {
-                    await updateTimeUsed();
-                }, 1000);
-                
-                // Cleanup on logout
-                document.getElementById('logout-btn').addEventListener('click', async () => {
-                    clearInterval(timer);
-                    await updateTimeUsed();
-                    await signOut(auth);
-                    localStorage.removeItem('userData');
-                    window.location.href = 'index.html';
-                });
+            // Start real-time timer for all users
+            const timer = setInterval(async () => {
+                await updateTimeUsed();
+            }, 1000);
+            
+            // Cleanup on logout
+            document.getElementById('logout-btn').addEventListener('click', async () => {
+                clearInterval(timer);
+                await updateTimeUsed();
+                await signOut(auth);
+                localStorage.removeItem('userData');
+                window.location.href = 'index.html';
+            });
 
-                // Cleanup on page unload
-                window.addEventListener('beforeunload', async () => {
-                    clearInterval(timer);
-                    await updateTimeUsed();
-                });
-            } else {
-                timeDisplay.textContent = "Unlimited";
-                document.getElementById('logout-btn').addEventListener('click', async () => {
-                    await signOut(auth);
-                    localStorage.removeItem('userData');
-                    window.location.href = 'index.html';
-                });
-            }
+            // Cleanup on page unload
+            window.addEventListener('beforeunload', async () => {
+                clearInterval(timer);
+                await updateTimeUsed();
+            });
         });
     </script>
 </body>
