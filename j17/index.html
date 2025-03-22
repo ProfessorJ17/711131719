@@ -1,85 +1,355 @@
-<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Register & Login</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link rel="stylesheet" href="style.css">
-    <script type="module" src="firebaseauth.js"></script>
+    <title>Interactive Study App</title>
+    <script type="importmap">
+        {
+            "imports": {
+                "firebase/app": "https://www.gstatic.com/firebasejs/10.4.0/firebase-app.js",
+                "firebase/auth": "https://www.gstatic.com/firebasejs/10.4.0/firebase-auth.js",
+                "firebase/firestore": "https://www.gstatic.com/firebasejs/10.4.0/firebase-firestore.js"
+            }
+        }
+    </script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background-color: #f0f2f5;
+        }
+
+        .container {
+            max-width: 400px;
+            margin: 100px auto;
+            padding: 20px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .auth-container {
+            text-align: center;
+        }
+
+        h1 {
+            color: #1a73e8;
+            margin-bottom: 20px;
+        }
+
+        .input-group {
+            margin-bottom: 15px;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: #1a73e8;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+
+        button:hover {
+            background-color: #1557b0;
+        }
+
+        .auth-links {
+            margin-top: 15px;
+        }
+
+        .auth-links a {
+            color: #1a73e8;
+            text-decoration: none;
+            margin: 0 10px;
+            cursor: pointer;
+        }
+
+        .homepage {
+            display: none;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .timer {
+            font-size: 48px;
+            margin: 20px 0;
+        }
+
+        .controls {
+            margin: 20px 0;
+        }
+
+        .task-input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+        }
+
+        .task-list {
+            text-align: left;
+            list-style: none;
+        }
+
+        .task-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            margin: 5px 0;
+            background-color: #f8f9fa;
+            border-radius: 4px;
+        }
+
+        .delete-btn {
+            background-color: #dc3545;
+            color: white;
+            padding: 5px 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .delete-btn:hover {
+            background-color: #c82333;
+        }
+
+        #logoutBtn {
+            margin-top: 20px;
+            background-color: #dc3545;
+        }
+
+        #logoutBtn:hover {
+            background-color: #c82333;
+        }
+    </style>
 </head>
 <body>
-    <div class="container" id="signup" style="display:none;">
-      <h1 class="form-title">Register</h1>
-      <form method="post" action="">
-        <div id="signUpMessage" class="messageDiv" style="display:none;"></div>
-        <div class="input-group">
-           <i class="fas fa-user"></i>
-           <input type="text"  id="fName" placeholder="First Name" required>
-           <label for="fname">First Name</label>
+    <div class="container">
+        <div id="authContainer" class="auth-container">
+            <h1>Study Timer</h1>
+            <div class="input-group">
+                <input type="email" id="email" placeholder="Email" required>
+            </div>
+            <div class="input-group">
+                <input type="password" id="password" placeholder="Password" required>
+            </div>
+            <button id="loginBtn">Login</button>
+            <div class="auth-links">
+                <a id="forgotPassword">Forgot Password?</a>
+            </div>
         </div>
-        <div class="input-group">
-            <i class="fas fa-user"></i>
-            <input type="text"  id="lName" placeholder="Last Name" required>
-            <label for="lName">Last Name</label>
+
+        <div id="homepage" class="homepage">
+            <h1>Study Timer</h1>
+            <div class="timer" id="timer">25:00</div>
+            <div class="controls">
+                <button id="startBtn">Start</button>
+                <button id="resetBtn">Reset</button>
+            </div>
+            <div class="task-container">
+                <input type="text" id="taskInput" class="task-input" placeholder="Add a new task">
+                <button id="addTaskBtn">Add Task</button>
+                <ul id="taskList" class="task-list"></ul>
+            </div>
+            <button id="logoutBtn">Logout</button>
         </div>
-        <div class="input-group">
-            <i class="fas fa-envelope"></i>
-            <input type="email"  id="rEmail" placeholder="Email" required>
-            <label for="rEmail">Email</label>
-        </div>
-        <div class="input-group">
-            <i class="fas fa-lock"></i>
-            <input type="password" id="rPassword"  placeholder="Password" required>
-            <label for="rPassword">Password</label>
-        </div>
-       <button class="btn" id="submitSignUp" >Sign Up</button>
-      </form>
-      <p class="or">
-        ----------or--------
-      </p>
-      <div class="icons">
-        <i class="fab fa-google"></i>
-        <i class="fab fa-facebook"></i>
-      </div>
-      <div class="links">
-        <p>Already Have Account ?</p>
-        <button id="signInButton">Sign In</button>
-      </div>
     </div>
 
-  <div class="container" id="signIn">
-        <h1 class="form-title">Sign In</h1>
-        <form method="post" action="">
-          <div id="signInMessage" class="messageDiv" style="display:none;"></div>
+    <script type="module">
+        import { initializeApp } from 'firebase/app';
+        import { getAuth, signInWithEmailAndPassword, signOut, sendPasswordResetEmail, onAuthStateChanged } from 'firebase/auth';
+        import { getFirestore, doc, getDoc } from 'firebase/firestore';
 
-          <div class="input-group">
-              <i class="fas fa-envelope"></i>
-              <input type="email"  id="email" placeholder="Email" required>
-              <label for="email">Email</label>
-          </div>
-          <div class="input-group">
-              <i class="fas fa-lock"></i>
-            <input type="password" id="password"  placeholder="Password" required>
-              <label for="password">Password</label>
-          </div>
-          <p class="recover">
-            <a href="#">Recover Password</a>
-          </p>
-         <button  class="btn"  id="submitSignIn">Sign In</button>
-        </form>
-        <p class="or">
-          ----------or--------
-        </p>
-        <div class="icons">
-          <i class="fab fa-google"></i>
-          <i class="fab fa-facebook"></i>
-        </div>
-        <div class="links">
-          <p>Don't have account yet?</p>
-          <button id="signUpButton">Sign Up</button>
-        </div>
-      </div>
-      <script src="script.js"></script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyDpIapJzv54LIApO_yM2f-SrwkXbjjLRPo",
+            authDomain: "ever4-e1efb.firebaseapp.com",
+            projectId: "ever4-e1efb",
+            storageBucket: "ever4-e1efb.firebasestorage.app",
+            messagingSenderId: "473102358637",
+            appId: "1:473102358637:web:a28114096fac995e640764",
+            measurementId: "G-NX3JS6DVKB"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        // Auth elements
+        const authContainer = document.getElementById('authContainer');
+        const homepage = document.getElementById('homepage');
+        const emailInput = document.getElementById('email');
+        const passwordInput = document.getElementById('password');
+        const loginBtn = document.getElementById('loginBtn');
+        const forgotPasswordLink = document.getElementById('forgotPassword');
+        const logoutBtn = document.getElementById('logoutBtn');
+
+        // Timer elements
+        const timerDisplay = document.getElementById('timer');
+        const startBtn = document.getElementById('startBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        const taskInput = document.getElementById('taskInput');
+        const addTaskBtn = document.getElementById('addTaskBtn');
+        const taskList = document.getElementById('taskList');
+
+        let timeLeft = 25 * 60; // 25 minutes in seconds
+        let timerId = null;
+        let isRunning = false;
+
+        // Auth functions
+        loginBtn.addEventListener('click', async () => {
+            try {
+                const userCredential = await signInWithEmailAndPassword(auth, emailInput.value, passwordInput.value);
+                const user = userCredential.user;
+                await user.reload(); // Refresh user data
+                if (!user.emailVerified) {
+                    await signOut(auth);
+                    throw new Error("Please verify your email before logging in.");
+                }
+                const userDocRef = doc(db, "users", user.uid);
+                const userDoc = await getDoc(userDocRef);
+                if (!userDoc.exists() || userDoc.data().purchased !== true) {
+                    await signOut(auth);
+                    throw new Error("Access denied. Please purchase to continue.");
+                }
+                showHomepage();
+            } catch (error) {
+                alert(error.message);
+            }
+        });
+
+        forgotPasswordLink.addEventListener('click', async () => {
+            const email = prompt('Enter your email:');
+            if (email) {
+                try {
+                    await sendPasswordResetEmail(auth, email);
+                    alert('Password reset email sent!');
+                } catch (error) {
+                    alert(error.message);
+                }
+            }
+        });
+
+        logoutBtn.addEventListener('click', async () => {
+            try {
+                await signOut(auth);
+                showAuth();
+            } catch (error) {
+                alert(error.message);
+            }
+        });
+
+        // Timer functions
+        function updateTimer() {
+            const minutes = Math.floor(timeLeft / 60);
+            const seconds = timeLeft % 60;
+            timerDisplay.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }
+
+        function startTimer() {
+            if (!isRunning) {
+                isRunning = true;
+                startBtn.textContent = 'Pause';
+                timerId = setInterval(() => {
+                    timeLeft--;
+                    updateTimer();
+                    if (timeLeft === 0) {
+                        clearInterval(timerId);
+                        alert('Time is up!');
+                        resetTimer();
+                    }
+                }, 1000);
+            } else {
+                isRunning = false;
+                startBtn.textContent = 'Start';
+                clearInterval(timerId);
+            }
+        }
+
+        function resetTimer() {
+            clearInterval(timerId);
+            isRunning = false;
+            timeLeft = 25 * 60;
+            startBtn.textContent = 'Start';
+            updateTimer();
+        }
+
+        // Task functions
+        function addTask() {
+            const taskText = taskInput.value.trim();
+            if (taskText) {
+                const li = document.createElement('li');
+                li.className = 'task-item';
+                li.innerHTML = `
+                    <span>${taskText}</span>
+                    <button class="delete-btn">Delete</button>
+                `;
+                li.querySelector('.delete-btn').addEventListener('click', () => {
+                    li.remove();
+                });
+                taskList.appendChild(li);
+                taskInput.value = '';
+            }
+        }
+
+        // Event listeners
+        startBtn.addEventListener('click', startTimer);
+        resetBtn.addEventListener('click', resetTimer);
+        addTaskBtn.addEventListener('click', addTask);
+        taskInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                addTask();
+            }
+        });
+
+        // UI functions
+        function showAuth() {
+            authContainer.style.display = 'block';
+            homepage.style.display = 'none';
+        }
+
+        function showHomepage() {
+            authContainer.style.display = 'none';
+            homepage.style.display = 'block';
+        }
+
+        // Check auth state
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                await user.reload();
+                if (!user.emailVerified) {
+                    await signOut(auth);
+                    showAuth();
+                    return;
+                }
+                const userDocRef = doc(db, "users", user.uid);
+                const userDoc = await getDoc(userDocRef);
+                if (userDoc.exists() && userDoc.data().purchased === true) {
+                    showHomepage();
+                } else {
+                    await signOut(auth);
+                    showAuth();
+                }
+            } else {
+                showAuth();
+            }
+        });
+    </script>
 </body>
 </html>
