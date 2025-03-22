@@ -33,9 +33,9 @@
 </head>
 <body>
     <div class="homepage-container">
+        <p>Time Remaining Today: <span id="time-remaining"></span></p>
         <h1>Welcome <span id="username"></span>!</h1>
         <p>Subscription Status: <span id="purchase-status"></span></p>
-        <p>Time Remaining Today: <span id="time-remaining"></span></p>
         <button id="logout-btn">Logout</button>
     </div>
 
@@ -67,9 +67,21 @@
             throw new Error("No user data");
         }
 
-        document.getElementById('username').textContent = userData.name;
-        document.getElementById('purchase-status').textContent = 
-            userData.purchased ? 'Active' : 'Inactive';
+        // Fetch latest purchased status from Firestore to ensure accuracy
+        async function getLatestUserData() {
+            const userDoc = await getDoc(doc(db, "users", userData.uid));
+            if (userDoc.exists()) {
+                userData.purchased = userDoc.data().purchased || false;
+                localStorage.setItem('userData', JSON.stringify(userData));
+            }
+        }
+
+        // Call this immediately to sync with Firestore
+        getLatestUserData().then(() => {
+            document.getElementById('username').textContent = userData.name;
+            document.getElementById('purchase-status').textContent = 
+                userData.purchased ? 'Active' : 'Inactive';
+        });
 
         let timeRemaining = userData.timeRemaining;
         const timeDisplay = document.getElementById('time-remaining');
