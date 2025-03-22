@@ -204,10 +204,12 @@
         // Fetch user data from Firestore
         async function getLatestUserData(user) {
             const userDoc = await getDoc(doc(db, "users", user.uid));
-            if (!userDoc.exists() || userDoc.data().purchased !== true) {
+            if (!userDoc.exists()) {
+                throw new Error("User document not found.");
+            }
+            if (userDoc.data().purchased !== true) {
                 throw new Error("No active subscription found.");
             }
-
             const timeRemaining = await checkTimeRemaining(user.uid);
             userData = {
                 email: user.email,
@@ -291,7 +293,11 @@
                 }, 1000);
             } catch (error) {
                 console.error("Login error:", error);
-                if (error.code === "permission-denied") {
+                if (error.message === "User document not found.") {
+                    window.alert("User data not found. Please contact support.");
+                } else if (error.message === "No active subscription found.") {
+                    window.alert("You do not have an active subscription.");
+                } else if (error.code === "permission-denied") {
                     const waitTime = getTimeUntilMidnight();
                     window.alert(`You've exceeded your daily limit. Please try again in ${formatWaitTime(waitTime)}.`);
                 } else {
