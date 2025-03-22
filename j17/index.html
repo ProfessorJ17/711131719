@@ -201,9 +201,8 @@
             return timeRemaining;
         }
 
-        // Fetch user data from Firestore
+        // Fetch user data from Firestore using allowedEmails
         async function getLatestUserData(user) {
-           // const userDoc = await getDoc(doc(db, "users", user.uid));
             const userDoc = await getDoc(doc(db, "allowedEmails", user.email));
             if (!userDoc.exists()) {
                 throw new Error("User document not found.");
