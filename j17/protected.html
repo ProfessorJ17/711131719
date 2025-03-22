@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Protected Agent Page</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div id="protectedContent" style="display: none;">
+    <h1>Agent Interaction</h1>
+    <p>Welcome! Click the agent below. Limit: 5 clicks per day.</p>
+    <!-- D-ID Agent Script -->
+    <script
+      type="module"
+      src="https://agent.d-id.com/v1/index.js"
+      data-name="did-agent"
+      data-mode="fabio"
+      data-client-key="Z29vZ2xlLW9hdXRoMnwxMDI1NDc5NDg2ODI5NjkwNzc4MDg6RkpFT0VWOTBqYVFVb3lHT3hMU2Zt"
+      data-agent-id="agt_k9HerVqC"
+      data-monitor="true">
+    </script>
+    <p id="clickCount">Clicks left today: <span id="remaining">Checking...</span></p>
+    <a href="index.html">Back to Home</a>
+  </div>
+  <div id="unauthorized" style="display: none;">
+    <h1>Access Denied</h1>
+    <p>Please log in to view this page.</p>
+    <a href="index.html">Go to Login</a>
+  </div>
+
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js"></script>
+  <!-- Firebase Config -->
+  <script src="config.js"></script>
+  <!-- Protected Page Logic -->
+  <script>
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+
+    // Check authentication state
+    auth.onAuthStateChanged(async (user) => {
+      if (user) {
+        document.getElementById("protectedContent").style.display = "block";
+        document.getElementById("unauthorized").style.display = "none";
+        await manageClickLimit(user.uid);
+      } else {
+        document.getElementById("protectedContent").style.display = "none";
+        document.getElementById("unauthorized").style.display = "block";
+        setTimeout(() => window.location.href = "index.html", 2000);
+      }
+    });
+
+    async function manageClickLimit(userId) {
+      const userRef = db.collection("userClicks").doc(userId);
+      const today = new Date().toISOString().split("T")[0];
+      let clicksLeft = 5;
+
+      try {
+        const doc = await userRef.get();
+        if (doc.exists) {
+          const data = doc.data();
+          if (data.lastReset !== today) {
+            await userRef.set({ count: 0, lastReset: today });
+          } else {
+            clicksLeft = 5 - data.count;
+          }
+        } else {
+          await userRef.set({ count: 0, lastReset: today });
+        }
+        document.getElementById("remaining").textContent = clicksLeft;
+
+        // Wait for D-ID agent to load
+        waitForAgent(userRef, clicksLeft);
+      } catch (error) {
+        console.error("Error managing click limit:", error);
+        document.getElementById("remaining").textContent = "Error";
+      }
+    }
+
+    function waitForAgent(userRef, initialClicksLeft) {
+      const checkAgent = setInterval(async () => {
+        const agentElement = document.querySelector("[data-name='did-agent']");
+        if (agentElement) {
+          clearInterval(checkAgent);
+
+          // Add click listener to the embedded element
+          agentElement.addEventListener("click", async (event) => {
+            const docSnap = await userRef.get();
+            const currentCount = docSnap.data().count;
+
+            if (currentCount < 5) {
+              await userRef.update({ count: currentCount + 1 });
+              const newClicksLeft = 5 - (currentCount + 1);
+              document.getElementById("remaining").textContent = newClicksLeft;
+              console.log(`Click recorded. Remaining: ${newClicksLeft}`);
+            } else {
+              alert("You've reached your daily click limit of 5!");
+              agentElement.style.pointerEvents = "none"; // Disable further clicks
+            }
+          });
+        }
+      }, 500); // Check every 500ms
+    }
+  </script>
+</body>
+</html>
