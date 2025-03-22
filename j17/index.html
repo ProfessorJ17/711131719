@@ -135,11 +135,26 @@
         let startTime;
         let lastUpdateTime;
 
-        // Format time function
+        // Format time function (for seconds)
         function formatTime(ms) {
             const minutes = Math.floor(ms / 60000);
             const seconds = Math.floor((ms % 60000) / 1000);
             return `${minutes}:${seconds < 10 ? '0' + seconds : seconds}`;
+        }
+
+        // Format wait time (hours and minutes)
+        function formatWaitTime(msUntilMidnight) {
+            const hours = Math.floor(msUntilMidnight / (1000 * 60 * 60));
+            const minutes = Math.floor((msUntilMidnight % (1000 * 60 * 60)) / (1000 * 60));
+            return `${hours} hour${hours !== 1 ? 's' : ''} and ${minutes} minute${minutes !== 1 ? 's' : ''}`;
+        }
+
+        // Calculate time until midnight
+        function getTimeUntilMidnight() {
+            const now = new Date();
+            const midnight = new Date(now);
+            midnight.setHours(24, 0, 0, 0); // Next midnight
+            return midnight - now;
         }
 
         // Check remaining time from Firestore
@@ -150,7 +165,6 @@
 
             if (docSnap.exists() && docSnap.data().date === today) {
                 const timeUsed = docSnap.data().timeUsed || 0;
-                console.log("Fetched timeUsed from Firestore:", timeUsed);
                 return Math.max(0, MAX_DAILY_MS - timeUsed);
             }
             // Reset if no record or different date
@@ -174,8 +188,6 @@
             const elapsed = Date.now() - startTime;
             const totalTimeUsed = Math.min(timeUsed + elapsed, MAX_DAILY_MS); // Cap at 5 minutes
             const timeRemaining = Math.max(0, MAX_DAILY_MS - totalTimeUsed);
-
-            console.log("Updating Firestore - timeUsed:", totalTimeUsed, "timeRemaining:", timeRemaining);
 
             try {
                 await updateDoc(userTimeDoc, {
@@ -214,7 +226,10 @@
                 clearInterval(timer);
                 timer = null;
                 const finalTimeRemaining = await updateTimeUsed();
-                console.log("Logged out with remaining time:", finalTimeRemaining);
+                if (finalTimeRemaining <= 0) {
+                    const waitTime = getTimeUntilMidnight();
+                    window.alert(`Your daily time limit has been reached. You can log in again in ${formatWaitTime(waitTime)}.`);
+                }
             }
             try {
                 await signOut(auth);
@@ -241,7 +256,8 @@
                 await getLatestUserData(user);
 
                 if (userData.timeRemaining <= 0) {
-                    window.alert("You've used your 5-minute daily limit for today. Please try again tomorrow.");
+                    const waitTime = getTimeUntilMidnight();
+                    window.alert(`You've used your 5-minute daily limit for today. Please try again in ${formatWaitTime(waitTime)}.`);
                     await signOut(auth);
                     return;
                 }
@@ -268,19 +284,24 @@
                     if (timeRemaining <= 0) {
                         clearInterval(timer);
                         timer = null;
-                        window.alert("Your daily time limit has been reached.");
+                        const waitTime = getTimeUntilMidnight();
+                        window.alert(`Your daily time limit has been reached. You can log in again in ${formatWaitTime(waitTime)}.`);
                         await logout();
                     }
                 }, 1000);
             } catch (error) {
                 console.error("Login error:", error);
-                window.alert("Error occurred: " + error.message);
+                if (error.code === "permission-denied") {
+                    const waitTime = getTimeUntilMidnight();
+                    window.alert(`You've exceeded your daily limit. Please try again in ${formatWaitTime(waitTime)}.`);
+                } else {
+                    window.alert("Error occurred: " + error.message);
+                }
             }
         });
 
         // Logout handler
         logoutBtn.addEventListener('click', async () => {
-            console.log("Logout clicked");
             await logout();
         });
 
@@ -307,7 +328,8 @@
                 if (timeRemaining <= 0) {
                     clearInterval(timer);
                     timer = null;
-                    window.alert("Your daily time limit has been reached.");
+                    const waitTime = getTimeUntilMidnight();
+                    window.alert(`Your daily time limit has been reached. You can log in again in ${formatWaitTime(waitTime)}.`);
                     await logout();
                 }
             }, 1000);
