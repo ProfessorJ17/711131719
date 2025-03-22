@@ -4,13 +4,12 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Protected Agent Page</title>
-  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <div id="protectedContent" style="display: none;">
     <h1>Agent Interaction</h1>
-    <p>Welcome! Click the agent below. Limit: 5 clicks per day.</p>
-    <!-- D-ID Agent Script -->
+    <p>Welcome! Interact with the agent below.</p>
     <script
       type="module"
       src="https://agent.d-id.com/v1/index.js"
@@ -20,7 +19,6 @@
       data-agent-id="agt_k9HerVqC"
       data-monitor="true">
     </script>
-    <p id="clickCount">Clicks left today: <span id="remaining">Checking...</span></p>
     <a href="index.html">Back to Home</a>
   </div>
   <div id="unauthorized" style="display: none;">
@@ -29,13 +27,10 @@
     <a href="index.html">Go to Login</a>
   </div>
 
-  <!-- Firebase SDKs -->
   <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js"></script>
-  <!-- Firebase Config -->
   <script src="config.js"></script>
-  <!-- Protected Page Logic -->
   <script>
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
@@ -48,7 +43,6 @@
         if (user.emailVerified && userDoc.exists && userDoc.data().purchased === true) {
           document.getElementById("protectedContent").style.display = "block";
           document.getElementById("unauthorized").style.display = "none";
-          await manageClickLimit(user.uid);
         } else {
           auth.signOut();
           document.getElementById("protectedContent").style.display = "none";
@@ -61,54 +55,6 @@
         setTimeout(() => window.location.href = "index.html", 2000);
       }
     });
-
-    async function manageClickLimit(userId) {
-      const clickRef = db.collection("userClicks").doc(userId);
-      const today = new Date().toISOString().split("T")[0];
-      let clicksLeft = 5;
-
-      try {
-        const doc = await clickRef.get();
-        if (doc.exists) {
-          const data = doc.data();
-          if (data.lastReset !== today) {
-            await clickRef.set({ count: 0, lastReset: today });
-          } else {
-            clicksLeft = 5 - data.count;
-          }
-        } else {
-          await clickRef.set({ count: 0, lastReset: today });
-        }
-        document.getElementById("remaining").textContent = clicksLeft;
-
-        waitForAgent(clickRef, clicksLeft);
-      } catch (error) {
-        console.error("Error managing click limit:", error);
-        document.getElementById("remaining").textContent = "Error";
-      }
-    }
-
-    function waitForAgent(clickRef, initialClicksLeft) {
-      const checkAgent = setInterval(async () => {
-        const agentElement = document.querySelector("[data-name='did-agent']");
-        if (agentElement) {
-          clearInterval(checkAgent);
-          agentElement.addEventListener("click", async () => {
-            const docSnap = await clickRef.get();
-            const currentCount = docSnap.data().count;
-
-            if (currentCount < 5) {
-              await clickRef.update({ count: currentCount + 1 });
-              const newClicksLeft = 5 - (currentCount + 1);
-              document.getElementById("remaining").textContent = newClicksLeft;
-            } else {
-              alert("You've reached your daily click limit of 5!");
-              agentElement.style.pointerEvents = "none";
-            }
-          });
-        }
-      }, 500);
-    }
   </script>
 </body>
 </html>
