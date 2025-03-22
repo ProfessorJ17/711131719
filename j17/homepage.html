@@ -67,14 +67,13 @@
             throw new Error("No user data");
         }
 
-        // Fetch latest purchased status from Firestore
+        // Fetch latest user data from Firestore
         async function getLatestUserData() {
             const userDoc = await getDoc(doc(db, "users", userData.uid));
             if (userDoc.exists()) {
                 userData.purchased = userDoc.data().purchased || false;
                 localStorage.setItem('userData', JSON.stringify(userData));
             } else {
-                // If no user doc exists, create it with default purchased: false
                 await setDoc(doc(db, "users", userData.uid), {
                     email: userData.email,
                     purchased: false
@@ -82,12 +81,14 @@
                 userData.purchased = false;
                 localStorage.setItem('userData', JSON.stringify(userData));
             }
+            return userData.purchased;
         }
 
         // DOM elements
         const usernameDisplay = document.getElementById('username');
         const purchaseStatusDisplay = document.getElementById('purchase-status');
         const timeDisplay = document.getElementById('time-remaining');
+        const logoutBtn = document.getElementById('logout-btn');
 
         // Format time function
         function formatTime(ms) {
@@ -97,7 +98,7 @@
         }
 
         // Update time and display in real-time
-        async function updateTimeUsed() {
+        async function updateTimeUsed(startTime) {
             const today = new Date().toISOString().split('T')[0];
             const userTimeDoc = doc(db, "userTime", userData.uid);
             const docSnap = await getDoc(userTimeDoc);
@@ -114,10 +115,8 @@
             const totalTimeUsed = timeUsed + elapsed;
             const timeRemaining = Math.max(0, MAX_DAILY_MINUTES * MILLISECONDS_PER_MINUTE - totalTimeUsed);
             
-            // Update display in real-time
             timeDisplay.textContent = formatTime(timeRemaining);
 
-            // Save to Firestore
             await updateDoc(userTimeDoc, {
                 timeUsed: totalTimeUsed,
                 date: today
@@ -129,36 +128,42 @@
                 localStorage.removeItem('userData');
                 window.location.href = 'index.html';
             }
+            return timeRemaining;
         }
 
         // Initialize page
         const startTime = Date.now();
-        getLatestUserData().then(() => {
+        getLatestUserData().then((purchased) => {
             usernameDisplay.textContent = userData.name;
-            purchaseStatusDisplay.textContent = userData.purchased ? 'Active' : 'Inactive';
-            
-            // Set initial time display
+            purchaseStatusDisplay.textContent = purchased ? 'Active' : 'Inactive';
             timeDisplay.textContent = formatTime(userData.timeRemaining);
 
-            // Start real-time timer for all users
-            const timer = setInterval(async () => {
-                await updateTimeUsed();
+            // Start real-time timer
+            let timer = setInterval(async () => {
+                await updateTimeUsed(startTime);
             }, 1000);
-            
-            // Cleanup on logout
-            document.getElementById('logout-btn').addEventListener('click', async () => {
+
+            // Logout button handler
+            logoutBtn.addEventListener('click', async () => {
                 clearInterval(timer);
-                await updateTimeUsed();
-                await signOut(auth);
-                localStorage.removeItem('userData');
-                window.location.href = 'index.html';
+                await updateTimeUsed(startTime);
+                await signOut(auth).then(() => {
+                    localStorage.removeItem('userData');
+                    window.location.href = 'index.html';
+                }).catch((error) => {
+                    console.error("Logout error:", error);
+                    window.alert("Error during logout: " + error.message);
+                });
             });
 
             // Cleanup on page unload
             window.addEventListener('beforeunload', async () => {
                 clearInterval(timer);
-                await updateTimeUsed();
+                await updateTimeUsed(startTime);
             });
+        }).catch((error) => {
+            console.error("Error fetching user data:", error);
+            window.alert("Error initializing page: " + error.message);
         });
     </script>
 </body>
