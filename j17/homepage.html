@@ -42,7 +42,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js";
         import { getAuth, signOut } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js";
-        import { getFirestore, doc, updateDoc, getDoc } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
+        import { getFirestore, doc, updateDoc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyDpIapJzv54LIApO_yM2f-SrwkXbjjLRPo",
@@ -70,18 +70,18 @@
         // Fetch latest user data from Firestore
         async function getLatestUserData() {
             const userDoc = await getDoc(doc(db, "users", userData.uid));
+            let purchased = false;
             if (userDoc.exists()) {
-                userData.purchased = userDoc.data().purchased || false;
-                localStorage.setItem('userData', JSON.stringify(userData));
+                purchased = userDoc.data().purchased || false;
             } else {
                 await setDoc(doc(db, "users", userData.uid), {
                     email: userData.email,
                     purchased: false
                 });
-                userData.purchased = false;
-                localStorage.setItem('userData', JSON.stringify(userData));
             }
-            return userData.purchased;
+            userData.purchased = purchased;
+            localStorage.setItem('userData', JSON.stringify(userData));
+            return purchased;
         }
 
         // DOM elements
@@ -98,7 +98,7 @@
         }
 
         // Update time and display in real-time
-        async function updateTimeUsed(startTime) {
+        async function updateTimeUsed() {
             const today = new Date().toISOString().split('T')[0];
             const userTimeDoc = doc(db, "userTime", userData.uid);
             const docSnap = await getDoc(userTimeDoc);
@@ -123,47 +123,49 @@
             });
 
             if (timeRemaining <= 0) {
+                clearInterval(timer); // Stop timer when time runs out
                 window.alert("Your daily time limit has been reached.");
                 await signOut(auth);
                 localStorage.removeItem('userData');
                 window.location.href = 'index.html';
             }
-            return timeRemaining;
         }
 
         // Initialize page
         const startTime = Date.now();
+        let timer; // Declare timer globally
         getLatestUserData().then((purchased) => {
             usernameDisplay.textContent = userData.name;
             purchaseStatusDisplay.textContent = purchased ? 'Active' : 'Inactive';
             timeDisplay.textContent = formatTime(userData.timeRemaining);
 
             // Start real-time timer
-            let timer = setInterval(async () => {
-                await updateTimeUsed(startTime);
-            }, 1000);
+            timer = setInterval(updateTimeUsed, 1000);
 
             // Logout button handler
             logoutBtn.addEventListener('click', async () => {
                 clearInterval(timer);
-                await updateTimeUsed(startTime);
-                await signOut(auth).then(() => {
+                await updateTimeUsed();
+                try {
+                    await signOut(auth);
                     localStorage.removeItem('userData');
                     window.location.href = 'index.html';
-                }).catch((error) => {
+                } catch (error) {
                     console.error("Logout error:", error);
                     window.alert("Error during logout: " + error.message);
-                });
-            });
-
-            // Cleanup on page unload
-            window.addEventListener('beforeunload', async () => {
-                clearInterval(timer);
-                await updateTimeUsed(startTime);
+                }
             });
         }).catch((error) => {
             console.error("Error fetching user data:", error);
             window.alert("Error initializing page: " + error.message);
+        });
+
+        // Cleanup on page unload
+        window.addEventListener('beforeunload', async () => {
+            if (timer) {
+                clearInterval(timer);
+                await updateTimeUsed();
+            }
         });
     </script>
 </body>
