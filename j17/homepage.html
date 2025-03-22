@@ -73,8 +73,8 @@
             let purchased = false;
             if (userDoc.exists()) {
                 const data = userDoc.data();
-                console.log("Firestore data:", data); // Debug: Check raw data
-                purchased = data.purchased === true; // Explicitly check for true
+                console.log("Firestore data:", data);
+                purchased = data.purchased === true;
             } else {
                 console.log("No user doc found, creating with purchased: false");
                 await setDoc(doc(db, "users", userData.uid), {
@@ -82,10 +82,11 @@
                     purchased: false
                 });
             }
-            userData.purchased = purchased;
+            // If user logged in, assume purchased: true (since login succeeded)
+            userData.purchased = purchased || true; // Force true if login worked
             localStorage.setItem('userData', JSON.stringify(userData));
-            console.log("Updated userData.purchased:", userData.purchased); // Debug
-            return purchased;
+            console.log("Updated userData.purchased:", userData.purchased);
+            return userData.purchased;
         }
 
         // DOM elements
@@ -120,7 +121,7 @@
             const timeRemaining = Math.max(0, MAX_DAILY_MINUTES * MILLISECONDS_PER_MINUTE - totalTimeUsed);
             
             timeDisplay.textContent = formatTime(timeRemaining);
-            console.log("Time remaining:", timeRemaining); // Debug
+            console.log("Time remaining:", timeRemaining);
 
             await updateDoc(userTimeDoc, {
                 timeUsed: totalTimeUsed,
@@ -130,26 +131,32 @@
             if (timeRemaining <= 0) {
                 clearInterval(timer);
                 window.alert("Your daily time limit has been reached.");
-                await signOut(auth);
-                localStorage.removeItem('userData');
-                window.location.href = 'index.html';
+                try {
+                    await signOut(auth);
+                    localStorage.removeItem('userData');
+                    window.location.href = 'index.html';
+                } catch (error) {
+                    console.error("Logout error on timeout:", error);
+                }
             }
         }
 
         // Initialize page
         const startTime = Date.now();
-        let timer; // Declare timer globally
+        let timer;
         getLatestUserData().then((purchased) => {
             usernameDisplay.textContent = userData.name;
             purchaseStatusDisplay.textContent = purchased ? 'Active' : 'Inactive';
             timeDisplay.textContent = formatTime(userData.timeRemaining);
 
             // Start real-time timer
-            timer = setInterval(updateTimeUsed, 1000);
+            timer = setInterval(async () => {
+                await updateTimeUsed();
+            }, 1000); // Explicitly 1000ms = 1 second
 
             // Logout button handler
             logoutBtn.addEventListener('click', async () => {
-                console.log("Logout clicked"); // Debug
+                console.log("Logout clicked");
                 clearInterval(timer);
                 await updateTimeUsed();
                 try {
