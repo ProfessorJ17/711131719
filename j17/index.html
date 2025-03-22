@@ -25,29 +25,17 @@
             letter-spacing: 0.1em;
         }
 
-        p {
-            margin-top: 5%;
-            margin-bottom: 5%;
-            width: 100%;
-            text-align: center;
-            border-bottom: 1px solid #000;
-            line-height: 0.1em;
-        }
-
-        p span {
-            background: #fff;
-            padding: 0 10px;
-        }
-
         input {
             margin-bottom: 3%;
+            padding: 3%;
+            width: 100%;
         }
 
         input:last-of-type {
             margin-bottom: 0;
         }
 
-        input, button {
+        button {
             padding: 3%;
             width: 100%;
         }
@@ -58,11 +46,11 @@
             box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
             width: 40vw;
             margin-left: 30vw;
-            height: 70vh;
-            margin-top: 15vh;
+            height: 50vh;
+            margin-top: 25vh;
         }
 
-        #submit, #create-acct-btn {
+        #submit {
             background-color: #0583D2;
             color: white;
             border: none;
@@ -74,22 +62,6 @@
             opacity: 0.8;
             transition: 0.3s;
         }
-
-        #sign-up {
-            border: none;
-        }
-
-        #create-acct {
-            display: none;
-        }
-
-        #return-btn {
-            background: none;
-            color: grey;
-            text-decoration: underline;
-            border: none;
-            margin-top: 3%;
-        }
     </style>
 </head>
 <body>
@@ -99,26 +71,14 @@
             <input id="email" type="text" placeholder="Email"></input>
             <input id="password" type="password" placeholder="Password"></input>
             <button id="submit">Submit</button>
-            <p><span>or</span></p>
-            <button id="sign-up">Sign Up</button>
-        </div>
-
-        <div id="create-acct">
-            <h1>Create an Account</h1>
-            <input id="email-signup" type="text" placeholder="Email *"></input>
-            <input id="confirm-email-signup" type="email" placeholder="Confirm Email *"></input>
-            <input id="password-signup" type="password" placeholder="Password *"></input>
-            <input id="confirm-password-signup" type="password" placeholder="Confirm Password *"></input>
-            <button id="create-acct-btn">Create Account</button>
-            <button id="return-btn">Return to Login</button>
         </div>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js";
         import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-analytics.js";
-        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js";
-        import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
+        import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js";
+        import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyDpIapJzv54LIApO_yM2f-SrwkXbjjLRPo",
@@ -139,17 +99,8 @@
         const MILLISECONDS_PER_MINUTE = 60000;
 
         const submitButton = document.getElementById("submit");
-        const signupButton = document.getElementById("sign-up");
         const emailInput = document.getElementById("email");
         const passwordInput = document.getElementById("password");
-        const main = document.getElementById("main");
-        const createacct = document.getElementById("create-acct");
-        const signupEmailIn = document.getElementById("email-signup");
-        const confirmSignupEmailIn = document.getElementById("confirm-email-signup");
-        const signupPasswordIn = document.getElementById("password-signup");
-        const confirmSignUpPasswordIn = document.getElementById("confirm-password-signup");
-        const createacctbtn = document.getElementById("create-acct-btn");
-        const returnBtn = document.getElementById("return-btn");
 
         async function checkTimeRemaining(userId) {
             const today = new Date().toISOString().split('T')[0];
@@ -173,7 +124,6 @@
                 const userCredential = await signInWithEmailAndPassword(auth, email, password);
                 const user = userCredential.user;
                 
-                // Fetch purchased status from users collection
                 const userDoc = await getDoc(doc(db, "users", user.uid));
                 const purchased = userDoc.exists() ? userDoc.data().purchased || false : false;
                 
@@ -200,73 +150,6 @@
                 console.log("Error:", error.message);
                 window.alert("Error occurred: " + error.message);
             }
-        });
-
-        createacctbtn.addEventListener("click", async function() {
-            var isVerified = true;
-            const signupEmail = signupEmailIn.value;
-            const confirmSignupEmail = confirmSignupEmailIn.value;
-            const signupPassword = signupPasswordIn.value;
-            const confirmSignUpPassword = confirmSignUpPasswordIn.value;
-
-            if(signupEmail !== confirmSignupEmail) {
-                window.alert("Email fields do not match. Try again.");
-                isVerified = false;
-            }
-
-            if(signupPassword !== confirmSignUpPassword) {
-                window.alert("Password fields do not match. Try again.");
-                isVerified = false;
-            }
-
-            if(!signupEmail || !confirmSignupEmail || !signupPassword || !confirmSignUpPassword) {
-                window.alert("Please fill out all required fields.");
-                isVerified = false;
-            }
-
-            if(isVerified) {
-                try {
-                    const userCredential = await createUserWithEmailAndPassword(auth, signupEmail, signupPassword);
-                    const user = userCredential.user;
-                    
-                    // Set initial user data in users collection
-                    await setDoc(doc(db, "users", user.uid), {
-                        email: signupEmail,
-                        purchased: false
-                    });
-
-                    // Initialize user time tracking
-                    const today = new Date().toISOString().split('T')[0];
-                    await setDoc(doc(db, "userTime", user.uid), {
-                        date: today,
-                        timeUsed: 0
-                    });
-
-                    const userData = {
-                        email: signupEmail,
-                        name: signupEmail.split('@')[0],
-                        purchased: false,
-                        uid: user.uid,
-                        timeRemaining: MAX_DAILY_MINUTES * MILLISECONDS_PER_MINUTE
-                    };
-                    localStorage.setItem('userData', JSON.stringify(userData));
-                    
-                    window.alert("Success! Account created.");
-                    window.location.href = 'homepage.html';
-                } catch (error) {
-                    window.alert("Error occurred: " + error.message);
-                }
-            }
-        });
-
-        signupButton.addEventListener("click", function() {
-            main.style.display = "none";
-            createacct.style.display = "block";
-        });
-
-        returnBtn.addEventListener("click", function() {
-            main.style.display = "block";
-            createacct.style.display = "none";
         });
     </script>
 </body>
