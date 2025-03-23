@@ -258,14 +258,14 @@
             const today = getLocalDate();
             const userDocRef = doc(db, "allowedEmails", userData.email);
             const elapsed = Date.now() - startTime;
-            const totalTimeUsed = Math.min(initialTimeUsed + elapsed, NORMAL_DAILY_MS);
+            const totalTimeUsed = Math.min((initialTimeUsed || 0) + elapsed, NORMAL_DAILY_MS); // Default to 0 if undefined
             const timeRemaining = Math.max(0, NORMAL_DAILY_MS - totalTimeUsed);
 
             try {
                 const currentDoc = await getDoc(userDocRef);
                 const currentData = currentDoc.data();
                 window.alert(`Before save: date=${currentData.date}, timeused=${currentData.timeused}, name=${currentData.name}, uid=${currentData.uid}`);
-                window.alert(`Saving on logout: date=${today}, timeused=${totalTimeUsed}`);
+                window.alert(`Saving on logout: date=${today}, timeused=${totalTimeUsed}, initialTimeUsed=${initialTimeUsed}, elapsed=${elapsed}`);
                 await updateDoc(userDocRef, { 
                     date: today, 
                     timeused: totalTimeUsed, 
@@ -289,7 +289,7 @@
                 return Infinity;
             }
             const elapsed = Date.now() - startTime;
-            const totalTimeUsed = Math.min(initialTimeUsed + elapsed, NORMAL_DAILY_MS);
+            const totalTimeUsed = Math.min((initialTimeUsed || 0) + elapsed, NORMAL_DAILY_MS); // Default to 0 if undefined
             return Math.max(0, NORMAL_DAILY_MS - totalTimeUsed);
         }
 
