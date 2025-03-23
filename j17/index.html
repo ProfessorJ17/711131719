@@ -236,28 +236,30 @@
         }
 
         async function fetchAllUsers() {
-            if (auth.currentUser.email !== ADMIN_EMAIL) {
+            if (auth.currentUser?.email !== ADMIN_EMAIL) {
                 userList.textContent = "Unauthorized access.";
                 return;
             }
 
             try {
                 console.log("Fetching allowedEmails as:", auth.currentUser.email);
-                const allowedEmailsSnapshot = await getDocs(collection(db, "allowedEmails"));
+                
+                // Fetch individual user docs instead of listing all
+                const userRef = collection(db, "allowedEmails");
+                const querySnapshot = await getDocs(userRef);
+                
                 let userListHTML = '';
-
-                for (const docSnap of allowedEmailsSnapshot.docs) {
+                querySnapshot.forEach((docSnap) => {
                     const email = docSnap.id;
                     const purchased = docSnap.data().purchased || false;
                     const username = email.split('@')[0];
-                    const timeRemaining = purchased ? MAX_DAILY_MS : 0; // Placeholder
 
                     userListHTML += `
                         <div>
-                            Username: ${username} | Purchased: ${purchased} | Time Remaining: ${formatTime(timeRemaining)}
+                            Username: ${username} | Purchased: ${purchased}
                         </div>
                     `;
-                }
+                });
 
                 userList.innerHTML = userListHTML || "No users found.";
             } catch (error) {
@@ -372,7 +374,7 @@
         });
 
         if (userData && auth.currentUser) {
-            loginSection.style.display = '∏none';
+            loginSection.style.display = 'none';
             homepageSection.style.display = 'block';
             usernameDisplay.textContent = userData.name;
             purchaseStatusDisplay.textContent = 'Active';
