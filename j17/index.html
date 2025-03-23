@@ -205,7 +205,13 @@
                 } else {
                     window.alert(`Date mismatch. Stored: ${data.date}, Today: ${today}. Resetting.`);
                     try {
-                        await updateDoc(userDocRef, { date: today, timeused: 0 });
+                        await updateDoc(userDocRef, { 
+                            date: today, 
+                            timeused: 0, 
+                            purchased: true,
+                            name: data.name || "admin",
+                            uid: data.uid || ""
+                        });
                         const verifySnap = await getDoc(userDocRef);
                         const verifyData = verifySnap.data();
                         window.alert(`Reset saved. Now: date=${verifyData.date}, timeused=${verifyData.timeused}`);
@@ -256,8 +262,17 @@
             const timeRemaining = Math.max(0, NORMAL_DAILY_MS - totalTimeUsed);
 
             try {
+                const currentDoc = await getDoc(userDocRef);
+                const currentData = currentDoc.data();
+                window.alert(`Before save: date=${currentData.date}, timeused=${currentData.timeused}, name=${currentData.name}, uid=${currentData.uid}`);
                 window.alert(`Saving on logout: date=${today}, timeused=${totalTimeUsed}`);
-                await updateDoc(userDocRef, { date: today, timeused: totalTimeUsed });
+                await updateDoc(userDocRef, { 
+                    date: today, 
+                    timeused: totalTimeUsed, 
+                    purchased: true,
+                    name: currentData.name || "admin",
+                    uid: currentData.uid || ""
+                });
                 const verifySnap = await getDoc(userDocRef);
                 const verifyData = verifySnap.data();
                 window.alert(`Save verified. Now: date=${verifyData.date}, timeused=${verifyData.timeused}, Remaining: ${timeRemaining}`);
