@@ -128,7 +128,7 @@
         const MILLISECONDS_PER_MINUTE = 60000;
         const MAX_DAILY_MS = MAX_DAILY_MINUTES * MILLISECONDS_PER_MINUTE;
         const UPDATE_INTERVAL = 10000; // Update Firestore every 10 seconds
-        const ADMIN_EMAIL = "admin@example.com"; // Replace with your actual admin email
+        const ADMIN_EMAIL = "jesse3@example.com"; // Replace with your actual admin email
 
         // DOM elements
         const loginSection = document.getElementById('login-section');
@@ -225,7 +225,10 @@
             if (userDoc.data().purchased !== true) {
                 throw new Error("No active subscription found.");
             }
-            const timeRemaining = await checkTimeRemaining(user.uid);
+            // Bypass time check for admin when not testing another user
+            let timeRemaining = (user.email === ADMIN_EMAIL && !testEmail) 
+                ? Infinity 
+                : await checkTimeRemaining(user.uid);
             userData = {
                 email: emailToFetch,
                 name: emailToFetch.split('@')[0],
@@ -242,10 +245,12 @@
             if (timer) {
                 clearInterval(timer);
                 timer = null;
-                const finalTimeRemaining = await updateTimeUsed();
-                if (finalTimeRemaining <= 0 && userData.email !== ADMIN_EMAIL) {
-                    const waitTime = getTimeUntilMidnight();
-                    window.alert(`Your daily time limit has been reached. You can log in again in ${formatWaitTime(waitTime)}.`);
+                if (userData.email !== ADMIN_EMAIL) {
+                    const finalTimeRemaining = await updateTimeUsed();
+                    if (finalTimeRemaining <= 0) {
+                        const waitTime = getTimeUntilMidnight();
+                        window.alert(`Your daily time limit has been reached. You can log in again in ${formatWaitTime(waitTime)}.`);
+                    }
                 }
             }
             try {
@@ -272,7 +277,7 @@
 
                 await getLatestUserData(user);
 
-                // Skip time limit check for admin
+                // Only enforce time limit for non-admin users
                 if (user.email !== ADMIN_EMAIL && userData.timeRemaining <= 0) {
                     const waitTime = getTimeUntilMidnight();
                     window.alert(`You've used your 5-minute daily limit for today. Please try again in ${formatWaitTime(waitTime)}.`);
@@ -295,10 +300,14 @@
                 lastUpdateTime = Date.now();
                 timer = setInterval(async () => {
                     const elapsed = Date.now() - startTime;
-                    const timeRemaining = Math.max(0, userData.timeRemaining - elapsed);
-                    timeDisplay.textContent = formatTime(timeRemaining);
+                    const timeRemaining = userData.timeRemaining === Infinity 
+                        ? Infinity 
+                        : Math.max(0, userData.timeRemaining - elapsed);
+                    timeDisplay.textContent = timeRemaining === Infinity 
+                        ? "Unlimited" 
+                        : formatTime(timeRemaining);
 
-                    if (Date.now() - lastUpdateTime >= UPDATE_INTERVAL) {
+                    if (timeRemaining !== Infinity && Date.now() - lastUpdateTime >= UPDATE_INTERVAL) {
                         await updateTimeUsed();
                         lastUpdateTime = Date.now();
                         userData.timeRemaining = timeRemaining; // Update local data
@@ -338,7 +347,9 @@
                 if (timer) {
                     clearInterval(timer);
                     timer = null;
-                    await updateTimeUsed();
+                    if (userData.email !== ADMIN_EMAIL) {
+                        await updateTimeUsed();
+                    }
                 }
                 const user = auth.currentUser;
                 await getLatestUserData(user, testEmail);
@@ -383,7 +394,9 @@
             homepageSection.style.display = 'block';
             usernameDisplay.textContent = userData.name;
             purchaseStatusDisplay.textContent = 'Active';
-            timeDisplay.textContent = formatTime(userData.timeRemaining);
+            timeDisplay.textContent = userData.timeRemaining === Infinity 
+                ? "Unlimited" 
+                : formatTime(userData.timeRemaining);
 
             // Show admin section if logged in as admin
             if (userData.email === ADMIN_EMAIL) {
@@ -394,10 +407,14 @@
             lastUpdateTime = Date.now();
             timer = setInterval(async () => {
                 const elapsed = Date.now() - startTime;
-                const timeRemaining = Math.max(0, userData.timeRemaining - elapsed);
-                timeDisplay.textContent = formatTime(timeRemaining);
+                const timeRemaining = userData.timeRemaining === Infinity 
+                    ? Infinity 
+                    : Math.max(0, userData.timeRemaining - elapsed);
+                timeDisplay.textContent = timeRemaining === Infinity 
+                    ? "Unlimited" 
+                    : formatTime(timeRemaining);
 
-                if (Date.now() - lastUpdateTime >= UPDATE_INTERVAL) {
+                if (timeRemaining !== Infinity && Date.now() - lastUpdateTime >= UPDATE_INTERVAL) {
                     await updateTimeUsed();
                     lastUpdateTime = Date.now();
                     userData.timeRemaining = timeRemaining;
@@ -418,7 +435,9 @@
             if (timer) {
                 clearInterval(timer);
                 timer = null;
-                await updateTimeUsed();
+                if (userData.email !== ADMIN_EMAIL) {
+                    await updateTimeUsed();
+                }
             }
         });
     </script>
