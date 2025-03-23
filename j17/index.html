@@ -92,14 +92,13 @@
         const emailInput = document.getElementById('email');
         const passwordInput = document.getElementById('password');
         const ADMIN_EMAIL = "jesse3@example.com";
-        const ADMIN_DAILY_MS = 23 * 60 * 60 * 1000; // 23 hours in ms
-        const NORMAL_DAILY_MS = 5 * 60 * 1000; // 5 minutes in ms
+        const DAILY_MS = 10 * 60 * 1000; // 10 minutes in ms for everyone
 
         async function checkTimeRemaining(userId, email) {
             const today = new Date().toISOString().split('T')[0];
             const userTimeDoc = doc(db, "userTime", userId);
             const docSnap = await getDoc(userTimeDoc);
-            const maxDailyMs = email === ADMIN_EMAIL ? ADMIN_DAILY_MS : NORMAL_DAILY_MS;
+            const maxDailyMs = DAILY_MS;
 
             console.log("Checking time for:", { userId, email, today, maxDailyMs });
 
