@@ -139,7 +139,7 @@
         const MILLISECONDS_PER_MINUTE = 60000;
         const MAX_DAILY_MS = MAX_DAILY_MINUTES * MILLISECONDS_PER_MINUTE;
         const UPDATE_INTERVAL = 10000; // Update Firestore every 10 seconds
-        const ADMIN_EMAIL = "jesse3@example.com"; // Updated to your admin email
+        const ADMIN_EMAIL = "jesse3@example.com";
 
         // DOM elements
         const loginSection = document.getElementById('login-section');
@@ -182,17 +182,27 @@
             return midnight - now;
         }
 
-        // Check remaining time from Firestore
+        // Check remaining time from Firestore without resetting unless it's a new day
         async function checkTimeRemaining(userId) {
             const today = new Date().toISOString().split('T')[0];
             const userTimeDoc = doc(db, "userTime", userId);
             const docSnap = await getDoc(userTimeDoc);
 
-            if (docSnap.exists() && docSnap.data().date === today) {
-                const timeUsed = docSnap.data().timeUsed || 0;
-                return Math.max(0, MAX_DAILY_MS - timeUsed);
+            if (docSnap.exists()) {
+                const data = docSnap.data();
+                if (data.date === today) {
+                    const timeUsed = data.timeUsed || 0;
+                    return Math.max(0, MAX_DAILY_MS - timeUsed);
+                } else {
+                    // New day, reset timeUsed to 0
+                    await setDoc(userTimeDoc, { date: today, timeUsed: 0 }, { merge: true });
+                    return MAX_DAILY_MS;
+                }
+            } else {
+                // No document exists, create it with 5 minutes
+                await setDoc(userTimeDoc, { date: today, timeUsed: 0 });
+                return MAX_DAILY_MS;
             }
-            return MAX_DAILY_MS; // Default to 5 minutes if no record
         }
 
         // Update time used and save to Firestore
@@ -262,8 +272,8 @@
                     const email = docSnap.id;
                     const purchased = docSnap.data().purchased || false;
                     const username = email.split('@')[0];
-                    // Without emailToUid, time defaults to 5:00; implement mapping for accuracy
-                    const timeRemaining = MAX_DAILY_MS; // Placeholder until emailToUid is added
+                    // Placeholder time until emailToUid is implemented
+                    const timeRemaining = purchased ? MAX_DAILY_MS : 0; // Default to 5:00 or 0 if not purchased
 
                     userListHTML += `
                         <div>
@@ -276,6 +286,32 @@
             } catch (error) {
                 console.error("Error fetching users:", error);
                 userList.textContent = "Error loading user list: " + error.message;
+            }
+        }
+
+        // Logout function
+        async function logout() {
+            if (timer) {
+                clearInterval(timer);
+                timer = null;
+                if (userData.email !== ADMIN_EMAIL) {
+                    const finalTimeRemaining = await updateTimeUsed();
+                    if (finalTimeRemaining <= 0) {
+                        const waitTime = getTimeUntilMidnight();
+                        window.alert(`Your daily time limit has been reached. You can log in again in ${formatWaitTime(waitTime)}.`);
+                    }
+                }
+            }
+            try {
+                await signOut(auth);
+                localStorage.removeItem('userData');
+                userData = null;
+                loginSection.style.display = 'block';
+                homepageSection.style.display = 'none';
+                timeDisplay.textContent = '';
+            } catch (error) {
+                console.error("Logout error:", error);
+                window.alert("Error during logout: " + error.message);
             }
         }
 
