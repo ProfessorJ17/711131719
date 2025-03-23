@@ -272,9 +272,8 @@
             purchaseStatusDisplay.textContent = 'Active';
             timeDisplay.textContent = formatTime(userData.timeRemaining);
 
-            // Load D-ID if time remains or admin
-            if (userData.timeRemaining > 0 || userData.email === ADMIN_EMAIL) {
-                console.log("Time > 0 or admin, loading D-ID agent");
+            if (userData.email === ADMIN_EMAIL || userData.timeRemaining > 0) {
+                console.log("Admin or time > 0, loading D-ID agent");
                 loadDIDAgent();
             }
 
@@ -282,7 +281,7 @@
                 adminSection.style.display = 'block';
                 fetchAllUsers();
                 console.log("Admin session, no timer running");
-                return; // No timer for admin
+                return; // Admin stays logged in forever
             }
 
             startTime = Date.now();
