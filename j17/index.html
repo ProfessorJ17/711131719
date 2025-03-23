@@ -223,19 +223,21 @@
         }
 
         async function getUserData(user) {
-            const userDoc = await getDoc(doc(db, "allowedEmails", user.email));
+            const userDoc = await getDoc(doc(db, "allowedEmails", "emailToUid", user.email));
+            console.log("User doc exists:", userDoc.exists());
             if (!userDoc.exists()) {
                 throw new Error("User document not found.");
             }
-            if (userDoc.data().purchased !== true) {
+            const userData = userDoc.data();
+            if (!userData.purchased) {
                 throw new Error("No active subscription found.");
             }
-            const timeRemaining = await checkTimeRemaining(user.uid, user.email);
+            const timeRemaining = await checkTimeRemaining(userData.uid, user.email);
             const data = {
                 email: user.email,
                 name: user.email.split('@')[0],
                 purchased: true,
-                uid: user.uid,
+                uid: userData.uid,
                 timeRemaining: timeRemaining
             };
             console.log("User data:", data);
@@ -278,7 +280,7 @@
         async function checkUserTimeToday(email) {
             try {
                 console.log("Checking time for:", email);
-                const userDoc = await getDoc(doc(db, "allowedEmails", email));
+                const userDoc = await getDoc(doc(db, "allowedEmails", "emailToUid", email));
                 console.log("User doc exists:", userDoc.exists());
                 if (!userDoc.exists()) {
                     timeResult.innerHTML = `Error: User ${email} not found in allowedEmails.`;
