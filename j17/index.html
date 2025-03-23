@@ -203,7 +203,7 @@
                     window.alert(`Same day. Time used: ${initialTimeUsed}, Remaining: ${remaining}`);
                     return remaining;
                 } else {
-                    window.alert(`Date mismatch. Stored: ${data.date}, Today: ${today}. Resetting to 0.`);
+                    window.alert(`Date mismatch. Stored: ${data.date}, Today: ${today}. Resetting.`);
                     try {
                         await updateDoc(userDocRef, { date: today, timeused: 0 });
                         const verifySnap = await getDoc(userDocRef);
@@ -212,12 +212,12 @@
                         initialTimeUsed = 0;
                         return maxDailyMs;
                     } catch (error) {
-                        window.alert("Error resetting time: " + error.message);
+                        window.alert("Reset error: " + error.message);
                         throw error;
                     }
                 }
             } else {
-                window.alert("No document found for: " + email);
+                window.alert("No document for: " + email);
                 throw new Error("User document not found.");
             }
         }
@@ -264,7 +264,7 @@
                 userData.timeRemaining = timeRemaining;
                 return timeRemaining;
             } catch (error) {
-                window.alert("Error saving time: " + error.message);
+                window.alert("Save error: " + error.message);
                 return userData.timeRemaining;
             }
         }
@@ -350,11 +350,8 @@
                     window.alert("User data not found. Contact support.");
                 } else if (error.message === "No active subscription found.") {
                     window.alert("No active subscription.");
-                } else if (error.code === "permission-denied") {
-                    const waitTime = getTimeUntilMidnight();
-                    window.alert(`Daily limit exceeded. Try again in ${formatWaitTime(waitTime)}.`);
                 } else {
-                    window.alert("Error: " + error.message);
+                    window.alert("Login error: " + error.message);
                 }
             }
         });
@@ -437,7 +434,7 @@
             if (timer && userData && userData.email !== ADMIN_EMAIL) {
                 clearInterval(timer);
                 timer = null;
-                saveTimeUsed(); // Synchronous attempt
+                saveTimeUsed();
             }
         });
     </script>
