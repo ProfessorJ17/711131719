@@ -128,7 +128,7 @@
         const MILLISECONDS_PER_MINUTE = 60000;
         const MAX_DAILY_MS = MAX_DAILY_MINUTES * MILLISECONDS_PER_MINUTE;
         const UPDATE_INTERVAL = 10000; // Update Firestore every 10 seconds
-        const ADMIN_EMAIL = "jesse3@example.com"; // Replace with your email
+        const ADMIN_EMAIL = "admin@example.com"; // Replace with your actual admin email
 
         // DOM elements
         const loginSection = document.getElementById('login-section');
@@ -243,7 +243,7 @@
                 clearInterval(timer);
                 timer = null;
                 const finalTimeRemaining = await updateTimeUsed();
-                if (finalTimeRemaining <= 0) {
+                if (finalTimeRemaining <= 0 && userData.email !== ADMIN_EMAIL) {
                     const waitTime = getTimeUntilMidnight();
                     window.alert(`Your daily time limit has been reached. You can log in again in ${formatWaitTime(waitTime)}.`);
                 }
@@ -272,7 +272,8 @@
 
                 await getLatestUserData(user);
 
-                if (userData.timeRemaining <= 0) {
+                // Skip time limit check for admin
+                if (user.email !== ADMIN_EMAIL && userData.timeRemaining <= 0) {
                     const waitTime = getTimeUntilMidnight();
                     window.alert(`You've used your 5-minute daily limit for today. Please try again in ${formatWaitTime(waitTime)}.`);
                     await signOut(auth);
@@ -303,7 +304,7 @@
                         userData.timeRemaining = timeRemaining; // Update local data
                     }
 
-                    if (timeRemaining <= 0) {
+                    if (timeRemaining <= 0 && userData.email !== ADMIN_EMAIL) {
                         clearInterval(timer);
                         timer = null;
                         const waitTime = getTimeUntilMidnight();
@@ -402,7 +403,7 @@
                     userData.timeRemaining = timeRemaining;
                 }
 
-                if (timeRemaining <= 0) {
+                if (timeRemaining <= 0 && userData.email !== ADMIN_EMAIL) {
                     clearInterval(timer);
                     timer = null;
                     const waitTime = getTimeUntilMidnight();
