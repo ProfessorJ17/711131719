@@ -92,24 +92,27 @@
         const emailInput = document.getElementById('email');
         const passwordInput = document.getElementById('password');
         const ADMIN_EMAIL = "jesse3@example.com";
-        const ADMIN_DAILY_MS = 1440 * 60000; // 24 hours
-        const NORMAL_DAILY_MS = 5 * 60000;   // 5 minutes
+        const ADMIN_DAILY_MS = 23 * 60 * 60000 + 59 * 60000 + 59000; // 23:59:59 in ms
+        const NORMAL_DAILY_MS = 5 * 60000; // 5 minutes in ms
 
-        async function checkTimeRemaining(user) {
+        async function checkTimeRemaining(userId, email) {
             const today = new Date().toISOString().split('T')[0];
-            const userTimeDoc = doc(db, "userTime", user.uid);
+            const userTimeDoc = doc(db, "userTime", userId);
             const docSnap = await getDoc(userTimeDoc);
-            const maxDailyMs = user.email === ADMIN_EMAIL ? ADMIN_DAILY_MS : NORMAL_DAILY_MS;
+            const maxDailyMs = email === ADMIN_EMAIL ? ADMIN_DAILY_MS : NORMAL_DAILY_MS;
 
             if (docSnap.exists()) {
                 const data = docSnap.data();
                 if (data.date === today) {
                     const timeUsed = data.timeUsed || 0;
-                    return Math.max(0, maxDailyMs - timeUsed);
+                    const remaining = Math.max(0, maxDailyMs - timeUsed);
+                    console.log("Time remaining from Firestore:", remaining);
+                    return remaining;
                 }
             }
-            // New day or no record, reset to full daily allowance
+            // Reset to max if new day or no record
             await setDoc(userTimeDoc, { date: today, timeUsed: 0 }, { merge: true });
+            console.log("Reset time for new day:", maxDailyMs);
             return maxDailyMs;
         }
 
@@ -121,7 +124,7 @@
             if (userDoc.data().purchased !== true) {
                 throw new Error("No active subscription found.");
             }
-            const timeRemaining = await checkTimeRemaining(user);
+            const timeRemaining = await checkTimeRemaining(user.uid, user.email);
             const userData = {
                 email: user.email,
                 name: user.email.split('@')[0],
