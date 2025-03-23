@@ -144,6 +144,7 @@
         }
 
         function loadDIDAgent() {
+            console.log("Attempting to load D-ID agent");
             const existingScript = document.querySelector('script[data-name="did-agent"]');
             if (existingScript) existingScript.remove();
 
@@ -161,8 +162,8 @@
         }
 
         async function updateTimeUsed() {
-            if (!userData || !timer || userData.email === ADMIN_EMAIL) {
-                console.log("Skipping time update for admin or no userData/timer");
+            if (!userData || userData.email === ADMIN_EMAIL) {
+                console.log("Skipping time update for admin or no userData");
                 return userData.timeRemaining;
             }
 
@@ -182,16 +183,13 @@
             const timeRemaining = Math.max(0, MAX_DAILY_MS - totalTimeUsed);
 
             try {
-                await updateDoc(userTimeDoc, {
-                    timeUsed: totalTimeUsed,
-                    date: today
-                });
-                console.log("Time updated:", { totalTimeUsed, timeRemaining });
+                await updateDoc(userTimeDoc, { timeUsed: totalTimeUsed, date: today });
+                console.log("Time updated in Firestore:", { totalTimeUsed, timeRemaining });
+                return timeRemaining;
             } catch (error) {
                 console.error("Error updating time:", error);
+                return timeRemaining; // Return last known value on error
             }
-
-            return timeRemaining;
         }
 
         async function fetchAllUsers() {
@@ -254,15 +252,8 @@
 
         onAuthStateChanged(auth, (user) => {
             console.log("Auth state changed:", user ? user.email : "No user");
-            if (!user) {
-                console.log("No user authenticated, redirecting to index.html");
-                localStorage.removeItem('userData');
-                window.location.href = 'index.html';
-                return;
-            }
-
-            if (!userData || user.email !== userData.email) {
-                console.log("userData mismatch or missing, redirecting to index.html");
+            if (!user || !userData || user.email !== userData.email) {
+                console.log("No valid auth or userData mismatch, redirecting to index.html");
                 localStorage.removeItem('userData');
                 window.location.href = 'index.html';
                 return;
@@ -279,11 +270,12 @@
                 ? "Unlimited" 
                 : formatTime(userData.timeRemaining);
 
+            // Load D-ID if purchased and time > 1s or Infinity
             if (userData.purchased && (userData.timeRemaining === Infinity || userData.timeRemaining > 1000)) {
-                console.log("Loading D-ID agent (purchased and time > 1s)");
+                console.log("Conditions met, loading D-ID agent");
                 loadDIDAgent();
             } else {
-                console.log("Not loading D-ID agent (time <= 1s or not purchased)");
+                console.log("D-ID not loaded: purchased=", userData.purchased, "timeRemaining=", userData.timeRemaining);
             }
 
             if (userData.email === ADMIN_EMAIL) {
@@ -295,21 +287,21 @@
             lastUpdateTime = Date.now();
             timer = setInterval(async () => {
                 const elapsed = Date.now() - startTime;
-                const timeRemaining = userData.timeRemaining === Infinity 
+                let timeRemaining = userData.timeRemaining === Infinity 
                     ? Infinity 
                     : Math.max(0, userData.timeRemaining - elapsed);
+
+                if (userData.email !== ADMIN_EMAIL && Date.now() - lastUpdateTime >= UPDATE_INTERVAL) {
+                    timeRemaining = await updateTimeUsed();
+                    userData.timeRemaining = timeRemaining;
+                    lastUpdateTime = Date.now();
+                }
+
                 timeDisplay.textContent = timeRemaining === Infinity 
                     ? "Unlimited" 
                     : formatTime(timeRemaining);
 
-                console.log("Timer tick:", { timeRemaining });
-
-                if (timeRemaining !== Infinity && Date.now() - lastUpdateTime >= UPDATE_INTERVAL) {
-                    const updatedTime = await updateTimeUsed();
-                    lastUpdateTime = Date.now();
-                    userData.timeRemaining = updatedTime;
-                    console.log("Updated timeRemaining:", userData.timeRemaining);
-                }
+                console.log("Timer tick:", { timeRemaining, elapsed });
 
                 if (timeRemaining <= 0 && userData.email !== ADMIN_EMAIL) {
                     clearInterval(timer);
