@@ -90,7 +90,7 @@
         import { getFirestore, doc, updateDoc, getDoc, setDoc, collection, getDocs } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
 
         const firebaseConfig = {
-            apiKey: "AIzaSyDpIapJzv54LIApO_yM2f-SrwkXbjjLRPo",
+            apiKey: "AiSyDpIapJzv54LIApO_yM2f-SrwkXbjjLRPo",
             authDomain: "ever4-e1efb.firebaseapp.com",
             projectId: "ever4-e1efb",
             storageBucket: "ever4-e1efb.firebasestorage.app",
@@ -105,8 +105,7 @@
         const db = getFirestore(app);
 
         const ADMIN_EMAIL = "jesse3@example.com";
-        const ADMIN_DAILY_MS = 23 * 60 * 60 * 1000; // 23 hours in ms
-        const NORMAL_DAILY_MS = 5 * 60 * 1000; // 5 minutes in ms
+        const DAILY_MS = 10 * 60 * 1000; // 10 minutes in ms for everyone
         const UPDATE_INTERVAL = 5000; // 5 seconds
 
         const usernameDisplay = document.getElementById('username');
@@ -170,7 +169,7 @@
             const today = new Date().toISOString().split('T')[0];
             const userTimeDoc = doc(db, "userTime", userData.uid);
             const docSnap = await getDoc(userTimeDoc);
-            const maxDailyMs = userData.email === ADMIN_EMAIL ? ADMIN_DAILY_MS : NORMAL_DAILY_MS;
+            const maxDailyMs = DAILY_MS;
             let timeUsed = 0;
 
             if (docSnap.exists() && docSnap.data().date === today) {
@@ -283,7 +282,7 @@
             lastUpdateTime = Date.now();
             timer = setInterval(async () => {
                 const elapsed = Date.now() - startTime;
-                const maxDailyMs = userData.email === ADMIN_EMAIL ? ADMIN_DAILY_MS : NORMAL_DAILY_MS;
+                const maxDailyMs = DAILY_MS;
                 let timeRemaining = Math.max(0, userData.timeRemaining - elapsed);
 
                 if (Date.now() - lastUpdateTime >= UPDATE_INTERVAL) {
