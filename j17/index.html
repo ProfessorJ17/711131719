@@ -206,9 +206,9 @@
                 try {
                     await updateDoc(userDocRef, { 
                         date: today, 
-                        timeused: timeUsed, 
-                        startTime: startTime,
-                        endTime: null, // Clear endTime on login
+                        timeused: Math.floor(timeUsed), // Ensure integer
+                        startTime: Math.floor(startTime), // Ensure integer
+                        endTime: null,
                         purchased: true,
                         name: data.name || "admin",
                         uid: data.uid || ""
@@ -261,7 +261,7 @@
             const elapsed = startTime ? endTime - startTime : 0;
             const currentDoc = await getDoc(userDocRef);
             const currentData = currentDoc.data();
-            const totalTimeUsed = Math.min((currentData.timeused || 0) + elapsed, NORMAL_DAILY_MS);
+            const totalTimeUsed = Math.min(Math.floor((currentData.timeused || 0) + elapsed), NORMAL_DAILY_MS); // Ensure integer
             const timeRemaining = Math.max(0, NORMAL_DAILY_MS - totalTimeUsed);
 
             try {
@@ -269,9 +269,9 @@
                 window.alert(`Saving on logout: date=${today}, timeused=${totalTimeUsed}, startTime=${startTime}, endTime=${endTime}, elapsed=${elapsed}`);
                 await updateDoc(userDocRef, { 
                     date: today, 
-                    timeused: totalTimeUsed, 
-                    startTime: startTime,
-                    endTime: endTime,
+                    timeused: totalTimeUsed,
+                    startTime: Math.floor(startTime), // Ensure integer
+                    endTime: Math.floor(endTime),     // Ensure integer
                     purchased: true,
                     name: currentData.name || "admin",
                     uid: currentData.uid || ""
@@ -296,7 +296,7 @@
             const userDocRef = doc(db, "allowedEmails", userData.email);
             return getDoc(userDocRef).then(doc => {
                 const currentData = doc.data();
-                const totalTimeUsed = Math.min((currentData.timeused || 0) + elapsed, NORMAL_DAILY_MS);
+                const totalTimeUsed = Math.min(Math.floor((currentData.timeused || 0) + elapsed), NORMAL_DAILY_MS);
                 return Math.max(0, NORMAL_DAILY_MS - totalTimeUsed);
             });
         }
