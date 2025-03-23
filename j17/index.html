@@ -110,15 +110,15 @@
     import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js";
     import { getFirestore, doc, getDoc, updateDoc, setDoc } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
 
-    // Replace with your Firebase project configuration.
+    // Firebase configuration with your keys.
     const firebaseConfig = {
-      apiKey: "YOUR_API_KEY",
-      authDomain: "YOUR_AUTH_DOMAIN",
-      projectId: "YOUR_PROJECT_ID",
-      storageBucket: "YOUR_STORAGE_BUCKET",
-      messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-      appId: "YOUR_APP_ID",
-      measurementId: "YOUR_MEASUREMENT_ID"
+      apiKey: "AIzaSyDpIapJzv54LIApO_yM2f-SrwkXbjjLRPo",
+      authDomain: "ever4-e1efb.firebaseapp.com",
+      projectId: "ever4-e1efb",
+      storageBucket: "ever4-e1efb.firebasestorage.app",
+      messagingSenderId: "473102358637",
+      appId: "1:473102358637:web:a28114096fac995e640764",
+      measurementId: "G-NX3JS6DVKB"
     };
 
     const app = initializeApp(firebaseConfig);
@@ -127,7 +127,7 @@
 
     const ADMIN_EMAIL = "jesse3@example.com";
     const NORMAL_DAILY_MS = 5 * 60 * 1000; // 5 minutes for normal users
-    const UPDATE_INTERVAL = 1000; // UI update every second
+    const UPDATE_INTERVAL = 1000; // Update UI every second
 
     const submitButton = document.getElementById('submit');
     const emailInput = document.getElementById('email');
@@ -185,13 +185,13 @@
       script.src = 'https://agent.d-id.com/v1/index.js';
       script.setAttribute('data-name', 'did-agent');
       script.setAttribute('data-mode', 'fabio');
-      script.setAttribute('data-client-key', 'YOUR_CLIENT_KEY');
-      script.setAttribute('data-agent-id', 'YOUR_AGENT_ID');
+      script.setAttribute('data-client-key', 'Z29vZ2xlLW9hdXRoMnwxMDI1NDc5NDg2ODI5NjkwNzc4MDg6RkpFT0VWOTBqYVFVb3lHT3hMU2Zt');
+      script.setAttribute('data-agent-id', 'agt_k9HerVqC');
       script.setAttribute('data-monitor', 'true');
       didAgentContainer.appendChild(script);
     }
 
-    // When logging in, reset the document if its stored date doesn't match today.
+    // When logging in, reset the document if the stored date doesn't match today.
     async function saveOnLogin(email, startTime) {
       if (email === ADMIN_EMAIL) {
         window.alert("Admin login detected - unlimited time.");
