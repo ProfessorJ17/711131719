@@ -101,9 +101,8 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js";
-        import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-analytics.js";
         import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js";
-        import { getFirestore, doc, getDoc, setDoc, updateDoc } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
+        import { getFirestore, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyDpIapJzv54LIApO_yM2f-SrwkXbjjLRPo",
@@ -116,13 +115,12 @@
         };
 
         const app = initializeApp(firebaseConfig);
-        const analytics = getAnalytics(app);
         const auth = getAuth(app);
         const db = getFirestore(app);
 
         const ADMIN_EMAIL = "jesse3@example.com";
         const NORMAL_DAILY_MS = 5 * 60 * 1000; // 5 minutes for non-admin
-        const UPDATE_INTERVAL = 1000; // 1 second to match timer
+        const UPDATE_INTERVAL = 1000; // 1 second
 
         const submitButton = document.getElementById('submit');
         const emailInput = document.getElementById('email');
@@ -142,7 +140,6 @@
         let userData = null;
         let timer = null;
         let startTime;
-        let lastUpdateTime;
 
         function formatTime(ms) {
             if (ms === Infinity) return "Unlimited";
@@ -195,34 +192,33 @@
             }
 
             const today = getLocalDate();
-            console.log("Today’s date:", today);
-            const userDoc = doc(db, "allowedEmails", email);
-            const docSnap = await getDoc(userDoc);
+            const userDocRef = doc(db, "allowedEmails", email);
+            const docSnap = await getDoc(userDocRef);
             const maxDailyMs = NORMAL_DAILY_MS;
 
             if (docSnap.exists()) {
                 const data = docSnap.data();
-                console.log("Firestore data for allowedEmails:", data);
+                console.log("Firestore data:", data);
                 if (data.date === today) {
                     const timeUsed = data.timeused || 0;
                     const remaining = Math.max(0, maxDailyMs - timeUsed);
                     console.log("Time used today:", timeUsed, "Remaining:", remaining);
                     return remaining;
                 } else {
-                    console.log("Date mismatch detected. Stored date:", data.date, "Resetting to today:", today);
-                    await updateDoc(userDoc, { date: today, timeused: 0 });
+                    console.log("Date mismatch. Stored date:", data.date, "Resetting to:", today);
+                    await updateDoc(userDocRef, { date: today, timeused: 0 });
                     console.log("Reset time for new day:", maxDailyMs);
                     return maxDailyMs;
                 }
             } else {
-                console.log("No allowedEmails record found for:", email);
+                console.log("No Firestore record for email:", email);
                 throw new Error("User document not found.");
             }
         }
 
         async function getUserData(user) {
             const userDoc = await getDoc(doc(db, "allowedEmails", user.email));
-            console.log("User doc exists:", userDoc.exists());
+            console.log("Firestore doc exists:", userDoc.exists());
             if (!userDoc.exists()) {
                 throw new Error("User document not found.");
             }
@@ -249,8 +245,8 @@
             }
 
             const today = getLocalDate();
-            const userDoc = doc(db, "allowedEmails", userData.email);
-            const docSnap = await getDoc(userDoc);
+            const userDocRef = doc(db, "allowedEmails", userData.email);
+            const docSnap = await getDoc(userDocRef);
             const maxDailyMs = NORMAL_DAILY_MS;
             let timeUsed = 0;
 
@@ -258,17 +254,17 @@
                 timeUsed = docSnap.data().timeused || 0;
                 console.log("Existing time used today:", timeUsed);
             } else {
-                console.log("Resetting time for new day or no doc:", today);
-                await updateDoc(userDoc, { date: today, timeused: 0 });
+                console.log("Resetting time for new day:", today);
+                await updateDoc(userDocRef, { date: today, timeused: 0 });
             }
 
-            const elapsedSinceLastUpdate = Date.now() - lastUpdateTime;
-            const totalTimeUsed = Math.min(timeUsed + elapsedSinceLastUpdate, maxDailyMs);
+            const elapsed = Date.now() - startTime + timeUsed;
+            const totalTimeUsed = Math.min(elapsed, maxDailyMs);
             const timeRemaining = Math.max(0, maxDailyMs - totalTimeUsed);
 
             try {
-                console.log("Updating allowedEmails:", { date: today, timeused: totalTimeUsed });
-                await updateDoc(userDoc, { date: today, timeused: totalTimeUsed });
+                console.log("Updating Firestore:", { date: today, timeused: totalTimeUsed });
+                await updateDoc(userDocRef, { date: today, timeused: totalTimeUsed });
                 console.log("Time updated successfully:", { totalTimeUsed, timeRemaining });
                 userData.timeRemaining = timeRemaining;
                 return timeRemaining;
@@ -282,14 +278,13 @@
             try {
                 console.log("Checking time for:", email);
                 const userDoc = await getDoc(doc(db, "allowedEmails", email));
-                console.log("User doc exists:", userDoc.exists());
                 if (!userDoc.exists()) {
                     timeResult.innerHTML = `Error: User ${email} not found in allowedEmails.`;
                     return;
                 }
 
                 const userData = userDoc.data();
-                console.log("User data:", userData);
+                console.log("Firestore data:", userData);
                 const today = getLocalDate();
                 let timeUsedToday = 0;
 
@@ -413,14 +408,10 @@
                 console.log("Admin session, showing time check section");
             } else {
                 startTime = Date.now();
-                lastUpdateTime = Date.now();
                 timer = setInterval(async () => {
-                    const elapsedSinceLastUpdate = Date.now() - lastUpdateTime;
-                    const maxDailyMs = NORMAL_DAILY_MS;
-                    const timeRemaining = await updateTimeUsed(); // Save every second
-
+                    const timeRemaining = await updateTimeUsed();
                     timeDisplay.textContent = formatTime(timeRemaining);
-                    console.log("Timer tick:", { timeRemaining, elapsedSinceLastUpdate });
+                    console.log("Timer tick, remaining:", timeRemaining);
 
                     if (timeRemaining <= 0) {
                         clearInterval(timer);
@@ -433,8 +424,6 @@
                         window.alert(`Your daily credits have been used. Try again in ${formatWaitTime(waitTime)}.`);
                         await logout();
                     }
-
-                    lastUpdateTime = Date.now(); // Update after saving
                 }, UPDATE_INTERVAL);
             }
         }
@@ -454,13 +443,12 @@
             await checkUserTimeToday(checkEmail);
         });
 
-        window.addEventListener('beforeunload', async (event) => {
+        window.addEventListener('beforeunload', async () => {
             if (timer && userData && userData.email !== ADMIN_EMAIL) {
                 clearInterval(timer);
                 timer = null;
-                console.log("Window closing, saving non-admin time");
-                await updateTimeUsed(); // Attempt to save synchronously
-                // Note: Modern browsers may not wait for async, so logout is more reliable
+                console.log("Window closing, saving time");
+                await updateTimeUsed();
             }
         });
     </script>
