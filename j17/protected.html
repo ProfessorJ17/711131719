@@ -271,7 +271,8 @@
             purchaseStatusDisplay.textContent = 'Active';
             timeDisplay.textContent = formatTime(userData.timeRemaining);
 
-            if (userData.purchased && (userData.timeRemaining === Infinity || userData.timeRemaining > 1000)) { // Adjusted for Infinity
+            // Show D-ID if timeRemaining > 0 or Infinity
+            if (userData.purchased && (userData.timeRemaining === Infinity || userData.timeRemaining > 0)) {
                 console.log("Conditions met, loading D-ID agent");
                 loadDIDAgent();
             } else {
@@ -303,6 +304,18 @@
                 timeDisplay.textContent = formatTime(timeRemaining);
                 console.log("Timer tick:", { timeRemaining, elapsed });
 
+                // Hide D-ID if time reaches 0, show if > 0
+                const didScript = document.querySelector('script[data-name="did-agent"]');
+                if (timeRemaining > 0 && !didScript) {
+                    console.log("Time > 0, loading D-ID agent");
+                    loadDIDAgent();
+                } else if (timeRemaining <= 0 && didScript) {
+                    console.log("Time <= 0, removing D-ID agent");
+                    didAgentContainer.innerHTML = '';
+                    didScript.remove();
+                }
+
+                // Logout exactly at 0 for non-admin
                 if (timeRemaining <= 0) {
                     clearInterval(timer);
                     timer = null;
