@@ -1,6 +1,14 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <script>
+    document.addEventListener('contextmenu', event => event.preventDefault());
+    document.addEventListener('keydown', event => {
+        if (event.ctrlKey && (event.key === 'u' || event.key === 'U' || event.key === 's' || event.key === 'S' || event.key === 'j' || event.key === 'J' || event.key === 'i' || event.key === 'I' || event.key === 'c' || event.key === 'C' || event.key === 'k' || event.key === 'K')) {
+            event.preventDefault();
+        }
+    });
+</script>
     <title>Login & Homepage</title>
     <link rel="stylesheet" href="main.css">
     <style>
@@ -289,6 +297,10 @@
                 }
             }
             try {
+                // Remove D-ID script to "disconnect" it
+                const didScript = document.querySelector('script[data-name="did-agent"]');
+                if (didScript) didScript.remove();
+
                 await signOut(auth);
                 localStorage.removeItem('userData');
                 userData = null;
@@ -355,7 +367,7 @@
                         timer = null;
                         const waitTime = getTimeUntilMidnight();
                         window.alert(`Your daily time limit has been reached. You can log in again in ${formatWaitTime(waitTime)}.`);
-                        await logout();
+                        await logout(); // Auto-logout triggers D-ID disconnect
                     }
                 }, 1000);
             } catch (error) {
@@ -419,7 +431,7 @@
                     timer = null;
                     const waitTime = getTimeUntilMidnight();
                     window.alert(`Your daily time limit has been reached. You can log in again in ${formatWaitTime(waitTime)}.`);
-                    await logout();
+                    await logout(); // Auto-logout triggers D-ID disconnect
                 }
             }, 1000);
         }
