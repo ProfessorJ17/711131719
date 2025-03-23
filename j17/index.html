@@ -189,7 +189,7 @@
             didAgentContainer.appendChild(script);
         }
 
-        async function checkTimeRemaining(userId, email) {
+        async function checkTimeRemaining(email) {
             if (email === ADMIN_EMAIL) {
                 console.log("Admin login, unlimited time:", email);
                 return Infinity;
@@ -197,29 +197,27 @@
 
             const today = getLocalDate();
             console.log("Today’s date:", today);
-            const userTimeDoc = doc(db, "userTime", userId);
-            const docSnap = await getDoc(userTimeDoc);
+            const userDoc = doc(db, "allowedEmails", email);
+            const docSnap = await getDoc(userDoc);
             const maxDailyMs = NORMAL_DAILY_MS;
 
             if (docSnap.exists()) {
                 const data = docSnap.data();
-                console.log("Firestore data for userTime:", data);
+                console.log("Firestore data for allowedEmails:", data);
                 if (data.date === today) {
-                    const timeUsed = data.timeUsed || 0;
+                    const timeUsed = data.timeused || 0; // Already a number
                     const remaining = Math.max(0, maxDailyMs - timeUsed);
                     console.log("Time used today:", timeUsed, "Remaining:", remaining);
                     return remaining;
                 } else {
                     console.log("Date mismatch detected. Stored date:", data.date, "Resetting to today:", today);
-                    await setDoc(userTimeDoc, { date: today, timeUsed: 0 }, { merge: true });
+                    await updateDoc(userDoc, { date: today, timeused: 0 });
                     console.log("Reset time for new day:", maxDailyMs);
                     return maxDailyMs;
                 }
             } else {
-                console.log("No userTime record found for UID:", userId, "Creating new one for:", today);
-                await setDoc(userTimeDoc, { date: today, timeUsed: 0 }, { merge: true });
-                console.log("Initialized time for new day:", maxDailyMs);
-                return maxDailyMs;
+                console.log("No allowedEmails record found for:", email);
+                throw new Error("User document not found.");
             }
         }
 
@@ -233,7 +231,7 @@
             if (userDocData.purchased !== true) {
                 throw new Error("No active subscription found.");
             }
-            const timeRemaining = await checkTimeRemaining(user.uid, user.email);
+            const timeRemaining = await checkTimeRemaining(user.email);
             const data = {
                 email: user.email,
                 name: userDocData.name || user.email.split('@')[0],
@@ -252,17 +250,17 @@
             }
 
             const today = getLocalDate();
-            const userTimeDoc = doc(db, "userTime", userData.uid);
-            const docSnap = await getDoc(userTimeDoc);
+            const userDoc = doc(db, "allowedEmails", userData.email);
+            const docSnap = await getDoc(userDoc);
             const maxDailyMs = NORMAL_DAILY_MS;
             let timeUsed = 0;
 
             if (docSnap.exists() && docSnap.data().date === today) {
-                timeUsed = docSnap.data().timeUsed || 0;
+                timeUsed = docSnap.data().timeused || 0;
                 console.log("Existing time used today:", timeUsed);
             } else {
                 console.log("Resetting time for new day or no doc:", today);
-                await setDoc(userTimeDoc, { date: today, timeUsed: 0 }, { merge: true });
+                await updateDoc(userDoc, { date: today, timeused: 0 });
             }
 
             const elapsedSinceLastUpdate = Date.now() - lastUpdateTime;
@@ -270,8 +268,8 @@
             const timeRemaining = Math.max(0, maxDailyMs - totalTimeUsed);
 
             try {
-                console.log("Updating userTime:", { date: today, timeUsed: totalTimeUsed });
-                await updateDoc(userTimeDoc, { date: today, timeUsed: totalTimeUsed });
+                console.log("Updating allowedEmails:", { date: today, timeused: totalTimeUsed });
+                await updateDoc(userDoc, { date: today, timeused: totalTimeUsed });
                 console.log("Time updated successfully:", { totalTimeUsed, timeRemaining });
                 userData.timeRemaining = timeRemaining;
                 return timeRemaining;
@@ -293,24 +291,13 @@
 
                 const userData = userDoc.data();
                 console.log("User data:", userData);
-                if (!userData.uid) {
-                    timeResult.innerHTML = `Error: No UID found for ${email}. Add UID to allowedEmails/${email}.`;
-                    return;
-                }
-
-                const userTimeDoc = doc(db, "userTime", userData.uid);
-                const docSnap = await getDoc(userTimeDoc);
                 const today = getLocalDate();
                 let timeUsedToday = 0;
 
-                if (docSnap.exists()) {
-                    const data = docSnap.data();
-                    console.log("Time doc data:", data);
-                    if (data.date === today) {
-                        timeUsedToday = data.timeUsed || 0;
-                    }
+                if (userData.date === today) {
+                    timeUsedToday = userData.timeused || 0;
                 } else {
-                    console.log("No time doc exists for:", userData.uid);
+                    console.log("Date mismatch, no time used today:", today);
                 }
 
                 const minutesUsed = (timeUsedToday / 1000 / 60).toFixed(2);
