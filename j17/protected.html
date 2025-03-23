@@ -271,13 +271,9 @@
             purchaseStatusDisplay.textContent = 'Active';
             timeDisplay.textContent = formatTime(userData.timeRemaining);
 
-            // Show D-ID if timeRemaining > 0 or Infinity
-            if (userData.purchased && (userData.timeRemaining === Infinity || userData.timeRemaining > 0)) {
-                console.log("Conditions met, loading D-ID agent");
-                loadDIDAgent();
-            } else {
-                console.log("D-ID not loaded: purchased=", userData.purchased, "timeRemaining=", userData.timeRemaining);
-            }
+            // Always load D-ID on protected.html
+            console.log("Loading D-ID agent unconditionally");
+            loadDIDAgent();
 
             if (userData.email === ADMIN_EMAIL) {
                 adminSection.style.display = 'block';
@@ -303,17 +299,6 @@
 
                 timeDisplay.textContent = formatTime(timeRemaining);
                 console.log("Timer tick:", { timeRemaining, elapsed });
-
-                // Hide D-ID if time reaches 0, show if > 0
-                const didScript = document.querySelector('script[data-name="did-agent"]');
-                if (timeRemaining > 0 && !didScript) {
-                    console.log("Time > 0, loading D-ID agent");
-                    loadDIDAgent();
-                } else if (timeRemaining <= 0 && didScript) {
-                    console.log("Time <= 0, removing D-ID agent");
-                    didAgentContainer.innerHTML = '';
-                    didScript.remove();
-                }
 
                 // Logout exactly at 0 for non-admin
                 if (timeRemaining <= 0) {
