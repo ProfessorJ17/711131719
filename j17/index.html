@@ -46,7 +46,7 @@
             margin: 10vh auto;
             text-align: center;
         }
-        #submit, #logout-btn {
+        #submit, #logout-btn, #test-login-btn {
             background-color: #0583D2;
             color: white;
             border: none;
@@ -70,14 +70,9 @@
             display: none;
             margin-top: 20px;
         }
-        #user-list {
+        #test-result {
             margin-top: 10px;
-            text-align: left;
-            max-height: 300px;
-            overflow-y: auto;
-        }
-        #user-list div {
-            margin: 5px 0;
+            color: #333;
         }
     </style>
 </head>
@@ -96,9 +91,11 @@
             <p>Subscription Status: <span id="purchase-status"></span></p>
             <button id="logout-btn">Logout</button>
             <div id="admin-section">
-                <h2>All Users</h2>
-                <button id="refresh-btn">Refresh List</button>
-                <div id="user-list"></div>
+                <h2>Test User Login</h2>
+                <input id="test-email" type="text" placeholder="Test Email"></input>
+                <input id="test-password" type="password" placeholder="Test Password"></input>
+                <button id="test-login-btn">Test Login</button>
+                <div id="test-result"></div>
             </div>
         </div>
     </div>
@@ -107,7 +104,7 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js";
         import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-analytics.js";
         import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js";
-        import { getFirestore, doc, getDoc, setDoc, updateDoc, collection, getDocs } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
+        import { getFirestore, doc, getDoc, setDoc, updateDoc } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyDpIapJzv54LIApO_yM2f-SrwkXbjjLRPo",
@@ -125,7 +122,7 @@
         const db = getFirestore(app);
 
         const ADMIN_EMAIL = "jesse3@example.com";
-        const NORMAL_DAILY_MS = 10 * 60 * 1000; // 10 minutes for non-admin
+        const NORMAL_DAILY_MS = 5 * 60 * 1000; // 5 minutes for non-admin
         const UPDATE_INTERVAL = 5000; // 5 seconds
         const LOAD_DELAY = 5000; // 5 seconds to load data
 
@@ -133,7 +130,6 @@
         const emailInput = document.getElementById('email');
         const passwordInput = document.getElementById('password');
         const logoutBtn = document.getElementById('logout-btn');
-        const refreshBtn = document.getElementById('refresh-btn');
         const loginSection = document.getElementById('login-section');
         const dashboardSection = document.getElementById('dashboard-section');
         const usernameDisplay = document.getElementById('username');
@@ -141,7 +137,10 @@
         const timeDisplay = document.getElementById('time-remaining');
         const didAgentContainer = document.getElementById('did-agent-container');
         const adminSection = document.getElementById('admin-section');
-        const userList = document.getElementById('user-list');
+        const testEmailInput = document.getElementById('test-email');
+        const testPasswordInput = document.getElementById('test-password');
+        const testLoginBtn = document.getElementById('test-login-btn');
+        const testResult = document.getElementById('test-result');
 
         let userData = null;
         let timer = null;
@@ -171,7 +170,7 @@
 
         function getLocalDate() {
             const now = new Date();
-            return now.toLocaleDateString('en-CA'); // YYYY-MM-DD in local time (e.g., 2025-03-23)
+            return now.toLocaleDateString('en-CA'); // YYYY-MM-DD in local time
         }
 
         function loadDIDAgent() {
@@ -198,7 +197,7 @@
                 return Infinity;
             }
 
-            const today = getLocalDate(); // Use local date
+            const today = getLocalDate();
             const userTimeDoc = doc(db, "userTime", userId);
             const docSnap = await getDoc(userTimeDoc);
             const maxDailyMs = NORMAL_DAILY_MS;
@@ -251,7 +250,7 @@
                 return userData.timeRemaining;
             }
 
-            const today = getLocalDate(); // Use local date
+            const today = getLocalDate();
             const userTimeDoc = doc(db, "userTime", userData.uid);
             const docSnap = await getDoc(userTimeDoc);
             const maxDailyMs = NORMAL_DAILY_MS;
@@ -278,34 +277,40 @@
             }
         }
 
-        async function fetchAllUsers() {
-            if (auth.currentUser?.email !== ADMIN_EMAIL) {
-                userList.textContent = "Unauthorized access.";
-                return;
-            }
-
+        async function testUserLogin(email, password) {
             try {
-                const userRef = collection(db, "userTime");
-                const querySnapshot = await getDocs(userRef);
-                
-                let userListHTML = '';
-                querySnapshot.forEach((docSnap) => {
-                    const data = docSnap.data();
-                    const uid = docSnap.id;
-                    const timeUsed = data.timeUsed || 0;
-                    const date = data.date || 'N/A';
-                    userListHTML += `
-                        <div>
-                            UID: ${uid} | Time Used: ${timeUsed} ms | Date: ${date}
-                        </div>
-                    `;
-                });
+                console.log("Testing login for:", email);
+                const userCredential = await signInWithEmailAndPassword(auth, email, password);
+                const user = userCredential.user;
+                console.log("Test login successful:", user.email);
 
-                userList.innerHTML = userListHTML || "No users found.";
-                console.log("Users fetched successfully");
+                const userDoc = await getDoc(doc(db, "allowedEmails", user.email));
+                if (!userDoc.exists()) throw new Error("User not in allowedEmails.");
+                if (!userDoc.data().purchased) throw new Error("No active subscription.");
+
+                const userTimeDoc = doc(db, "userTime", user.uid);
+                const docSnap = await getDoc(userTimeDoc);
+                let timeUsedYesterday = 0;
+                const yesterday = new Date();
+                yesterday.setDate(yesterday.getDate() - 1);
+                const yesterdayDate = yesterday.toLocaleDateString('en-CA');
+
+                if (docSnap.exists()) {
+                    const data = docSnap.data();
+                    if (data.date === yesterdayDate) {
+                        timeUsedYesterday = data.timeUsed || 0;
+                    }
+                }
+
+                const minutesUsed = (timeUsedYesterday / 1000 / 60).toFixed(2);
+                testResult.innerHTML = `Login successful!<br>Time used from ${yesterdayDate} (past 24 hours): ${minutesUsed} minutes`;
+
+                // Sign out the test user to avoid affecting the admin session
+                await signOut(auth);
+                console.log("Test user signed out");
             } catch (error) {
-                console.error("Error fetching users:", error);
-                userList.textContent = "Error loading user list: " + error.message;
+                console.error("Test login error:", error);
+                testResult.innerHTML = `Login failed: ${error.message}`;
             }
         }
 
@@ -348,7 +353,7 @@
                 console.log("Authenticated:", user.email);
 
                 userData = await getUserData(user);
-                await new Promise(resolve => setTimeout(resolve, LOAD_DELAY)); // 5-second delay
+                await new Promise(resolve => setTimeout(resolve, LOAD_DELAY));
 
                 if (userData.email !== ADMIN_EMAIL && userData.timeRemaining <= 0) {
                     const waitTime = getTimeUntilMidnight();
@@ -415,44 +420,36 @@
 
             if (userData.email === ADMIN_EMAIL) {
                 adminSection.style.display = 'block';
-                fetchAllUsers();
-                console.log("Admin session, no timer");
-                return;
+                console.log("Admin session, showing testing section");
+            } else {
+                startTime = Date.now();
+                lastUpdateTime = Date.now();
+                timer = setInterval(async () => {
+                    const elapsed = Date.now() - startTime;
+                    const maxDailyMs = NORMAL_DAILY_MS;
+                    let timeRemaining = Math.max(0, userData.timeRemaining - elapsed);
+
+                    if (Date.now() - lastUpdateTime >= UPDATE_INTERVAL) {
+                        timeRemaining = await updateTimeUsed();
+                        lastUpdateTime = Date.now();
+                    }
+
+                    timeDisplay.textContent = formatTime(timeRemaining);
+                    console.log("Timer tick:", { timeRemaining, elapsed });
+
+                    if (timeRemaining <= 0) {
+                        clearInterval(timer);
+                        timer = null;
+                        didAgentContainer.innerHTML = '';
+                        const didScript = document.querySelector('script[data-name="did-agent"]');
+                        if (didScript) didScript.remove();
+                        const waitTime = getTimeUntilMidnight();
+                        console.log("Time limit reached, logging out");
+                        window.alert(`Your daily credits have been used. Try again in ${formatWaitTime(waitTime)}.`);
+                        await logout();
+                    }
+                }, 1000);
             }
-
-            if (userData.timeRemaining <= 0) {
-                console.log("Non-admin with no time, should not happen");
-                logout();
-                return;
-            }
-
-            startTime = Date.now();
-            lastUpdateTime = Date.now();
-            timer = setInterval(async () => {
-                const elapsed = Date.now() - startTime;
-                const maxDailyMs = NORMAL_DAILY_MS;
-                let timeRemaining = Math.max(0, userData.timeRemaining - elapsed);
-
-                if (Date.now() - lastUpdateTime >= UPDATE_INTERVAL) {
-                    timeRemaining = await updateTimeUsed();
-                    lastUpdateTime = Date.now();
-                }
-
-                timeDisplay.textContent = formatTime(timeRemaining);
-                console.log("Timer tick:", { timeRemaining, elapsed });
-
-                if (timeRemaining <= 0) {
-                    clearInterval(timer);
-                    timer = null;
-                    didAgentContainer.innerHTML = '';
-                    const didScript = document.querySelector('script[data-name="did-agent"]');
-                    if (didScript) didScript.remove();
-                    const waitTime = getTimeUntilMidnight();
-                    console.log("Time limit reached, logging out");
-                    window.alert(`Your daily credits have been used. Try again in ${formatWaitTime(waitTime)}.`);
-                    await logout();
-                }
-            }, 1000);
         }
 
         logoutBtn.addEventListener('click', async () => {
@@ -460,9 +457,15 @@
             await logout();
         });
 
-        refreshBtn.addEventListener('click', async () => {
-            console.log("Refreshing user list");
-            await fetchAllUsers();
+        testLoginBtn.addEventListener('click', async () => {
+            if (userData.email !== ADMIN_EMAIL) return; // Only admin can test
+            const testEmail = testEmailInput.value;
+            const testPassword = testPasswordInput.value;
+            if (!testEmail || !testPassword) {
+                testResult.innerHTML = "Please enter both email and password.";
+                return;
+            }
+            await testUserLogin(testEmail, testPassword);
         });
 
         window.addEventListener('beforeunload', () => {
@@ -470,7 +473,7 @@
                 clearInterval(timer);
                 timer = null;
                 console.log("Window closing, saving non-admin time (async not awaited)");
-                updateTimeUsed(); // Fire and forget
+                updateTimeUsed();
             }
         });
     </script>
