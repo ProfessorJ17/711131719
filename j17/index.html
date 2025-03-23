@@ -174,23 +174,25 @@
       return now.toLocaleDateString('en-CA');
     }
 
+    // Load the D-ID agent after a 2-second delay.
     function loadDIDAgent() {
-      const existingScript = document.querySelector('script[data-name="did-agent"]');
-      if (existingScript) existingScript.remove();
-      const script = document.createElement('script');
-      script.type = 'module';
-      script.src = 'https://agent.d-id.com/v1/index.js';
-      script.setAttribute('data-name', 'did-agent');
-      script.setAttribute('data-mode', 'fabio');
-      script.setAttribute('data-client-key', 'Z29vZ2xlLW9hdXRoMnwxMDI1NDc5NDg2ODI5NjkwNzc4MDg6RkpFT0VWOTBqYVFVb3lHT3hMU2Zt');
-      script.setAttribute('data-agent-id', 'agt_k9HerVqC');
-      script.setAttribute('data-monitor', 'true');
-      didAgentContainer.appendChild(script);
+      setTimeout(() => {
+        const existingScript = document.querySelector('script[data-name="did-agent"]');
+        if (existingScript) existingScript.remove();
+        const script = document.createElement('script');
+        script.type = 'module';
+        script.src = 'https://agent.d-id.com/v1/index.js';
+        script.setAttribute('data-name', 'did-agent');
+        script.setAttribute('data-mode', 'fabio');
+        script.setAttribute('data-client-key', 'Z29vZ2xlLW9hdXRoMnwxMDI1NDc5NDg2ODI5NjkwNzc4MDg6RkpFT0VWOTBqYVFVb3lHT3hMU2Zt');
+        script.setAttribute('data-agent-id', 'agt_k9HerVqC');
+        script.setAttribute('data-monitor', 'true');
+        didAgentContainer.appendChild(script);
+      }, 2000);
     }
 
     async function saveOnLogin(email, startTime) {
       if (email === ADMIN_EMAIL) {
-        window.alert("Admin login detected - unlimited time.");
         return Infinity;
       }
       const today = getLocalDate();
@@ -199,10 +201,8 @@
       const maxDailyMs = NORMAL_DAILY_MS;
       if (docSnap.exists()) {
         const data = docSnap.data();
-        window.alert(`On login, fetched: date=${data.date}, timeused=${data.timeused}, startTime=${data.startTime}, endTime=${data.endTime}`);
         let timeUsed = data.timeused || 0;
         if (data.date !== today) {
-          window.alert(`Date mismatch. Stored: ${data.date}, Today: ${today}. Resetting.`);
           timeUsed = 0;
         }
         const updatedData = {
@@ -218,14 +218,11 @@
           await setDoc(userDocRef, updatedData);
           const verifySnap = await getDoc(userDocRef);
           const verifyData = verifySnap.data();
-          window.alert(`Login saved. Now: date=${verifyData.date}, timeused=${verifyData.timeused}, startTime=${verifyData.startTime}, endTime=${verifyData.endTime}`);
           return Math.max(0, maxDailyMs - timeUsed);
         } catch (error) {
-          window.alert("Login save error: " + error.message);
           throw error;
         }
       } else {
-        window.alert("No document for: " + email);
         throw new Error("User document not found.");
       }
     }
@@ -249,13 +246,11 @@
         uid: user.uid,
         timeRemaining: timeRemaining
       };
-      window.alert(`User loaded. Time remaining: ${timeRemaining} ms`);
       return data;
     }
 
     async function saveTimeUsed() {
       if (!userData || userData.email === ADMIN_EMAIL) {
-        window.alert("Skipping save for admin or no userData.");
         return userData ? userData.timeRemaining : Infinity;
       }
       const today = getLocalDate();
@@ -279,11 +274,9 @@
         await setDoc(userDocRef, updatedData);
         const verifySnap = await getDoc(userDocRef);
         const verifyData = verifySnap.data();
-        window.alert(`Save verified. Now: date=${verifyData.date}, timeused=${verifyData.timeused}, startTime=${verifyData.startTime}, endTime=${verifyData.endTime}, Remaining: ${timeRemaining}`);
         userData.timeRemaining = timeRemaining;
         return timeRemaining;
       } catch (error) {
-        window.alert("Save error: " + error.message);
         return userData.timeRemaining;
       }
     }
@@ -317,7 +310,6 @@
         }
         const minutesUsed = (timeUsedToday / 1000 / 60).toFixed(2);
         timeResult.innerHTML = `Time used today (${today}): ${minutesUsed} minutes`;
-        window.alert(`Checked ${email}: Time used today: ${minutesUsed} minutes`);
       } catch (error) {
         timeResult.innerHTML = `Error: ${error.message}`;
       }
@@ -331,7 +323,7 @@
           const finalTimeRemaining = await saveTimeUsed();
           if (finalTimeRemaining <= 0) {
             const waitTime = getTimeUntilMidnight();
-            window.alert(`Your daily credits have been used. Try again in ${formatWaitTime(waitTime)}.`);
+            // No popup
           }
         }
       }
@@ -344,7 +336,6 @@
         startTime = 0;
         window.location.reload();
       } catch (error) {
-        window.alert("Logout error: " + error.message);
       }
     }
 
@@ -357,20 +348,12 @@
         userData = await getUserData(user);
         if (userData.email !== ADMIN_EMAIL && userData.timeRemaining <= 0) {
           const waitTime = getTimeUntilMidnight();
-          window.alert(`Your daily credits have been used. Try again in ${formatWaitTime(waitTime)}.`);
           await signOut(auth);
           userData = null;
           return;
         }
         initializeDashboard();
       } catch (error) {
-        if (error.message === "User document not found.") {
-          window.alert("User data not found. Contact support.");
-        } else if (error.message === "No active subscription found.") {
-          window.alert("No active subscription.");
-        } else {
-          window.alert("Login error: " + error.message);
-        }
       }
     });
 
@@ -391,7 +374,6 @@
         userData = await getUserData(user);
         if (userData.email !== ADMIN_EMAIL && userData.timeRemaining <= 0) {
           const waitTime = getTimeUntilMidnight();
-          window.alert(`Your daily credits have been used. Try again in ${formatWaitTime(waitTime)}.`);
           await signOut(auth);
           return;
         }
@@ -420,7 +402,6 @@
             const didScript = document.querySelector('script[data-name="did-agent"]');
             if (didScript) didScript.remove();
             const waitTime = getTimeUntilMidnight();
-            window.alert(`Your daily credits have been used. Try again in ${formatWaitTime(waitTime)}.`);
             await logout();
           }
         }, UPDATE_INTERVAL);
