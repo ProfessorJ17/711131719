@@ -122,8 +122,7 @@
 
         const ADMIN_EMAIL = "jesse3@example.com";
         const NORMAL_DAILY_MS = 5 * 60 * 1000; // 5 minutes for non-admin
-        const UPDATE_INTERVAL = 5000; // 5 seconds
-        const LOAD_DELAY = 5000; // 5 seconds to load data
+        const UPDATE_INTERVAL = 1000; // 1 second to match timer
 
         const submitButton = document.getElementById('submit');
         const emailInput = document.getElementById('email');
@@ -205,7 +204,7 @@
                 const data = docSnap.data();
                 console.log("Firestore data for allowedEmails:", data);
                 if (data.date === today) {
-                    const timeUsed = data.timeused || 0; // Already a number
+                    const timeUsed = data.timeused || 0;
                     const remaining = Math.max(0, maxDailyMs - timeUsed);
                     console.log("Time used today:", timeUsed, "Remaining:", remaining);
                     return remaining;
@@ -347,8 +346,6 @@
                 console.log("Authenticated:", user.email);
 
                 userData = await getUserData(user);
-                await new Promise(resolve => setTimeout(resolve, LOAD_DELAY));
-
                 if (userData.email !== ADMIN_EMAIL && userData.timeRemaining <= 0) {
                     const waitTime = getTimeUntilMidnight();
                     console.log("Non-admin out of time:", userData.timeRemaining);
@@ -391,7 +388,6 @@
 
             if (!userData) {
                 userData = await getUserData(user);
-                await new Promise(resolve => setTimeout(resolve, LOAD_DELAY));
                 if (userData.email !== ADMIN_EMAIL && userData.timeRemaining <= 0) {
                     const waitTime = getTimeUntilMidnight();
                     window.alert(`Your daily credits have been used. Try again in ${formatWaitTime(waitTime)}.`);
@@ -419,17 +415,12 @@
                 startTime = Date.now();
                 lastUpdateTime = Date.now();
                 timer = setInterval(async () => {
-                    const elapsed = Date.now() - startTime;
+                    const elapsedSinceLastUpdate = Date.now() - lastUpdateTime;
                     const maxDailyMs = NORMAL_DAILY_MS;
-                    let timeRemaining = Math.max(0, userData.timeRemaining - elapsed);
-
-                    if (Date.now() - lastUpdateTime >= UPDATE_INTERVAL) {
-                        timeRemaining = await updateTimeUsed();
-                        lastUpdateTime = Date.now();
-                    }
+                    const timeRemaining = await updateTimeUsed(); // Save every second
 
                     timeDisplay.textContent = formatTime(timeRemaining);
-                    console.log("Timer tick:", { timeRemaining, elapsed });
+                    console.log("Timer tick:", { timeRemaining, elapsedSinceLastUpdate });
 
                     if (timeRemaining <= 0) {
                         clearInterval(timer);
@@ -442,7 +433,9 @@
                         window.alert(`Your daily credits have been used. Try again in ${formatWaitTime(waitTime)}.`);
                         await logout();
                     }
-                }, 1000);
+
+                    lastUpdateTime = Date.now(); // Update after saving
+                }, UPDATE_INTERVAL);
             }
         }
 
@@ -461,12 +454,13 @@
             await checkUserTimeToday(checkEmail);
         });
 
-        window.addEventListener('beforeunload', () => {
-            if (timer && userData.email !== ADMIN_EMAIL) {
+        window.addEventListener('beforeunload', async (event) => {
+            if (timer && userData && userData.email !== ADMIN_EMAIL) {
                 clearInterval(timer);
                 timer = null;
-                console.log("Window closing, saving non-admin time (async not awaited)");
-                updateTimeUsed();
+                console.log("Window closing, saving non-admin time");
+                await updateTimeUsed(); // Attempt to save synchronously
+                // Note: Modern browsers may not wait for async, so logout is more reliable
             }
         });
     </script>
