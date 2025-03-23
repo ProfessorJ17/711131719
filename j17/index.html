@@ -110,7 +110,7 @@
         import { getFirestore, doc, getDoc, setDoc, updateDoc, collection, getDocs } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
 
         const firebaseConfig = {
-            apiKey: "AIzaSyDpIapJzv54LIApO_yM2f-SrwkXbjjLRPo", // Corrected API key
+            apiKey: "AIzaSyDpIapJzv54LIApO_yM2f-SrwkXbjjLRPo",
             authDomain: "ever4-e1efb.firebaseapp.com",
             projectId: "ever4-e1efb",
             storageBucket: "ever4-e1efb.firebasestorage.app",
@@ -317,12 +317,12 @@
             }
             try {
                 console.log("Logging out...");
-                didAgentContainer.innerHTML = '';
+                didAgentContainer.innerHTML = ''; // Hide D-ID
                 const didScript = document.querySelector('script[data-name="did-agent"]');
                 if (didScript) didScript.remove();
                 await signOut(auth);
                 userData = null;
-                loginSection.style.display = 'block';
+                loginSection.style.display = 'block'; // Back to login
                 dashboardSection.style.display = 'none';
                 console.log("Logged out");
             } catch (error) {
@@ -438,6 +438,9 @@
                 if (timeRemaining <= 0) {
                     clearInterval(timer);
                     timer = null;
+                    didAgentContainer.innerHTML = ''; // Hide D-ID
+                    const didScript = document.querySelector('script[data-name="did-agent"]');
+                    if (didScript) didScript.remove();
                     const waitTime = getTimeUntilMidnight();
                     console.log("Time limit reached, logging out");
                     window.alert(`Your daily credits have been used. Try again in ${formatWaitTime(waitTime)}.`);
