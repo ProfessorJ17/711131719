@@ -242,7 +242,6 @@
             }
 
             try {
-                console.log("Fetching allowedEmails for:", auth.currentUser.email);
                 const allowedEmailsSnapshot = await getDocs(collection(db, "allowedEmails"));
                 let userListHTML = '';
 
@@ -250,9 +249,12 @@
                     const email = docSnap.id;
                     const purchased = docSnap.data().purchased || false;
                     const username = email.split('@')[0];
-                    const uidDoc = await getDoc(doc(db, "emailToUid", email));
-                    const uid = uidDoc.exists() ? uidDoc.data().uid : null;
-                    const timeRemaining = uid ? await checkTimeRemaining(uid) : (purchased ? MAX_DAILY_MS : 0);
+                    let timeRemaining = 0; // Default to 0 if no time or no mapping
+                    if (purchased) {
+                        const uidDoc = await getDoc(doc(db, "emailToUid", email));
+                        const uid = uidDoc.exists() ? uidDoc.data().uid : null;
+                        timeRemaining = uid ? await checkTimeRemaining(uid) : MAX_DAILY_MS;
+                    }
 
                     userListHTML += `
                         <div>
