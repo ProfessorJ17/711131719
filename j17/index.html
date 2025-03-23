@@ -96,15 +96,14 @@
         const LOGIN_DELAY = 5000; // 5 seconds delay
 
         async function checkTimeRemaining(userId, email) {
+            if (email === ADMIN_EMAIL) {
+                console.log("Admin login, skipping time check:", email);
+                return Infinity; // Admin always gets unlimited
+            }
+
             const today = new Date().toISOString().split('T')[0];
             const userTimeDoc = doc(db, "userTime", userId);
             const docSnap = await getDoc(userTimeDoc);
-
-            if (email === ADMIN_EMAIL) {
-                console.log("Admin login, no time limit applied:", email);
-                return Infinity; // Unlimited time for admin
-            }
-
             const maxDailyMs = NORMAL_DAILY_MS;
             console.log("Checking time for:", { userId, email, today, maxDailyMs });
 
@@ -176,20 +175,24 @@
                 let userData = await getLatestUserData(user);
                 console.log("User data retrieved:", userData);
 
-                // Wait 5 seconds and recheck from localStorage to ensure sync
-                await new Promise(resolve => setTimeout(resolve, LOGIN_DELAY));
-                userData = JSON.parse(localStorage.getItem('userData'));
-                console.log("After delay, userData from localStorage:", userData);
+                // Wait 5 seconds for non-admins to ensure data sync
+                if (email !== ADMIN_EMAIL) {
+                    await new Promise(resolve => setTimeout(resolve, LOGIN_DELAY));
+                    userData = JSON.parse(localStorage.getItem('userData'));
+                    console.log("After delay, userData from localStorage:", userData);
 
-                if (!userData || (userData.timeRemaining !== Infinity && userData.timeRemaining <= 0)) {
-                    const waitTime = getTimeUntilMidnight();
-                    console.log("Time check failed, logging out:", { timeRemaining: userData ? userData.timeRemaining : 'undefined' });
-                    window.alert(`You've used your daily limit for today. Please try again in ${formatWaitTime(waitTime)}.`);
-                    await auth.signOut();
-                    return;
+                    if (!userData || userData.timeRemaining <= 0) {
+                        const waitTime = getTimeUntilMidnight();
+                        console.log("Time check failed for non-admin, logging out:", { timeRemaining: userData ? userData.timeRemaining : 'undefined' });
+                        window.alert(`You've used your daily limit for today. Please try again in ${formatWaitTime(waitTime)}.`);
+                        await auth.signOut();
+                        return;
+                    }
+                } else {
+                    console.log("Admin login, skipping time check and delay");
                 }
 
-                console.log("Time check passed, redirecting to protected.html");
+                console.log("Login successful, redirecting to protected.html");
                 window.location.href = 'protected.html';
             } catch (error) {
                 console.error("Login error:", error);
