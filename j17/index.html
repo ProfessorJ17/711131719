@@ -140,7 +140,6 @@
         let userData = null;
         let timer = null;
         let startTime = null;
-        let initialTimeUsed = 0;
 
         function formatTime(ms) {
             if (ms === Infinity) return "Unlimited";
@@ -183,7 +182,7 @@
             didAgentContainer.appendChild(script);
         }
 
-        async function checkTimeRemaining(email) {
+        async function saveOnLogin(email, startTime) {
             if (email === ADMIN_EMAIL) {
                 window.alert("Admin login detected - unlimited time.");
                 return Infinity;
@@ -196,31 +195,31 @@
 
             if (docSnap.exists()) {
                 const data = docSnap.data();
-                window.alert(`On login, fetched: date=${data.date}, timeused=${data.timeused}`);
-                if (data.date === today) {
-                    initialTimeUsed = data.timeused || 0;
-                    const remaining = Math.max(0, maxDailyMs - initialTimeUsed);
-                    window.alert(`Same day. Time used: ${initialTimeUsed}, Remaining: ${remaining}`);
-                    return remaining;
-                } else {
+                window.alert(`On login, fetched: date=${data.date}, timeused=${data.timeused}, startTime=${data.startTime}, endTime=${data.endTime}`);
+                let timeUsed = data.timeused || 0;
+
+                if (data.date !== today) {
                     window.alert(`Date mismatch. Stored: ${data.date}, Today: ${today}. Resetting.`);
-                    try {
-                        await updateDoc(userDocRef, { 
-                            date: today, 
-                            timeused: 0, 
-                            purchased: true,
-                            name: data.name || "admin",
-                            uid: data.uid || ""
-                        });
-                        const verifySnap = await getDoc(userDocRef);
-                        const verifyData = verifySnap.data();
-                        window.alert(`Reset saved. Now: date=${verifyData.date}, timeused=${verifyData.timeused}`);
-                        initialTimeUsed = 0;
-                        return maxDailyMs;
-                    } catch (error) {
-                        window.alert("Reset error: " + error.message);
-                        throw error;
-                    }
+                    timeUsed = 0;
+                }
+
+                try {
+                    await updateDoc(userDocRef, { 
+                        date: today, 
+                        timeused: timeUsed, 
+                        startTime: startTime,
+                        endTime: null, // Clear endTime on login
+                        purchased: true,
+                        name: data.name || "admin",
+                        uid: data.uid || ""
+                    });
+                    const verifySnap = await getDoc(userDocRef);
+                    const verifyData = verifySnap.data();
+                    window.alert(`Login saved. Now: date=${verifyData.date}, timeused=${verifyData.timeused}, startTime=${verifyData.startTime}`);
+                    return Math.max(0, maxDailyMs - timeUsed);
+                } catch (error) {
+                    window.alert("Login save error: " + error.message);
+                    throw error;
                 }
             } else {
                 window.alert("No document for: " + email);
@@ -237,7 +236,8 @@
             if (userDocData.purchased !== true) {
                 throw new Error("No active subscription found.");
             }
-            const timeRemaining = await checkTimeRemaining(user.email);
+            startTime = Date.now();
+            const timeRemaining = await saveOnLogin(user.email, startTime);
             const data = {
                 email: user.email,
                 name: userDocData.name || user.email.split('@')[0],
@@ -257,25 +257,28 @@
 
             const today = getLocalDate();
             const userDocRef = doc(db, "allowedEmails", userData.email);
-            const elapsed = startTime ? Date.now() - startTime : 0; // Fallback if startTime is unset
-            const totalTimeUsed = Math.min((initialTimeUsed || 0) + elapsed, NORMAL_DAILY_MS);
+            const endTime = Date.now();
+            const elapsed = startTime ? endTime - startTime : 0;
+            const currentDoc = await getDoc(userDocRef);
+            const currentData = currentDoc.data();
+            const totalTimeUsed = Math.min((currentData.timeused || 0) + elapsed, NORMAL_DAILY_MS);
             const timeRemaining = Math.max(0, NORMAL_DAILY_MS - totalTimeUsed);
 
             try {
-                const currentDoc = await getDoc(userDocRef);
-                const currentData = currentDoc.data();
-                window.alert(`Before save: date=${currentData.date}, timeused=${currentData.timeused}, name=${currentData.name}, uid=${currentData.uid}`);
-                window.alert(`Saving on logout: date=${today}, timeused=${totalTimeUsed}, initialTimeUsed=${initialTimeUsed}, elapsed=${elapsed}`);
+                window.alert(`Before save: date=${currentData.date}, timeused=${currentData.timeused}, startTime=${currentData.startTime}, endTime=${currentData.endTime}`);
+                window.alert(`Saving on logout: date=${today}, timeused=${totalTimeUsed}, startTime=${startTime}, endTime=${endTime}, elapsed=${elapsed}`);
                 await updateDoc(userDocRef, { 
                     date: today, 
                     timeused: totalTimeUsed, 
+                    startTime: startTime,
+                    endTime: endTime,
                     purchased: true,
                     name: currentData.name || "admin",
                     uid: currentData.uid || ""
                 });
                 const verifySnap = await getDoc(userDocRef);
                 const verifyData = verifySnap.data();
-                window.alert(`Save verified. Now: date=${verifyData.date}, timeused=${verifyData.timeused}, Remaining: ${timeRemaining}`);
+                window.alert(`Save verified. Now: date=${verifyData.date}, timeused=${verifyData.timeused}, startTime=${verifyData.startTime}, endTime=${verifyData.endTime}, Remaining: ${timeRemaining}`);
                 userData.timeRemaining = timeRemaining;
                 return timeRemaining;
             } catch (error) {
@@ -288,9 +291,14 @@
             if (!userData || userData.email === ADMIN_EMAIL) {
                 return Infinity;
             }
-            const elapsed = startTime ? Date.now() - startTime : 0; // Fallback if startTime is unset
-            const totalTimeUsed = Math.min((initialTimeUsed || 0) + elapsed, NORMAL_DAILY_MS);
-            return Math.max(0, NORMAL_DAILY_MS - totalTimeUsed);
+            const now = Date.now();
+            const elapsed = startTime ? now - startTime : 0;
+            const userDocRef = doc(db, "allowedEmails", userData.email);
+            return getDoc(userDocRef).then(doc => {
+                const currentData = doc.data();
+                const totalTimeUsed = Math.min((currentData.timeused || 0) + elapsed, NORMAL_DAILY_MS);
+                return Math.max(0, NORMAL_DAILY_MS - totalTimeUsed);
+            });
         }
 
         async function checkUserTimeToday(email) {
@@ -335,7 +343,6 @@
                 await signOut(auth);
                 userData = null;
                 startTime = null;
-                initialTimeUsed = 0;
                 window.location.reload();
             } catch (error) {
                 window.alert("Logout error: " + error.message);
@@ -381,7 +388,6 @@
                 }
                 userData = null;
                 startTime = null;
-                initialTimeUsed = 0;
                 didAgentContainer.innerHTML = '';
                 return;
             }
@@ -410,22 +416,20 @@
             if (userData.email === ADMIN_EMAIL) {
                 adminSection.style.display = 'block';
             } else {
-                startTime = Date.now();
-                timer = setInterval(() => {
-                    const timeRemaining = calculateTimeRemaining();
+                timer = setInterval(async () => {
+                    const timeRemaining = await calculateTimeRemaining();
                     timeDisplay.textContent = formatTime(timeRemaining);
 
                     if (timeRemaining <= 0) {
                         clearInterval(timer);
                         timer = null;
-                        saveTimeUsed().then(async () => {
-                            didAgentContainer.innerHTML = '';
-                            const didScript = document.querySelector('script[data-name="did-agent"]');
-                            if (didScript) didScript.remove();
-                            const waitTime = getTimeUntilMidnight();
-                            window.alert(`Your daily credits have been used. Try again in ${formatWaitTime(waitTime)}.`);
-                            await logout();
-                        });
+                        await saveTimeUsed();
+                        didAgentContainer.innerHTML = '';
+                        const didScript = document.querySelector('script[data-name="did-agent"]');
+                        if (didScript) didScript.remove();
+                        const waitTime = getTimeUntilMidnight();
+                        window.alert(`Your daily credits have been used. Try again in ${formatWaitTime(waitTime)}.`);
+                        await logout();
                     }
                 }, UPDATE_INTERVAL);
             }
@@ -445,11 +449,11 @@
             await checkUserTimeToday(checkEmail);
         });
 
-        window.addEventListener('beforeunload', () => {
+        window.addEventListener('beforeunload', async () => {
             if (timer && userData && userData.email !== ADMIN_EMAIL) {
                 clearInterval(timer);
                 timer = null;
-                saveTimeUsed();
+                await saveTimeUsed();
             }
         });
     </script>
