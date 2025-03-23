@@ -71,7 +71,7 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js";
         import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-analytics.js";
         import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js";
-        import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
+        import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyDpIapJzv54LIApO_yM2f-SrwkXbjjLRPo",
@@ -92,21 +92,25 @@
         const emailInput = document.getElementById('email');
         const passwordInput = document.getElementById('password');
         const ADMIN_EMAIL = "jesse3@example.com";
+        const ADMIN_DAILY_MS = 1440 * 60000; // 24 hours
+        const NORMAL_DAILY_MS = 5 * 60000;   // 5 minutes
 
-        async function checkTimeRemaining(userId) {
+        async function checkTimeRemaining(user) {
             const today = new Date().toISOString().split('T')[0];
-            const userTimeDoc = doc(db, "userTime", userId);
+            const userTimeDoc = doc(db, "userTime", user.uid);
             const docSnap = await getDoc(userTimeDoc);
-            const MAX_DAILY_MS = 5 * 60000;
+            const maxDailyMs = user.email === ADMIN_EMAIL ? ADMIN_DAILY_MS : NORMAL_DAILY_MS;
 
             if (docSnap.exists()) {
                 const data = docSnap.data();
                 if (data.date === today) {
                     const timeUsed = data.timeUsed || 0;
-                    return Math.max(0, MAX_DAILY_MS - timeUsed);
+                    return Math.max(0, maxDailyMs - timeUsed);
                 }
             }
-            return MAX_DAILY_MS; // Default if no record or new day
+            // New day or no record, reset to full daily allowance
+            await setDoc(userTimeDoc, { date: today, timeUsed: 0 }, { merge: true });
+            return maxDailyMs;
         }
 
         async function getLatestUserData(user) {
@@ -117,9 +121,7 @@
             if (userDoc.data().purchased !== true) {
                 throw new Error("No active subscription found.");
             }
-            let timeRemaining = (user.email === ADMIN_EMAIL) 
-                ? Infinity 
-                : await checkTimeRemaining(user.uid);
+            const timeRemaining = await checkTimeRemaining(user);
             const userData = {
                 email: user.email,
                 name: user.email.split('@')[0],
@@ -158,9 +160,9 @@
                 const userData = await getLatestUserData(user);
                 console.log("User data retrieved:", userData);
 
-                if (user.email !== ADMIN_EMAIL && userData.timeRemaining <= 0) {
+                if (userData.timeRemaining <= 0) {
                     const waitTime = getTimeUntilMidnight();
-                    window.alert(`You've used your 5-minute daily limit for today. Please try again in ${formatWaitTime(waitTime)}.`);
+                    window.alert(`You've used your daily limit for today. Please try again in ${formatWaitTime(waitTime)}.`);
                     await auth.signOut();
                     return;
                 }
