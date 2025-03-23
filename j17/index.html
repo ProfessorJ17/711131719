@@ -202,7 +202,7 @@
 
             if (docSnap.exists()) {
                 const data = docSnap.data();
-                console.log("Firestore data:", data);
+                console.log("Firestore data for checkTimeRemaining:", data);
                 if (data.date === today) {
                     const timeUsed = data.timeUsed || 0;
                     const remaining = Math.max(0, maxDailyMs - timeUsed);
@@ -235,9 +235,9 @@
             const timeRemaining = await checkTimeRemaining(user.uid, user.email);
             const data = {
                 email: user.email,
-                name: userDocData.name || user.email.split('@')[0], // Use 'name' if exists, else email prefix
+                name: userDocData.name || user.email.split('@')[0],
                 purchased: true,
-                uid: user.uid, // From Firebase Auth
+                uid: user.uid,
                 timeRemaining: timeRemaining
             };
             console.log("User data:", data);
@@ -258,17 +258,20 @@
 
             if (docSnap.exists() && docSnap.data().date === today) {
                 timeUsed = docSnap.data().timeUsed || 0;
+                console.log("Existing time used today:", timeUsed);
             } else {
+                console.log("Resetting time for new day:", today);
                 await setDoc(userTimeDoc, { date: today, timeUsed: 0 }, { merge: true });
             }
 
-            const elapsed = Date.now() - startTime;
-            const totalTimeUsed = Math.min(timeUsed + elapsed, maxDailyMs);
+            const elapsedSinceLastUpdate = Date.now() - lastUpdateTime;
+            const totalTimeUsed = Math.min(timeUsed + elapsedSinceLastUpdate, maxDailyMs);
             const timeRemaining = Math.max(0, maxDailyMs - totalTimeUsed);
 
             try {
+                console.log("Attempting to update userTime:", { date: today, timeUsed: totalTimeUsed });
                 await updateDoc(userTimeDoc, { date: today, timeUsed: totalTimeUsed });
-                console.log("Time updated:", { totalTimeUsed, timeRemaining });
+                console.log("Time updated successfully:", { totalTimeUsed, timeRemaining });
                 userData.timeRemaining = timeRemaining;
                 return timeRemaining;
             } catch (error) {
