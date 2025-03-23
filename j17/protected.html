@@ -161,7 +161,10 @@
         }
 
         async function updateTimeUsed() {
-            if (!userData || !timer) return;
+            if (!userData || !timer || userData.email === ADMIN_EMAIL) {
+                console.log("Skipping time update for admin or no userData/timer");
+                return userData.timeRemaining;
+            }
 
             const today = new Date().toISOString().split('T')[0];
             const userTimeDoc = doc(db, "userTime", userData.uid);
@@ -249,37 +252,44 @@
             }
         }
 
-        // Monitor auth state to ensure user is logged in
         onAuthStateChanged(auth, (user) => {
             console.log("Auth state changed:", user ? user.email : "No user");
-            if (!user || !userData || user.email !== userData.email) {
-                console.log("No valid auth or userData, redirecting to index.html");
+            if (!user) {
+                console.log("No user authenticated, redirecting to index.html");
                 localStorage.removeItem('userData');
                 window.location.href = 'index.html';
-            } else {
-                console.log("User authenticated, proceeding with page setup");
-                initializePage();
-            }
-        });
-
-        function initializePage() {
-            if (!userData) {
-                console.log("No userData, skipping initialization");
                 return;
             }
 
+            if (!userData || user.email !== userData.email) {
+                console.log("userData mismatch or missing, redirecting to index.html");
+                localStorage.removeItem('userData');
+                window.location.href = 'index.html';
+                return;
+            }
+
+            console.log("User authenticated, initializing page with:", userData);
+            initializePage();
+        });
+
+        function initializePage() {
             usernameDisplay.textContent = userData.name;
             purchaseStatusDisplay.textContent = 'Active';
             timeDisplay.textContent = userData.timeRemaining === Infinity 
                 ? "Unlimited" 
                 : formatTime(userData.timeRemaining);
 
+            if (userData.purchased && (userData.timeRemaining === Infinity || userData.timeRemaining > 1000)) {
+                console.log("Loading D-ID agent (purchased and time > 1s)");
+                loadDIDAgent();
+            } else {
+                console.log("Not loading D-ID agent (time <= 1s or not purchased)");
+            }
+
             if (userData.email === ADMIN_EMAIL) {
                 adminSection.style.display = 'block';
                 fetchAllUsers();
             }
-
-            loadDIDAgent();
 
             startTime = Date.now();
             lastUpdateTime = Date.now();
@@ -292,16 +302,20 @@
                     ? "Unlimited" 
                     : formatTime(timeRemaining);
 
+                console.log("Timer tick:", { timeRemaining });
+
                 if (timeRemaining !== Infinity && Date.now() - lastUpdateTime >= UPDATE_INTERVAL) {
                     const updatedTime = await updateTimeUsed();
                     lastUpdateTime = Date.now();
                     userData.timeRemaining = updatedTime;
+                    console.log("Updated timeRemaining:", userData.timeRemaining);
                 }
 
                 if (timeRemaining <= 0 && userData.email !== ADMIN_EMAIL) {
                     clearInterval(timer);
                     timer = null;
                     const waitTime = getTimeUntilMidnight();
+                    console.log("Time limit reached, logging out");
                     window.alert(`Your daily time limit has been reached. You can log in again in ${formatWaitTime(waitTime)}.`);
                     await logout();
                 }
@@ -309,10 +323,12 @@
         }
 
         logoutBtn.addEventListener('click', async () => {
+            console.log("Manual logout triggered");
             await logout();
         });
 
         refreshBtn.addEventListener('click', async () => {
+            console.log("Refreshing user list");
             await fetchAllUsers();
         });
 
