@@ -92,18 +92,6 @@
       width: 50%;
       margin: 20px auto 0;
     }
-    #forgot-password-btn {
-      width: 60%;
-      margin: 10px auto 0;
-      background: transparent;
-      border: 1px solid rgba(255, 165, 0, 0.8);
-      box-shadow: none;
-      font-size: 0.9em;
-    }
-    #forgot-password-btn:hover {
-      background: linear-gradient(90deg, #FFA500 0%, #FF4500 100%);
-      box-shadow: 0 0 15px rgba(255, 165, 0, 0.7);
-    }
     #login-section {
       display: block;
     }
@@ -135,7 +123,6 @@
       <input id="email" type="text" placeholder="Email">
       <input id="password" type="password" placeholder="Password">
       <button id="submit">Sign In</button>
-      <button id="forgot-password-btn">Forgot Password?</button>
     </div>
     <div id="dashboard-section">
       <h1>4everAI</h1>
@@ -155,7 +142,7 @@
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js";
-    import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js";
+    import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js";
     import { getFirestore, doc, getDoc, updateDoc, setDoc } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
 
     // Firebase configuration using your keys.
@@ -181,7 +168,6 @@
     const emailInput = document.getElementById('email');
     const passwordInput = document.getElementById('password');
     const logoutBtn = document.getElementById('logout-btn');
-    const forgotPasswordBtn = document.getElementById('forgot-password-btn');
     const loginSection = document.getElementById('login-section');
     const dashboardSection = document.getElementById('dashboard-section');
     const usernameDisplay = document.getElementById('username');
@@ -405,21 +391,6 @@
         }
         initializeDashboard();
       } catch (error) {
-        window.alert(`Login failed: ${error.message}`);
-      }
-    });
-
-    forgotPasswordBtn.addEventListener('click', async () => {
-      const email = emailInput.value;
-      if (!email) {
-        window.alert("Please enter your email address first.");
-        return;
-      }
-      try {
-        await sendPasswordResetEmail(auth, email);
-        window.alert("A password reset email has been sent to your email address. Please check your inbox (and spam/junk folder).");
-      } catch (error) {
-        window.alert(`Failed to send reset email: ${error.message}`);
       }
     });
 
