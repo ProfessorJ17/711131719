@@ -13,16 +13,60 @@
     <link rel="stylesheet" href="main.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap');
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: sans-serif; }
-        body { background-color: #0583D2; }
-        h1 { margin-bottom: 8%; text-align: center; font-family: "Fredoka One", cursive; color: #0583D2; letter-spacing: 0.1em; }
-        button { padding: 3%; width: 100%; }
-        .container { background-color: white; padding: 5%; box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2); width: 50vw; margin: 10vh auto; text-align: center; }
-        #logout-btn { background-color: #0583D2; color: white; border: none; padding: 2%; margin-top: 5%; width: 50%; }
-        button:hover { cursor: pointer; opacity: 0.8; transition: 0.3s; }
-        #admin-section { display: none; margin-top: 20px; }
-        #user-list { margin-top: 10px; text-align: left; max-height: 300px; overflow-y: auto; }
-        #user-list div { margin: 5px 0; }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: sans-serif;
+        }
+        body {
+            background-color: #0583D2;
+        }
+        h1 {
+            margin-bottom: 8%;
+            text-align: center;
+            font-family: "Fredoka One", cursive;
+            color: #0583D2;
+            letter-spacing: 0.1em;
+        }
+        button {
+            padding: 3%;
+            width: 100%;
+        }
+        .container {
+            background-color: white;
+            padding: 5%;
+            box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+            width: 50vw;
+            margin: 10vh auto;
+            text-align: center;
+        }
+        #logout-btn {
+            background-color: #0583D2;
+            color: white;
+            border: none;
+            padding: 2%;
+            margin-top: 5%;
+            width: 50%;
+        }
+        button:hover {
+            cursor: pointer;
+            opacity: 0.8;
+            transition: 0.3s;
+        }
+        #admin-section {
+            display: none;
+            margin-top: 20px;
+        }
+        #user-list {
+            margin-top: 10px;
+            text-align: left;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        #user-list div {
+            margin: 5px 0;
+        }
     </style>
 </head>
 <body>
@@ -79,7 +123,7 @@
         let lastUpdateTime;
 
         function formatTime(ms) {
-            if (ms === Infinity) return "Unlimited";
+            if (ms === Infinity) return "Unlimited"; // Display for admin
             const hours = Math.floor(ms / (1000 * 60 * 60));
             const minutes = Math.floor((ms % (1000 * 60 * 60)) / (1000 * 60));
             const seconds = Math.floor((ms % (1000 * 60)) / 1000);
@@ -122,8 +166,10 @@
                 console.log("No userData, skipping time update");
                 return userData.timeRemaining;
             }
+
+            // Admin has no time limit, skip updates
             if (userData.email === ADMIN_EMAIL) {
-                console.log("Admin has unlimited time, skipping update");
+                console.log("Admin session, no time tracking");
                 return Infinity;
             }
 
@@ -159,14 +205,150 @@
                 userList.textContent = "Unauthorized access.";
                 return;
             }
+
             try {
                 const userRef = collection(db, "allowedEmails");
                 const querySnapshot = await getDocs(userRef);
+                
                 let userListHTML = '';
                 querySnapshot.forEach((docSnap) => {
                     const email = docSnap.id;
                     const purchased = docSnap.data().purchased || false;
                     const username = email.split('@')[0];
-                    userListHTML += `<div>Username: ${username} | Purchased: ${purchased}</div>`;
+                    userListHTML += `
+                        <div>
+                            Username: ${username} | Purchased: ${purchased}
+                        </div>
+                    `;
                 });
-                userList
+
+                userList.innerHTML = userListHTML || "No users found.";
+                console.log("Users fetched successfully");
+            } catch (error) {
+                console.error("Error fetching users:", error);
+                userList.textContent = "Error loading user list: " + error.message;
+            }
+        }
+
+        async function logout() {
+            if (timer) {
+                clearInterval(timer);
+                timer = null;
+                if (userData.email !== ADMIN_EMAIL) {
+                    const finalTimeRemaining = await updateTimeUsed();
+                    userData.timeRemaining = finalTimeRemaining;
+                    localStorage.setItem('userData', JSON.stringify(userData));
+                    if (finalTimeRemaining <= 0) {
+                        const waitTime = getTimeUntilMidnight();
+                        window.alert(`Your daily time limit has been reached. You can log in again in ${formatWaitTime(waitTime)}.`);
+                    }
+                }
+            }
+            try {
+                console.log("Logging out...");
+                didAgentContainer.innerHTML = '';
+                const didScript = document.querySelector('script[data-name="did-agent"]');
+                if (didScript) didScript.remove();
+
+                await signOut(auth);
+                console.log("Logged out, redirecting to index.html");
+                window.location.href = 'index.html';
+            } catch (error) {
+                console.error("Logout error:", error);
+                window.alert("Error during logout: " + error.message);
+            }
+        }
+
+        onAuthStateChanged(auth, (user) => {
+            console.log("Auth state changed:", user ? user.email : "No user");
+            if (!user || !userData || user.email !== userData.email) {
+                console.log("No valid auth or userData mismatch, redirecting to index.html");
+                localStorage.removeItem('userData');
+                window.location.href = 'index.html';
+                return;
+            }
+
+            console.log("User authenticated, initializing page with:", userData);
+            initializePage();
+        });
+
+        function initializePage() {
+            usernameDisplay.textContent = userData.name;
+            purchaseStatusDisplay.textContent = 'Active';
+            timeDisplay.textContent = formatTime(userData.timeRemaining);
+
+            if (userData.timeRemaining > 0 || userData.email === ADMIN_EMAIL) {
+                console.log("Time > 0 or admin, loading D-ID agent");
+                loadDIDAgent();
+            }
+
+            if (userData.email === ADMIN_EMAIL) {
+                adminSection.style.display = 'block';
+                fetchAllUsers();
+            }
+
+            if (userData.email === ADMIN_EMAIL) {
+                console.log("Admin session, no timer running");
+                return; // No timer for admin
+            }
+
+            startTime = Date.now();
+            lastUpdateTime = Date.now();
+            timer = setInterval(async () => {
+                const elapsed = Date.now() - startTime;
+                const maxDailyMs = NORMAL_DAILY_MS;
+                let timeRemaining = Math.max(0, userData.timeRemaining - elapsed);
+
+                if (Date.now() - lastUpdateTime >= UPDATE_INTERVAL) {
+                    timeRemaining = await updateTimeUsed();
+                    lastUpdateTime = Date.now();
+                }
+
+                timeDisplay.textContent = formatTime(timeRemaining);
+                console.log("Timer tick:", { timeRemaining, elapsed });
+
+                const didScript = document.querySelector('script[data-name="did-agent"]');
+                if (timeRemaining > 0 && !didScript) {
+                    console.log("Time > 0, loading D-ID agent");
+                    loadDIDAgent();
+                } else if (timeRemaining <= 0 && didScript) {
+                    console.log("Time <= 0, removing D-ID agent");
+                    didAgentContainer.innerHTML = '';
+                    didScript.remove();
+                }
+
+                if (timeRemaining <= 0) {
+                    clearInterval(timer);
+                    timer = null;
+                    const waitTime = getTimeUntilMidnight();
+                    console.log("Time limit reached, logging out");
+                    window.alert(`Your daily time limit has been reached. You can log in again in ${formatWaitTime(waitTime)}.`);
+                    await logout();
+                }
+            }, 1000);
+        }
+
+        logoutBtn.addEventListener('click', async () => {
+            console.log("Manual logout triggered");
+            await logout();
+        });
+
+        refreshBtn.addEventListener('click', async () => {
+            console.log("Refreshing user list");
+            await fetchAllUsers();
+        });
+
+        window.addEventListener('beforeunload', async () => {
+            if (timer) {
+                clearInterval(timer);
+                timer = null;
+                if (userData.email !== ADMIN_EMAIL) {
+                    const finalTimeRemaining = await updateTimeUsed();
+                    userData.timeRemaining = finalTimeRemaining;
+                    localStorage.setItem('userData', JSON.stringify(userData));
+                }
+            }
+        });
+    </script>
+</body>
+</html>
