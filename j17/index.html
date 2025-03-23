@@ -223,21 +223,21 @@
         }
 
         async function getUserData(user) {
-            const userDoc = await getDoc(doc(db, "allowedEmails/emailToUid", user.email));
+            const userDoc = await getDoc(doc(db, "allowedEmails", user.email));
             console.log("User doc exists:", userDoc.exists());
             if (!userDoc.exists()) {
                 throw new Error("User document not found.");
             }
-            const userData = userDoc.data();
-            if (!userData.purchased) {
+            const userDocData = userDoc.data();
+            if (userDocData.purchased !== true) {
                 throw new Error("No active subscription found.");
             }
-            const timeRemaining = await checkTimeRemaining(userData.uid, user.email);
+            const timeRemaining = await checkTimeRemaining(user.uid, user.email);
             const data = {
                 email: user.email,
-                name: user.email.split('@')[0],
+                name: userDocData.name || user.email.split('@')[0], // Use 'name' if exists, else email prefix
                 purchased: true,
-                uid: userData.uid,
+                uid: user.uid, // From Firebase Auth
                 timeRemaining: timeRemaining
             };
             console.log("User data:", data);
@@ -280,7 +280,7 @@
         async function checkUserTimeToday(email) {
             try {
                 console.log("Checking time for:", email);
-                const userDoc = await getDoc(doc(db, "allowedEmails/emailToUid", email));
+                const userDoc = await getDoc(doc(db, "allowedEmails", email));
                 console.log("User doc exists:", userDoc.exists());
                 if (!userDoc.exists()) {
                     timeResult.innerHTML = `Error: User ${email} not found in allowedEmails.`;
@@ -290,7 +290,7 @@
                 const userData = userDoc.data();
                 console.log("User data:", userData);
                 if (!userData.uid) {
-                    timeResult.innerHTML = `Error: No UID found for ${email}.`;
+                    timeResult.innerHTML = `Error: No UID found for ${email}. Add UID to allowedEmails/${email}.`;
                     return;
                 }
 
