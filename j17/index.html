@@ -223,7 +223,7 @@
         }
 
         async function getUserData(user) {
-            const userDoc = await getDoc(doc(db, "allowedEmails", "emailToUid", user.email));
+            const userDoc = await getDoc(doc(db, "allowedEmails/emailToUid", user.email));
             console.log("User doc exists:", userDoc.exists());
             if (!userDoc.exists()) {
                 throw new Error("User document not found.");
@@ -280,7 +280,7 @@
         async function checkUserTimeToday(email) {
             try {
                 console.log("Checking time for:", email);
-                const userDoc = await getDoc(doc(db, "allowedEmails", "emailToUid", email));
+                const userDoc = await getDoc(doc(db, "allowedEmails/emailToUid", email));
                 console.log("User doc exists:", userDoc.exists());
                 if (!userDoc.exists()) {
                     timeResult.innerHTML = `Error: User ${email} not found in allowedEmails.`;
