@@ -165,8 +165,13 @@
         function getTimeUntilMidnight() {
             const now = new Date();
             const midnight = new Date(now);
-            midnight.setHours(24, 0, 0, 0);
+            midnight.setHours(24, 0, 0, 0); // Local midnight
             return midnight - now;
+        }
+
+        function getLocalDate() {
+            const now = new Date();
+            return now.toLocaleDateString('en-CA'); // YYYY-MM-DD in local time (e.g., 2025-03-23)
         }
 
         function loadDIDAgent() {
@@ -193,7 +198,7 @@
                 return Infinity;
             }
 
-            const today = new Date().toISOString().split('T')[0];
+            const today = getLocalDate(); // Use local date
             const userTimeDoc = doc(db, "userTime", userId);
             const docSnap = await getDoc(userTimeDoc);
             const maxDailyMs = NORMAL_DAILY_MS;
@@ -207,15 +212,17 @@
                     console.log("Time remaining calculated:", remaining);
                     return remaining;
                 } else {
-                    console.log("Date mismatch, resetting time");
+                    console.log("Date mismatch, resetting time to new day:", today);
+                    await setDoc(userTimeDoc, { date: today, timeUsed: 0 }, { merge: true });
+                    console.log("Reset time for new day:", maxDailyMs);
+                    return maxDailyMs;
                 }
             } else {
-                console.log("No Firestore record, creating new one");
+                console.log("No Firestore record, creating new one for:", today);
+                await setDoc(userTimeDoc, { date: today, timeUsed: 0 }, { merge: true });
+                console.log("Reset time for new day:", maxDailyMs);
+                return maxDailyMs;
             }
-
-            await setDoc(userTimeDoc, { date: today, timeUsed: 0 }, { merge: true });
-            console.log("Reset time for new day:", maxDailyMs);
-            return maxDailyMs;
         }
 
         async function getUserData(user) {
@@ -244,7 +251,7 @@
                 return userData.timeRemaining;
             }
 
-            const today = new Date().toISOString().split('T')[0];
+            const today = getLocalDate(); // Use local date
             const userTimeDoc = doc(db, "userTime", userData.uid);
             const docSnap = await getDoc(userTimeDoc);
             const maxDailyMs = NORMAL_DAILY_MS;
@@ -261,7 +268,7 @@
             const timeRemaining = Math.max(0, maxDailyMs - totalTimeUsed);
 
             try {
-                await updateDoc(userTimeDoc, { timeUsed: totalTimeUsed, date: today });
+                await updateDoc(userTimeDoc, { date: today, timeUsed: totalTimeUsed });
                 console.log("Time updated:", { totalTimeUsed, timeRemaining });
                 userData.timeRemaining = timeRemaining;
                 return timeRemaining;
@@ -317,13 +324,13 @@
             }
             try {
                 console.log("Logging out...");
-                didAgentContainer.innerHTML = ''; // Hide D-ID
+                didAgentContainer.innerHTML = '';
                 const didScript = document.querySelector('script[data-name="did-agent"]');
                 if (didScript) didScript.remove();
                 await signOut(auth);
                 userData = null;
                 console.log("Logged out, refreshing page");
-                window.location.reload(); // Refresh instead of showing login
+                window.location.reload();
             } catch (error) {
                 console.error("Logout error:", error);
                 window.alert("Logout error: " + error.message);
@@ -437,13 +444,13 @@
                 if (timeRemaining <= 0) {
                     clearInterval(timer);
                     timer = null;
-                    didAgentContainer.innerHTML = ''; // Hide D-ID
+                    didAgentContainer.innerHTML = '';
                     const didScript = document.querySelector('script[data-name="did-agent"]');
                     if (didScript) didScript.remove();
                     const waitTime = getTimeUntilMidnight();
                     console.log("Time limit reached, logging out");
                     window.alert(`Your daily credits have been used. Try again in ${formatWaitTime(waitTime)}.`);
-                    await logout(); // Refresh via logout
+                    await logout();
                 }
             }, 1000);
         }
