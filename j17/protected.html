@@ -104,11 +104,10 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
 
-        const MAX_DAILY_MINUTES = 5;
-        const MILLISECONDS_PER_MINUTE = 60000;
-        const MAX_DAILY_MS = MAX_DAILY_MINUTES * MILLISECONDS_PER_MINUTE;
-        const UPDATE_INTERVAL = 10000;
         const ADMIN_EMAIL = "jesse3@example.com";
+        const ADMIN_DAILY_MS = 24 * 60 * 60000; // 24 hours
+        const NORMAL_DAILY_MS = 5 * 60000; // 5 minutes
+        const UPDATE_INTERVAL = 10000;
 
         const usernameDisplay = document.getElementById('username');
         const purchaseStatusDisplay = document.getElementById('purchase-status');
@@ -125,9 +124,10 @@
         let lastUpdateTime;
 
         function formatTime(ms) {
-            const minutes = Math.floor(ms / 60000);
-            const seconds = Math.floor((ms % 60000) / 1000);
-            return `${minutes}:${seconds < 10 ? '0' + seconds : seconds}`;
+            const hours = Math.floor(ms / (1000 * 60 * 60));
+            const minutes = Math.floor((ms % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((ms % (1000 * 60)) / 1000);
+            return `${hours}:${minutes < 10 ? '0' + minutes : minutes}:${seconds < 10 ? '0' + seconds : seconds}`;
         }
 
         function formatWaitTime(msUntilMidnight) {
@@ -162,14 +162,15 @@
         }
 
         async function updateTimeUsed() {
-            if (!userData || userData.email === ADMIN_EMAIL) {
-                console.log("Skipping time update for admin or no userData");
+            if (!userData) {
+                console.log("No userData, skipping time update");
                 return userData.timeRemaining;
             }
 
             const today = new Date().toISOString().split('T')[0];
             const userTimeDoc = doc(db, "userTime", userData.uid);
             const docSnap = await getDoc(userTimeDoc);
+            const maxDailyMs = userData.email === ADMIN_EMAIL ? ADMIN_DAILY_MS : NORMAL_DAILY_MS;
             let timeUsed = 0;
 
             if (docSnap.exists() && docSnap.data().date === today) {
@@ -179,16 +180,17 @@
             }
 
             const elapsed = Date.now() - startTime;
-            const totalTimeUsed = Math.min(timeUsed + elapsed, MAX_DAILY_MS);
-            const timeRemaining = Math.max(0, MAX_DAILY_MS - totalTimeUsed);
+            const totalTimeUsed = Math.min(timeUsed + elapsed, maxDailyMs);
+            const timeRemaining = Math.max(0, maxDailyMs - totalTimeUsed);
 
             try {
                 await updateDoc(userTimeDoc, { timeUsed: totalTimeUsed, date: today });
                 console.log("Time updated in Firestore:", { totalTimeUsed, timeRemaining });
+                userData.timeRemaining = timeRemaining; // Update local userData
                 return timeRemaining;
             } catch (error) {
                 console.error("Error updating time:", error);
-                return timeRemaining; // Return last known value on error
+                return timeRemaining;
             }
         }
 
@@ -226,12 +228,12 @@
             if (timer) {
                 clearInterval(timer);
                 timer = null;
-                if (userData.email !== ADMIN_EMAIL) {
-                    const finalTimeRemaining = await updateTimeUsed();
-                    if (finalTimeRemaining <= 0) {
-                        const waitTime = getTimeUntilMidnight();
-                        window.alert(`Your daily time limit has been reached. You can log in again in ${formatWaitTime(waitTime)}.`);
-                    }
+                const finalTimeRemaining = await updateTimeUsed();
+                userData.timeRemaining = finalTimeRemaining;
+                localStorage.setItem('userData', JSON.stringify(userData)); // Save updated time
+                if (finalTimeRemaining <= 0) {
+                    const waitTime = getTimeUntilMidnight();
+                    window.alert(`Your daily time limit has been reached. You can log in again in ${formatWaitTime(waitTime)}.`);
                 }
             }
             try {
@@ -266,12 +268,9 @@
         function initializePage() {
             usernameDisplay.textContent = userData.name;
             purchaseStatusDisplay.textContent = 'Active';
-            timeDisplay.textContent = userData.timeRemaining === Infinity 
-                ? "Unlimited" 
-                : formatTime(userData.timeRemaining);
+            timeDisplay.textContent = formatTime(userData.timeRemaining);
 
-            // Load D-ID if purchased and time > 1s or Infinity
-            if (userData.purchased && (userData.timeRemaining === Infinity || userData.timeRemaining > 1000)) {
+            if (userData.purchased && userData.timeRemaining > 1000) {
                 console.log("Conditions met, loading D-ID agent");
                 loadDIDAgent();
             } else {
@@ -287,23 +286,18 @@
             lastUpdateTime = Date.now();
             timer = setInterval(async () => {
                 const elapsed = Date.now() - startTime;
-                let timeRemaining = userData.timeRemaining === Infinity 
-                    ? Infinity 
-                    : Math.max(0, userData.timeRemaining - elapsed);
+                const maxDailyMs = userData.email === ADMIN_EMAIL ? ADMIN_DAILY_MS : NORMAL_DAILY_MS;
+                let timeRemaining = Math.max(0, userData.timeRemaining - elapsed);
 
-                if (userData.email !== ADMIN_EMAIL && Date.now() - lastUpdateTime >= UPDATE_INTERVAL) {
+                if (Date.now() - lastUpdateTime >= UPDATE_INTERVAL) {
                     timeRemaining = await updateTimeUsed();
-                    userData.timeRemaining = timeRemaining;
                     lastUpdateTime = Date.now();
                 }
 
-                timeDisplay.textContent = timeRemaining === Infinity 
-                    ? "Unlimited" 
-                    : formatTime(timeRemaining);
-
+                timeDisplay.textContent = formatTime(timeRemaining);
                 console.log("Timer tick:", { timeRemaining, elapsed });
 
-                if (timeRemaining <= 0 && userData.email !== ADMIN_EMAIL) {
+                if (timeRemaining <= 0) {
                     clearInterval(timer);
                     timer = null;
                     const waitTime = getTimeUntilMidnight();
@@ -328,9 +322,9 @@
             if (timer) {
                 clearInterval(timer);
                 timer = null;
-                if (userData.email !== ADMIN_EMAIL) {
-                    await updateTimeUsed();
-                }
+                const finalTimeRemaining = await updateTimeUsed();
+                userData.timeRemaining = finalTimeRemaining;
+                localStorage.setItem('userData', JSON.stringify(userData)); // Save on page close
             }
         });
     </script>
