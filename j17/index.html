@@ -242,6 +242,7 @@
             }
 
             try {
+                console.log("Fetching allowedEmails as:", auth.currentUser.email);
                 const allowedEmailsSnapshot = await getDocs(collection(db, "allowedEmails"));
                 let userListHTML = '';
 
@@ -249,12 +250,7 @@
                     const email = docSnap.id;
                     const purchased = docSnap.data().purchased || false;
                     const username = email.split('@')[0];
-                    let timeRemaining = 0; // Default to 0 if no time or no mapping
-                    if (purchased) {
-                        const uidDoc = await getDoc(doc(db, "emailToUid", email));
-                        const uid = uidDoc.exists() ? uidDoc.data().uid : null;
-                        timeRemaining = uid ? await checkTimeRemaining(uid) : MAX_DAILY_MS;
-                    }
+                    const timeRemaining = purchased ? MAX_DAILY_MS : 0; // Placeholder
 
                     userListHTML += `
                         <div>
@@ -376,7 +372,7 @@
         });
 
         if (userData && auth.currentUser) {
-            loginSection.style.display = 'none';
+            loginSection.style.display = '∏none';
             homepageSection.style.display = 'block';
             usernameDisplay.textContent = userData.name;
             purchaseStatusDisplay.textContent = 'Active';
