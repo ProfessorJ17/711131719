@@ -307,7 +307,10 @@
                 }
             }
             try {
-                // Remove D-ID script to "disconnect" it
+                // Immediately clear the D-ID container to hide the agent
+                didAgentContainer.innerHTML = '';
+
+                // Remove D-ID script to fully disconnect it
                 const didScript = document.querySelector('script[data-name="did-agent"]');
                 if (didScript) didScript.remove();
 
@@ -380,7 +383,7 @@
                         timer = null;
                         const waitTime = getTimeUntilMidnight();
                         window.alert(`Your daily time limit has been reached. You can log in again in ${formatWaitTime(waitTime)}.`);
-                        await logout(); // Auto-logout triggers D-ID disconnect
+                        await logout(); // Auto-logout triggers immediate D-ID hide
                     }
                 }, 1000);
             } catch (error) {
@@ -447,7 +450,7 @@
                     timer = null;
                     const waitTime = getTimeUntilMidnight();
                     window.alert(`Your daily time limit has been reached. You can log in again in ${formatWaitTime(waitTime)}.`);
-                    await logout(); // Auto-logout triggers D-ID disconnect
+                    await logout(); // Auto-logout triggers immediate D-ID hide
                 }
             }, 1000);
         }
