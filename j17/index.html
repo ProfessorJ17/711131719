@@ -196,28 +196,29 @@
             }
 
             const today = getLocalDate();
+            console.log("Today’s date:", today);
             const userTimeDoc = doc(db, "userTime", userId);
             const docSnap = await getDoc(userTimeDoc);
             const maxDailyMs = NORMAL_DAILY_MS;
 
             if (docSnap.exists()) {
                 const data = docSnap.data();
-                console.log("Firestore data for checkTimeRemaining:", data);
+                console.log("Firestore data for userTime:", data);
                 if (data.date === today) {
                     const timeUsed = data.timeUsed || 0;
                     const remaining = Math.max(0, maxDailyMs - timeUsed);
-                    console.log("Time remaining calculated:", remaining);
+                    console.log("Time used today:", timeUsed, "Remaining:", remaining);
                     return remaining;
                 } else {
-                    console.log("Date mismatch, resetting time to new day:", today);
+                    console.log("Date mismatch detected. Stored date:", data.date, "Resetting to today:", today);
                     await setDoc(userTimeDoc, { date: today, timeUsed: 0 }, { merge: true });
                     console.log("Reset time for new day:", maxDailyMs);
                     return maxDailyMs;
                 }
             } else {
-                console.log("No Firestore record, creating new one for:", today);
+                console.log("No userTime record found for UID:", userId, "Creating new one for:", today);
                 await setDoc(userTimeDoc, { date: today, timeUsed: 0 }, { merge: true });
-                console.log("Reset time for new day:", maxDailyMs);
+                console.log("Initialized time for new day:", maxDailyMs);
                 return maxDailyMs;
             }
         }
@@ -260,7 +261,7 @@
                 timeUsed = docSnap.data().timeUsed || 0;
                 console.log("Existing time used today:", timeUsed);
             } else {
-                console.log("Resetting time for new day:", today);
+                console.log("Resetting time for new day or no doc:", today);
                 await setDoc(userTimeDoc, { date: today, timeUsed: 0 }, { merge: true });
             }
 
@@ -269,7 +270,7 @@
             const timeRemaining = Math.max(0, maxDailyMs - totalTimeUsed);
 
             try {
-                console.log("Attempting to update userTime:", { date: today, timeUsed: totalTimeUsed });
+                console.log("Updating userTime:", { date: today, timeUsed: totalTimeUsed });
                 await updateDoc(userTimeDoc, { date: today, timeUsed: totalTimeUsed });
                 console.log("Time updated successfully:", { totalTimeUsed, timeRemaining });
                 userData.timeRemaining = timeRemaining;
