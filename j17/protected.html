@@ -271,13 +271,9 @@
             purchaseStatusDisplay.textContent = 'Active';
             timeDisplay.textContent = formatTime(userData.timeRemaining);
 
-            // Load D-ID if timeRemaining is Infinity (admin) or > 0
-            if (userData.timeRemaining === Infinity || userData.timeRemaining > 0) {
-                console.log("Time is unlimited or > 0, loading D-ID agent");
-                loadDIDAgent();
-            } else {
-                console.log("Time <= 0, D-ID not loaded");
-            }
+            // Load D-ID unconditionally since user is logged in
+            console.log("User logged in, loading D-ID agent");
+            loadDIDAgent();
 
             if (userData.email === ADMIN_EMAIL) {
                 adminSection.style.display = 'block';
