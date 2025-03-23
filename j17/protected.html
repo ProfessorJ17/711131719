@@ -105,8 +105,8 @@
         const db = getFirestore(app);
 
         const ADMIN_EMAIL = "jesse3@example.com";
-        const ADMIN_DAILY_MS = 24 * 60 * 60000; // 24 hours
-        const NORMAL_DAILY_MS = 5 * 60000; // 5 minutes
+        const ADMIN_DAILY_MS = 23 * 60 * 60000 + 59 * 60000 + 59000; // 23:59:59 in ms
+        const NORMAL_DAILY_MS = 5 * 60000; // 5 minutes in ms
         const UPDATE_INTERVAL = 10000;
 
         const usernameDisplay = document.getElementById('username');
@@ -243,7 +243,6 @@
                 if (didScript) didScript.remove();
 
                 await signOut(auth);
-                localStorage.removeItem('userData');
                 console.log("Logged out, redirecting to index.html");
                 window.location.href = 'index.html';
             } catch (error) {
