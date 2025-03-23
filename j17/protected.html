@@ -105,8 +105,9 @@
         const db = getFirestore(app);
 
         const ADMIN_EMAIL = "jesse3@example.com";
-        const NORMAL_DAILY_MS = 5 * 60000; // 5 minutes in ms
-        const UPDATE_INTERVAL = 10000;
+        const ADMIN_DAILY_MS = 23 * 60 * 60 * 1000; // 23 hours in ms
+        const NORMAL_DAILY_MS = 5 * 60 * 1000; // 5 minutes in ms
+        const UPDATE_INTERVAL = 5000; // 5 seconds
 
         const usernameDisplay = document.getElementById('username');
         const purchaseStatusDisplay = document.getElementById('purchase-status');
@@ -123,7 +124,6 @@
         let lastUpdateTime;
 
         function formatTime(ms) {
-            if (ms === Infinity) return "Unlimited";
             const hours = Math.floor(ms / (1000 * 60 * 60));
             const minutes = Math.floor((ms % (1000 * 60 * 60)) / (1000 * 60));
             const seconds = Math.floor((ms % (1000 * 60)) / 1000);
@@ -162,15 +162,15 @@
         }
 
         async function updateTimeUsed() {
-            if (!userData || userData.email === ADMIN_EMAIL) { // Skip for admin
-                console.log("No userData or admin, skipping time update");
+            if (!userData) {
+                console.log("No userData, skipping time update");
                 return userData.timeRemaining;
             }
 
             const today = new Date().toISOString().split('T')[0];
             const userTimeDoc = doc(db, "userTime", userData.uid);
             const docSnap = await getDoc(userTimeDoc);
-            const maxDailyMs = NORMAL_DAILY_MS;
+            const maxDailyMs = userData.email === ADMIN_EMAIL ? ADMIN_DAILY_MS : NORMAL_DAILY_MS;
             let timeUsed = 0;
 
             if (docSnap.exists() && docSnap.data().date === today) {
@@ -228,14 +228,12 @@
             if (timer) {
                 clearInterval(timer);
                 timer = null;
-                if (userData.email !== ADMIN_EMAIL) { // Only update time for non-admin
-                    const finalTimeRemaining = await updateTimeUsed();
-                    userData.timeRemaining = finalTimeRemaining;
-                    localStorage.setItem('userData', JSON.stringify(userData)); // Save updated time
-                    if (finalTimeRemaining <= 0) {
-                        const waitTime = getTimeUntilMidnight();
-                        window.alert(`Your daily time limit has been reached. You can log in again in ${formatWaitTime(waitTime)}.`);
-                    }
+                const finalTimeRemaining = await updateTimeUsed();
+                userData.timeRemaining = finalTimeRemaining;
+                localStorage.setItem('userData', JSON.stringify(userData)); // Save updated time
+                if (finalTimeRemaining <= 0) {
+                    const waitTime = getTimeUntilMidnight();
+                    window.alert(`Your daily time limit has been reached. You can log in again in ${formatWaitTime(waitTime)}.`);
                 }
             }
             try {
@@ -271,9 +269,10 @@
             purchaseStatusDisplay.textContent = 'Active';
             timeDisplay.textContent = formatTime(userData.timeRemaining);
 
-            // Load D-ID unconditionally since user is logged in
-            console.log("User logged in, loading D-ID agent");
-            loadDIDAgent();
+            if (userData.timeRemaining > 0) {
+                console.log("Time > 0, loading D-ID agent");
+                loadDIDAgent();
+            }
 
             if (userData.email === ADMIN_EMAIL) {
                 adminSection.style.display = 'block';
@@ -283,13 +282,8 @@
             startTime = Date.now();
             lastUpdateTime = Date.now();
             timer = setInterval(async () => {
-                if (userData.email === ADMIN_EMAIL) { // Skip timer for admin
-                    timeDisplay.textContent = "Unlimited";
-                    return;
-                }
-
                 const elapsed = Date.now() - startTime;
-                const maxDailyMs = NORMAL_DAILY_MS;
+                const maxDailyMs = userData.email === ADMIN_EMAIL ? ADMIN_DAILY_MS : NORMAL_DAILY_MS;
                 let timeRemaining = Math.max(0, userData.timeRemaining - elapsed);
 
                 if (Date.now() - lastUpdateTime >= UPDATE_INTERVAL) {
@@ -300,7 +294,16 @@
                 timeDisplay.textContent = formatTime(timeRemaining);
                 console.log("Timer tick:", { timeRemaining, elapsed });
 
-                // Logout exactly at 0 for non-admin
+                const didScript = document.querySelector('script[data-name="did-agent"]');
+                if (timeRemaining > 0 && !didScript) {
+                    console.log("Time > 0, loading D-ID agent");
+                    loadDIDAgent();
+                } else if (timeRemaining <= 0 && didScript) {
+                    console.log("Time <= 0, removing D-ID agent");
+                    didAgentContainer.innerHTML = '';
+                    didScript.remove();
+                }
+
                 if (timeRemaining <= 0) {
                     clearInterval(timer);
                     timer = null;
@@ -309,7 +312,7 @@
                     window.alert(`Your daily time limit has been reached. You can log in again in ${formatWaitTime(waitTime)}.`);
                     await logout();
                 }
-            }, 1000);
+            }, 1000); // Check every second, update every 5 seconds via UPDATE_INTERVAL
         }
 
         logoutBtn.addEventListener('click', async () => {
@@ -326,11 +329,9 @@
             if (timer) {
                 clearInterval(timer);
                 timer = null;
-                if (userData.email !== ADMIN_EMAIL) { // Only update time for non-admin
-                    const finalTimeRemaining = await updateTimeUsed();
-                    userData.timeRemaining = finalTimeRemaining;
-                    localStorage.setItem('userData', JSON.stringify(userData)); // Save on page close
-                }
+                const finalTimeRemaining = await updateTimeUsed();
+                userData.timeRemaining = finalTimeRemaining;
+                localStorage.setItem('userData', JSON.stringify(userData)); // Save on page close
             }
         });
     </script>
