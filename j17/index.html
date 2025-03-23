@@ -279,18 +279,32 @@
             try {
                 console.log("Checking time for:", email);
                 const userDoc = await getDoc(doc(db, "allowedEmails", email));
-                if (!userDoc.exists()) throw new Error("User not found in allowedEmails.");
+                console.log("User doc exists:", userDoc.exists());
+                if (!userDoc.exists()) {
+                    timeResult.innerHTML = `Error: User ${email} not found in allowedEmails.`;
+                    return;
+                }
 
-                const userTimeDoc = doc(db, "userTime", userDoc.data().uid);
+                const userData = userDoc.data();
+                console.log("User data:", userData);
+                if (!userData.uid) {
+                    timeResult.innerHTML = `Error: No UID found for ${email}.`;
+                    return;
+                }
+
+                const userTimeDoc = doc(db, "userTime", userData.uid);
                 const docSnap = await getDoc(userTimeDoc);
                 const today = getLocalDate();
                 let timeUsedToday = 0;
 
                 if (docSnap.exists()) {
                     const data = docSnap.data();
+                    console.log("Time doc data:", data);
                     if (data.date === today) {
                         timeUsedToday = data.timeUsed || 0;
                     }
+                } else {
+                    console.log("No time doc exists for:", userData.uid);
                 }
 
                 const minutesUsed = (timeUsedToday / 1000 / 60).toFixed(2);
