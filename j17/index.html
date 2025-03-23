@@ -257,8 +257,8 @@
 
             const today = getLocalDate();
             const userDocRef = doc(db, "allowedEmails", userData.email);
-            const elapsed = Date.now() - startTime;
-            const totalTimeUsed = Math.min((initialTimeUsed || 0) + elapsed, NORMAL_DAILY_MS); // Default to 0 if undefined
+            const elapsed = startTime ? Date.now() - startTime : 0; // Fallback if startTime is unset
+            const totalTimeUsed = Math.min((initialTimeUsed || 0) + elapsed, NORMAL_DAILY_MS);
             const timeRemaining = Math.max(0, NORMAL_DAILY_MS - totalTimeUsed);
 
             try {
@@ -288,8 +288,8 @@
             if (!userData || userData.email === ADMIN_EMAIL) {
                 return Infinity;
             }
-            const elapsed = Date.now() - startTime;
-            const totalTimeUsed = Math.min((initialTimeUsed || 0) + elapsed, NORMAL_DAILY_MS); // Default to 0 if undefined
+            const elapsed = startTime ? Date.now() - startTime : 0; // Fallback if startTime is unset
+            const totalTimeUsed = Math.min((initialTimeUsed || 0) + elapsed, NORMAL_DAILY_MS);
             return Math.max(0, NORMAL_DAILY_MS - totalTimeUsed);
         }
 
@@ -320,7 +320,7 @@
             if (timer) {
                 clearInterval(timer);
                 timer = null;
-                if (userData.email !== ADMIN_EMAIL) {
+                if (userData && userData.email !== ADMIN_EMAIL) {
                     const finalTimeRemaining = await saveTimeUsed();
                     if (finalTimeRemaining <= 0) {
                         const waitTime = getTimeUntilMidnight();
