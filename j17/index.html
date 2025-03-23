@@ -5,18 +5,15 @@
     <link rel="stylesheet" href="main.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap');
-
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
             font-family: sans-serif;
         }
-
         body {
             background-color: #0583D2;
         }
-
         h1 {
             margin-bottom: 8%;
             text-align: center;
@@ -24,18 +21,15 @@
             color: #0583D2;
             letter-spacing: 0.1em;
         }
-
         input {
             margin-bottom: 3%;
             padding: 3%;
             width: 100%;
         }
-
         button {
             padding: 3%;
             width: 100%;
         }
-
         .container {
             background-color: white;
             padding: 5%;
@@ -44,14 +38,12 @@
             margin: 10vh auto;
             text-align: center;
         }
-
         #submit {
             background-color: #0583D2;
             color: white;
             border: none;
             margin-top: 5%;
         }
-
         #logout-btn {
             background-color: #0583D2;
             color: white;
@@ -60,33 +52,27 @@
             margin-top: 5%;
             width: 50%;
         }
-
         button:hover {
             cursor: pointer;
             opacity: 0.8;
             transition: 0.3s;
         }
-
         #login-section {
             display: block;
         }
-
         #homepage-section {
             display: none;
         }
-
         #admin-section {
             display: none;
             margin-top: 20px;
         }
-
         #user-list {
             margin-top: 10px;
             text-align: left;
             max-height: 300px;
             overflow-y: auto;
         }
-
         #user-list div {
             margin: 5px 0;
         }
@@ -100,7 +86,6 @@
             <input id="password" type="password" placeholder="Password"></input>
             <button id="submit">Submit</button>
         </div>
-
         <div id="homepage-section">
             <p>Time Remaining Today: <span id="time-remaining"></span></p>
             <h1>Welcome <span id="username"></span>!</h1>
@@ -138,10 +123,9 @@
         const MAX_DAILY_MINUTES = 5;
         const MILLISECONDS_PER_MINUTE = 60000;
         const MAX_DAILY_MS = MAX_DAILY_MINUTES * MILLISECONDS_PER_MINUTE;
-        const UPDATE_INTERVAL = 10000; // Update Firestore every 10 seconds
+        const UPDATE_INTERVAL = 10000;
         const ADMIN_EMAIL = "jesse3@example.com";
 
-        // DOM elements
         const loginSection = document.getElementById('login-section');
         const homepageSection = document.getElementById('homepage-section');
         const submitButton = document.getElementById('submit');
@@ -160,29 +144,25 @@
         let startTime;
         let lastUpdateTime;
 
-        // Format time function (for seconds)
         function formatTime(ms) {
             const minutes = Math.floor(ms / 60000);
             const seconds = Math.floor((ms % 60000) / 1000);
             return `${minutes}:${seconds < 10 ? '0' + seconds : seconds}`;
         }
 
-        // Format wait time (hours and minutes)
         function formatWaitTime(msUntilMidnight) {
             const hours = Math.floor(msUntilMidnight / (1000 * 60 * 60));
             const minutes = Math.floor((msUntilMidnight % (1000 * 60 * 60)) / (1000 * 60));
             return `${hours} hour${hours !== 1 ? 's' : ''} and ${minutes} minute${minutes !== 1 ? 's' : ''}`;
         }
 
-        // Calculate time until midnight
         function getTimeUntilMidnight() {
             const now = new Date();
             const midnight = new Date(now);
-            midnight.setHours(24, 0, 0, 0); // Next midnight
+            midnight.setHours(24, 0, 0, 0);
             return midnight - now;
         }
 
-        // Check remaining time from Firestore without resetting unless it's a new day
         async function checkTimeRemaining(userId) {
             const today = new Date().toISOString().split('T')[0];
             const userTimeDoc = doc(db, "userTime", userId);
@@ -194,18 +174,15 @@
                     const timeUsed = data.timeUsed || 0;
                     return Math.max(0, MAX_DAILY_MS - timeUsed);
                 } else {
-                    // New day, reset timeUsed to 0
                     await setDoc(userTimeDoc, { date: today, timeUsed: 0 }, { merge: true });
                     return MAX_DAILY_MS;
                 }
             } else {
-                // No document exists, create it with 5 minutes
                 await setDoc(userTimeDoc, { date: today, timeUsed: 0 }, { merge: true });
                 return MAX_DAILY_MS;
             }
         }
 
-        // Update time used and save to Firestore
         async function updateTimeUsed() {
             if (!userData || !timer) return;
 
@@ -217,12 +194,11 @@
             if (docSnap.exists() && docSnap.data().date === today) {
                 timeUsed = docSnap.data().timeUsed || 0;
             } else {
-                // New day, reset if date doesn't match
                 await setDoc(userTimeDoc, { date: today, timeUsed: 0 }, { merge: true });
             }
 
             const elapsed = Date.now() - startTime;
-            const totalTimeUsed = Math.min(timeUsed + elapsed, MAX_DAILY_MS); // Cap at 5 minutes
+            const totalTimeUsed = Math.min(timeUsed + elapsed, MAX_DAILY_MS);
             const timeRemaining = Math.max(0, MAX_DAILY_MS - totalTimeUsed);
 
             try {
@@ -237,7 +213,6 @@
             return timeRemaining;
         }
 
-        // Fetch user data from Firestore using allowedEmails
         async function getLatestUserData(user) {
             const userDoc = await getDoc(doc(db, "allowedEmails", user.email));
             if (!userDoc.exists()) {
@@ -260,7 +235,6 @@
             return userData;
         }
 
-        // Fetch all users' data
         async function fetchAllUsers() {
             if (auth.currentUser.email !== ADMIN_EMAIL) {
                 userList.textContent = "Unauthorized access.";
@@ -268,6 +242,7 @@
             }
 
             try {
+                console.log("Fetching allowedEmails for:", auth.currentUser.email);
                 const allowedEmailsSnapshot = await getDocs(collection(db, "allowedEmails"));
                 let userListHTML = '';
 
@@ -275,7 +250,6 @@
                     const email = docSnap.id;
                     const purchased = docSnap.data().purchased || false;
                     const username = email.split('@')[0];
-                    // Fetch real timeRemaining using emailToUid (optional)
                     const uidDoc = await getDoc(doc(db, "emailToUid", email));
                     const uid = uidDoc.exists() ? uidDoc.data().uid : null;
                     const timeRemaining = uid ? await checkTimeRemaining(uid) : (purchased ? MAX_DAILY_MS : 0);
@@ -294,7 +268,6 @@
             }
         }
 
-        // Logout function
         async function logout() {
             if (timer) {
                 clearInterval(timer);
@@ -320,7 +293,6 @@
             }
         }
 
-        // Login handler
         submitButton.addEventListener('click', async () => {
             const email = emailInput.value;
             const password = passwordInput.value;
@@ -393,17 +365,14 @@
             }
         });
 
-        // Refresh user list (admin only)
         refreshBtn.addEventListener('click', async () => {
             await fetchAllUsers();
         });
 
-        // Logout handler
         logoutBtn.addEventListener('click', async () => {
             await logout();
         });
 
-        // Check if already logged in
         if (userData && auth.currentUser) {
             loginSection.style.display = 'none';
             homepageSection.style.display = 'block';
@@ -447,7 +416,6 @@
             }, 1000);
         }
 
-        // Cleanup on page unload
         window.addEventListener('beforeunload', async () => {
             if (timer) {
                 clearInterval(timer);
