@@ -26,11 +26,13 @@
       font-family: 'Orbitron', sans-serif;
     }
     body {
-      background: linear-gradient(135deg, #6B48FF 0%, #1A0033 100%);
+      background: linear-gradient(135deg, #6B48FF 0%, #1A0033 100%), url('https://711131719.xyz/images/1540588933.svg') no-repeat center center fixed;
+      background-size: cover;
       min-height: 100vh;
       display: flex;
       justify-content: center;
       align-items: center;
+      position: relative;
     }
     .container {
       background: rgba(255, 255, 255, 0.1);
@@ -42,6 +44,8 @@
       box-shadow: 0 0 20px rgba(107, 72, 255, 0.5);
       text-align: center;
       border: 1px solid rgba(255, 255, 255, 0.2);
+      position: relative;
+      z-index: 1; /* Ensures container stays above background */
     }
     h1 {
       margin-bottom: 10px;
