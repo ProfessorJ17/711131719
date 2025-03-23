@@ -110,7 +110,7 @@
     import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js";
     import { getFirestore, doc, getDoc, updateDoc, setDoc } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
 
-    // Firebase configuration with your keys.
+    // Firebase configuration using your keys.
     const firebaseConfig = {
       apiKey: "AIzaSyDpIapJzv54LIApO_yM2f-SrwkXbjjLRPo",
       authDomain: "ever4-e1efb.firebaseapp.com",
@@ -148,7 +148,6 @@
     let timer = null;
     let startTime = 0;
 
-    // Format milliseconds as HH:MM:SS.
     function formatTime(ms) {
       if (ms === Infinity) return "Unlimited";
       const hours = Math.floor(ms / (1000 * 60 * 60));
@@ -170,13 +169,11 @@
       return midnight - now;
     }
 
-    // Get today's date as "YYYY-MM-DD".
     function getLocalDate() {
       const now = new Date();
       return now.toLocaleDateString('en-CA');
     }
 
-    // (Optional) Load a third-party agent script.
     function loadDIDAgent() {
       const existingScript = document.querySelector('script[data-name="did-agent"]');
       if (existingScript) existingScript.remove();
@@ -191,7 +188,6 @@
       didAgentContainer.appendChild(script);
     }
 
-    // When logging in, reset the document if the stored date doesn't match today.
     async function saveOnLogin(email, startTime) {
       if (email === ADMIN_EMAIL) {
         window.alert("Admin login detected - unlimited time.");
@@ -205,7 +201,6 @@
         const data = docSnap.data();
         window.alert(`On login, fetched: date=${data.date}, timeused=${data.timeused}, startTime=${data.startTime}, endTime=${data.endTime}`);
         let timeUsed = data.timeused || 0;
-        // Reset if stored date doesn't match today.
         if (data.date !== today) {
           window.alert(`Date mismatch. Stored: ${data.date}, Today: ${today}. Resetting.`);
           timeUsed = 0;
@@ -220,7 +215,6 @@
           uid: data.uid || ""
         };
         try {
-          // Send the complete document.
           await setDoc(userDocRef, updatedData);
           const verifySnap = await getDoc(userDocRef);
           const verifyData = verifySnap.data();
@@ -259,7 +253,6 @@
       return data;
     }
 
-    // Save the complete document on logout.
     async function saveTimeUsed() {
       if (!userData || userData.email === ADMIN_EMAIL) {
         window.alert("Skipping save for admin or no userData.");
