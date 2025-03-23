@@ -275,7 +275,7 @@
                     const email = docSnap.id;
                     const purchased = docSnap.data().purchased || false;
                     const username = email.split('@')[0];
-                    // Fetch real timeRemaining using emailToUid
+                    // Fetch real timeRemaining using emailToUid (optional)
                     const uidDoc = await getDoc(doc(db, "emailToUid", email));
                     const uid = uidDoc.exists() ? uidDoc.data().uid : null;
                     const timeRemaining = uid ? await checkTimeRemaining(uid) : (purchased ? MAX_DAILY_MS : 0);
