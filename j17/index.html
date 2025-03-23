@@ -91,15 +91,7 @@
             <h1>Welcome <span id="username"></span>!</h1>
             <p>Subscription Status: <span id="purchase-status"></span></p>
             <button id="logout-btn">Logout</button>
-            <script
-                type="module"
-                src="https://agent.d-id.com/v1/index.js"
-                data-name="did-agent"
-                data-mode="fabio"
-                data-client-key="Z29vZ2xlLW9hdXRoMnwxMDI1NDc5NDg2ODI5NjkwNzc4MDg6RkpFT0VWOTBqYVFVb3lHT3hMU2Zt"
-                data-agent-id="agt_k9HerVqC"
-                data-monitor="true">
-            </script>
+            <div id="did-agent-container"></div> <!-- Container for D-ID agent -->
             <div id="admin-section">
                 <h2>All Users</h2>
                 <button id="refresh-btn">Refresh List</button>
@@ -147,6 +139,7 @@
         const adminSection = document.getElementById('admin-section');
         const refreshBtn = document.getElementById('refresh-btn');
         const userList = document.getElementById('user-list');
+        const didAgentContainer = document.getElementById('did-agent-container');
 
         let userData = JSON.parse(localStorage.getItem('userData'));
         let timer = null;
@@ -170,6 +163,23 @@
             const midnight = new Date(now);
             midnight.setHours(24, 0, 0, 0);
             return midnight - now;
+        }
+
+        function loadDIDAgent() {
+            // Remove any existing script to prevent duplicates
+            const existingScript = document.querySelector('script[data-name="did-agent"]');
+            if (existingScript) existingScript.remove();
+
+            // Create and append the D-ID script
+            const script = document.createElement('script');
+            script.type = 'module';
+            script.src = 'https://agent.d-id.com/v1/index.js';
+            script.setAttribute('data-name', 'did-agent');
+            script.setAttribute('data-mode', 'fabio');
+            script.setAttribute('data-client-key', 'Z29vZ2xlLW9hdXRoMnwxMDI1NDc5NDg2ODI5NjkwNzc4MDg6RkpFT0VWOTBqYVFVb3lHT3hMU2Zt');
+            script.setAttribute('data-agent-id', 'agt_k9HerVqC');
+            script.setAttribute('data-monitor', 'true');
+            didAgentContainer.appendChild(script);
         }
 
         async function checkTimeRemaining(userId) {
@@ -295,6 +305,7 @@
                 loginSection.style.display = 'block';
                 homepageSection.style.display = 'none';
                 timeDisplay.textContent = '';
+                didAgentContainer.innerHTML = ''; // Clear D-ID agent on logout
             } catch (error) {
                 console.error("Logout error:", error);
                 window.alert("Error during logout: " + error.message);
@@ -332,6 +343,9 @@
                 } else {
                     adminSection.style.display = 'none';
                 }
+
+                // Load D-ID agent after login
+                loadDIDAgent();
 
                 startTime = Date.now();
                 lastUpdateTime = Date.now();
@@ -396,6 +410,9 @@
             } else {
                 adminSection.style.display = 'none';
             }
+
+            // Load D-ID agent on page reload if logged in
+            loadDIDAgent();
 
             startTime = Date.now();
             lastUpdateTime = Date.now();
