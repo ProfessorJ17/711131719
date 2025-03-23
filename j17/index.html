@@ -89,7 +89,15 @@
         <div id="homepage-section">
             <p>Time Remaining Today: <span id="time-remaining"></span></p>
             <h1>Welcome <span id="username"></span>!</h1>
-            <div id="did-agent-container"></div>
+            <script
+                type="module"
+                src="https://agent.d-id.com/v1/index.js"
+                data-name="did-agent"
+                data-mode="fabio"
+                data-client-key="Z29vZ2xlLW9hdXRoMnwxMDI1NDc5NDg2ODI5NjkwNzc4MDg6RkpFT0VWOTBqYVFVb3lHT3hMU2Zt"
+                data-agent-id="agt_k9HerVqC"
+                data-monitor="true">
+            </script>
             <p>Subscription Status: <span id="purchase-status"></span></p>
             <button id="logout-btn">Logout</button>
             <div id="admin-section">
@@ -139,7 +147,6 @@
         const adminSection = document.getElementById('admin-section');
         const refreshBtn = document.getElementById('refresh-btn');
         const userList = document.getElementById('user-list');
-        const didAgentContainer = document.getElementById('did-agent-container');
 
         let userData = JSON.parse(localStorage.getItem('userData'));
         let timer = null;
@@ -163,26 +170,6 @@
             const midnight = new Date(now);
             midnight.setHours(24, 0, 0, 0);
             return midnight - now;
-        }
-
-        function loadDIDAgent() {
-            // Only load if purchased is true and time remaining > 0
-            if (!userData.purchased || (userData.timeRemaining !== Infinity && userData.timeRemaining <= 0)) return;
-
-            // Remove any existing script to prevent duplicates
-            const existingScript = document.querySelector('script[data-name="did-agent"]');
-            if (existingScript) existingScript.remove();
-
-            // Create and append the D-ID script
-            const script = document.createElement('script');
-            script.type = 'module';
-            script.src = 'https://agent.d-id.com/v1/index.js';
-            script.setAttribute('data-name', 'did-agent');
-            script.setAttribute('data-mode', 'fabio');
-            script.setAttribute('data-client-key', 'Z29vZ2xlLW9hdXRoMnwxMDI1NDc5NDg2ODI5NjkwNzc4MDg6RkpFT0VWOTBqYVFVb3lHT3hMU2Zt');
-            script.setAttribute('data-agent-id', 'agt_k9HerVqC');
-            script.setAttribute('data-monitor', 'true');
-            didAgentContainer.appendChild(script);
         }
 
         async function checkTimeRemaining(userId) {
@@ -308,7 +295,6 @@
                 loginSection.style.display = 'block';
                 homepageSection.style.display = 'none';
                 timeDisplay.textContent = '';
-                didAgentContainer.innerHTML = ''; // Clear D-ID agent on logout
             } catch (error) {
                 console.error("Logout error:", error);
                 window.alert("Error during logout: " + error.message);
@@ -346,9 +332,6 @@
                 } else {
                     adminSection.style.display = 'none';
                 }
-
-                // Load D-ID agent if purchased and time remaining
-                loadDIDAgent();
 
                 startTime = Date.now();
                 lastUpdateTime = Date.now();
@@ -413,9 +396,6 @@
             } else {
                 adminSection.style.display = 'none';
             }
-
-            // Load D-ID agent on page reload if purchased and time remaining
-            loadDIDAgent();
 
             startTime = Date.now();
             lastUpdateTime = Date.now();
