@@ -101,15 +101,23 @@
             const docSnap = await getDoc(userTimeDoc);
             const maxDailyMs = email === ADMIN_EMAIL ? ADMIN_DAILY_MS : NORMAL_DAILY_MS;
 
+            console.log("Checking time for:", { userId, email, today, maxDailyMs });
+
             if (docSnap.exists()) {
                 const data = docSnap.data();
+                console.log("Firestore data:", data);
                 if (data.date === today) {
                     const timeUsed = data.timeUsed || 0;
                     const remaining = Math.max(0, maxDailyMs - timeUsed);
-                    console.log("Time remaining from Firestore:", remaining);
+                    console.log("Time remaining calculated:", remaining);
                     return remaining;
+                } else {
+                    console.log("Date mismatch, resetting time for new day");
                 }
+            } else {
+                console.log("No Firestore record, creating new one");
             }
+
             // Reset to max if new day or no record
             await setDoc(userTimeDoc, { date: today, timeUsed: 0 }, { merge: true });
             console.log("Reset time for new day:", maxDailyMs);
