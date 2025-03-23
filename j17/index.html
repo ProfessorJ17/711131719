@@ -322,9 +322,8 @@
                 if (didScript) didScript.remove();
                 await signOut(auth);
                 userData = null;
-                loginSection.style.display = 'block'; // Back to login
-                dashboardSection.style.display = 'none';
-                console.log("Logged out");
+                console.log("Logged out, refreshing page");
+                window.location.reload(); // Refresh instead of showing login
             } catch (error) {
                 console.error("Logout error:", error);
                 window.alert("Logout error: " + error.message);
@@ -444,7 +443,7 @@
                     const waitTime = getTimeUntilMidnight();
                     console.log("Time limit reached, logging out");
                     window.alert(`Your daily credits have been used. Try again in ${formatWaitTime(waitTime)}.`);
-                    await logout();
+                    await logout(); // Refresh via logout
                 }
             }, 1000);
         }
