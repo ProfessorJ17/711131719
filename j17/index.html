@@ -15,56 +15,82 @@
       }
     });
   </script>
-  <title>Login & Dashboard</title>
+  <title>4everAI - Login & Dashboard</title>
   <link rel="stylesheet" href="main.css">
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap');
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
-      font-family: sans-serif;
+      font-family: 'Orbitron', sans-serif;
     }
     body {
-      background-color: #0583D2;
-    }
-    h1 {
-      margin-bottom: 8%;
-      text-align: center;
-      font-family: "Fredoka One", cursive;
-      color: #0583D2;
-      letter-spacing: 0.1em;
-    }
-    input {
-      margin-bottom: 3%;
-      padding: 3%;
-      width: 100%;
-    }
-    button {
-      padding: 3%;
-      width: 100%;
+      background: linear-gradient(135deg, #6B48FF 0%, #1A0033 100%);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
     }
     .container {
-      background-color: white;
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
       padding: 5%;
-      box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
       width: 50vw;
-      margin: 10vh auto;
+      max-width: 600px;
+      border-radius: 20px;
+      box-shadow: 0 0 20px rgba(107, 72, 255, 0.5);
       text-align: center;
+      border: 1px solid rgba(255, 255, 255, 0.2);
     }
-    #submit, #logout-btn, #check-time-btn {
-      background-color: #0583D2;
-      color: white;
+    h1 {
+      margin-bottom: 10px;
+      font-size: 2.5em;
+      color: #fff;
+      text-shadow: 0 0 10px rgba(255, 165, 0, 0.8);
+    }
+    p.subtitle {
+      color: rgba(255, 255, 255, 0.8);
+      font-size: 1.2em;
+      margin-bottom: 20px;
+      text-shadow: 0 0 5px rgba(107, 72, 255, 0.5);
+    }
+    input {
+      margin-bottom: 15px;
+      padding: 12px;
+      width: 100%;
+      background: rgba(255, 255, 255, 0.15);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      border-radius: 25px;
+      color: #fff;
+      font-size: 1em;
+      outline: none;
+      transition: all 0.3s ease;
+    }
+    input:focus {
+      box-shadow: 0 0 15px rgba(255, 165, 0, 0.7);
+      border-color: #FFA500;
+    }
+    button {
+      padding: 12px;
+      width: 100%;
+      background: linear-gradient(90deg, #FFA500 0%, #FF4500 100%);
       border: none;
-      margin-top: 5%;
+      border-radius: 25px;
+      color: #fff;
+      font-size: 1.1em;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 0 10px rgba(255, 165, 0, 0.5);
+    }
+    button:hover {
+      box-shadow: 0 0 20px rgba(255, 165, 0, 0.8);
+      transform: translateY(-2px);
     }
     #logout-btn {
       width: 50%;
-    }
-    button:hover {
-      cursor: pointer;
-      opacity: 0.8;
-      transition: 0.3s;
+      margin: 20px auto 0;
     }
     #login-section {
       display: block;
@@ -76,23 +102,32 @@
       display: none;
       margin-top: 20px;
     }
-    #time-result {
-      margin-top: 10px;
-      color: #333;
+    #time-result, p {
+      color: rgba(255, 255, 255, 0.9);
+      text-shadow: 0 0 5px rgba(107, 72, 255, 0.5);
+      margin: 10px 0;
+    }
+    #did-agent-container {
+      margin: 20px 0;
+    }
+    ::placeholder {
+      color: rgba(255, 255, 255, 0.6);
     }
   </style>
 </head>
 <body>
   <div class="container">
     <div id="login-section">
-      <h1>Sign In</h1>
+      <h1>4everAI</h1>
+      <p class="subtitle">Empowering the Future with Intelligence</p>
       <input id="email" type="text" placeholder="Email">
       <input id="password" type="password" placeholder="Password">
-      <button id="submit">Submit</button>
+      <button id="submit">Sign In</button>
     </div>
     <div id="dashboard-section">
+      <h1>4everAI</h1>
+      <p class="subtitle">Welcome <span id="username"></span>!</p>
       <p>Credits Remaining Today: <span id="time-remaining"></span></p>
-      <h1>Welcome <span id="username"></span>!</h1>
       <div id="did-agent-container"></div>
       <p>Subscription Status: <span id="purchase-status"></span></p>
       <button id="logout-btn">Logout</button>
