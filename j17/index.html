@@ -139,7 +139,7 @@
         const MILLISECONDS_PER_MINUTE = 60000;
         const MAX_DAILY_MS = MAX_DAILY_MINUTES * MILLISECONDS_PER_MINUTE;
         const UPDATE_INTERVAL = 10000; // Update Firestore every 10 seconds
-        const ADMIN_EMAIL = "jesse3@example.com"; // Replace with your actual admin email
+        const ADMIN_EMAIL = "jesse3@example.com"; // Updated to your admin email
 
         // DOM elements
         const loginSection = document.getElementById('login-section');
@@ -249,7 +249,10 @@
 
         // Fetch all users' data
         async function fetchAllUsers() {
-            if (auth.currentUser.email !== ADMIN_EMAIL) return;
+            if (auth.currentUser.email !== ADMIN_EMAIL) {
+                userList.textContent = "Unauthorized access.";
+                return;
+            }
 
             try {
                 const allowedEmailsSnapshot = await getDocs(collection(db, "allowedEmails"));
@@ -259,13 +262,9 @@
                     const email = docSnap.id;
                     const purchased = docSnap.data().purchased || false;
                     const username = email.split('@')[0];
+                    // Without emailToUid, time defaults to 5:00; implement mapping for accuracy
+                    const timeRemaining = MAX_DAILY_MS; // Placeholder until emailToUid is added
 
-                    // Fetch UID from Firebase Authentication (requires server-side or manual mapping)
-                    // For simplicity, we'll assume a userTime document exists or defaults to 5:00
-                    const userTimeDoc = await getDoc(doc(db, "userTime", auth.currentUser.uid)); // Placeholder UID logic needed
-                    const timeRemaining = await checkTimeRemaining(auth.currentUser.uid); // Placeholder, needs real UID
-
-                    // Ideally, map email to UID via a separate collection or server-side logic
                     userListHTML += `
                         <div>
                             Username: ${username} | Purchased: ${purchased} | Time Remaining: ${formatTime(timeRemaining)}
@@ -277,32 +276,6 @@
             } catch (error) {
                 console.error("Error fetching users:", error);
                 userList.textContent = "Error loading user list: " + error.message;
-            }
-        }
-
-        // Logout function
-        async function logout() {
-            if (timer) {
-                clearInterval(timer);
-                timer = null;
-                if (userData.email !== ADMIN_EMAIL) {
-                    const finalTimeRemaining = await updateTimeUsed();
-                    if (finalTimeRemaining <= 0) {
-                        const waitTime = getTimeUntilMidnight();
-                        window.alert(`Your daily time limit has been reached. You can log in again in ${formatWaitTime(waitTime)}.`);
-                    }
-                }
-            }
-            try {
-                await signOut(auth);
-                localStorage.removeItem('userData');
-                userData = null;
-                loginSection.style.display = 'block';
-                homepageSection.style.display = 'none';
-                timeDisplay.textContent = '';
-            } catch (error) {
-                console.error("Logout error:", error);
-                window.alert("Error during logout: " + error.message);
             }
         }
 
@@ -335,6 +308,8 @@
                 if (user.email === ADMIN_EMAIL) {
                     adminSection.style.display = 'block';
                     await fetchAllUsers();
+                } else {
+                    adminSection.style.display = 'none';
                 }
 
                 startTime = Date.now();
@@ -400,6 +375,8 @@
             if (userData.email === ADMIN_EMAIL) {
                 adminSection.style.display = 'block';
                 await fetchAllUsers();
+            } else {
+                adminSection.style.display = 'none';
             }
 
             startTime = Date.now();
