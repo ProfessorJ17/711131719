@@ -2,7 +2,7 @@
 <html>
 <head>
   <script>
-    // Prevent right-click and some key shortcuts
+    // Prevent right-click and disallowed key shortcuts.
     document.addEventListener('contextmenu', event => event.preventDefault());
     document.addEventListener('keydown', event => {
       if (event.ctrlKey && (event.key === 'u' || event.key === 'U' ||
@@ -86,8 +86,8 @@
   <div class="container">
     <div id="login-section">
       <h1>Sign In</h1>
-      <input id="email" type="text" placeholder="Email"></input>
-      <input id="password" type="password" placeholder="Password"></input>
+      <input id="email" type="text" placeholder="Email">
+      <input id="password" type="password" placeholder="Password">
       <button id="submit">Submit</button>
     </div>
     <div id="dashboard-section">
@@ -98,7 +98,7 @@
       <button id="logout-btn">Logout</button>
       <div id="admin-section">
         <h2>Check User Time</h2>
-        <input id="check-email" type="text" placeholder="User Email"></input>
+        <input id="check-email" type="text" placeholder="User Email">
         <button id="check-time-btn">Check Time Used Today</button>
         <div id="time-result"></div>
       </div>
@@ -125,8 +125,8 @@
     const db = getFirestore(app);
 
     const ADMIN_EMAIL = "jesse3@example.com";
-    const NORMAL_DAILY_MS = 5 * 60 * 1000; // 5 minutes for non-admin users
-    const UPDATE_INTERVAL = 1000; // UI update every second
+    const NORMAL_DAILY_MS = 5 * 60 * 1000; // 5 minutes for normal users
+    const UPDATE_INTERVAL = 1000; // Update UI every second
 
     const submitButton = document.getElementById('submit');
     const emailInput = document.getElementById('email');
@@ -170,7 +170,7 @@
 
     function getLocalDate() {
       const now = new Date();
-      return now.toLocaleDateString('en-CA'); // YYYY-MM-DD format in local time
+      return now.toLocaleDateString('en-CA'); // returns YYYY-MM-DD
     }
 
     function loadDIDAgent() {
@@ -204,6 +204,7 @@
         window.alert(`On login, fetched: date=${data.date}, timeused=${data.timeused}, startTime=${data.startTime}, endTime=${data.endTime}`);
         let timeUsed = data.timeused || 0;
 
+        // Reset if stored date isn't today.
         if (data.date !== today) {
           window.alert(`Date mismatch. Stored: ${data.date}, Today: ${today}. Resetting.`);
           timeUsed = 0;
