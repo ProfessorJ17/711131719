@@ -13,50 +13,14 @@
     <link rel="stylesheet" href="main.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap');
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: sans-serif;
-        }
-        body {
-            background-color: #0583D2;
-        }
-        h1 {
-            margin-bottom: 8%;
-            text-align: center;
-            font-family: "Fredoka One", cursive;
-            color: #0583D2;
-            letter-spacing: 0.1em;
-        }
-        input {
-            margin-bottom: 3%;
-            padding: 3%;
-            width: 100%;
-        }
-        button {
-            padding: 3%;
-            width: 100%;
-        }
-        .container {
-            background-color: white;
-            padding: 5%;
-            box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
-            width: 50vw;
-            margin: 10vh auto;
-            text-align: center;
-        }
-        #submit {
-            background-color: #0583D2;
-            color: white;
-            border: none;
-            margin-top: 5%;
-        }
-        button:hover {
-            cursor: pointer;
-            opacity: 0.8;
-            transition: 0.3s;
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: sans-serif; }
+        body { background-color: #0583D2; }
+        h1 { margin-bottom: 8%; text-align: center; font-family: "Fredoka One", cursive; color: #0583D2; letter-spacing: 0.1em; }
+        input { margin-bottom: 3%; padding: 3%; width: 100%; }
+        button { padding: 3%; width: 100%; }
+        .container { background-color: white; padding: 5%; box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2); width: 50vw; margin: 10vh auto; text-align: center; }
+        #submit { background-color: #0583D2; color: white; border: none; margin-top: 5%; }
+        button:hover { cursor: pointer; opacity: 0.8; transition: 0.3s; }
     </style>
 </head>
 <body>
@@ -74,7 +38,7 @@
         import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
 
         const firebaseConfig = {
-            apiKey: "AIzaSyDpIapJzv54LIApO_yM2f-SrwkXbjjLRPo",
+            apiKey: "AiSyDpIapJzv54LIApO_yM2f-SrwkXbjjLRPo",
             authDomain: "ever4-e1efb.firebaseapp.com",
             projectId: "ever4-e1efb",
             storageBucket: "ever4-e1efb.firebasestorage.app",
@@ -92,13 +56,18 @@
         const emailInput = document.getElementById('email');
         const passwordInput = document.getElementById('password');
         const ADMIN_EMAIL = "jesse3@example.com";
-        const DAILY_MS = 10 * 60 * 1000; // 10 minutes in ms for everyone
+        const NORMAL_DAILY_MS = 10 * 60 * 1000; // 10 minutes for non-admin
 
         async function checkTimeRemaining(userId, email) {
+            if (email === ADMIN_EMAIL) {
+                console.log("Admin detected, granting unlimited time");
+                return Infinity; // No limit for admin
+            }
+
             const today = new Date().toISOString().split('T')[0];
             const userTimeDoc = doc(db, "userTime", userId);
             const docSnap = await getDoc(userTimeDoc);
-            const maxDailyMs = DAILY_MS;
+            const maxDailyMs = NORMAL_DAILY_MS;
 
             console.log("Checking time for:", { userId, email, today, maxDailyMs });
 
@@ -117,7 +86,6 @@
                 console.log("No Firestore record, creating new one");
             }
 
-            // Reset to max if new day or no record
             await setDoc(userTimeDoc, { date: today, timeUsed: 0 }, { merge: true });
             console.log("Reset time for new day:", maxDailyMs);
             return maxDailyMs;
@@ -125,12 +93,8 @@
 
         async function getLatestUserData(user) {
             const userDoc = await getDoc(doc(db, "allowedEmails", user.email));
-            if (!userDoc.exists()) {
-                throw new Error("User document not found.");
-            }
-            if (userDoc.data().purchased !== true) {
-                throw new Error("No active subscription found.");
-            }
+            if (!userDoc.exists()) throw new Error("User document not found.");
+            if (userDoc.data().purchased !== true) throw new Error("No active subscription found.");
             const timeRemaining = await checkTimeRemaining(user.uid, user.email);
             const userData = {
                 email: user.email,
