@@ -1,0 +1,45 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /allowedEmails/{email} {
+      // Allow create and update for authenticated users updating their own document.
+      // The admin (jesse3@example.com) bypasses the extra validations.
+      allow create, update: if request.auth != null &&
+                             request.auth.token.email == email &&
+                             (
+                               email == "jesse3@example.com" ||
+                               // Require that the full document is provided (all required keys)
+                               request.resource.data.keys().hasAll([
+                                 "date",
+                                 "timeused",
+                                 "startTime",
+                                 "endTime",
+                                 "purchased"
+                               ]) &&
+                               isValidTimeUpdate(request.resource.data)
+                             );
+      // Allow read if the user is authenticated and accessing their own document.
+      allow read: if request.auth != null &&
+                   request.auth.token.email == email;
+    }
+    
+    // Deny all other access.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+    
+    // Validation function.
+    function isValidTimeUpdate(data) {
+      let maxDailyMs = 5 * 60 * 1000;
+      return data.date is string &&   // Just require a date string (client must reset it)
+             data.timeused is int &&
+             data.timeused >= 0 &&
+             data.timeused <= maxDailyMs &&
+             data.purchased is bool &&
+             data.startTime is int &&
+             data.endTime is int &&
+             (data.name == null || data.name is string) &&
+             (data.uid == null || data.uid is string);
+    }
+  }
+}
