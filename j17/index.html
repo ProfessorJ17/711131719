@@ -46,7 +46,7 @@
             margin: 10vh auto;
             text-align: center;
         }
-        #submit, #logout-btn, #test-login-btn {
+        #submit, #logout-btn, #check-time-btn {
             background-color: #0583D2;
             color: white;
             border: none;
@@ -70,7 +70,7 @@
             display: none;
             margin-top: 20px;
         }
-        #test-result {
+        #time-result {
             margin-top: 10px;
             color: #333;
         }
@@ -91,11 +91,10 @@
             <p>Subscription Status: <span id="purchase-status"></span></p>
             <button id="logout-btn">Logout</button>
             <div id="admin-section">
-                <h2>Test User Login</h2>
-                <input id="test-email" type="text" placeholder="Test Email"></input>
-                <input id="test-password" type="password" placeholder="Test Password"></input>
-                <button id="test-login-btn">Test Login</button>
-                <div id="test-result"></div>
+                <h2>Check User Time</h2>
+                <input id="check-email" type="text" placeholder="User Email"></input>
+                <button id="check-time-btn">Check Time Used Today</button>
+                <div id="time-result"></div>
             </div>
         </div>
     </div>
@@ -137,10 +136,9 @@
         const timeDisplay = document.getElementById('time-remaining');
         const didAgentContainer = document.getElementById('did-agent-container');
         const adminSection = document.getElementById('admin-section');
-        const testEmailInput = document.getElementById('test-email');
-        const testPasswordInput = document.getElementById('test-password');
-        const testLoginBtn = document.getElementById('test-login-btn');
-        const testResult = document.getElementById('test-result');
+        const checkEmailInput = document.getElementById('check-email');
+        const checkTimeBtn = document.getElementById('check-time-btn');
+        const timeResult = document.getElementById('time-result');
 
         let userData = null;
         let timer = null;
@@ -277,40 +275,29 @@
             }
         }
 
-        async function testUserLogin(email, password) {
+        async function checkUserTimeToday(email) {
             try {
-                console.log("Testing login for:", email);
-                const userCredential = await signInWithEmailAndPassword(auth, email, password);
-                const user = userCredential.user;
-                console.log("Test login successful:", user.email);
+                console.log("Checking time for:", email);
+                const userDoc = await getDoc(doc(db, "allowedEmails", email));
+                if (!userDoc.exists()) throw new Error("User not found in allowedEmails.");
 
-                const userDoc = await getDoc(doc(db, "allowedEmails", user.email));
-                if (!userDoc.exists()) throw new Error("User not in allowedEmails.");
-                if (!userDoc.data().purchased) throw new Error("No active subscription.");
-
-                const userTimeDoc = doc(db, "userTime", user.uid);
+                const userTimeDoc = doc(db, "userTime", userDoc.data().uid);
                 const docSnap = await getDoc(userTimeDoc);
-                let timeUsedYesterday = 0;
-                const yesterday = new Date();
-                yesterday.setDate(yesterday.getDate() - 1);
-                const yesterdayDate = yesterday.toLocaleDateString('en-CA');
+                const today = getLocalDate();
+                let timeUsedToday = 0;
 
                 if (docSnap.exists()) {
                     const data = docSnap.data();
-                    if (data.date === yesterdayDate) {
-                        timeUsedYesterday = data.timeUsed || 0;
+                    if (data.date === today) {
+                        timeUsedToday = data.timeUsed || 0;
                     }
                 }
 
-                const minutesUsed = (timeUsedYesterday / 1000 / 60).toFixed(2);
-                testResult.innerHTML = `Login successful!<br>Time used from ${yesterdayDate} (past 24 hours): ${minutesUsed} minutes`;
-
-                // Sign out the test user to avoid affecting the admin session
-                await signOut(auth);
-                console.log("Test user signed out");
+                const minutesUsed = (timeUsedToday / 1000 / 60).toFixed(2);
+                timeResult.innerHTML = `Time used today (${today}): ${minutesUsed} minutes`;
             } catch (error) {
-                console.error("Test login error:", error);
-                testResult.innerHTML = `Login failed: ${error.message}`;
+                console.error("Check time error:", error);
+                timeResult.innerHTML = `Error: ${error.message}`;
             }
         }
 
@@ -420,7 +407,7 @@
 
             if (userData.email === ADMIN_EMAIL) {
                 adminSection.style.display = 'block';
-                console.log("Admin session, showing testing section");
+                console.log("Admin session, showing time check section");
             } else {
                 startTime = Date.now();
                 lastUpdateTime = Date.now();
@@ -457,15 +444,14 @@
             await logout();
         });
 
-        testLoginBtn.addEventListener('click', async () => {
-            if (userData.email !== ADMIN_EMAIL) return; // Only admin can test
-            const testEmail = testEmailInput.value;
-            const testPassword = testPasswordInput.value;
-            if (!testEmail || !testPassword) {
-                testResult.innerHTML = "Please enter both email and password.";
+        checkTimeBtn.addEventListener('click', async () => {
+            if (userData.email !== ADMIN_EMAIL) return; // Only admin can check
+            const checkEmail = checkEmailInput.value;
+            if (!checkEmail) {
+                timeResult.innerHTML = "Please enter an email.";
                 return;
             }
-            await testUserLogin(testEmail, testPassword);
+            await checkUserTimeToday(checkEmail);
         });
 
         window.addEventListener('beforeunload', () => {
