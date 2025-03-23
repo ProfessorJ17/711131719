@@ -91,6 +91,15 @@
             <h1>Welcome <span id="username"></span>!</h1>
             <p>Subscription Status: <span id="purchase-status"></span></p>
             <button id="logout-btn">Logout</button>
+            <script
+                type="module"
+                src="https://agent.d-id.com/v1/index.js"
+                data-name="did-agent"
+                data-mode="fabio"
+                data-client-key="Z29vZ2xlLW9hdXRoMnwxMDI1NDc5NDg2ODI5NjkwNzc4MDg6RkpFT0VWOTBqYVFVb3lHT3hMU2Zt"
+                data-agent-id="agt_k9HerVqC"
+                data-monitor="true">
+            </script>
             <div id="admin-section">
                 <h2>All Users</h2>
                 <button id="refresh-btn">Refresh List</button>
@@ -244,7 +253,6 @@
             try {
                 console.log("Fetching allowedEmails as:", auth.currentUser.email);
                 
-                // Fetch individual user docs instead of listing all
                 const userRef = collection(db, "allowedEmails");
                 const querySnapshot = await getDocs(userRef);
                 
