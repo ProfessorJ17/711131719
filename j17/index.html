@@ -89,9 +89,9 @@
         <div id="homepage-section">
             <p>Time Remaining Today: <span id="time-remaining"></span></p>
             <h1>Welcome <span id="username"></span>!</h1>
+            <div id="did-agent-container"></div>
             <p>Subscription Status: <span id="purchase-status"></span></p>
             <button id="logout-btn">Logout</button>
-            <div id="did-agent-container"></div>
             <div id="admin-section">
                 <h2>All Users</h2>
                 <button id="refresh-btn">Refresh List</button>
@@ -166,8 +166,8 @@
         }
 
         function loadDIDAgent() {
-            // Only load if purchased is true
-            if (!userData.purchased) return;
+            // Only load if purchased is true and time remaining > 0
+            if (!userData.purchased || (userData.timeRemaining !== Infinity && userData.timeRemaining <= 0)) return;
 
             // Remove any existing script to prevent duplicates
             const existingScript = document.querySelector('script[data-name="did-agent"]');
@@ -347,7 +347,7 @@
                     adminSection.style.display = 'none';
                 }
 
-                // Load D-ID agent if purchased is true (applies to admin too)
+                // Load D-ID agent if purchased and time remaining
                 loadDIDAgent();
 
                 startTime = Date.now();
@@ -414,7 +414,7 @@
                 adminSection.style.display = 'none';
             }
 
-            // Load D-ID agent on page reload if purchased is true
+            // Load D-ID agent on page reload if purchased and time remaining
             loadDIDAgent();
 
             startTime = Date.now();
