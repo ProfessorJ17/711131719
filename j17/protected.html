@@ -107,7 +107,6 @@
         const ADMIN_EMAIL = "jesse3@example.com";
         const NORMAL_DAILY_MS = 10 * 60 * 1000; // 10 minutes for non-admin
         const UPDATE_INTERVAL = 5000; // 5 seconds
-        const INIT_DELAY = 300; // 300 ms delay to load data
 
         const usernameDisplay = document.getElementById('username');
         const purchaseStatusDisplay = document.getElementById('purchase-status');
@@ -124,7 +123,7 @@
         let lastUpdateTime;
 
         function formatTime(ms) {
-            if (ms === Infinity) return "Unlimited"; // Display for admin
+            if (ms === Infinity) return "Unlimited";
             const hours = Math.floor(ms / (1000 * 60 * 60));
             const minutes = Math.floor((ms % (1000 * 60 * 60)) / (1000 * 60));
             const seconds = Math.floor((ms % (1000 * 60)) / 1000);
@@ -145,7 +144,7 @@
         }
 
         function loadDIDAgent() {
-            console.log("Attempting to load D-ID agent");
+            console.log("Loading D-ID agent");
             const existingScript = document.querySelector('script[data-name="did-agent"]');
             if (existingScript) existingScript.remove();
 
@@ -163,14 +162,9 @@
         }
 
         async function updateTimeUsed() {
-            if (!userData) {
-                console.log("No userData, skipping time update");
-                return userData.timeRemaining;
-            }
-
-            if (userData.email === ADMIN_EMAIL) {
-                console.log("Admin session, no time tracking");
-                return Infinity;
+            if (!userData || userData.email === ADMIN_EMAIL) {
+                console.log("No time update needed for admin or missing userData");
+                return userData.timeRemaining; // Infinity for admin
             }
 
             const today = new Date().toISOString().split('T')[0];
@@ -207,18 +201,18 @@
             }
 
             try {
-                const userRef = collection(db, "userTime"); // Changed to userTime for consistency
+                const userRef = collection(db, "userTime");
                 const querySnapshot = await getDocs(userRef);
                 
                 let userListHTML = '';
                 querySnapshot.forEach((docSnap) => {
                     const data = docSnap.data();
-                    const email = docSnap.id; // Note: This assumes userTime uses email as ID; adjust if using UID
+                    const uid = docSnap.id;
                     const timeUsed = data.timeUsed || 0;
                     const date = data.date || 'N/A';
                     userListHTML += `
                         <div>
-                            UID: ${email} | Time Used: ${timeUsed} ms | Date: ${date}
+                            UID: ${uid} | Time Used: ${timeUsed} ms | Date: ${date}
                         </div>
                     `;
                 });
@@ -270,7 +264,7 @@
             }
 
             console.log("User authenticated, initializing page with:", userData);
-            setTimeout(initializePage, INIT_DELAY); // Delay initialization by 300 ms
+            initializePage();
         });
 
         function initializePage() {
@@ -278,6 +272,7 @@
             purchaseStatusDisplay.textContent = 'Active';
             timeDisplay.textContent = formatTime(userData.timeRemaining);
 
+            // Load D-ID if time remains or admin
             if (userData.timeRemaining > 0 || userData.email === ADMIN_EMAIL) {
                 console.log("Time > 0 or admin, loading D-ID agent");
                 loadDIDAgent();
