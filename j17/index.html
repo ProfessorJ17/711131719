@@ -1,461 +1,458 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <script>
+  <script>
+    // Prevent right-click and some key shortcuts
     document.addEventListener('contextmenu', event => event.preventDefault());
     document.addEventListener('keydown', event => {
-        if (event.ctrlKey && (event.key === 'u' || event.key === 'U' || event.key === 's' || event.key === 'S' || event.key === 'j' || event.key === 'J' || event.key === 'i' || event.key === 'I' || event.key === 'c' || event.key === 'C' || event.key === 'k' || event.key === 'K')) {
-            event.preventDefault();
-        }
+      if (event.ctrlKey && (event.key === 'u' || event.key === 'U' ||
+          event.key === 's' || event.key === 'S' ||
+          event.key === 'j' || event.key === 'J' ||
+          event.key === 'i' || event.key === 'I' ||
+          event.key === 'c' || event.key === 'C' ||
+          event.key === 'k' || event.key === 'K')) {
+        event.preventDefault();
+      }
     });
-    </script>
-    <title>Login & Dashboard</title>
-    <link rel="stylesheet" href="main.css">
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap');
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: sans-serif;
-        }
-        body {
-            background-color: #0583D2;
-        }
-        h1 {
-            margin-bottom: 8%;
-            text-align: center;
-            font-family: "Fredoka One", cursive;
-            color: #0583D2;
-            letter-spacing: 0.1em;
-        }
-        input {
-            margin-bottom: 3%;
-            padding: 3%;
-            width: 100%;
-        }
-        button {
-            padding: 3%;
-            width: 100%;
-        }
-        .container {
-            background-color: white;
-            padding: 5%;
-            box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
-            width: 50vw;
-            margin: 10vh auto;
-            text-align: center;
-        }
-        #submit, #logout-btn, #check-time-btn {
-            background-color: #0583D2;
-            color: white;
-            border: none;
-            margin-top: 5%;
-        }
-        #logout-btn {
-            width: 50%;
-        }
-        button:hover {
-            cursor: pointer;
-            opacity: 0.8;
-            transition: 0.3s;
-        }
-        #login-section {
-            display: block;
-        }
-        #dashboard-section {
-            display: none;
-        }
-        #admin-section {
-            display: none;
-            margin-top: 20px;
-        }
-        #time-result {
-            margin-top: 10px;
-            color: #333;
-        }
-    </style>
+  </script>
+  <title>Login & Dashboard</title>
+  <link rel="stylesheet" href="main.css">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap');
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: sans-serif;
+    }
+    body {
+      background-color: #0583D2;
+    }
+    h1 {
+      margin-bottom: 8%;
+      text-align: center;
+      font-family: "Fredoka One", cursive;
+      color: #0583D2;
+      letter-spacing: 0.1em;
+    }
+    input {
+      margin-bottom: 3%;
+      padding: 3%;
+      width: 100%;
+    }
+    button {
+      padding: 3%;
+      width: 100%;
+    }
+    .container {
+      background-color: white;
+      padding: 5%;
+      box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+      width: 50vw;
+      margin: 10vh auto;
+      text-align: center;
+    }
+    #submit, #logout-btn, #check-time-btn {
+      background-color: #0583D2;
+      color: white;
+      border: none;
+      margin-top: 5%;
+    }
+    #logout-btn {
+      width: 50%;
+    }
+    button:hover {
+      cursor: pointer;
+      opacity: 0.8;
+      transition: 0.3s;
+    }
+    #login-section {
+      display: block;
+    }
+    #dashboard-section {
+      display: none;
+    }
+    #admin-section {
+      display: none;
+      margin-top: 20px;
+    }
+    #time-result {
+      margin-top: 10px;
+      color: #333;
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <div id="login-section">
-            <h1>Sign In</h1>
-            <input id="email" type="text" placeholder="Email"></input>
-            <input id="password" type="password" placeholder="Password"></input>
-            <button id="submit">Submit</button>
-        </div>
-        <div id="dashboard-section">
-            <p>Credits Remaining Today: <span id="time-remaining"></span></p>
-            <h1>Welcome <span id="username"></span>!</h1>
-            <div id="did-agent-container"></div>
-            <p>Subscription Status: <span id="purchase-status"></span></p>
-            <button id="logout-btn">Logout</button>
-            <div id="admin-section">
-                <h2>Check User Time</h2>
-                <input id="check-email" type="text" placeholder="User Email"></input>
-                <button id="check-time-btn">Check Time Used Today</button>
-                <div id="time-result"></div>
-            </div>
-        </div>
+  <div class="container">
+    <div id="login-section">
+      <h1>Sign In</h1>
+      <input id="email" type="text" placeholder="Email"></input>
+      <input id="password" type="password" placeholder="Password"></input>
+      <button id="submit">Submit</button>
     </div>
+    <div id="dashboard-section">
+      <p>Credits Remaining Today: <span id="time-remaining"></span></p>
+      <h1>Welcome <span id="username"></span>!</h1>
+      <div id="did-agent-container"></div>
+      <p>Subscription Status: <span id="purchase-status"></span></p>
+      <button id="logout-btn">Logout</button>
+      <div id="admin-section">
+        <h2>Check User Time</h2>
+        <input id="check-email" type="text" placeholder="User Email"></input>
+        <button id="check-time-btn">Check Time Used Today</button>
+        <div id="time-result"></div>
+      </div>
+    </div>
+  </div>
 
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js";
-        import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js";
-        import { getFirestore, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js";
+    import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js";
+    import { getFirestore, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
 
-        const firebaseConfig = {
-            apiKey: "AIzaSyDpIapJzv54LIApO_yM2f-SrwkXbjjLRPo",
-            authDomain: "ever4-e1efb.firebaseapp.com",
-            projectId: "ever4-e1efb",
-            storageBucket: "ever4-e1efb.firebasestorage.app",
-            messagingSenderId: "473102358637",
-            appId: "1:473102358637:web:a28114096fac995e640764",
-            measurementId: "G-NX3JS6DVKB"
-        };
+    const firebaseConfig = {
+      apiKey: "AIzaSyDpIapJzv54LIApO_yM2f-SrwkXbjjLRPo",
+      authDomain: "ever4-e1efb.firebaseapp.com",
+      projectId: "ever4-e1efb",
+      storageBucket: "ever4-e1efb.firebasestorage.app",
+      messagingSenderId: "473102358637",
+      appId: "1:473102358637:web:a28114096fac995e640764",
+      measurementId: "G-NX3JS6DVKB"
+    };
 
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
 
-        const ADMIN_EMAIL = "jesse3@example.com";
-        const NORMAL_DAILY_MS = 5 * 60 * 1000; // 5 minutes for non-admin
-        const UPDATE_INTERVAL = 1000; // 1 second for UI updates
+    const ADMIN_EMAIL = "jesse3@example.com";
+    const NORMAL_DAILY_MS = 5 * 60 * 1000; // 5 minutes for non-admin users
+    const UPDATE_INTERVAL = 1000; // UI update every second
 
-        const submitButton = document.getElementById('submit');
-        const emailInput = document.getElementById('email');
-        const passwordInput = document.getElementById('password');
-        const logoutBtn = document.getElementById('logout-btn');
-        const loginSection = document.getElementById('login-section');
-        const dashboardSection = document.getElementById('dashboard-section');
-        const usernameDisplay = document.getElementById('username');
-        const purchaseStatusDisplay = document.getElementById('purchase-status');
-        const timeDisplay = document.getElementById('time-remaining');
-        const didAgentContainer = document.getElementById('did-agent-container');
-        const adminSection = document.getElementById('admin-section');
-        const checkEmailInput = document.getElementById('check-email');
-        const checkTimeBtn = document.getElementById('check-time-btn');
-        const timeResult = document.getElementById('time-result');
+    const submitButton = document.getElementById('submit');
+    const emailInput = document.getElementById('email');
+    const passwordInput = document.getElementById('password');
+    const logoutBtn = document.getElementById('logout-btn');
+    const loginSection = document.getElementById('login-section');
+    const dashboardSection = document.getElementById('dashboard-section');
+    const usernameDisplay = document.getElementById('username');
+    const purchaseStatusDisplay = document.getElementById('purchase-status');
+    const timeDisplay = document.getElementById('time-remaining');
+    const didAgentContainer = document.getElementById('did-agent-container');
+    const adminSection = document.getElementById('admin-section');
+    const checkEmailInput = document.getElementById('check-email');
+    const checkTimeBtn = document.getElementById('check-time-btn');
+    const timeResult = document.getElementById('time-result');
 
-        let userData = null;
-        let timer = null;
-        let startTime = 0;
+    let userData = null;
+    let timer = null;
+    let startTime = 0;
 
-        function formatTime(ms) {
-            if (ms === Infinity) return "Unlimited";
-            const hours = Math.floor(ms / (1000 * 60 * 60));
-            const minutes = Math.floor((ms % (1000 * 60 * 60)) / (1000 * 60));
-            const seconds = Math.floor((ms % (1000 * 60)) / 1000);
-            return `${hours}:${minutes < 10 ? '0' + minutes : minutes}:${seconds < 10 ? '0' + seconds : seconds}`;
+    function formatTime(ms) {
+      if (ms === Infinity) return "Unlimited";
+      const hours = Math.floor(ms / (1000 * 60 * 60));
+      const minutes = Math.floor((ms % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((ms % (1000 * 60)) / 1000);
+      return `${hours}:${minutes < 10 ? '0' + minutes : minutes}:${seconds < 10 ? '0' + seconds : seconds}`;
+    }
+
+    function formatWaitTime(msUntilMidnight) {
+      const hours = Math.floor(msUntilMidnight / (1000 * 60 * 60));
+      const minutes = Math.floor((msUntilMidnight % (1000 * 60 * 60)) / (1000 * 60));
+      return `${hours} hour${hours !== 1 ? 's' : ''} and ${minutes} minute${minutes !== 1 ? 's' : ''}`;
+    }
+
+    function getTimeUntilMidnight() {
+      const now = new Date();
+      const midnight = new Date(now);
+      midnight.setHours(24, 0, 0, 0); // local midnight
+      return midnight - now;
+    }
+
+    function getLocalDate() {
+      const now = new Date();
+      return now.toLocaleDateString('en-CA'); // YYYY-MM-DD format in local time
+    }
+
+    function loadDIDAgent() {
+      const existingScript = document.querySelector('script[data-name="did-agent"]');
+      if (existingScript) existingScript.remove();
+
+      const script = document.createElement('script');
+      script.type = 'module';
+      script.src = 'https://agent.d-id.com/v1/index.js';
+      script.setAttribute('data-name', 'did-agent');
+      script.setAttribute('data-mode', 'fabio');
+      script.setAttribute('data-client-key', 'Z29vZ2xlLW9hdXRoMnwxMDI1NDc5NDg2ODI5NjkwNzc4MDg6RkpFT0VWOTBqYVFVb3lHT3hMU2Zt');
+      script.setAttribute('data-agent-id', 'agt_k9HerVqC');
+      script.setAttribute('data-monitor', 'true');
+      didAgentContainer.appendChild(script);
+    }
+
+    async function saveOnLogin(email, startTime) {
+      if (email === ADMIN_EMAIL) {
+        window.alert("Admin login detected - unlimited time.");
+        return Infinity;
+      }
+
+      const today = getLocalDate();
+      const userDocRef = doc(db, "allowedEmails", email);
+      const docSnap = await getDoc(userDocRef);
+      const maxDailyMs = NORMAL_DAILY_MS;
+
+      if (docSnap.exists()) {
+        const data = docSnap.data();
+        window.alert(`On login, fetched: date=${data.date}, timeused=${data.timeused}, startTime=${data.startTime}, endTime=${data.endTime}`);
+        let timeUsed = data.timeused || 0;
+
+        if (data.date !== today) {
+          window.alert(`Date mismatch. Stored: ${data.date}, Today: ${today}. Resetting.`);
+          timeUsed = 0;
         }
 
-        function formatWaitTime(msUntilMidnight) {
-            const hours = Math.floor(msUntilMidnight / (1000 * 60 * 60));
-            const minutes = Math.floor((msUntilMidnight % (1000 * 60 * 60)) / (1000 * 60));
-            return `${hours} hour${hours !== 1 ? 's' : ''} and ${minutes} minute${minutes !== 1 ? 's' : ''}`;
+        try {
+          await updateDoc(userDocRef, { 
+            date: today, 
+            timeused: Math.floor(timeUsed), 
+            startTime: Math.floor(startTime), 
+            endTime: 0, // Reset to 0 on login
+            purchased: true,
+            name: data.name || "admin",
+            uid: data.uid || ""
+          });
+          const verifySnap = await getDoc(userDocRef);
+          const verifyData = verifySnap.data();
+          window.alert(`Login saved. Now: date=${verifyData.date}, timeused=${verifyData.timeused}, startTime=${verifyData.startTime}, endTime=${verifyData.endTime}`);
+          return Math.max(0, maxDailyMs - timeUsed);
+        } catch (error) {
+          window.alert("Login save error: " + error.message);
+          throw error;
         }
+      } else {
+        window.alert("No document for: " + email);
+        throw new Error("User document not found.");
+      }
+    }
 
-        function getTimeUntilMidnight() {
-            const now = new Date();
-            const midnight = new Date(now);
-            midnight.setHours(24, 0, 0, 0); // Local midnight
-            return midnight - now;
-        }
+    async function getUserData(user) {
+      const userDoc = await getDoc(doc(db, "allowedEmails", user.email));
+      if (!userDoc.exists()) {
+        throw new Error("User document not found.");
+      }
+      const userDocData = userDoc.data();
+      if (userDocData.purchased !== true) {
+        throw new Error("No active subscription found.");
+      }
+      startTime = Date.now();
+      const timeRemaining = await saveOnLogin(user.email, startTime);
+      const data = {
+        email: user.email,
+        name: userDocData.name || user.email.split('@')[0],
+        purchased: true,
+        uid: user.uid,
+        timeRemaining: timeRemaining
+      };
+      window.alert(`User loaded. Time remaining: ${timeRemaining} ms`);
+      return data;
+    }
 
-        function getLocalDate() {
-            const now = new Date();
-            return now.toLocaleDateString('en-CA'); // YYYY-MM-DD in local time
-        }
+    async function saveTimeUsed() {
+      if (!userData || userData.email === ADMIN_EMAIL) {
+        window.alert("Skipping save for admin or no userData.");
+        return userData ? userData.timeRemaining : Infinity;
+      }
 
-        function loadDIDAgent() {
-            const existingScript = document.querySelector('script[data-name="did-agent"]');
-            if (existingScript) existingScript.remove();
+      const today = getLocalDate();
+      const userDocRef = doc(db, "allowedEmails", userData.email);
+      const endTime = Date.now();
+      const elapsed = startTime ? endTime - startTime : 0;
+      const currentDoc = await getDoc(userDocRef);
+      const currentData = currentDoc.data();
+      const totalTimeUsed = Math.min(Math.floor((currentData.timeused || 0) + elapsed), NORMAL_DAILY_MS);
+      const timeRemaining = Math.max(0, NORMAL_DAILY_MS - totalTimeUsed);
 
-            const script = document.createElement('script');
-            script.type = 'module';
-            script.src = 'https://agent.d-id.com/v1/index.js';
-            script.setAttribute('data-name', 'did-agent');
-            script.setAttribute('data-mode', 'fabio');
-            script.setAttribute('data-client-key', 'Z29vZ2xlLW9hdXRoMnwxMDI1NDc5NDg2ODI5NjkwNzc4MDg6RkpFT0VWOTBqYVFVb3lHT3hMU2Zt');
-            script.setAttribute('data-agent-id', 'agt_k9HerVqC');
-            script.setAttribute('data-monitor', 'true');
-            didAgentContainer.appendChild(script);
-        }
-
-        async function saveOnLogin(email, startTime) {
-            if (email === ADMIN_EMAIL) {
-                window.alert("Admin login detected - unlimited time.");
-                return Infinity;
-            }
-
-            const today = getLocalDate();
-            const userDocRef = doc(db, "allowedEmails", email);
-            const docSnap = await getDoc(userDocRef);
-            const maxDailyMs = NORMAL_DAILY_MS;
-
-            if (docSnap.exists()) {
-                const data = docSnap.data();
-                window.alert(`On login, fetched: date=${data.date}, timeused=${data.timeused}, startTime=${data.startTime}, endTime=${data.endTime}`);
-                let timeUsed = data.timeused || 0;
-
-                if (data.date !== today) {
-                    window.alert(`Date mismatch. Stored: ${data.date}, Today: ${today}. Resetting.`);
-                    timeUsed = 0;
-                }
-
-                try {
-                    await updateDoc(userDocRef, { 
-                        date: today, 
-                        timeused: Math.floor(timeUsed), 
-                        startTime: Math.floor(startTime), 
-                        endTime: 0, // Reset to 0 on login
-                        purchased: true,
-                        name: data.name || "admin",
-                        uid: data.uid || ""
-                    });
-                    const verifySnap = await getDoc(userDocRef);
-                    const verifyData = verifySnap.data();
-                    window.alert(`Login saved. Now: date=${verifyData.date}, timeused=${verifyData.timeused}, startTime=${verifyData.startTime}, endTime=${verifyData.endTime}`);
-                    return Math.max(0, maxDailyMs - timeUsed);
-                } catch (error) {
-                    window.alert("Login save error: " + error.message);
-                    throw error;
-                }
-            } else {
-                window.alert("No document for: " + email);
-                throw new Error("User document not found.");
-            }
-        }
-
-        async function getUserData(user) {
-            const userDoc = await getDoc(doc(db, "allowedEmails", user.email));
-            if (!userDoc.exists()) {
-                throw new Error("User document not found.");
-            }
-            const userDocData = userDoc.data();
-            if (userDocData.purchased !== true) {
-                throw new Error("No active subscription found.");
-            }
-            startTime = Date.now();
-            const timeRemaining = await saveOnLogin(user.email, startTime);
-            const data = {
-                email: user.email,
-                name: userDocData.name || user.email.split('@')[0],
-                purchased: true,
-                uid: user.uid,
-                timeRemaining: timeRemaining
-            };
-            window.alert(`User loaded. Time remaining: ${timeRemaining} ms`);
-            return data;
-        }
-
-        async function saveTimeUsed() {
-            if (!userData || userData.email === ADMIN_EMAIL) {
-                window.alert("Skipping save for admin or no userData.");
-                return userData.timeRemaining;
-            }
-
-            const today = getLocalDate();
-            const userDocRef = doc(db, "allowedEmails", userData.email);
-            const endTime = Date.now();
-            const elapsed = startTime ? endTime - startTime : 0;
-            const currentDoc = await getDoc(userDocRef);
-            const currentData = currentDoc.data();
-            const totalTimeUsed = Math.min(Math.floor((currentData.timeused || 0) + elapsed), NORMAL_DAILY_MS);
-            const timeRemaining = Math.max(0, NORMAL_DAILY_MS - totalTimeUsed);
-
-            try {
-                window.alert(`Before save: date=${currentData.date}, timeused=${currentData.timeused}, startTime=${currentData.startTime}, endTime=${currentData.endTime}`);
-                window.alert(`Saving on logout: date=${today}, timeused=${totalTimeUsed}, startTime=${startTime}, endTime=${endTime}, elapsed=${elapsed}`);
-                await updateDoc(userDocRef, { 
-                    date: today, 
-                    timeused: totalTimeUsed,
-                    startTime: Math.floor(startTime), 
-                    endTime: Math.floor(endTime), 
-                    purchased: true,
-                    name: currentData.name || "admin",
-                    uid: currentData.uid || ""
-                });
-                const verifySnap = await getDoc(userDocRef);
-                const verifyData = verifySnap.data();
-                window.alert(`Save verified. Now: date=${verifyData.date}, timeused=${verifyData.timeused}, startTime=${verifyData.startTime}, endTime=${verifyData.endTime}, Remaining: ${timeRemaining}`);
-                userData.timeRemaining = timeRemaining;
-                return timeRemaining;
-            } catch (error) {
-                window.alert("Save error: " + error.message);
-                return userData.timeRemaining;
-            }
-        }
-
-        function calculateTimeRemaining() {
-            if (!userData || userData.email === ADMIN_EMAIL) {
-                return Infinity;
-            }
-            const now = Date.now();
-            const elapsed = startTime ? now - startTime : 0;
-            const userDocRef = doc(db, "allowedEmails", userData.email);
-            return getDoc(userDocRef).then(doc => {
-                const currentData = doc.data();
-                const totalTimeUsed = Math.min(Math.floor((currentData.timeused || 0) + elapsed), NORMAL_DAILY_MS);
-                return Math.max(0, NORMAL_DAILY_MS - totalTimeUsed);
-            });
-        }
-
-        async function checkUserTimeToday(email) {
-            try {
-                const userDoc = await getDoc(doc(db, "allowedEmails", email));
-                if (!userDoc.exists()) {
-                    timeResult.innerHTML = `Error: User ${email} not found in allowedEmails.`;
-                    return;
-                }
-
-                const userData = userDoc.data();
-                const today = getLocalDate();
-                let timeUsedToday = 0;
-
-                if (userData.date === today) {
-                    timeUsedToday = userData.timeused || 0;
-                }
-                const minutesUsed = (timeUsedToday / 1000 / 60).toFixed(2);
-                timeResult.innerHTML = `Time used today (${today}): ${minutesUsed} minutes`;
-                window.alert(`Checked ${email}: Time used today: ${minutesUsed} minutes`);
-            } catch (error) {
-                timeResult.innerHTML = `Error: ${error.message}`;
-            }
-        }
-
-        async function logout() {
-            if (timer) {
-                clearInterval(timer);
-                timer = null;
-                if (userData && userData.email !== ADMIN_EMAIL) {
-                    const finalTimeRemaining = await saveTimeUsed();
-                    if (finalTimeRemaining <= 0) {
-                        const waitTime = getTimeUntilMidnight();
-                        window.alert(`Your daily credits have been used. Try again in ${formatWaitTime(waitTime)}.`);
-                    }
-                }
-            }
-            try {
-                didAgentContainer.innerHTML = '';
-                const didScript = document.querySelector('script[data-name="did-agent"]');
-                if (didScript) didScript.remove();
-                await signOut(auth);
-                userData = null;
-                startTime = 0;
-                window.location.reload();
-            } catch (error) {
-                window.alert("Logout error: " + error.message);
-            }
-        }
-
-        submitButton.addEventListener('click', async () => {
-            const email = emailInput.value;
-            const password = passwordInput.value;
-
-            try {
-                const userCredential = await signInWithEmailAndPassword(auth, email, password);
-                const user = userCredential.user;
-
-                userData = await getUserData(user);
-                if (userData.email !== ADMIN_EMAIL && userData.timeRemaining <= 0) {
-                    const waitTime = getTimeUntilMidnight();
-                    window.alert(`Your daily credits have been used. Try again in ${formatWaitTime(waitTime)}.`);
-                    await signOut(auth);
-                    userData = null;
-                    return;
-                }
-
-                initializeDashboard();
-            } catch (error) {
-                if (error.message === "User document not found.") {
-                    window.alert("User data not found. Contact support.");
-                } else if (error.message === "No active subscription found.") {
-                    window.alert("No active subscription.");
-                } else {
-                    window.alert("Login error: " + error.message);
-                }
-            }
+      try {
+        window.alert(`Before save: date=${currentData.date}, timeused=${currentData.timeused}, startTime=${currentData.startTime}, endTime=${currentData.endTime}`);
+        window.alert(`Saving on logout: date=${today}, timeused=${totalTimeUsed}, startTime=${startTime}, endTime=${endTime}, elapsed=${elapsed}`);
+        await updateDoc(userDocRef, { 
+          date: today, 
+          timeused: totalTimeUsed,
+          startTime: Math.floor(startTime), 
+          endTime: Math.floor(endTime), 
+          purchased: true,
+          name: currentData.name || "admin",
+          uid: currentData.uid || ""
         });
+        const verifySnap = await getDoc(userDocRef);
+        const verifyData = verifySnap.data();
+        window.alert(`Save verified. Now: date=${verifyData.date}, timeused=${verifyData.timeused}, startTime=${verifyData.startTime}, endTime=${verifyData.endTime}, Remaining: ${timeRemaining}`);
+        userData.timeRemaining = timeRemaining;
+        return timeRemaining;
+      } catch (error) {
+        window.alert("Save error: " + error.message);
+        return userData.timeRemaining;
+      }
+    }
 
-        onAuthStateChanged(auth, async (user) => {
-            if (!user) {
-                loginSection.style.display = 'block';
-                dashboardSection.style.display = 'none';
-                if (timer) {
-                    clearInterval(timer);
-                    timer = null;
-                }
-                userData = null;
-                startTime = 0;
-                didAgentContainer.innerHTML = '';
-                return;
-            }
+    function calculateTimeRemaining() {
+      if (!userData || userData.email === ADMIN_EMAIL) {
+        return Infinity;
+      }
+      const now = Date.now();
+      const elapsed = startTime ? now - startTime : 0;
+      const userDocRef = doc(db, "allowedEmails", userData.email);
+      return getDoc(userDocRef).then(doc => {
+        const currentData = doc.data();
+        const totalTimeUsed = Math.min(Math.floor((currentData.timeused || 0) + elapsed), NORMAL_DAILY_MS);
+        return Math.max(0, NORMAL_DAILY_MS - totalTimeUsed);
+      });
+    }
 
-            if (!userData) {
-                userData = await getUserData(user);
-                if (userData.email !== ADMIN_EMAIL && userData.timeRemaining <= 0) {
-                    const waitTime = getTimeUntilMidnight();
-                    window.alert(`Your daily credits have been used. Try again in ${formatWaitTime(waitTime)}.`);
-                    await signOut(auth);
-                    return;
-                }
-                initializeDashboard();
-            }
-        });
-
-        function initializeDashboard() {
-            loginSection.style.display = 'none';
-            dashboardSection.style.display = 'block';
-            usernameDisplay.textContent = userData.name;
-            purchaseStatusDisplay.textContent = 'Active';
-            timeDisplay.textContent = formatTime(userData.timeRemaining);
-
-            loadDIDAgent();
-
-            if (userData.email === ADMIN_EMAIL) {
-                adminSection.style.display = 'block';
-            } else {
-                timer = setInterval(async () => {
-                    const timeRemaining = await calculateTimeRemaining();
-                    timeDisplay.textContent = formatTime(timeRemaining);
-
-                    if (timeRemaining <= 0) {
-                        clearInterval(timer);
-                        timer = null;
-                        await saveTimeUsed();
-                        didAgentContainer.innerHTML = '';
-                        const didScript = document.querySelector('script[data-name="did-agent"]');
-                        if (didScript) didScript.remove();
-                        const waitTime = getTimeUntilMidnight();
-                        window.alert(`Your daily credits have been used. Try again in ${formatWaitTime(waitTime)}.`);
-                        await logout();
-                    }
-                }, UPDATE_INTERVAL);
-            }
+    async function checkUserTimeToday(email) {
+      try {
+        const userDoc = await getDoc(doc(db, "allowedEmails", email));
+        if (!userDoc.exists()) {
+          timeResult.innerHTML = `Error: User ${email} not found in allowedEmails.`;
+          return;
         }
+        const userData = userDoc.data();
+        const today = getLocalDate();
+        let timeUsedToday = 0;
+        if (userData.date === today) {
+          timeUsedToday = userData.timeused || 0;
+        }
+        const minutesUsed = (timeUsedToday / 1000 / 60).toFixed(2);
+        timeResult.innerHTML = `Time used today (${today}): ${minutesUsed} minutes`;
+        window.alert(`Checked ${email}: Time used today: ${minutesUsed} minutes`);
+      } catch (error) {
+        timeResult.innerHTML = `Error: ${error.message}`;
+      }
+    }
 
-        logoutBtn.addEventListener('click', async () => {
+    async function logout() {
+      if (timer) {
+        clearInterval(timer);
+        timer = null;
+        if (userData && userData.email !== ADMIN_EMAIL) {
+          const finalTimeRemaining = await saveTimeUsed();
+          if (finalTimeRemaining <= 0) {
+            const waitTime = getTimeUntilMidnight();
+            window.alert(`Your daily credits have been used. Try again in ${formatWaitTime(waitTime)}.`);
+          }
+        }
+      }
+      try {
+        didAgentContainer.innerHTML = '';
+        const didScript = document.querySelector('script[data-name="did-agent"]');
+        if (didScript) didScript.remove();
+        await signOut(auth);
+        userData = null;
+        startTime = 0;
+        window.location.reload();
+      } catch (error) {
+        window.alert("Logout error: " + error.message);
+      }
+    }
+
+    submitButton.addEventListener('click', async () => {
+      const email = emailInput.value;
+      const password = passwordInput.value;
+      try {
+        const userCredential = await signInWithEmailAndPassword(auth, email, password);
+        const user = userCredential.user;
+        userData = await getUserData(user);
+        if (userData.email !== ADMIN_EMAIL && userData.timeRemaining <= 0) {
+          const waitTime = getTimeUntilMidnight();
+          window.alert(`Your daily credits have been used. Try again in ${formatWaitTime(waitTime)}.`);
+          await signOut(auth);
+          userData = null;
+          return;
+        }
+        initializeDashboard();
+      } catch (error) {
+        if (error.message === "User document not found.") {
+          window.alert("User data not found. Contact support.");
+        } else if (error.message === "No active subscription found.") {
+          window.alert("No active subscription.");
+        } else {
+          window.alert("Login error: " + error.message);
+        }
+      }
+    });
+
+    onAuthStateChanged(auth, async (user) => {
+      if (!user) {
+        loginSection.style.display = 'block';
+        dashboardSection.style.display = 'none';
+        if (timer) {
+          clearInterval(timer);
+          timer = null;
+        }
+        userData = null;
+        startTime = 0;
+        didAgentContainer.innerHTML = '';
+        return;
+      }
+      if (!userData) {
+        userData = await getUserData(user);
+        if (userData.email !== ADMIN_EMAIL && userData.timeRemaining <= 0) {
+          const waitTime = getTimeUntilMidnight();
+          window.alert(`Your daily credits have been used. Try again in ${formatWaitTime(waitTime)}.`);
+          await signOut(auth);
+          return;
+        }
+        initializeDashboard();
+      }
+    });
+
+    function initializeDashboard() {
+      loginSection.style.display = 'none';
+      dashboardSection.style.display = 'block';
+      usernameDisplay.textContent = userData.name;
+      purchaseStatusDisplay.textContent = 'Active';
+      timeDisplay.textContent = formatTime(userData.timeRemaining);
+      loadDIDAgent();
+      if (userData.email === ADMIN_EMAIL) {
+        adminSection.style.display = 'block';
+      } else {
+        timer = setInterval(async () => {
+          const timeRemaining = await calculateTimeRemaining();
+          timeDisplay.textContent = formatTime(timeRemaining);
+          if (timeRemaining <= 0) {
+            clearInterval(timer);
+            timer = null;
+            await saveTimeUsed();
+            didAgentContainer.innerHTML = '';
+            const didScript = document.querySelector('script[data-name="did-agent"]');
+            if (didScript) didScript.remove();
+            const waitTime = getTimeUntilMidnight();
+            window.alert(`Your daily credits have been used. Try again in ${formatWaitTime(waitTime)}.`);
             await logout();
-        });
+          }
+        }, UPDATE_INTERVAL);
+      }
+    }
 
-        checkTimeBtn.addEventListener('click', async () => {
-            if (userData.email !== ADMIN_EMAIL) return;
-            const checkEmail = checkEmailInput.value;
-            if (!checkEmail) {
-                timeResult.innerHTML = "Please enter an email.";
-                return;
-            }
-            await checkUserTimeToday(checkEmail);
-        });
+    logoutBtn.addEventListener('click', async () => {
+      await logout();
+    });
 
-        window.addEventListener('beforeunload', async () => {
-            if (timer && userData && userData.email !== ADMIN_EMAIL) {
-                clearInterval(timer);
-                timer = null;
-                await saveTimeUsed();
-            }
-        });
-    </script>
+    checkTimeBtn.addEventListener('click', async () => {
+      if (userData.email !== ADMIN_EMAIL) return;
+      const checkEmail = checkEmailInput.value;
+      if (!checkEmail) {
+        timeResult.innerHTML = "Please enter an email.";
+        return;
+      }
+      await checkUserTimeToday(checkEmail);
+    });
+
+    window.addEventListener('beforeunload', async () => {
+      if (timer && userData && userData.email !== ADMIN_EMAIL) {
+        clearInterval(timer);
+        timer = null;
+        await saveTimeUsed();
+      }
+    });
+  </script>
 </body>
 </html>
