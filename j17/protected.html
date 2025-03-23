@@ -86,7 +86,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js";
         import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-analytics.js";
-        import { getAuth, signOut } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js";
+        import { getAuth, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js";
         import { getFirestore, doc, updateDoc, getDoc, setDoc, collection, getDocs } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
 
         const firebaseConfig = {
@@ -144,11 +144,9 @@
         }
 
         function loadDIDAgent() {
-            // Remove any existing script to prevent duplicates
             const existingScript = document.querySelector('script[data-name="did-agent"]');
             if (existingScript) existingScript.remove();
 
-            // Create and append the D-ID script
             const script = document.createElement('script');
             script.type = 'module';
             script.src = 'https://agent.d-id.com/v1/index.js';
@@ -157,6 +155,8 @@
             script.setAttribute('data-client-key', 'Z29vZ2xlLW9hdXRoMnwxMDI1NDc5NDg2ODI5NjkwNzc4MDg6RkpFT0VWOTBqYVFVb3lHT3hMU2Zt');
             script.setAttribute('data-agent-id', 'agt_k9HerVqC');
             script.setAttribute('data-monitor', 'true');
+            script.onload = () => console.log("D-ID agent loaded successfully");
+            script.onerror = (e) => console.error("Error loading D-ID agent:", e);
             didAgentContainer.appendChild(script);
         }
 
@@ -183,6 +183,7 @@
                     timeUsed: totalTimeUsed,
                     date: today
                 });
+                console.log("Time updated:", { totalTimeUsed, timeRemaining });
             } catch (error) {
                 console.error("Error updating time:", error);
             }
@@ -213,6 +214,7 @@
                 });
 
                 userList.innerHTML = userListHTML || "No users found.";
+                console.log("Users fetched successfully");
             } catch (error) {
                 console.error("Error fetching users:", error);
                 userList.textContent = "Error loading user list: " + error.message;
@@ -232,15 +234,14 @@
                 }
             }
             try {
-                // Immediately clear the D-ID container to hide the agent
+                console.log("Logging out...");
                 didAgentContainer.innerHTML = '';
-
-                // Remove D-ID script to fully disconnect it
                 const didScript = document.querySelector('script[data-name="did-agent"]');
                 if (didScript) didScript.remove();
 
                 await signOut(auth);
                 localStorage.removeItem('userData');
+                console.log("Logged out, redirecting to index.html");
                 window.location.href = 'index.html';
             } catch (error) {
                 console.error("Logout error:", error);
@@ -248,10 +249,25 @@
             }
         }
 
-        // Check if user is authenticated on page load
-        if (!userData || !auth.currentUser) {
-            window.location.href = 'index.html';
-        } else {
+        // Monitor auth state to ensure user is logged in
+        onAuthStateChanged(auth, (user) => {
+            console.log("Auth state changed:", user ? user.email : "No user");
+            if (!user || !userData || user.email !== userData.email) {
+                console.log("No valid auth or userData, redirecting to index.html");
+                localStorage.removeItem('userData');
+                window.location.href = 'index.html';
+            } else {
+                console.log("User authenticated, proceeding with page setup");
+                initializePage();
+            }
+        });
+
+        function initializePage() {
+            if (!userData) {
+                console.log("No userData, skipping initialization");
+                return;
+            }
+
             usernameDisplay.textContent = userData.name;
             purchaseStatusDisplay.textContent = 'Active';
             timeDisplay.textContent = userData.timeRemaining === Infinity 
@@ -263,7 +279,6 @@
                 fetchAllUsers();
             }
 
-            // Load D-ID agent on page load
             loadDIDAgent();
 
             startTime = Date.now();
@@ -278,9 +293,9 @@
                     : formatTime(timeRemaining);
 
                 if (timeRemaining !== Infinity && Date.now() - lastUpdateTime >= UPDATE_INTERVAL) {
-                    await updateTimeUsed();
+                    const updatedTime = await updateTimeUsed();
                     lastUpdateTime = Date.now();
-                    userData.timeRemaining = timeRemaining;
+                    userData.timeRemaining = updatedTime;
                 }
 
                 if (timeRemaining <= 0 && userData.email !== ADMIN_EMAIL) {
