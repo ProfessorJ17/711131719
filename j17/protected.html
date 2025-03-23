@@ -107,6 +107,7 @@
         const ADMIN_EMAIL = "jesse3@example.com";
         const NORMAL_DAILY_MS = 10 * 60 * 1000; // 10 minutes for non-admin
         const UPDATE_INTERVAL = 5000; // 5 seconds
+        const INIT_DELAY = 300; // 300 ms delay to load data
 
         const usernameDisplay = document.getElementById('username');
         const purchaseStatusDisplay = document.getElementById('purchase-status');
@@ -167,7 +168,6 @@
                 return userData.timeRemaining;
             }
 
-            // Admin has no time limit, skip updates
             if (userData.email === ADMIN_EMAIL) {
                 console.log("Admin session, no time tracking");
                 return Infinity;
@@ -207,17 +207,18 @@
             }
 
             try {
-                const userRef = collection(db, "allowedEmails");
+                const userRef = collection(db, "userTime"); // Changed to userTime for consistency
                 const querySnapshot = await getDocs(userRef);
                 
                 let userListHTML = '';
                 querySnapshot.forEach((docSnap) => {
-                    const email = docSnap.id;
-                    const purchased = docSnap.data().purchased || false;
-                    const username = email.split('@')[0];
+                    const data = docSnap.data();
+                    const email = docSnap.id; // Note: This assumes userTime uses email as ID; adjust if using UID
+                    const timeUsed = data.timeUsed || 0;
+                    const date = data.date || 'N/A';
                     userListHTML += `
                         <div>
-                            Username: ${username} | Purchased: ${purchased}
+                            UID: ${email} | Time Used: ${timeUsed} ms | Date: ${date}
                         </div>
                     `;
                 });
@@ -269,7 +270,7 @@
             }
 
             console.log("User authenticated, initializing page with:", userData);
-            initializePage();
+            setTimeout(initializePage, INIT_DELAY); // Delay initialization by 300 ms
         });
 
         function initializePage() {
@@ -285,9 +286,6 @@
             if (userData.email === ADMIN_EMAIL) {
                 adminSection.style.display = 'block';
                 fetchAllUsers();
-            }
-
-            if (userData.email === ADMIN_EMAIL) {
                 console.log("Admin session, no timer running");
                 return; // No timer for admin
             }
