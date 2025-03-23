@@ -200,7 +200,7 @@
                 }
             } else {
                 // No document exists, create it with 5 minutes
-                await setDoc(userTimeDoc, { date: today, timeUsed: 0 });
+                await setDoc(userTimeDoc, { date: today, timeUsed: 0 }, { merge: true });
                 return MAX_DAILY_MS;
             }
         }
@@ -216,6 +216,9 @@
 
             if (docSnap.exists() && docSnap.data().date === today) {
                 timeUsed = docSnap.data().timeUsed || 0;
+            } else {
+                // New day, reset if date doesn't match
+                await setDoc(userTimeDoc, { date: today, timeUsed: 0 }, { merge: true });
             }
 
             const elapsed = Date.now() - startTime;
@@ -272,8 +275,10 @@
                     const email = docSnap.id;
                     const purchased = docSnap.data().purchased || false;
                     const username = email.split('@')[0];
-                    // Placeholder time until emailToUid is implemented
-                    const timeRemaining = purchased ? MAX_DAILY_MS : 0; // Default to 5:00 or 0 if not purchased
+                    // Fetch real timeRemaining using emailToUid
+                    const uidDoc = await getDoc(doc(db, "emailToUid", email));
+                    const uid = uidDoc.exists() ? uidDoc.data().uid : null;
+                    const timeRemaining = uid ? await checkTimeRemaining(uid) : (purchased ? MAX_DAILY_MS : 0);
 
                     userListHTML += `
                         <div>
@@ -393,7 +398,7 @@
             await fetchAllUsers();
         });
 
-        // Logout handler (fixed)
+        // Logout handler
         logoutBtn.addEventListener('click', async () => {
             await logout();
         });
