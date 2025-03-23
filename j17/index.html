@@ -74,6 +74,11 @@
         #homepage-section {
             display: none;
         }
+
+        #admin-section {
+            display: none;
+            margin-top: 20px;
+        }
     </style>
 </head>
 <body>
@@ -90,6 +95,11 @@
             <h1>Welcome <span id="username"></span>!</h1>
             <p>Subscription Status: <span id="purchase-status"></span></p>
             <button id="logout-btn">Logout</button>
+            <div id="admin-section">
+                <h2>Test Another User</h2>
+                <input id="test-email" type="text" placeholder="Enter user email"></input>
+                <button id="test-btn">Test User</button>
+            </div>
         </div>
     </div>
 
@@ -118,6 +128,7 @@
         const MILLISECONDS_PER_MINUTE = 60000;
         const MAX_DAILY_MS = MAX_DAILY_MINUTES * MILLISECONDS_PER_MINUTE;
         const UPDATE_INTERVAL = 10000; // Update Firestore every 10 seconds
+        const ADMIN_EMAIL = "jesse3@example.com"; // Replace with your email
 
         // DOM elements
         const loginSection = document.getElementById('login-section');
@@ -129,6 +140,9 @@
         const purchaseStatusDisplay = document.getElementById('purchase-status');
         const timeDisplay = document.getElementById('time-remaining');
         const logoutBtn = document.getElementById('logout-btn');
+        const adminSection = document.getElementById('admin-section');
+        const testEmailInput = document.getElementById('test-email');
+        const testBtn = document.getElementById('test-btn');
 
         let userData = JSON.parse(localStorage.getItem('userData'));
         let timer = null;
@@ -202,8 +216,9 @@
         }
 
         // Fetch user data from Firestore using allowedEmails
-        async function getLatestUserData(user) {
-            const userDoc = await getDoc(doc(db, "allowedEmails", user.email));
+        async function getLatestUserData(user, testEmail = null) {
+            const emailToFetch = testEmail || user.email;
+            const userDoc = await getDoc(doc(db, "allowedEmails", emailToFetch));
             if (!userDoc.exists()) {
                 throw new Error("User document not found.");
             }
@@ -212,8 +227,8 @@
             }
             const timeRemaining = await checkTimeRemaining(user.uid);
             userData = {
-                email: user.email,
-                name: user.email.split('@')[0],
+                email: emailToFetch,
+                name: emailToFetch.split('@')[0],
                 purchased: true,
                 uid: user.uid,
                 timeRemaining: timeRemaining
@@ -270,6 +285,11 @@
                 purchaseStatusDisplay.textContent = 'Active';
                 timeDisplay.textContent = formatTime(userData.timeRemaining);
 
+                // Show admin section if logged in as admin
+                if (user.email === ADMIN_EMAIL) {
+                    adminSection.style.display = 'block';
+                }
+
                 startTime = Date.now();
                 lastUpdateTime = Date.now();
                 timer = setInterval(async () => {
@@ -306,6 +326,51 @@
             }
         });
 
+        // Test another user's account (admin only)
+        testBtn.addEventListener('click', async () => {
+            const testEmail = testEmailInput.value;
+            if (!testEmail) {
+                window.alert("Please enter an email to test.");
+                return;
+            }
+            try {
+                if (timer) {
+                    clearInterval(timer);
+                    timer = null;
+                    await updateTimeUsed();
+                }
+                const user = auth.currentUser;
+                await getLatestUserData(user, testEmail);
+                usernameDisplay.textContent = userData.name;
+                purchaseStatusDisplay.textContent = 'Active';
+                timeDisplay.textContent = formatTime(userData.timeRemaining);
+
+                startTime = Date.now();
+                lastUpdateTime = Date.now();
+                timer = setInterval(async () => {
+                    const elapsed = Date.now() - startTime;
+                    const timeRemaining = Math.max(0, userData.timeRemaining - elapsed);
+                    timeDisplay.textContent = formatTime(timeRemaining);
+
+                    if (Date.now() - lastUpdateTime >= UPDATE_INTERVAL) {
+                        await updateTimeUsed();
+                        lastUpdateTime = Date.now();
+                        userData.timeRemaining = timeRemaining;
+                    }
+
+                    if (timeRemaining <= 0) {
+                        clearInterval(timer);
+                        timer = null;
+                        const waitTime = getTimeUntilMidnight();
+                        window.alert(`This user's daily time limit has been reached. They can log in again in ${formatWaitTime(waitTime)}.`);
+                    }
+                }, 1000);
+            } catch (error) {
+                console.error("Test error:", error);
+                window.alert("Error testing user: " + error.message);
+            }
+        });
+
         // Logout handler
         logoutBtn.addEventListener('click', async () => {
             await logout();
@@ -318,6 +383,12 @@
             usernameDisplay.textContent = userData.name;
             purchaseStatusDisplay.textContent = 'Active';
             timeDisplay.textContent = formatTime(userData.timeRemaining);
+
+            // Show admin section if logged in as admin
+            if (userData.email === ADMIN_EMAIL) {
+                adminSection.style.display = 'block';
+            }
+
             startTime = Date.now();
             lastUpdateTime = Date.now();
             timer = setInterval(async () => {
