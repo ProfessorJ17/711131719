@@ -196,17 +196,25 @@
 
             if (docSnap.exists()) {
                 const data = docSnap.data();
-                window.alert(`Fetched data: date=${data.date}, timeused=${data.timeused}`);
+                window.alert(`On login, fetched: date=${data.date}, timeused=${data.timeused}`);
                 if (data.date === today) {
                     initialTimeUsed = data.timeused || 0;
                     const remaining = Math.max(0, maxDailyMs - initialTimeUsed);
                     window.alert(`Same day. Time used: ${initialTimeUsed}, Remaining: ${remaining}`);
                     return remaining;
                 } else {
-                    window.alert(`Date mismatch. Stored: ${data.date}, Today: ${today}. Resetting time.`);
-                    await updateDoc(userDocRef, { date: today, timeused: 0 });
-                    initialTimeUsed = 0;
-                    return maxDailyMs;
+                    window.alert(`Date mismatch. Stored: ${data.date}, Today: ${today}. Resetting to 0.`);
+                    try {
+                        await updateDoc(userDocRef, { date: today, timeused: 0 });
+                        const verifySnap = await getDoc(userDocRef);
+                        const verifyData = verifySnap.data();
+                        window.alert(`Reset saved. Now: date=${verifyData.date}, timeused=${verifyData.timeused}`);
+                        initialTimeUsed = 0;
+                        return maxDailyMs;
+                    } catch (error) {
+                        window.alert("Error resetting time: " + error.message);
+                        throw error;
+                    }
                 }
             } else {
                 window.alert("No document found for: " + email);
@@ -231,7 +239,7 @@
                 uid: user.uid,
                 timeRemaining: timeRemaining
             };
-            window.alert(`User data loaded. Time remaining: ${timeRemaining}`);
+            window.alert(`User loaded. Time remaining: ${timeRemaining} ms`);
             return data;
         }
 
@@ -248,9 +256,11 @@
             const timeRemaining = Math.max(0, NORMAL_DAILY_MS - totalTimeUsed);
 
             try {
-                window.alert(`Saving: date=${today}, timeused=${totalTimeUsed}`);
+                window.alert(`Saving on logout: date=${today}, timeused=${totalTimeUsed}`);
                 await updateDoc(userDocRef, { date: today, timeused: totalTimeUsed });
-                window.alert(`Saved successfully. Time used: ${totalTimeUsed}, Remaining: ${timeRemaining}`);
+                const verifySnap = await getDoc(userDocRef);
+                const verifyData = verifySnap.data();
+                window.alert(`Save verified. Now: date=${verifyData.date}, timeused=${verifyData.timeused}, Remaining: ${timeRemaining}`);
                 userData.timeRemaining = timeRemaining;
                 return timeRemaining;
             } catch (error) {
@@ -427,7 +437,7 @@
             if (timer && userData && userData.email !== ADMIN_EMAIL) {
                 clearInterval(timer);
                 timer = null;
-                saveTimeUsed(); // Synchronous attempt, may not block unload
+                saveTimeUsed(); // Synchronous attempt
             }
         });
     </script>
