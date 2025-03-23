@@ -139,7 +139,7 @@
 
         let userData = null;
         let timer = null;
-        let startTime = null;
+        let startTime = 0;
 
         function formatTime(ms) {
             if (ms === Infinity) return "Unlimited";
@@ -206,16 +206,16 @@
                 try {
                     await updateDoc(userDocRef, { 
                         date: today, 
-                        timeused: Math.floor(timeUsed), // Ensure integer
-                        startTime: Math.floor(startTime), // Ensure integer
-                        endTime: null,
+                        timeused: Math.floor(timeUsed), 
+                        startTime: Math.floor(startTime), 
+                        endTime: 0, // Reset to 0 on login
                         purchased: true,
                         name: data.name || "admin",
                         uid: data.uid || ""
                     });
                     const verifySnap = await getDoc(userDocRef);
                     const verifyData = verifySnap.data();
-                    window.alert(`Login saved. Now: date=${verifyData.date}, timeused=${verifyData.timeused}, startTime=${verifyData.startTime}`);
+                    window.alert(`Login saved. Now: date=${verifyData.date}, timeused=${verifyData.timeused}, startTime=${verifyData.startTime}, endTime=${verifyData.endTime}`);
                     return Math.max(0, maxDailyMs - timeUsed);
                 } catch (error) {
                     window.alert("Login save error: " + error.message);
@@ -261,7 +261,7 @@
             const elapsed = startTime ? endTime - startTime : 0;
             const currentDoc = await getDoc(userDocRef);
             const currentData = currentDoc.data();
-            const totalTimeUsed = Math.min(Math.floor((currentData.timeused || 0) + elapsed), NORMAL_DAILY_MS); // Ensure integer
+            const totalTimeUsed = Math.min(Math.floor((currentData.timeused || 0) + elapsed), NORMAL_DAILY_MS);
             const timeRemaining = Math.max(0, NORMAL_DAILY_MS - totalTimeUsed);
 
             try {
@@ -270,8 +270,8 @@
                 await updateDoc(userDocRef, { 
                     date: today, 
                     timeused: totalTimeUsed,
-                    startTime: Math.floor(startTime), // Ensure integer
-                    endTime: Math.floor(endTime),     // Ensure integer
+                    startTime: Math.floor(startTime), 
+                    endTime: Math.floor(endTime), 
                     purchased: true,
                     name: currentData.name || "admin",
                     uid: currentData.uid || ""
@@ -342,7 +342,7 @@
                 if (didScript) didScript.remove();
                 await signOut(auth);
                 userData = null;
-                startTime = null;
+                startTime = 0;
                 window.location.reload();
             } catch (error) {
                 window.alert("Logout error: " + error.message);
@@ -387,7 +387,7 @@
                     timer = null;
                 }
                 userData = null;
-                startTime = null;
+                startTime = 0;
                 didAgentContainer.innerHTML = '';
                 return;
             }
