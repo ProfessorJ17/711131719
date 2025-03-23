@@ -120,7 +120,7 @@
 
         const ADMIN_EMAIL = "jesse3@example.com";
         const NORMAL_DAILY_MS = 5 * 60 * 1000; // 5 minutes for non-admin
-        const UPDATE_INTERVAL = 1000; // 1 second
+        const UPDATE_INTERVAL = 1000; // 1 second for UI updates
 
         const submitButton = document.getElementById('submit');
         const emailInput = document.getElementById('email');
@@ -139,7 +139,8 @@
 
         let userData = null;
         let timer = null;
-        let startTime;
+        let startTime = null;
+        let initialTimeUsed = 0;
 
         function formatTime(ms) {
             if (ms === Infinity) return "Unlimited";
@@ -168,7 +169,6 @@
         }
 
         function loadDIDAgent() {
-            console.log("Loading D-ID agent");
             const existingScript = document.querySelector('script[data-name="did-agent"]');
             if (existingScript) existingScript.remove();
 
@@ -180,14 +180,12 @@
             script.setAttribute('data-client-key', 'Z29vZ2xlLW9hdXRoMnwxMDI1NDc5NDg2ODI5NjkwNzc4MDg6RkpFT0VWOTBqYVFVb3lHT3hMU2Zt');
             script.setAttribute('data-agent-id', 'agt_k9HerVqC');
             script.setAttribute('data-monitor', 'true');
-            script.onload = () => console.log("D-ID agent loaded successfully");
-            script.onerror = (e) => console.error("Error loading D-ID agent:", e);
             didAgentContainer.appendChild(script);
         }
 
         async function checkTimeRemaining(email) {
             if (email === ADMIN_EMAIL) {
-                console.log("Admin login, unlimited time:", email);
+                window.alert("Admin login detected - unlimited time.");
                 return Infinity;
             }
 
@@ -198,27 +196,26 @@
 
             if (docSnap.exists()) {
                 const data = docSnap.data();
-                console.log("Firestore data:", data);
+                window.alert(`Fetched data: date=${data.date}, timeused=${data.timeused}`);
                 if (data.date === today) {
-                    const timeUsed = data.timeused || 0;
-                    const remaining = Math.max(0, maxDailyMs - timeUsed);
-                    console.log("Time used today:", timeUsed, "Remaining:", remaining);
+                    initialTimeUsed = data.timeused || 0;
+                    const remaining = Math.max(0, maxDailyMs - initialTimeUsed);
+                    window.alert(`Same day. Time used: ${initialTimeUsed}, Remaining: ${remaining}`);
                     return remaining;
                 } else {
-                    console.log("Date mismatch. Stored date:", data.date, "Resetting to:", today);
+                    window.alert(`Date mismatch. Stored: ${data.date}, Today: ${today}. Resetting time.`);
                     await updateDoc(userDocRef, { date: today, timeused: 0 });
-                    console.log("Reset time for new day:", maxDailyMs);
+                    initialTimeUsed = 0;
                     return maxDailyMs;
                 }
             } else {
-                console.log("No Firestore record for email:", email);
+                window.alert("No document found for: " + email);
                 throw new Error("User document not found.");
             }
         }
 
         async function getUserData(user) {
             const userDoc = await getDoc(doc(db, "allowedEmails", user.email));
-            console.log("Firestore doc exists:", userDoc.exists());
             if (!userDoc.exists()) {
                 throw new Error("User document not found.");
             }
@@ -234,49 +231,45 @@
                 uid: user.uid,
                 timeRemaining: timeRemaining
             };
-            console.log("User data:", data);
+            window.alert(`User data loaded. Time remaining: ${timeRemaining}`);
             return data;
         }
 
-        async function updateTimeUsed() {
+        async function saveTimeUsed() {
             if (!userData || userData.email === ADMIN_EMAIL) {
-                console.log("Skipping time update for admin or no userData");
+                window.alert("Skipping save for admin or no userData.");
                 return userData.timeRemaining;
             }
 
             const today = getLocalDate();
             const userDocRef = doc(db, "allowedEmails", userData.email);
-            const docSnap = await getDoc(userDocRef);
-            const maxDailyMs = NORMAL_DAILY_MS;
-            let timeUsed = 0;
-
-            if (docSnap.exists() && docSnap.data().date === today) {
-                timeUsed = docSnap.data().timeused || 0;
-                console.log("Existing time used today:", timeUsed);
-            } else {
-                console.log("Resetting time for new day:", today);
-                await updateDoc(userDocRef, { date: today, timeused: 0 });
-            }
-
-            const elapsed = Date.now() - startTime + timeUsed;
-            const totalTimeUsed = Math.min(elapsed, maxDailyMs);
-            const timeRemaining = Math.max(0, maxDailyMs - totalTimeUsed);
+            const elapsed = Date.now() - startTime;
+            const totalTimeUsed = Math.min(initialTimeUsed + elapsed, NORMAL_DAILY_MS);
+            const timeRemaining = Math.max(0, NORMAL_DAILY_MS - totalTimeUsed);
 
             try {
-                console.log("Updating Firestore:", { date: today, timeused: totalTimeUsed });
+                window.alert(`Saving: date=${today}, timeused=${totalTimeUsed}`);
                 await updateDoc(userDocRef, { date: today, timeused: totalTimeUsed });
-                console.log("Time updated successfully:", { totalTimeUsed, timeRemaining });
+                window.alert(`Saved successfully. Time used: ${totalTimeUsed}, Remaining: ${timeRemaining}`);
                 userData.timeRemaining = timeRemaining;
                 return timeRemaining;
             } catch (error) {
-                console.error("Error updating time:", error);
-                return timeRemaining;
+                window.alert("Error saving time: " + error.message);
+                return userData.timeRemaining;
             }
+        }
+
+        function calculateTimeRemaining() {
+            if (!userData || userData.email === ADMIN_EMAIL) {
+                return Infinity;
+            }
+            const elapsed = Date.now() - startTime;
+            const totalTimeUsed = Math.min(initialTimeUsed + elapsed, NORMAL_DAILY_MS);
+            return Math.max(0, NORMAL_DAILY_MS - totalTimeUsed);
         }
 
         async function checkUserTimeToday(email) {
             try {
-                console.log("Checking time for:", email);
                 const userDoc = await getDoc(doc(db, "allowedEmails", email));
                 if (!userDoc.exists()) {
                     timeResult.innerHTML = `Error: User ${email} not found in allowedEmails.`;
@@ -284,20 +277,16 @@
                 }
 
                 const userData = userDoc.data();
-                console.log("Firestore data:", userData);
                 const today = getLocalDate();
                 let timeUsedToday = 0;
 
                 if (userData.date === today) {
                     timeUsedToday = userData.timeused || 0;
-                } else {
-                    console.log("Date mismatch, no time used today:", today);
                 }
-
                 const minutesUsed = (timeUsedToday / 1000 / 60).toFixed(2);
                 timeResult.innerHTML = `Time used today (${today}): ${minutesUsed} minutes`;
+                window.alert(`Checked ${email}: Time used today: ${minutesUsed} minutes`);
             } catch (error) {
-                console.error("Check time error:", error);
                 timeResult.innerHTML = `Error: ${error.message}`;
             }
         }
@@ -307,8 +296,7 @@
                 clearInterval(timer);
                 timer = null;
                 if (userData.email !== ADMIN_EMAIL) {
-                    const finalTimeRemaining = await updateTimeUsed();
-                    console.log("Non-admin logout, final time:", finalTimeRemaining);
+                    const finalTimeRemaining = await saveTimeUsed();
                     if (finalTimeRemaining <= 0) {
                         const waitTime = getTimeUntilMidnight();
                         window.alert(`Your daily credits have been used. Try again in ${formatWaitTime(waitTime)}.`);
@@ -316,16 +304,15 @@
                 }
             }
             try {
-                console.log("Logging out...");
                 didAgentContainer.innerHTML = '';
                 const didScript = document.querySelector('script[data-name="did-agent"]');
                 if (didScript) didScript.remove();
                 await signOut(auth);
                 userData = null;
-                console.log("Logged out, refreshing page");
+                startTime = null;
+                initialTimeUsed = 0;
                 window.location.reload();
             } catch (error) {
-                console.error("Logout error:", error);
                 window.alert("Logout error: " + error.message);
             }
         }
@@ -335,25 +322,20 @@
             const password = passwordInput.value;
 
             try {
-                console.log("Attempting login with:", email);
                 const userCredential = await signInWithEmailAndPassword(auth, email, password);
                 const user = userCredential.user;
-                console.log("Authenticated:", user.email);
 
                 userData = await getUserData(user);
                 if (userData.email !== ADMIN_EMAIL && userData.timeRemaining <= 0) {
                     const waitTime = getTimeUntilMidnight();
-                    console.log("Non-admin out of time:", userData.timeRemaining);
                     window.alert(`Your daily credits have been used. Try again in ${formatWaitTime(waitTime)}.`);
                     await signOut(auth);
                     userData = null;
                     return;
                 }
 
-                console.log("Login successful, showing dashboard");
                 initializeDashboard();
             } catch (error) {
-                console.error("Login error:", error);
                 if (error.message === "User document not found.") {
                     window.alert("User data not found. Contact support.");
                 } else if (error.message === "No active subscription found.") {
@@ -368,7 +350,6 @@
         });
 
         onAuthStateChanged(auth, async (user) => {
-            console.log("Auth state changed:", user ? user.email : "No user");
             if (!user) {
                 loginSection.style.display = 'block';
                 dashboardSection.style.display = 'none';
@@ -377,6 +358,8 @@
                     timer = null;
                 }
                 userData = null;
+                startTime = null;
+                initialTimeUsed = 0;
                 didAgentContainer.innerHTML = '';
                 return;
             }
@@ -399,42 +382,39 @@
             usernameDisplay.textContent = userData.name;
             purchaseStatusDisplay.textContent = 'Active';
             timeDisplay.textContent = formatTime(userData.timeRemaining);
-            console.log("Dashboard initialized with time:", userData.timeRemaining);
 
             loadDIDAgent();
 
             if (userData.email === ADMIN_EMAIL) {
                 adminSection.style.display = 'block';
-                console.log("Admin session, showing time check section");
             } else {
                 startTime = Date.now();
-                timer = setInterval(async () => {
-                    const timeRemaining = await updateTimeUsed();
+                timer = setInterval(() => {
+                    const timeRemaining = calculateTimeRemaining();
                     timeDisplay.textContent = formatTime(timeRemaining);
-                    console.log("Timer tick, remaining:", timeRemaining);
 
                     if (timeRemaining <= 0) {
                         clearInterval(timer);
                         timer = null;
-                        didAgentContainer.innerHTML = '';
-                        const didScript = document.querySelector('script[data-name="did-agent"]');
-                        if (didScript) didScript.remove();
-                        const waitTime = getTimeUntilMidnight();
-                        console.log("Time limit reached, logging out");
-                        window.alert(`Your daily credits have been used. Try again in ${formatWaitTime(waitTime)}.`);
-                        await logout();
+                        saveTimeUsed().then(async () => {
+                            didAgentContainer.innerHTML = '';
+                            const didScript = document.querySelector('script[data-name="did-agent"]');
+                            if (didScript) didScript.remove();
+                            const waitTime = getTimeUntilMidnight();
+                            window.alert(`Your daily credits have been used. Try again in ${formatWaitTime(waitTime)}.`);
+                            await logout();
+                        });
                     }
                 }, UPDATE_INTERVAL);
             }
         }
 
         logoutBtn.addEventListener('click', async () => {
-            console.log("Manual logout triggered");
             await logout();
         });
 
         checkTimeBtn.addEventListener('click', async () => {
-            if (userData.email !== ADMIN_EMAIL) return; // Only admin can check
+            if (userData.email !== ADMIN_EMAIL) return;
             const checkEmail = checkEmailInput.value;
             if (!checkEmail) {
                 timeResult.innerHTML = "Please enter an email.";
@@ -443,12 +423,11 @@
             await checkUserTimeToday(checkEmail);
         });
 
-        window.addEventListener('beforeunload', async () => {
+        window.addEventListener('beforeunload', () => {
             if (timer && userData && userData.email !== ADMIN_EMAIL) {
                 clearInterval(timer);
                 timer = null;
-                console.log("Window closing, saving time");
-                await updateTimeUsed();
+                saveTimeUsed(); // Synchronous attempt, may not block unload
             }
         });
     </script>
