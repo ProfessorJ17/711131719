@@ -127,6 +127,7 @@
                 uid: user.uid,
                 timeRemaining: timeRemaining
             };
+            console.log("User data saved to localStorage:", userData);
             localStorage.setItem('userData', JSON.stringify(userData));
             return userData;
         }
@@ -149,10 +150,13 @@
             const password = passwordInput.value;
 
             try {
+                console.log("Attempting login with email:", email);
                 const userCredential = await signInWithEmailAndPassword(auth, email, password);
                 const user = userCredential.user;
+                console.log("User authenticated:", user.email);
 
                 const userData = await getLatestUserData(user);
+                console.log("User data retrieved:", userData);
 
                 if (user.email !== ADMIN_EMAIL && userData.timeRemaining <= 0) {
                     const waitTime = getTimeUntilMidnight();
@@ -161,6 +165,7 @@
                     return;
                 }
 
+                console.log("Redirecting to protected.html");
                 window.location.href = 'protected.html';
             } catch (error) {
                 console.error("Login error:", error);
