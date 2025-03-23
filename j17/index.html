@@ -383,6 +383,8 @@
         userData = await getUserData(user);
         if (userData.email !== ADMIN_EMAIL && userData.timeRemaining <= 0) {
           const waitTime = getTimeUntilMidnight();
+          const resetTime = new Date(Date.now() + waitTime).toLocaleTimeString();
+          window.alert(`5 minutes reached, please come back in ${formatWaitTime(waitTime)}. Your 5 minutes reset at ${resetTime}.`);
           await signOut(auth);
           userData = null;
           return;
@@ -409,6 +411,8 @@
         userData = await getUserData(user);
         if (userData.email !== ADMIN_EMAIL && userData.timeRemaining <= 0) {
           const waitTime = getTimeUntilMidnight();
+          const resetTime = new Date(Date.now() + waitTime).toLocaleTimeString();
+          window.alert(`5 minutes reached, please come back in ${formatWaitTime(waitTime)}. Your 5 minutes reset at ${resetTime}.`);
           await signOut(auth);
           return;
         }
