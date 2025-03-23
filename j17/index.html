@@ -91,7 +91,7 @@
             <h1>Welcome <span id="username"></span>!</h1>
             <p>Subscription Status: <span id="purchase-status"></span></p>
             <button id="logout-btn">Logout</button>
-            <div id="did-agent-container"></div> <!-- Container for D-ID agent -->
+            <div id="did-agent-container"></div>
             <div id="admin-section">
                 <h2>All Users</h2>
                 <button id="refresh-btn">Refresh List</button>
@@ -166,6 +166,9 @@
         }
 
         function loadDIDAgent() {
+            // Only load if purchased is true
+            if (!userData.purchased) return;
+
             // Remove any existing script to prevent duplicates
             const existingScript = document.querySelector('script[data-name="did-agent"]');
             if (existingScript) existingScript.remove();
@@ -344,7 +347,7 @@
                     adminSection.style.display = 'none';
                 }
 
-                // Load D-ID agent after login
+                // Load D-ID agent if purchased is true (applies to admin too)
                 loadDIDAgent();
 
                 startTime = Date.now();
@@ -411,7 +414,7 @@
                 adminSection.style.display = 'none';
             }
 
-            // Load D-ID agent on page reload if logged in
+            // Load D-ID agent on page reload if purchased is true
             loadDIDAgent();
 
             startTime = Date.now();
