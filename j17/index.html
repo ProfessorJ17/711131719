@@ -164,7 +164,7 @@
     function getTimeUntilMidnight() {
       const now = new Date();
       const midnight = new Date(now);
-      midnight.setHours(24, 0, 0, 0); // local midnight
+      midnight.setHours(24, 0, 0, 0);
       return midnight - now;
     }
 
@@ -176,7 +176,6 @@
     function loadDIDAgent() {
       const existingScript = document.querySelector('script[data-name="did-agent"]');
       if (existingScript) existingScript.remove();
-
       const script = document.createElement('script');
       script.type = 'module';
       script.src = 'https://agent.d-id.com/v1/index.js';
@@ -193,29 +192,24 @@
         window.alert("Admin login detected - unlimited time.");
         return Infinity;
       }
-
       const today = getLocalDate();
       const userDocRef = doc(db, "allowedEmails", email);
       const docSnap = await getDoc(userDocRef);
       const maxDailyMs = NORMAL_DAILY_MS;
-
       if (docSnap.exists()) {
         const data = docSnap.data();
         window.alert(`On login, fetched: date=${data.date}, timeused=${data.timeused}, startTime=${data.startTime}, endTime=${data.endTime}`);
         let timeUsed = data.timeused || 0;
-
-        // Reset if stored date isn't today.
         if (data.date !== today) {
           window.alert(`Date mismatch. Stored: ${data.date}, Today: ${today}. Resetting.`);
           timeUsed = 0;
         }
-
         try {
           await updateDoc(userDocRef, { 
             date: today, 
             timeused: Math.floor(timeUsed), 
             startTime: Math.floor(startTime), 
-            endTime: 0, // Reset to 0 on login
+            endTime: 0,
             purchased: true,
             name: data.name || "admin",
             uid: data.uid || ""
@@ -261,7 +255,6 @@
         window.alert("Skipping save for admin or no userData.");
         return userData ? userData.timeRemaining : Infinity;
       }
-
       const today = getLocalDate();
       const userDocRef = doc(db, "allowedEmails", userData.email);
       const endTime = Date.now();
@@ -270,7 +263,6 @@
       const currentData = currentDoc.data();
       const totalTimeUsed = Math.min(Math.floor((currentData.timeused || 0) + elapsed), NORMAL_DAILY_MS);
       const timeRemaining = Math.max(0, NORMAL_DAILY_MS - totalTimeUsed);
-
       try {
         window.alert(`Before save: date=${currentData.date}, timeused=${currentData.timeused}, startTime=${currentData.startTime}, endTime=${currentData.endTime}`);
         window.alert(`Saving on logout: date=${today}, timeused=${totalTimeUsed}, startTime=${startTime}, endTime=${endTime}, elapsed=${elapsed}`);
